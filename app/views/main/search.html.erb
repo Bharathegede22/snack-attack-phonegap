@@ -1,0 +1,8 @@
+<h3>the available cars are given below</h3>
+<% @cars.each do |car| %>
+	<li>
+		<%= image_tag(asset_path('cars/' + car.cargroup_id.to_s + 'small.jpg')) %>
+		 <%= Cargroup.find(car.cargroup_id).name %> 
+		 <%= Location.find(car.location_id).name %>
+	</li>
+<% end %>

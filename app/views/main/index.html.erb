@@ -1,1 +1,64 @@
-<h1>welcome to the website</h2>
+<h2>search cars </h2>
+
+<%= stylesheet_link_tag "jquery-ui" %>
+<%= stylesheet_link_tag "jquery-ui-timepicker-addon" %>
+
+
+<span id="search_menu">
+
+	<%= form_for :booking, url: { action: "search"} do |f| %>
+
+	<p>
+	 	<div id="select_car">
+	 	<%= select("booking", "cargroup_id", Cargroup.all.collect {|p| [ p.name, p.id ] }, {include_blank: 'None'})%>
+	 	</div>
+
+	 	<div id="select_location">
+	 	<%= select("booking", "location_id", Location.all.collect {|p| [ p.name, p.id ] }, {include_blank: 'None'})%>
+	 		
+	 	</div>
+
+	 	<div id="select_start">
+	 		<%= f.label :from %>
+	 		<%= f.datetime_field :starts %>
+	 	</div>
+
+	 	<div id="select_ends">
+	 		<%= f.label :to %>
+	 		<%= f.datetime_field :ends %>
+	 	</div>
+
+	</p> 
+
+  <%= f.submit "search" %>	
+
+<% end %>
+
+</span> 
+
+
+
+<%= javascript_include_tag "jquery-1.9.1" %>
+<%= javascript_include_tag "jquery-ui" %>
+<%= javascript_include_tag "jquery-ui-timepicker-addon" %>
+
+<script>
+  $(function() {  
+
+    $('#booking_starts').datetimepicker({
+    	stepMinute: 15,
+      	dateFormat: 'yy-mm-dd',
+    	timeFormat: 'HH:mm:ss'
+    });
+
+    $('#booking_ends').datetimepicker({
+    	stepMinute: 15,
+      	dateFormat: 'yy-mm-dd',
+    	timeFormat: 'HH:mm:ss'
+    });
+    
+  });
+</script>
+
+
+
