@@ -101,7 +101,7 @@ class Inventory < ActiveRecord::Base
 			cars.each do |car| 
 				booking[:cargroup_id] = car.cargroup_id 
 				booking[:location_id] = car.location_id 
-				if Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:starts],booking[:ends]) == 2									
+				if Inventory.check(booking[:cargroup_id],booking[:location_id],booking[:starts],booking[:ends]) == 2									
 					available_cars << car 
 				end
 			end 

@@ -2,6 +2,12 @@ class MainController < ApplicationController
 
 
 	def book
+		if !user_signed_in?
+			redirect_to new_user_session_path
+		else
+			#create the booking.
+			#redirect to the payment page.
+		end
 
 	end
 
@@ -20,15 +26,19 @@ class MainController < ApplicationController
 
 	def search
 		booking = params[:booking]
-		status = Inventory.check(booking[:cargroup_id],booking[:location_id],booking[:starts],booking[:ends])
-		if status != 2 && booking[:cargroup_id] && booking[:location_id]
-			if status == 0
-				flash[:notice] = "the car is not present"
-			else
-				flash[:notice] = "the is car is not available"
+		
+		if params[:booking][:cargroup_id] != '' && params[:booking][:location_id] != ''
+			status = Inventory.check(booking[:cargroup_id],booking[:location_id],booking[:starts],booking[:ends])
+			if status != 2 
+				if status == 0
+					flash[:notice] = "the car is not present"
+				else
+					flash[:notice] = "the is car is not available"
+				end
+				redirect_to root_path
 			end
-			redirect_to root_path
 		end
+	
 		session[:starts] = booking[:starts]
 		session[:ends] = booking[:ends]
 		session[:cargroup_id] = booking[:cargroup_id] if !booking[:cargroup_id].blank?

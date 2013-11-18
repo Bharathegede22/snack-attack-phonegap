@@ -1,7 +1,8 @@
 Web::Application.routes.draw do
   root to: "main#index"
   devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks" }
-  post "/search" => "main#search"
+  get "/search" => "main#search"
+  get "/book" => "main#book"
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

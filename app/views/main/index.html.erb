@@ -6,7 +6,7 @@
 
 <span id="search_menu">
 
-	<%= form_for :booking, url: { action: "search"} do |f| %>
+	<%= form_for :booking, url: { action: "search"},html: { method: 'GET' } do |f| %>
 
 	<p>
 	 	<div id="select_car">
