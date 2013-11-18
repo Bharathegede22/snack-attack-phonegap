@@ -9,7 +9,6 @@ class MainController < ApplicationController
 		if !user_signed_in?
 			redirect_to new_user_session_path
 		else
-			Inventory.block(session[:cargroup_id],session[:location_id],session[:starts],session[:ends])
 			booking=Booking.new
 			booking.starts=session[:starts]
 			booking.ends=session[:ends]
