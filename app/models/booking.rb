@@ -3,35 +3,29 @@ class Booking < ActiveRecord::Base
 
 	def self.select_car(booking)
 
-
 		#find all the booked cars utlization for that day in increasing order
-		#if any of the car have free slot for the curret time then select that car and create the utlization
-		cars=Array.new
+		#single day booking first
 
-		start_day = booking[:starts].to_date
-		end_day = booking[:ends].to_date
+		#do this for the booking starts with in next one hour
 
-		while start_day <= end_day do
 
-		cars +=  Utilization.find(:all,:conditions => ["location_id =? AND cargroup_id =? AND day =?"
-			,booking[:location_id],booking[:cargroup_id],booking[:starts].to_date],:group => "car_id")
+		start_day = booking.starts.to_date
+		end_day = booking.ends.to_date
+
+		cars = Utilization.find(:all,:conditions => ["location_id =? AND cargroup_id =? AND day =?",
+			   booking.location_id,booking.cargroup_id,start_day],:group => "car_id,day")
 		
-		start_day += 1.days
-
-		end
-
-		if !cars
-			#select random car
-			#add to utilization
-			#update booking
-		else
-			#select car with minimum utlization
-			#create utlization
-			#update booking
-		end
-
-
-
+			random_car=Car.find(:all , :conditions => ["cargroup_id =?",booking.cargroup_id]).first
+			current_booking=Booking.find(booking.id)
+			current_booking.update(car_id: random_car.id)
+			current_utilization=Utilization.new
+			current_utilization.booking_id=	booking.id
+			current_utilization.car_id=random_car.id
+			current_utilization.cargroup_id=booking.cargroup_id
+			current_utilization.location_id=booking.location_id
+			current_utilization.day=booking.starts.to_date
+			current_utilization.billed_minutes= ((booking.ends-booking.starts)*24*60).to_f
+			current_utilization.save
 
 
 

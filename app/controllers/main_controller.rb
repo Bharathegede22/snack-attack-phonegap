@@ -16,6 +16,7 @@ class MainController < ApplicationController
 			booking.cargroup_id=session[:cargroup_id]
 			booking.location_id=session[:location_id]
 			booking.save
+			Booking.select_car(booking)
 			session.delete(:cargroup_id)
 			session.delete(:location_id)
 			session.delete(:starts)
