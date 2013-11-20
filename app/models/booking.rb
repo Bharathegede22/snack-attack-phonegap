@@ -2,33 +2,51 @@ class Booking < ActiveRecord::Base
 
 
 	def self.select_car(booking)
-
-		#find all the booked cars utlization for that day in increasing order
-		#single day booking first
-
-		#do this for the booking starts with in next one hour
-
-
-		start_day = booking.starts.to_date
-		end_day = booking.ends.to_date
-
-		cars = Utilization.find(:all,:conditions => ["location_id =? AND cargroup_id =? AND day =?",
-			   booking.location_id,booking.cargroup_id,start_day],:group => "car_id,day")
 		
-			random_car=Car.find(:all , :conditions => ["cargroup_id =?",booking.cargroup_id]).first
-			current_booking=Booking.find(booking.id)
+ 		start_day = booking.starts.to_date
+		end_day = booking.ends.to_date	
+		present = true	
+
+		cars =  Utilization.where("cargroup_id =? AND location_id =? AND day >=? AND day <= ? ",booking.cargroup_id,booking.location_id,
+			    start_day,end_day).group(:car_id).sum(:billed_minutes)
+
+		if cars.empty?		
+			random_car=Car.find(:all , :conditions => ["cargroup_id =?",booking.cargroup_id]).first			
+			current_booking = Booking.find(booking.id)
 			current_booking.update(car_id: random_car.id)
-			current_utilization=Utilization.new
-			current_utilization.booking_id=	booking.id
-			current_utilization.car_id=random_car.id
-			current_utilization.cargroup_id=booking.cargroup_id
-			current_utilization.location_id=booking.location_id
-			current_utilization.day=booking.starts.to_date
-			current_utilization.billed_minutes= ((booking.ends-booking.starts)*24*60).to_f
-			current_utilization.save
+			Utilization.create_utiliz(booking,random_car.id)
+		else
+			cars.sort_by{ |k,v| -v }
+			cars.each do |car_id,utilization|
+				if Booking.check_booking(booking.starts,booking.ends,booking.cargroup_id,booking.location_id,car_id)
+					current_booking = Booking.find(booking.id)
+					current_booking.update(car_id: car_id)
+					Utilization.create_utiliz(booking,car_id)
+					present = false					
+					break	
+				end
+			end
 
+			if present
+				c=Car.find(:all,:conditions => ["cargroup_id =? AND location_id =? ",booking.cargroup_id,booking.location_id])
+				c.each do |car|
+					if !cars.has_key?(car.id)
+						current_booking = Booking.find(booking.id)
+						current_booking.update(car_id: car.id)
+						Utilization.create_utiliz(booking,car.id)
+						break
+					end
+				end
+			end
 
-
+		end
 	end
 
+
+	def self.check_booking(starts,ends,cargroup_id,location_id,car_id)
+		check = Booking.find(:all,:conditions => ["starts =? AND ends =? AND cargroup_id =? AND car_id =? AND
+			  location_id =?",starts,ends,cargroup_id,car_id,location_id])
+		return check.empty? ? true : false
+	end
 end
+

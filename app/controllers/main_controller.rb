@@ -10,11 +10,11 @@ class MainController < ApplicationController
 			redirect_to new_user_session_path
 		else
 			Inventory.block(session[:cargroup_id],session[:location_id],session[:starts],session[:ends])
-			booking=Booking.new
-			booking.starts=session[:starts]
-			booking.ends=session[:ends]
-			booking.cargroup_id=session[:cargroup_id]
-			booking.location_id=session[:location_id]
+			booking = Booking.new
+			booking.starts = session[:starts]
+			booking.ends = session[:ends]
+			booking.cargroup_id = session[:cargroup_id]
+			booking.location_id = session[:location_id]
 			booking.save
 			Booking.select_car(booking)
 			session.delete(:cargroup_id)
