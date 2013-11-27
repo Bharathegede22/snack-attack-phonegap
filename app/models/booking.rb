@@ -10,25 +10,38 @@ class Booking < ActiveRecord::Base
 		cars =  Utilization.where("cargroup_id =? AND location_id =? AND day >=? AND day <= ? ",booking.cargroup_id,booking.location_id,
 			    start_day,end_day).group(:car_id).sum(:billed_minutes)
 
+
+		#if there is not utlization with given day,cargroup,location then select a random car
 		if cars.empty?		
+
 			random_car=Car.find(:all , :conditions => ["cargroup_id =?",booking.cargroup_id]).first			
 			current_booking = Booking.find(booking.id)
 			current_booking.update(car_id: random_car.id)
 			Utilization.create_utiliz(booking,random_car.id)
+
 		else
-			cars.sort_by{ |k,v| -v }
+
+			#get the utlization for all booking with day,cargroup and allot the car with mxm utlization
+			cars.sort_by { |k,v| -v }
+
 			cars.each do |car_id,utilization|
+
 				if Booking.check_booking(booking.starts,booking.ends,booking.cargroup_id,booking.location_id,car_id)
 					current_booking = Booking.find(booking.id)
 					current_booking.update(car_id: car_id)
 					Utilization.create_utiliz(booking,car_id)
 					present = false					
 					break	
+
 				end
 			end
 
+
+			#if already used car is not available then select a fresh  car
 			if present
-				c=Car.find(:all,:conditions => ["cargroup_id =? AND location_id =? ",booking.cargroup_id,booking.location_id])
+				c = Car.find(:all,:conditions => ["cargroup_id =? AND location_id =? ",booking.cargroup_id,
+					          booking.location_id])
+
 				c.each do |car|
 					if !cars.has_key?(car.id)
 						current_booking = Booking.find(booking.id)
@@ -44,9 +57,10 @@ class Booking < ActiveRecord::Base
 
 
 	def self.check_booking(starts,ends,cargroup_id,location_id,car_id)
+
 		check = Booking.find(:all,:conditions => ["starts =? AND ends =? AND cargroup_id =? AND car_id =? AND
-			  location_id =?",starts,ends,cargroup_id,car_id,location_id])
+			  location_id = ?",starts,ends,cargroup_id,car_id,location_id])
+
 		return check.empty? ? true : false
 	end
 end
-

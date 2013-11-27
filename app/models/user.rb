@@ -10,7 +10,8 @@ class User < ActiveRecord::Base
   def self.find_for_facebook_oauth(auth, signed_in_resource=nil)
 	  user = User.where(:email => auth.info.email).first
 	  unless user
-	    user = User.create(email:auth.info.email,password:Devise.friendly_token[0,20])
+	    user = User.create(email:auth.info.email,name:auth.info.name,city:auth.extra.raw_info.location.name,
+             dob:auth.extra.raw_info.birthday,img_url:auth.info.image,password:Devise.friendly_token[0,20])
 	  end
 	  user
   end
@@ -26,10 +27,13 @@ class User < ActiveRecord::Base
 
   def self.find_for_google_oauth2(access_token, signed_in_resource=nil)
     data = access_token.info
+    raw  = access_token.extra.raw_info
     user = User.where(:email => data["email"]).first
 
+    #location is not available
     unless user
-        user = User.create(email: data["email"],password: Devise.friendly_token[0,20])
+        user = User.create(email: data["email"],name: data["name"],
+          dob:raw["birthday"],img_url:data["image"],password: Devise.friendly_token[0,20])
     end
     user
 end

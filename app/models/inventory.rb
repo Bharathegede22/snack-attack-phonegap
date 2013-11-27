@@ -88,8 +88,6 @@ class Inventory < ActiveRecord::Base
 	end
 
 
-
-
 	#db queries is not cached
 
 
