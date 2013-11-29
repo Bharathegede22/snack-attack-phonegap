@@ -151,6 +151,67 @@ class Inventory < ActiveRecord::Base
 			end
 		end
 	end
+
+
+	def reschedule
+
+		
+		 if booking[:extended] 	
+		 	
+		 	count = Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:actual_ends] + 15.minutes,
+		 		booking[:ends],0)
+
+		 elsif booking[:cancel]
+		 	count = Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:starts],booking[:ends],1)
+
+		 elsif booking[:early]		 	
+		 	count = Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:ends].to_datetime + 15.minutes,booking[:actual_ends],1)
+
+		 elsif booking[:rescheduled]
+
+		 	if booking[:starts] < booking[:actual_starts] && booking[:ends] > booking[:actual_starts]
+
+		 		count = Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:starts],
+		 			booking[:actual_starts].to_datetime - 15.minutes,0)
+
+		 	elsif booking[:starts] > booking[:actual_starts] && booking[:starts] < booking[:actual_ends]	 		
+
+		 		count = Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:actual_starts],booking[:starts].to_datetime - 15.minutes,1)
+
+
+			elsif booking[:starts] >= booking[:actual_ends]
+
+		 		count = Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:starts],booking[:ends],0)
+		 		count += Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:actual_starts],booking[:actual_ends],1)
+			end
+
+
+
+			if booking[:ends] > booking[:actual_ends] && booking[:starts] < booking[:actual_ends]				
+
+		 		count = Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:actual_ends].to_datetime + 15.minutes, booking[:ends],0)
+
+			elsif booking[:ends] < booking[:actual_ends] && booking[:ends] > booking[:actual_starts]				
+
+				count = Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:ends].to_datetime + 15.minutes, booking[:actual_ends],1)
+
+
+			elsif booking[:ends] <= booking[:actual_starts]
+
+				count = Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:starts], booking[:ends],0)
+				count += Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:actual_starts], booking[:actual_ends],1)
+
+
+			end		 		 		
+		 	
+		 elsif booking[:late]
+		 	#do something sensible
+		 end
+
+		 return count
+
+
+	end
 	
 	private
 	
