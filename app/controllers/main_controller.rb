@@ -54,7 +54,7 @@ class MainController < ApplicationController
 
 		status = Inventory.reschedule(booking)
 
-		if status == 2
+		if status == 2 || status == 4
 			flash[:notice]="your booking is successfully rescheduled"
 		else
 			flash[:notice]="your are not able to reschedule"
@@ -85,7 +85,7 @@ class MainController < ApplicationController
 	end
 
 
-	def settings
+	def settings(user)
 
 		#check the session and pull the user details
 		#edit the user details
