@@ -14,11 +14,12 @@ class Inventory < ActiveRecord::Base
 	end
 
 	
-	def self.block(cargroup, location, start_time, end_time)
+	def self.block(cargroup, location, start_time, end_time,status)
 		check = Inventory.check(cargroup, location, start_time, end_time)
 		if check == 2			
 				Inventory.find(:all, :conditions => ["cargroup_id = ? AND location_id = ? AND slot >= ? AND slot <= ?", cargroup, location, start_time, end_time]).each do |i|
-					i.total -= 1
+					i.total -= 1 if status == 0
+					i.total += 1 if statis == 1
 					i.save!
 				end			
 		end

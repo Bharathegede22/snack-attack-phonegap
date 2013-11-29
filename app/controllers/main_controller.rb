@@ -1,6 +1,8 @@
 class MainController < ApplicationController
 
 
+
+
 	def book
 		
 		session[:cargroup_id] = params[:cargroup_id] if !params[:cargroup_id].blank?
@@ -9,7 +11,7 @@ class MainController < ApplicationController
 		if !user_signed_in?
 			redirect_to new_user_session_path
 		else
-			Inventory.block(session[:cargroup_id],session[:location_id],session[:starts],session[:ends])
+			Inventory.block(session[:cargroup_id],session[:location_id],session[:starts],session[:ends],0)
 			booking = Booking.new
 			booking.starts = session[:starts]
 			booking.ends = session[:ends]
@@ -21,8 +23,9 @@ class MainController < ApplicationController
 			session.delete(:location_id)
 			session.delete(:starts)
 			session.delete(:ends)
-		end
+		ends
 	end
+
 
 	def index
 		if session[:starts] && session[:ends]
@@ -30,13 +33,32 @@ class MainController < ApplicationController
 		end
 	end
 
+
 	def list
 
 	end
 	
+	
 
-	def payment
+	def payment(booking,todo)
 
+		case todo
+
+		when 
+
+	end
+
+
+
+	def reschedule(booking)
+
+		status = Inventory.reschedule(booking)
+
+		if status == 2
+			flash[:notice]="your booking is successfully rescheduled"
+		else
+			flash[:notice]="your are not able to reschedule"
+		end
 	end
 
 	def search
@@ -60,6 +82,15 @@ class MainController < ApplicationController
 		session[:location_id] = booking[:location_id] if !booking[:location_id].blank?
 
 		@cars = Inventory.get_available_cars(booking)
+	end
+
+
+	def settings
+
+		#check the session and pull the user details
+		#edit the user details
+		#more about  UI play
+
 	end
 
 
