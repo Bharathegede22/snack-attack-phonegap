@@ -1,0 +1,137 @@
+.title TRIP MODIFICATION ESTIMATOR
+%form{:id => "CalculatorForm", :onsubmit => "return SubmitForm(this,'/calculator/reschedule?','CalculatorContent');", :action => "#", "data-ajax" => "false"}
+	.m-10
+		.left
+			Select Car
+		.small.fr.pointer{:onclick => "$('#CarsList').slideToggle();"}
+			.input
+				%input.pointer.validate-presence{:id => "CalCar", :readonly => true, :name => 'calcar', :value => @calcar, :type => 'text'}
+				.arrow
+			#CalCarError.red
+			%ul{:id => 'CarsList'}
+				- Cargroup.name_list.each do |c|
+					%li{:onclick => "$('#CalCar').val('#{c.display_name}'); _gaq.push(['_trackEvent', 'Rescheduler', 'Car', '#{c.display_name}']); return false;"}
+						= c.display_name
+		.fc
+	.m-10
+		.left
+			Original Pickup Time
+		.small.pointer
+			.input
+				%input.datetimeo.pointer.validate-presence{:readonly => true, :id => 'CalStart', :name => 'calstart', :value => @calstart, :type => 'text', :onclick => "_gaq.push(['_trackEvent', 'Rescheduler', 'Date', 'OrgStart']);"}
+				.arrow
+			#CalStartError.red
+		.fc
+	.m-10
+		.left
+			Original Return Time
+		.small.pointer
+			.input
+				%input.datetimeo.pointer.validate-presence{:readonly => true, :id => 'CalEnd', :name => 'calend', :value => @calend, :type => 'text', :onclick => "_gaq.push(['_trackEvent', 'Rescheduler', 'Date', 'OrgEnd']);"}
+				.arrow
+			#CalEndError.red
+		.fc
+	.m-10
+		.left
+			New Return Time
+		.small.pointer
+			.input
+				%input.datetimeo.pointer.validate-presence{:readonly => true, :id => 'CalRet', :name => 'calret', :value => @calret, :type => 'text', :onclick => "_gaq.push(['_trackEvent', 'Rescheduler', 'Date', 'NewEnd']);"}
+				.arrow
+			#CalRetError.red
+		.fc
+	.m-10
+		.left
+			Approx. Kms
+		.small
+			.input
+				%input.validate-numeric{:id => 'CalMileage', :name => 'calmileage', :value => @calmileage, :type => 'text', :onclick => "_gaq.push(['_trackEvent', 'Rescheduler', 'Mileage']);"}
+			#CalMileageError.red
+		.fc
+	.m-10.t-c
+		%div{:id => "CalculatorSubmit"}
+			= submit_tag "Submit", :class => 'button'
+		.p-5.hide{:id => "CalculatorWait"}
+			.wait
+	.m-10
+		- render_flash
+		- if !@tariff.blank?
+			.bg-f6.grey.border-c.dotted
+				.p-5.p-l10.p-r10
+					.table
+						.tr
+							.td
+								Cancellation Refund *
+							.td.middle
+								before 24 hours
+							.td.right.f-b
+								= @tariff[:cancel]
+						.tr
+							.td
+								Cancellation Refund *
+							.td.middle
+								within 24 hours
+							.td.right.f-b
+								= @tariff[:cancel_late]
+						- if !@tariff[:extend].blank? && @tariff[:extend] > 0
+							.tr
+								.td
+									Extension Charges
+								.td.middle
+									&nbsp;
+								.td.right.f-b
+									= @tariff[:extend]
+						- if !@tariff[:late].blank? && @tariff[:late] > 0
+							.tr
+								.td
+									Late Charges
+								.td.middle
+									without inconvenience fee
+								.td.right.f-b
+									= @tariff[:late]
+						- if !@tariff[:short].blank? && @tariff[:short] > 0
+							.tr
+								.td
+									Shortening Refund
+								.td.middle
+									before 24 hours
+								.td.right.f-b
+									= @tariff[:short]
+						- if !@tariff[:short_late].blank? && @tariff[:short_late] > 0
+							.tr
+								.td
+									Shortening Refund
+								.td.middle
+									within 24 hours
+								.td.right.f-b
+									= @tariff[:short_late]
+						- if !@tariff[:early].blank? && @tariff[:early] > 0
+							.tr
+								.td
+									Early Return Credits
+								.td.middle
+									&nbsp;
+								.td.right.f-b
+									= @tariff[:early]
+						- if !@tariff[:mileage].blank? && @tariff[:mileage] > 0
+							.tr
+								.td
+									Extra Kms Charges
+								.td.middle
+									= @tariff[:mileage]
+									Kms
+								.td.right.f-b
+									= @tariff[:mileage_fee]
+			.m-t10.t-c.f-b
+				* - Cancellation of original booking
+	.f-i.red.size-12.t-c
+		This calculator is only to help you estimate your charges, refunds & credits
+		%br/
+		when you reschedule your booking as per current tariff and policies.
+- if @calcar || @calstart || @calend
+	:javascript
+		initializeDatePicker();
+		_gaq.push(['_trackEvent', 'Rescheduler', 'Submit']);
+- else
+	:javascript
+		initializeDatePicker();

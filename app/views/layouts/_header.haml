@@ -1,0 +1,87 @@
+#fb-root
+.hide
+	%input#AjaxActive{:name => "ajax", :type => "hidden", :value => "0"}
+	#JsResponse
+	#DummyWait
+#DocTop
+.header
+	.wrapper
+		%a.logo{:href => '/'}
+		%a.logo-rtt{:href => 'http://www.rtt.co.in', :target => '_blank', :rel => 'nofollow'}
+		.nav-wrapper
+			.nav
+				%ul
+					%li
+						%a{:href => "#{@sslhost}/search?ref=header"}
+							%span Book Cars
+					%li.has-sub
+						%a{:href => "javascript:void(0)"}
+							%span Tariffs ▼
+						%ul
+							%li
+								%a{:href => "/tariff?ref=header"}
+									%span Tariffs Details
+							%li
+								%a{:href => "/fees?ref=header"}
+									%span Fee Policy
+							%li
+								%a{:href => "/eligibility?ref=header"}
+									%span Eligibility
+							%li
+								%a{:href => "/member?ref=header"}
+									%span Member Agreement
+					%li.has-sub
+						%a{:href => "javascript:void(0)"}
+							%span How To Zoom ▼
+						%ul
+							%li
+								%a{:href => "/howtozoom?ref=header"}
+									%span This is How You Zoom
+							%li
+								%a{:href => "/safety?ref=header"}
+									%span Zoom in Safety
+							%li
+								%a{:href => "/outstation?ref=header"}
+									%span Going Outstation?
+							%li
+								%a{:href => "/reva?ref=header"}
+									%span Zoom's Electric!
+							%li
+								%a{:href => "/privacy?ref=header"}
+									%span Privacy Policy
+							%li.last
+								%a{:href => "/faq?ref=header"}
+									%span FAQs
+					%li.has-sub
+						%a{:href => "javascript:void(0)"}
+							%span Sign Up / Sign In ▼
+						%ul
+							%li
+								%a{:href => "#{@sslhost}/join?ref=header"}
+									%span Sign Up
+							%li
+								%a{:href => "#{@sslhost}/login?ref=header"}
+									%span Sign In
+							%li
+								%a{:href => "#{@sslhost}/mybookings?ref=header"} My Bookings
+							%li.last
+								%a{:href => "#{@sslhost}/myaccount?ref=header"}
+									%span Account Settings
+			.calculator-w
+				#CalculatorButton.calculator{:onclick => "showCalculator('tariff'); return false;"}
+					TARIFF CALCULATOR
+		.fr
+			.support
+				.phone
+					= CommonHelper::CUSTOMER_CARE
+				%a.email{:href => "mailto:#{CommonHelper::CUSTOMER_CARE_EMAIL}", :rel => "nofollow", :target => "_blank", :title => "Drop us a mail!"}
+					= CommonHelper::CUSTOMER_CARE_EMAIL
+			.social
+				.facebook
+					.fb-like{'data-href' => "https://www.facebook.com/zoomcar.in", 'data-send' => "false", 'data-layout' => "button_count", 'data-width' => "60", 'data-show-faces' => "false"}
+				.twitter
+					%a.twitter-follow-button{:href => "https://twitter.com/ZoomCarIndia", 'data-show-count' => "false", 'data-lang' => "en", 'data-show-screen-name' => 'false', 'data-width' => "60px"}
+				.gplus
+					.g-plusone{'data-size' => "medium", 'data-annotation' => 'none'}
+				.fc
+		.fc

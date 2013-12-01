@@ -1,9 +1,4 @@
 <h2>search cars </h2>
-
-<%= stylesheet_link_tag "jquery-ui" %>
-<%= stylesheet_link_tag "jquery-ui-timepicker-addon" %>
-
-
 <span id="search_menu">
 
 	<%= form_for :booking, url: { action: "search"},html: { method: 'GET' } do |f| %>
@@ -20,7 +15,8 @@
 
 	 	<div id="select_start">
 	 		<%= f.label :from %>
-	 		<%= f.datetime_field :starts %>
+	 		<input class="datepicker" id="StartsDate" name="starts_date" type="text">
+	 		<input class="timepicker" id="StartsTime" name="starts_time" type="text">
 	 	</div>
 
 	 	<div id="select_ends">
@@ -34,31 +30,4 @@
 
 <% end %>
 
-</span> 
-
-
-
-<%= javascript_include_tag "jquery-1.9.1" %>
-<%= javascript_include_tag "jquery-ui" %>
-<%= javascript_include_tag "jquery-ui-timepicker-addon" %>
-
-<script>
-  $(function() {  
-
-    $('#booking_starts').datetimepicker({
-    	stepMinute: 15,
-      	dateFormat: 'yy-mm-dd',
-    	timeFormat: 'HH:mm:ss'
-    });
-
-    $('#booking_ends').datetimepicker({
-    	stepMinute: 15,
-      	dateFormat: 'yy-mm-dd',
-    	timeFormat: 'HH:mm:ss'
-    });
-    
-  });
-</script>
-
-
-
+</span>

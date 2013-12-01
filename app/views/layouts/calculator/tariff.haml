@@ -1,0 +1,103 @@
+.title TARIFF CALCULATOR
+%form{:id => "CalculatorForm", :onsubmit => "return SubmitForm(this,'/calculator/tariff?','CalculatorContent');", :action => "#", "data-ajax" => "false"}
+	.m-10
+		.left
+			Select Car
+		.small.fr.pointer{:onclick => "$('#CarsList').slideToggle();"}
+			.input
+				%input.pointer.validate-presence{:id => "CalCar", :readonly => true, :name => 'calcar', :value => @calcar, :type => 'text'}
+				.arrow
+			#CalCarError.red
+			%ul{:id => 'CarsList'}
+				- Cargroup.name_list.each do |c|
+					%li{:onclick => "$('#CalCar').val('#{c.display_name}'); _gaq.push(['_trackEvent', 'Calculator', 'Car', '#{c.display_name}']); return false;"}
+						= c.display_name
+		.fc
+	.m-10
+		.left
+			Pickup Time
+		.small.pointer
+			.input
+				%input.datetime.pointer.validate-presence{:readonly => true, :id => 'CalStart', :name => 'calstart', :value => @calstart, :type => 'text', :onclick => "_gaq.push(['_trackEvent', 'Calculator', 'Date', 'Start']);"}
+				.arrow
+			#CalStartError.red
+		.fc
+	.m-10
+		.left
+			Return Time
+		.small.pointer
+			.input
+				%input.datetime.pointer.validate-presence{:readonly => true, :id => 'CalEnd', :name => 'calend', :value => @calend, :type => 'text', :onclick => "_gaq.push(['_trackEvent', 'Calculator', 'Date', 'End']);"}
+				.arrow
+			#CalEndError.red
+		.fc
+	.m-10
+		.left
+			Approx. Kms
+		.small
+			.input
+				%input.validate-numeric{:id => 'CalMileage', :name => 'calmileage', :value => @calmileage, :type => 'text', :onclick => "_gaq.push(['_trackEvent', 'Calculator', 'Mileage']);"}
+			#CalMileageError.red
+		.fc
+	.m-10.t-c
+		%div{:id => "CalculatorSubmit"}
+			= submit_tag "Submit", :class => 'button'
+		.p-5.hide{:id => "CalculatorWait"}
+			.wait
+	.m-10
+		- render_flash
+		- if !@tariff.blank?
+			.bg-f6.grey.border-c.dotted
+				.p-5.p-l10.p-r10
+					.table
+						.tr
+							.td
+								Rental Duration
+							.td.middle
+								&nbsp;
+							.td.right.f-b
+								= @tariff[0]
+						.tr
+							.td
+								Normal Tariff
+							.td.middle
+								= @tariff[5]
+							.td.right.f-b
+								Rs.
+								= @tariff[1].round
+						.tr
+							.td
+								Mon-Thu Discount
+							.td.middle.zoom
+								35% Off
+							.td.right.zoom.f-b
+								Rs.
+								= @tariff[2].round
+						.tr
+							.td
+								Extra Kms
+							.td.middle.red
+								= @tariff[4]
+							.td.right.red.f-b
+								Rs.
+								= @tariff[3].round
+				.black.size-16.f-b.bg-c.p-5
+					.fl
+						Total
+					.fr.t-r
+						Rs.
+						= (@tariff[1].round - @tariff[2].round + @tariff[3].round)
+					.fc
+	.m-5.t-c.f-b
+		Zoom's fare includes fuel & taxes.
+	.f-i.red.size-12.t-c
+		This calculator is only to help you estimate the cost of your booking.
+		%br/
+		A car will not be booked until you go through the full reservation process.
+- if @calcar || @calstart || @calend
+	:javascript
+		initializeDatePicker();
+		_gaq.push(['_trackEvent', 'Calculator', 'Submit']);
+- else
+	:javascript
+		initializeDatePicker();

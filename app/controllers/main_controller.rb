@@ -1,10 +1,6 @@
 class MainController < ApplicationController
-
-
-
-
+	
 	def book
-		
 		session[:cargroup_id] = params[:cargroup_id] if !params[:cargroup_id].blank?
 		session[:location_id] = params[:location_id] if !params[:location_id].blank?
 
@@ -23,11 +19,15 @@ class MainController < ApplicationController
 			session.delete(:location_id)
 			session.delete(:starts)
 			session.delete(:ends)
-		ends
+		end
 	end
 
 
 	def index
+		@meta_title = "Self Drive Car Rental In Bangalore | Find Cars And Book Online | Zoomcar.in"
+		@meta_description = "Self-drive car hire in Bangalore. Enjoy the Freedom of Four Wheels by renting a car by the hour or by the day.  All-inclusive tariff covers fuel, insurance & taxes"
+		@meta_keywords = "zoomcar, self drive car, self drive car rental, renting a car, self drive cars"
+		@canonical = "http://www.zoomcar.in"
 		if session[:starts] && session[:ends]
 			redirect_to action: "book"
 		end
@@ -41,11 +41,6 @@ class MainController < ApplicationController
 	
 
 	def payment(booking,todo)
-
-		case todo
-
-		when 
-
 	end
 
 

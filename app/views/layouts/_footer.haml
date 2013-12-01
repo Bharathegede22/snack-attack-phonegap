@@ -1,0 +1,80 @@
+.footer
+	.footer-text
+		.partition
+			%h3.size-16.grey How To Zoom?
+			.p-t5.size-14
+				.p-t5
+					%a{:href => "/howtozoom?ref=footer"} This is How You Zoom
+				.p-t5
+					%a{:href => "/safety?ref=footer"} Zoom in Safety
+				.p-t5
+					%a{:href => "/outstation?ref=footer"} Going Outstation?
+				.p-t5
+					%a{:href => "/reva?ref=footer"} Zoom's Electric!
+				.p-t5
+					%a{:href => "/privacy?ref=footer"} Privacy Policy
+				.p-t5
+					%a{:href => "/faq?ref=footer"} FAQs
+		.partition
+			%h3.size-16.grey About Us
+			.p-t5.size-14
+				.p-t5
+					%a{:href => "/about?ref=footer"} Zoom Team
+				.p-t5
+					%a{:href => "/careers?ref=footer"} Careers @ Zoom
+				.p-t5
+					%a{:href => "http://www.zoomcar.in/blog/", :target => "_blank"} Zoom Blog
+		.partition
+			%h3.size-16.grey Zoom Apps
+			.p-t10
+				%a.ios.fl{:href => "https://itunes.apple.com/us/app/zoom-mobile-key/id625896634?mt=8", :rel => "nofollow", :target => "_blank", :title => "Zoom now on iOS!"}
+				%a.android.fl.m-l10{:href => "https://play.google.com/store/apps/details?id=com.justshareit.zoom", :rel => "nofollow", :target => "_blank", :title => "Zoom now on Android!"}
+				.fc
+		.partition.t-r
+			%h3.size16.grey Let's keep in touch
+			.p-t10.size-14.lgrey
+				Unit T-2, Gem Plaza (3rd Floor)
+				%br/
+				\#66, Infantry Road
+				%br/
+				Bangalore - 560 001
+				%br/
+				Ph: #{CommonHelper::CUSTOMER_CARE}
+				%br/
+			.social.fr
+				%a.link{:href => "https://www.facebook.com/zoomcar.in?ref=hl", :rel => "nofollow", :target => "_blank", :title => "Connect with us on Facebook!"}
+				%a.link{:href => "https://plus.google.com/u/0/115015475123214624440/posts", :rel => "nofollow", :target => "_blank", :title => "We're on Google+ too!"}
+				%a.link{:href => "https://twitter.com/ZoomCarIndia", :rel => "nofollow", :target => "_blank", :title => "Follow us on Twitter!"}
+				%a.link{:href => "http://zoomcar.in/blog/", :rel => "nofollow", :target => "_blank", :title => "Catch up with us on our Blog!"}
+				%a.link{:href => "mailto:info@zoomcar.in", :rel => "nofollow", :target => "_blank", :title => "Drop us a mail!"}
+			.fc
+		.fc
+		.t-c
+			.m-t10
+				&copy; Copyright 2013 ZoomCar India Private Ltd. All rights reserved.
+			%a.logo-rtt{:href => "http://www.rtt.co.in/", :rel => "nofollow"}
+	:javascript
+		adroll_adv_id = "MAUPRE3VENEQ5LSSZFYO5Q";
+		adroll_pix_id = "Z4HCBGGE4NAGJBEHWRJCDS";
+		(function () {
+			var oldonload = window.onload;
+			window.onload = function(){
+			__adroll_loaded=true;
+			var scr = document.createElement("script");
+			var host = (("https:" == document.location.protocol) ? "https://s.adroll.com" : "http://a.adroll.com");
+			scr.setAttribute('async', 'true');
+			scr.type = "text/javascript";
+			scr.src = host + "/j/roundtrip.js";
+			((document.getElementsByTagName('head') || [null])[0] ||
+			document.getElementsByTagName('script')[0].parentNode).appendChild(scr);
+			if(oldonload){oldonload()}};
+		}());
+= render :partial => '/layouts/olark'
+#Overlay.overlay
+	.calculator-wrapper
+		#Calculator.calculator-modal
+			.content
+				#CalculatorContentWait.wait-box
+					.wait
+				#CalculatorContent
+		.close{:onclick => "hideCalculator();"}

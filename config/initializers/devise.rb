@@ -2,12 +2,6 @@
 # Many of these configuration options can be set straight in your model.
 Devise.setup do |config|
 
-  require "omniauth-facebook"
-  config.omniauth :facebook, "459596907493026", "a7aeed99eb17d6939443929c69cc82b1"
-  require "omniauth-google-oauth2"
-  config.omniauth :google_oauth2, "759895018496.apps.googleusercontent.com", "M8ZDJXn6Ex_BDd_VWnwvenpc", { access_type: "offline", approval_prompt: "" }
-
-
   # The secret key used by Devise. Devise uses this key to generate
   # random tokens. Changing this key will render invalid all existing
   # confirmation, reset password and unlock tokens in the database.
@@ -17,10 +11,10 @@ Devise.setup do |config|
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
-  config.mailer_sender = 'please-change-me-at-config-initializers-devise@example.com'
+  config.mailer_sender = 'accounts@zoomcar.in'
 
   # Configure the class responsible to send e-mails.
-  # config.mailer = 'Devise::Mailer'
+  config.mailer = 'Devise::Mailer'
 
   # ==> ORM configuration
   # Load and configure the ORM. Supports :active_record (default) and
@@ -102,7 +96,7 @@ Devise.setup do |config|
   config.stretches = Rails.env.test? ? 1 : 10
 
   # Setup a pepper to generate the encrypted password.
-  # config.pepper = 'a9ab8764dc8d191f5a516a23c754bf35512022a73ad2e3e26450167c395f98b851503698a73d9622bfcb104f1afd978e3c8210454bfc3434fed3284a5b95fd84'
+  config.pepper = "c807f663e4e90e50670bbca882b0ba850e9892ae9732dbabd2c2b0fd98f1c9400a63f4e28bd1f24b0ace044f46b6bf057d813d671ca8a2835529837e714cff9f"
 
   # ==> Configuration for :confirmable
   # A period that the user is allowed to access the website even without
@@ -131,7 +125,7 @@ Devise.setup do |config|
 
   # ==> Configuration for :rememberable
   # The time the user will be remembered without asking for credentials again.
-  # config.remember_for = 2.weeks
+  config.remember_for = 2.weeks
 
   # If true, extends the user's remember period when remembered via cookie.
   # config.extend_remember_period = false
@@ -234,7 +228,8 @@ Devise.setup do |config|
   # ==> OmniAuth
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
-  # config.omniauth :github, 'APP_ID', 'APP_SECRET', :scope => 'user,public_repo'
+  config.omniauth :facebook, "459596907493026", "a7aeed99eb17d6939443929c69cc82b1"
+  config.omniauth :google_oauth2, "759895018496.apps.googleusercontent.com", "M8ZDJXn6Ex_BDd_VWnwvenpc", { access_type: "offline", approval_prompt: "" }
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
