@@ -153,7 +153,7 @@ class Inventory < ActiveRecord::Base
 	end
 
 
-	def reschedule
+	def self.reschedule
 
 		
 		 if booking[:extended] 	

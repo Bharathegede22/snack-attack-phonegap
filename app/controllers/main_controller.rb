@@ -82,9 +82,12 @@ class MainController < ApplicationController
 
 	def settings(user)
 
-		#check the session and pull the user details
-		#edit the user details
-		#more about  UI play
+		current_user=User.find(session[:user_id])
+		if current_user
+			current_user.update(user)
+		else
+			flash[:notice] = "error in user details updation"
+		end
 
 	end
 
