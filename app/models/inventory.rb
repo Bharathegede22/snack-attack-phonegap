@@ -153,7 +153,7 @@ class Inventory < ActiveRecord::Base
 	end
 
 
-	def self.reschedule
+	def self.reschedule(booking)
 
 		
 		 if booking[:extended] 	
@@ -204,8 +204,7 @@ class Inventory < ActiveRecord::Base
 
 			end		 		 		
 		 	
-		 elsif booking[:late]
-		 	#do something sensible
+		
 		 end
 
 		 return count
