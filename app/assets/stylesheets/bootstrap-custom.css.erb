@@ -1,0 +1,138 @@
+.carousel {
+  position: relative;
+}
+
+.carousel-inner {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.carousel-inner > .item {
+  position: relative;
+  display: none;
+  -webkit-transition: 0.6s ease-in-out left;
+          transition: 0.6s ease-in-out left;
+}
+
+.carousel-inner > .item > img,
+.carousel-inner > .item > a > img {
+  display: block;
+  height: auto;
+  max-width: 100%;
+  line-height: 1;
+}
+
+.carousel-inner > .active,
+.carousel-inner > .next,
+.carousel-inner > .prev {
+  display: block;
+}
+
+.carousel-inner > .active {
+  left: 0;
+}
+
+.carousel-inner > .next,
+.carousel-inner > .prev {
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.carousel-inner > .next {
+  left: 100%;
+}
+
+.carousel-inner > .prev {
+  left: -100%;
+}
+
+.carousel-inner > .next.left,
+.carousel-inner > .prev.right {
+  left: 0;
+}
+
+.carousel-inner > .active.left {
+  left: -100%;
+}
+
+.carousel-inner > .active.right {
+  left: 100%;
+}
+
+
+.homepage .cars .carousel-indicators {
+  position: absolute;
+  bottom: 300px;
+  left: 50%;
+  z-index: 15;
+  width: 960px;
+   margin:0;
+  margin-left: -480px;
+  text-align: center;
+  list-style: none;
+  padding:0;
+}
+
+.homepage .cars .carousel-indicators li {
+  display: inline-block;
+  width:157px;
+  text-align:center;
+  font-size:16px;
+  padding:10px 0 7px 0;
+  margin:0;
+  cursor: pointer;
+  text-decoration:none;
+  background:#6ABD19;
+  color:#ffffff;
+  font-weight:bold;
+  border:0;
+}
+
+.homepage .cars .carousel-indicators li:hover {
+	background:#666666;
+}
+
+.homepage .cars .carousel-indicators .active {
+  background:#323a45;
+}
+
+.reviews .left, .reviews .right {
+	display:block;
+  cursor: pointer;
+  width:40px;
+  height:40px;
+  position:absolute;
+  top:10px;
+}
+
+.reviews .left {
+	background:url(<%= asset_path 'r.png' %>) no-repeat;
+	background-position:-170px -160px;
+  left:0px;
+  z-index:30;
+}
+
+.reviews .right {
+	right:0px;
+	background:url(<%= asset_path 'r.png' %>) no-repeat;
+	background-position:-210px -160px;
+	z-index:30;
+}
+
+.reviews .left:hover {
+  background-position:-170px -120px;
+}
+
+.reviews .left:active {
+  background-position:-170px -160px;
+}
+
+.reviews .right:hover {
+  background-position:-210px -120px;
+}
+
+.reviews .right:active {
+  background-position:-210px -120px;
+}

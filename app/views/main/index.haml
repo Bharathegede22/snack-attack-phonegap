@@ -8,170 +8,204 @@
 				By the Hour or by the Day
 			.fc
 		.slider
-			#CarSlider.liquid-slider
-				- @cargroup.each do |cargroup|
-					- if cargroup == @cargroup[0]
-						- style = "background:url(#{asset_path 'cars/' + cargroup.id.to_s + '.jpg'}) no-repeat center top;"
-						- databg = ''
-					- else
-						- style = "opacity: 0; z-index: 0;"
-						- databg = asset_path 'cars/' + cargroup.id.to_s + '.jpg'
-					.lazy{:style => style, 'data-background' => databg}
-						.cars-content
-							%h3.title.hide
+			#CarSlider.carousel.slide{'data-ride' => "carousel", 'data-interval' => '10000', 'data-pause' => 'click'}
+				%ol.carousel-indicators
+					- count = 0
+					- @cargroup.each do |cargroup|
+						- if cargroup == @cargroup[0]
+							%li.active{'data-target' => "#CarSlider", 'data-slide-to' => "#{count}"}
 								= cargroup.display_name.gsub('Mahindra ','')
+						- else
+							%li{'data-target' => "#CarSlider", 'data-slide-to' => "#{count}"}
+								= cargroup.display_name.gsub('Mahindra ','')
+						- count += 1
+				.carousel-inner
+					- @cargroup.each do |cargroup|
+						:ruby
+							if cargroup == @cargroup[0]
+								style = "background:url(#{asset_path 'cars/' + cargroup.id.to_s + '.jpg'}) no-repeat center top;"
+								databg = ''
+								cls = 'active'
+							else
+								style = ""
+								databg = asset_path 'cars/' + cargroup.id.to_s + '.jpg'
+								cls = ''
+							end
+						.item{:class => cls}
+							.lazy{:style => style, 'data-background' => databg}
+								.bg-overlay
+								.fg-overlay
+									.cars-content
+										%h3.title.hide
+											= cargroup.display_name.gsub('Mahindra ','')
+										.car-tariff
+											.item.r-5
+												.head Hourly Trip
+												.exp Upto 24 Hours
+												.fare
+													%b ₹#{cargroup.hourly_fare} / hour
+												.kms
+													#{cargroup.hourly_km_limit} Kms / hour. Max 200 Kms
+												.offer
+													Mon-Thurs 35% Discount
+											.item.r-5
+												.head Daily Trip
+												.exp After 24 Hours
+												.fare
+													%b ₹#{cargroup.daily_fare} / day
+												.kms
+													#{cargroup.daily_km_limit} Kms / day
+												.offer
+													Mon-Thurs 35% Discount
+											.item.r-5
+												.head Weekly Trip
+												.exp After 7 Days
+												.fare
+													%b ₹#{cargroup.hourly_fare} / week
+												.kms
+													#{cargroup.hourly_km_limit} Kms / week
+												.offer
+													Best price
+											.item.last.r-5
+												.head Monthly Trip
+												.exp After 4 Weeks
+												.fare
+													%b ₹#{cargroup.hourly_fare} / month
+												.kms
+													#{cargroup.hourly_km_limit} Kms / month
+												.offer
+													Best Price
+											.fc
+	.tariff-bg
 	.tariff
 		.size-16.white.f-i.p-t10
 			our tariff includes
 		.includes
-			#BubbleAllIn.item.left
+			#BubbleAllIn.item.left.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom'>No Hidden Costs</b><br/>Here at Zoom, you will get what you pay for. Following items are standard in all our cars."}
 				.all-in
 				.text 
 					No Hidden Costs
-			#BubbleFuel.item
+			#BubbleFuel.item.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom'>Fuel is Ours</b><br/>All Zoom reservations comes with unlimited fuel as part of the tariff. If you need more fuel, just fill up the tank, keep the receipt and <b><u><i>we will refund the amount!</i></u></b>."}
 				.fuel
 				.text
 					Fuel
-			#BubbleInsurance.item
+			#BubbleInsurance.item.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom'>No Worries, You're All Covered</b><br/>All Zoom reservations are covered with full comprehensive insurance, as long as a Zoom member is driving the car. <b><u><i>Maximum liability</i></u> for any damage for a Zoom member <u><i>is Rs.5000</i></u></b>."}
 				.insurance
 				.text 
 					Insurance
-			#BubbleTaxes.item
+			#BubbleTaxes.item.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom'>We Get Govt. Off Your Back</b><br/>Tariff includes all taxes, except the relevant tolls/taxes one has to pay while visiting another state."}
 				.taxes
 				.text 
 					Taxes
-			#BubbleNav.item
+			#BubbleNav.item.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom'>Zip Zap Zoom</b><br/>All Zoom cars are fitted with a 3G enabled tablet to guide you on your journey."}
 				.navigation
 				.text 
 					Navigation
-			#BubbleDeposit.item.right
+			#BubbleDeposit.item.right.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom'>In You We Trust</b><br/>The start of our relationship is not with a bag of money. Just pay the rental using your credit/debit card and you are good to zoom."}
 				.deposit
 				.text
 					No Deposit
 			.fc
-		.slider
-			#TariffSlider.liquid-slider
-				- @cargroup.each do |cargroup|
-					%div
-						.content
-							.item.r-5
-								.head Hourly Trip
-								.exp Upto 24 Hours
-								.fare
-									%b ₹#{cargroup.hourly_fare} / hour
-								.kms
-									#{cargroup.hourly_km_limit} Kms / hour. Max 200 Kms
-								.offer
-									Mon-Thurs 35% Discount
-							.item.r-5
-								.head Daily Trip
-								.exp After 24 Hours
-								.fare
-									%b ₹#{cargroup.daily_fare} / day
-								.kms
-									#{cargroup.daily_km_limit} Kms / day
-								.offer
-									Mon-Thurs 35% Discount
-							.item.r-5
-								.head Weekly Trip
-								.exp After 7 Days
-								.fare
-									%b ₹#{cargroup.hourly_fare} / week
-								.kms
-									#{cargroup.hourly_km_limit} Kms / week
-								.offer
-									Best price
-							.item.last.r-5
-								.head Monthly Trip
-								.exp After 4 Weeks
-								.fare
-									%b ₹#{cargroup.hourly_fare} / month
-								.kms
-									#{cargroup.hourly_km_limit} Kms / month
-								.offer
-									Best Price
-							.fc
 	.wrapper
 		.widget
 			.bg
 			.fg
-				%h3.title.r-tl-5.r-tr-5
+				.title.r-tl-5.r-tr-5
 					Book a Car
 				.box
+					.cal
+					.txt Pickup Date & Time*
+					.arrw
+					.fc
 				.box
+					.cal
+					.txt Dropoff Date & Time*
+					.arrw
+					.fc
 				.box
+					.loc
+					.txt Choose your location
+					.arrw
+					.fc
 				.box
+					.car
+					.txt Select a car
+					.arrw
+					.fc
 				.button
 					Search Car
 .reviews
 	%h2 What our happy users say about Zoom
-	#ReviewSlider.liquid-slider
-		%div
-			.text
-				%span.lquote &nbsp;&nbsp;&nbsp;
-				At the outset, let me thank you for introducing Zoom in Bangalore and for giving me an opportunity to use your service. Your customer support was impeccable and vehicle was well-maintained and top-notch.
-				%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				%b.black - Dibin Samuel
-		%div
-			.text
-				%span.lquote &nbsp;&nbsp;&nbsp;
-				I just wanted to let you know that I really appreciate the efforts you are making personally, to ensure that the customer is satisfied... I really hope you carry forward this culture and make a model for other companies.
-				%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				%b.black - Bejoy Babu 
-		%div
-			.text
-				%span.lquote &nbsp;&nbsp;&nbsp;
-				You certainly do have a very regular customer here... Must say, Greg went that extra mile... You have a great journey together!
-				%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				%b.black - Deepak Sharma
-		%div
-			.text
-				%span.lquote &nbsp;&nbsp;&nbsp;
-				It was great pleasure use zoom service, As all process being online it was really hassle free experience. good service please keep it going.
-				%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				%b.black - Mustak R
-		%div
-			.text
-				%span.lquote &nbsp;&nbsp;&nbsp;
-				I could not believe my ears on the benefits, especially the reimbursement of fuel. I would surely continue to use your professional services in months to come.
-				%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				%b.black - Dibin Samuel
-		%div
-			.text
-				%span.lquote &nbsp;&nbsp;&nbsp;
-				Appreciate the totally new welcome Concept. As an prospective customer, I feel this is going to really set an example in car rentals scenery. Wishing you the very Best and come out in flying colors!!
-				%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				%b.black - Yekula Santosh
-		%div
-			.text
-				%span.lquote &nbsp;&nbsp;&nbsp;
-				I really enjoyed driving! The idea of providing a navigation system was like cream on the cake. Please add more cars. Looking forward to book Zoomcar again for my next outing.
-				%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				%b.black - Chirag T
-		%div
-			.text
-				%span.lquote &nbsp;&nbsp;&nbsp;
-				The experience with Zoom has been excellent.  Your process is well thought out and the service definitely fills a void. Maybe you could start a school which teaches "real customer service"!
-				%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				%b.black - Sunil Rastogi
-		%div
-			.text
-				%span.lquote &nbsp;&nbsp;&nbsp;
-				I have loved your concept since the time I saw it online. Now, after using your services, this concept is wonderful and a delight to all customers. A service in other major cities would go a long way in establishing your brand as well as loyalty of customers.
-				%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				%b.black - Rohit R
-		%div
-			.text
-				%span.lquote &nbsp;&nbsp;&nbsp;
-				I belong to Mumbai and am currently based out of Pune. I have used many such services like Carzonrent, Girikand, Autodrive while being here but none have matched the convenience, affordability as well as efficiency of your service.
-				%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				%b.black - Rohit
-		%div
-			.text
-				%span.lquote &nbsp;&nbsp;&nbsp;
-				Excellent customer service. Would highly recommend ZOOM to anybody who is in need of self drive cars. Would be great if they start opening more pick up points throughout bangalore
-				%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				%b.black - Arun M
+	#ReviewSlider.carousel.slide{'data-ride' => "carousel", 'data-interval' => '10000', 'data-pause' => 'hover'}
+		.carousel-inner
+			.item.active
+				.text
+					%span.lquote &nbsp;&nbsp;&nbsp;
+					At the outset, let me thank you for introducing Zoom in Bangalore and for giving me an opportunity to use your service. Your customer support was impeccable and vehicle was well-maintained and top-notch.
+					%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					%b.black - Dibin Samuel
+			.item
+				.text
+					%span.lquote &nbsp;&nbsp;&nbsp;
+					I just wanted to let you know that I really appreciate the efforts you are making personally, to ensure that the customer is satisfied... I really hope you carry forward this culture and make a model for other companies.
+					%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					%b.black - Bejoy Babu 
+			.item
+				.text
+					%span.lquote &nbsp;&nbsp;&nbsp;
+					You certainly do have a very regular customer here... Must say, Greg went that extra mile... You have a great journey together!
+					%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					%b.black - Deepak Sharma
+			.item
+				.text
+					%span.lquote &nbsp;&nbsp;&nbsp;
+					It was great pleasure use zoom service, As all process being online it was really hassle free experience. good service please keep it going.
+					%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					%b.black - Mustak R
+			.item
+				.text
+					%span.lquote &nbsp;&nbsp;&nbsp;
+					I could not believe my ears on the benefits, especially the reimbursement of fuel. I would surely continue to use your professional services in months to come.
+					%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					%b.black - Dibin Samuel
+			.item
+				.text
+					%span.lquote &nbsp;&nbsp;&nbsp;
+					Appreciate the totally new welcome Concept. As an prospective customer, I feel this is going to really set an example in car rentals scenery. Wishing you the very Best and come out in flying colors!!
+					%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					%b.black - Yekula Santosh
+			.item
+				.text
+					%span.lquote &nbsp;&nbsp;&nbsp;
+					I really enjoyed driving! The idea of providing a navigation system was like cream on the cake. Please add more cars. Looking forward to book Zoomcar again for my next outing.
+					%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					%b.black - Chirag T
+			.item
+				.text
+					%span.lquote &nbsp;&nbsp;&nbsp;
+					The experience with Zoom has been excellent.  Your process is well thought out and the service definitely fills a void. Maybe you could start a school which teaches "real customer service"!
+					%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					%b.black - Sunil Rastogi
+			.item
+				.text
+					%span.lquote &nbsp;&nbsp;&nbsp;
+					I have loved your concept since the time I saw it online. Now, after using your services, this concept is wonderful and a delight to all customers. A service in other major cities would go a long way in establishing your brand as well as loyalty of customers.
+					%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					%b.black - Rohit R
+			.item
+				.text
+					%span.lquote &nbsp;&nbsp;&nbsp;
+					I belong to Mumbai and am currently based out of Pune. I have used many such services like Carzonrent, Girikand, Autodrive while being here but none have matched the convenience, affordability as well as efficiency of your service.
+					%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					%b.black - Rohit
+			.item
+				.text
+					%span.lquote &nbsp;&nbsp;&nbsp;
+					Excellent customer service. Would highly recommend ZOOM to anybody who is in need of self drive cars. Would be great if they start opening more pick up points throughout bangalore
+					%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					%b.black - Arun M
+		%a.left.carousel-control{:href => "#ReviewSlider", 'data-slide' => "prev"}
+		%a.right.carousel-control{:href => "#ReviewSlider", 'data-slide' => "next"}
 .reviews
 	.press
 		%a.et{:href => "http://economictimes.indiatimes.com/news/news-by-industry/auto/automobiles/zoomcar-closes-seed-round-of-funding-investment-led-by-new-york-based-empire-angels/articleshow/23417639.cms", :rel => "nofollow", :target => "_blank", :title => "The Economic Times", :onclick => "_gaq.push(['_trackEvent', 'Homepage', 'Press', 'The Economic Times']);"}
@@ -184,33 +218,11 @@
 		%a.teambhp{:href => "http://www.team-bhp.com/news/zoom-pay-drive-new-self-drive-option-bangalore", :rel => "nofollow", :target => "_blank", :title => "Team BHP", :onclick => "_gaq.push(['_trackEvent', 'Homepage', 'Press', 'TeamBHP']);"}
 		.fc
 :javascript
-	function jqueryLoaded() {
-		var api = $.data( $('#CarSlider')[0], 'liquidSlider');
-		api.startAutoSlide();
-		var api = $.data( $('#TariffSlider')[0], 'liquidSlider');
-		api.startAutoSlide();
-		var api = $.data( $('#ReviewSlider')[0], 'liquidSlider');
-		api.startAutoSlide();
-	}
 	function checkJquery() {
 		if (window.jQuery) {
-			$('#CarSlider').liquidSlider({
-				slideEaseFunction:"fade",
-				hoverArrows:false,
-				autoSlideInterval:10000
-			});
-			$('#TariffSlider').liquidSlider({
-				slideEaseFunction:"fade",
-				hoverArrows:false,
-				autoSlideInterval:10000
-			});
-			$('#ReviewSlider').liquidSlider({
-				hoverArrows:false,
-				autoSlideInterval:10000
-			});
+			$('.carousel').carousel();
+			$('.help').tooltip();
 			checkJail();
-			initializeBubbles()
-			window.setTimeout(jqueryLoaded, 6000);
 		} else {
 			window.setTimeout(checkJquery, 1000);
 		}

@@ -11,10 +11,9 @@
 // GO AFTER THE REQUIRES BELOW.
 //
 //= require jquery/jquery
+//= require bootstrap
 //= require jquery/jquery.easing
 //= require jquery/jquery.touchSwipe.min
-//= require jquery/jquery.liquid-slider
-//= require jquery/jquery.qtip2
 //= require jquery/picker
 //= require jquery/picker.date
 //= require jquery/picker.time

@@ -8,10 +8,11 @@
  * You're free to add application-wide styles to this file and they'll appear at the top of the
  * compiled file, but it's generally better to create a new file per style scope.
  *
+ *= require bootstrap
+ *= require bootstrap-theme
+  *= require bootstrap-custom
  *= require common
  *= require custom
- *= require liquid-slider
- *= require jquery.qtip2
  *= require picker
  *= require picker.date
  *= require picker.time
