@@ -80,6 +80,19 @@ class MainController < ApplicationController
 	end
 
 
+	def seo
+		str,id = CommonHelper.decode(params[:id].split('_').last.strip)
+		case str
+		when 'attraction'
+			@object = Attraction.find(id)
+		end
+		@meta_title = @object.meta_title
+		@meta_description = @object.meta_description
+		@meta_keywords = @object.meta_keywords
+		@canonical = @object.link
+		render "/seo/" + str
+	end
+	
 	def settings(user)
 
 		current_user=User.find(session[:user_id])

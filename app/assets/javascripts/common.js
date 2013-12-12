@@ -35,14 +35,20 @@ function autoResize(id,count) {
 	$("#IframeBox").fadeIn();
 }
 
-function showModal() {
-	$("#Calculator").hide();
-  h = $(document).height();
-  w = $(document).width();
-  $("#Overlay").height(h);
-  $("#Overlay").width(w);
-  $("#Overlay").fadeIn();
-  $("#Calculator").slideDown();
+function showModal(title,url) {
+	$('#ModalContentWait').show();
+	$('#ModalContent').html('');
+	$('#ModalLabel').text(title);
+	$('#Modal').modal('show');
+	getData(url, 'ModalContent', 'replace' ,'ModalContentWait');
+}
+
+function showSearch() {
+	$('#SHWait').show();
+	$('#SHContent').html('');
+	$('#SH').show();
+	$('#NavBuffer').css('height', 95);
+	getData('/search/widget', 'SHContent', 'replace' ,'SHWait');
 }
 
 function getData(complete_url,divId,divAction,divWait) {
@@ -137,13 +143,15 @@ function SubmitForm(frm,url,divId){
 		  	new_url += "&" + frm.elements[i].name + "=" + frm.elements[i].value;
 		  }
     	$('#' + frm.elements[i].id + 'Error').text("");
+    	$('#' + frm.elements[i].id + 'Error').hide();
 	    $(frm.elements[i]).removeClass('field_with_errors');
-	    if($(frm.elements[i]).hasClass('validate-presence') && (frm.elements[i].value.length == 0)) {
+	    if($(frm.elements[i]).hasClass('validate-presence') && (frm.elements[i].value.length == 0 || frm.elements[i].value == $('#'+frm.elements[i].id).attr('dummy-title'))) {
 	    	if(!failed){
 			    frm.elements[i].focus();
 			  }
 	    	if($('#' + frm.elements[i].id + 'Error').length > 0) {
 			    $('#' + frm.elements[i].id + 'Error').text("can't be empty");
+			    $('#' + frm.elements[i].id + 'Error').show();
 					$(frm.elements[i]).addClass('field_with_errors');
 				} else {
 					alert("Can't be empty.");
@@ -156,6 +164,7 @@ function SubmitForm(frm,url,divId){
 			    }
 			    if($('#' + frm.elements[i].id + 'Error').length > 0) {
 					  $('#' + frm.elements[i].id + 'Error').text("should be numeric");
+					  $('#' + frm.elements[i].id + 'Error').show();
 						$(frm.elements[i]).addClass('field_with_errors');
 					} else {
 						alert("Should be numeric.");
@@ -168,6 +177,7 @@ function SubmitForm(frm,url,divId){
 			    }
 			    if($('#' + frm.elements[i].id + 'Error').length > 0) {
 					  $('#' + frm.elements[i].id + 'Error').text("need " + $(frm.elements[i]).data("length") + " characters");
+					  $('#' + frm.elements[i].id + 'Error').show();
 						$(frm.elements[i]).addClass('field_with_errors');
 					} else {
 						alert("Should be of " + $(frm.elements[i]).data("length") + " characters.");
@@ -180,6 +190,7 @@ function SubmitForm(frm,url,divId){
 			    }
 			    if($('#' + frm.elements[i].id + 'Error').length > 0) {
 					  $('#' + frm.elements[i].id + 'Error').text("is invalid");
+					  $('#' + frm.elements[i].id + 'Error').show();
 						$(frm.elements[i]).addClass('field_with_errors');
 					} else {
 						alert("Email is invalid.");
@@ -199,33 +210,50 @@ function SubmitForm(frm,url,divId){
 
 function initializeDatePicker() {
 	var d = new Date(jQuery.now());
+	var nd = new Date(); nd.setDate(nd.getDate() + 60);
 	var mint = d.getMinutes();
-  mint = (parseInt((mint/15))*15) + 15;
-	$('.datepicker').pickadate({
-		format: 'dd/mm/yyyy',
-		formatSubmit: 'dd/mm/yyyy',
-		min: [d.getFullYear(), d.getMonth(), d.getDate()],
-		max: 60,
-		onSet: function(event) {
-			initializeTimePicker(this.$node.attr('id'));
+ 	mint = (parseInt((mint/15))*15) + 15;
+  $(".datetime").datetimepicker({
+		format: "dd/mm/yyyy hh:ii",
+		startDate: d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate() + " " + d.getHours() + ":" + mint,
+		endDate: nd.getFullYear() + "-" + (nd.getMonth()+1) + "-" + nd.getDate() + " 00:00",
+		startView: 2,
+		autoclose: true,
+		minuteStep: 15,
+		todayHighlight: true
+	});
+	$("#StartDate").click(function() {
+		$('#StartDateValError').hide();
+		$('#StartDateVal').removeClass('field_with_errors');
+		$('#StartDateVal').datetimepicker('show');
+	});
+	$("#EndDate").click(function() {
+		$('#EndDateValError').hide();
+		$('#EndDateVal').removeClass('field_with_errors');
+		if($('#StartDateVal').val() != $('#StartDateVal').attr('dummy-title')) {
+			$('#EndDateVal').datetimepicker('show');
+		} else {
+			$('#EndDateValError').text('please select start date first');
+			$('#EndDateValError').show();
 		}
 	});
-}
-
-function initializeTimePicker(dateId) {
-	var d = new Date(jQuery.now());
-	var mint = d.getMinutes();
-	var datePick = $("#" + dateId);
-	if (datePick.val() == (d.getDate() + "/" + (d.getMonth()+1) + "/" + d.getFullYear())) {
-  	mint = [d.getHours(), (parseInt((mint/15))*15) + 15];
-  } else {
-  	mint = [0, 0];
-  }
-	var timePick = $("#" + dateId.replace('Date','Time')).pickatime({
-		format: 'hh:i A',
-		formatSubmit: 'HH:i',
-		interval: 15,
-		min: mint,
+	$('#StartDateVal').datetimepicker().on('hide', function(ev) {
+		if(ev.date.valueOf() < jQuery.now().valueOf()) {
+			$('#StartDateVal').val($('#StartDateVal').attr('dummy-title'));
+		}
+	});
+	$('#EndDateVal').datetimepicker().on('hide', function(ev) {
+		if(ev.date.valueOf() < jQuery.now().valueOf()) {
+			$('#EndDateVal').val($('#EndDateVal').attr('dummy-title'));
+		}
+	});
+	$('#StartDateVal').datetimepicker().on('changeDate', function(ev) {
+		var d = ev.date;
+		d = new Date(d.getTime() - 270*60000);
+    $('#EndDateVal').datetimepicker('setStartDate', d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes());
+    $('#EndDateVal').removeClass('field_with_errors');
+    $('#EndDateValError').hide();
+    $('#EndDateVal').datetimepicker('show');
 	});
 }
 
@@ -243,6 +271,16 @@ function showCalculator(action) {
 
 function hideCalculator() {
 	$('#Overlay').toggle('explode');
+}
+
+function changeCar(id,name) {
+	$('#CarVal').val(id);
+	$('#CarHtml').html(name);
+}
+
+function changeLocation(id,name) {
+	$('#LocationVal').val(id);
+	$('#LocationHtml').html(name);
 }
 
 (function(d, s, id) {

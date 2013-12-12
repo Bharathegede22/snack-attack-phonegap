@@ -75,6 +75,8 @@ GEM
     execjs (2.0.2)
     faraday (0.8.8)
       multipart-post (~> 1.2.0)
+    fql (0.3.1)
+      multi_json
     haml (4.0.4)
       tilt
     haml-rails (0.5.1)
@@ -230,6 +232,7 @@ DEPENDENCIES
   debugger
   devise
   exception_notification
+  fql
   haml-rails
   jbuilder (~> 1.2)
   jquery-rails

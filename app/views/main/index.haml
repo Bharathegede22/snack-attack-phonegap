@@ -2,8 +2,8 @@
 .homepage
 	.cars
 		.h1
-			%h1.zoom
-				%span Self-Drive Cars in Bangalore
+			%h1
+				Self-Drive Cars in Bangalore
 			%p
 				By the Hour or by the Day
 			.fc
@@ -109,31 +109,10 @@
 	.wrapper
 		.widget
 			.bg
-			.fg
 				.title.r-tl-5.r-tr-5
 					Book a Car
-				.box
-					.cal
-					.txt Pickup Date & Time*
-					.arrw
-					.fc
-				.box
-					.cal
-					.txt Dropoff Date & Time*
-					.arrw
-					.fc
-				.box
-					.loc
-					.txt Choose your location
-					.arrw
-					.fc
-				.box
-					.car
-					.txt Select a car
-					.arrw
-					.fc
-				.button
-					Search Car
+				#SearchFormDiv.form
+					= render :partial => '/search/widget_homepage'
 .reviews
 	%h2 What our happy users say about Zoom
 	#ReviewSlider.carousel.slide{'data-ride' => "carousel", 'data-interval' => '10000', 'data-pause' => 'hover'}
@@ -223,6 +202,7 @@
 			$('.carousel').carousel();
 			$('.help').tooltip();
 			checkJail();
+			initializeDatePicker();
 		} else {
 			window.setTimeout(checkJquery, 1000);
 		}

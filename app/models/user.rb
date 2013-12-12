@@ -1,21 +1,76 @@
+require "open-uri"
 class User < ActiveRecord::Base
+  
+  has_one :image, :as => :imageable, dependent: :destroy
+  
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable 
-
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable, 
          :omniauthable, :omniauth_providers => [:facebook, :google_oauth2]
-
-   #check whether the user already signed up or it will create a new user
-  def self.find_for_facebook_oauth(auth, signed_in_resource=nil)
-	  user = User.where(:email => auth.info.email).first
-	  unless user
-	    user = User.create(email:auth.info.email,name:auth.info.name,city:auth.extra.raw_info.location.name,
-             dob:auth.extra.raw_info.birthday,img_url:auth.info.image,password:Devise.friendly_token[0,20])
-	  end
-	  user
-  end
-
+	
+	validates :email, presence: true
+  validates :email, uniqueness: true
+  
+  def self.find_for_oauth(auth, signed_in=nil)
+  	case auth.provider
+  	when 'facebook'
+  		user = User.where(:email => auth.info.email).first
+  		user = User.create(email:auth.info.email) unless user
+  		img = user.image
+  		if user.name.blank? || user.city.blank? || user.dob.blank? || !img
+  			options = {:access_token => auth['credentials']['token']}
+				fql = Fql.execute("SELECT birthday_date, sex, pic_big FROM user WHERE uid = me()", options)[0]
+  			user.name = auth.info.name if user.name.blank?
+  			user.city = auth.extra.raw_info.location.name if user.city.blank?
+ 				user.dob = Date.parse(fql['birthday_date']) if user.dob.blank? && !fql['birthday_date'].blank?
+  			if !fql['sex'].blank?
+  				if fql['sex'].downcase == 'male'
+  					user.gender = 0
+  				else
+  					user.gender = 1
+  				end
+  			end
+  			user.save!
+  			if !img
+					io = nil
+					begin
+						io = open(fql['pic_big'])
+						if io
+							def io.original_filename; base_uri.path.split('/').last; end
+							io.original_filename.blank? ? nil : io
+						end
+					rescue
+					end
+					img = Image.create(:imageable_id => user.id, :imageable_type => 'User') if io
+				end
+	  	end
+		when 'google_oauth2'
+			data = access_token.info
+		  raw  = access_token.extra.raw_info
+		  user = User.where(:email => data["email"]).first
+		  user = User.create(email:data["email"]) unless user
+		  if user.name.blank? || user.dob.blank?
+		    user.name = data["name"] if user.name.blank?
+		    user.dob = raw["birthday"] if user.dob.blank?
+		    user.save!
+		  end
+		  if !user.image
+  			io = nil
+		  	begin
+					io = open(data["image"])
+					if io
+						def io.original_filename; base_uri.path.split('/').last; end
+						io.original_filename.blank? ? nil : io
+					end
+				rescue
+				end
+	  		img = Image.create(:imageable_id => user.id, :imageable_type => 'User') if io
+	  	end
+		end
+		return user
+	end
+	
   def self.new_with_session(params, session)
     super.tap do |user|
       if data = session["devise.facebook_data"] && session["devise.facebook_data"]["extra"]["raw_info"]
@@ -23,18 +78,5 @@ class User < ActiveRecord::Base
       end
     end
   end
-
-
-  def self.find_for_google_oauth2(access_token, signed_in_resource=nil)
-    data = access_token.info
-    raw  = access_token.extra.raw_info
-    user = User.where(:email => data["email"]).first
-
-    #location is not available
-    unless user
-        user = User.create(email: data["email"],name: data["name"],
-          dob:raw["birthday"],img_url:data["image"],password: Devise.friendly_token[0,20])
-    end
-    user
-end
+  
 end

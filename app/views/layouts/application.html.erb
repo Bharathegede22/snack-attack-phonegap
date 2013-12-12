@@ -53,7 +53,9 @@
 	</head>
 	<body>
 		<%= render :partial => "/layouts/header" %>
-  	<%= yield %>
+		<div class="AjaxContent">
+  		<%= yield %>
+  	</div>
 	  <%= render :partial => '/layouts/footer' %>
 	</body>
 </html>

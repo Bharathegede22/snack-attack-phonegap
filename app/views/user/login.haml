@@ -1,0 +1,11 @@
+.login.t-c
+	%table.m-auto
+		%tr
+			%td{:colspan => '2'}
+				Signin With
+		%tr
+			%td
+				%a.facebook{:href => "#{user_omniauth_authorize_path(:facebook)}"}
+			%td
+				- if false
+					%a.gplus{:href => "#{user_omniauth_authorize_path(:google_oauth2)}"}

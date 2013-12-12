@@ -10,10 +10,8 @@
  *
  *= require bootstrap
  *= require bootstrap-theme
-  *= require bootstrap-custom
+ *= require bootstrap-datetimepicker
+ *= require bootstrap-custom
  *= require common
  *= require custom
- *= require picker
- *= require picker.date
- *= require picker.time
  */

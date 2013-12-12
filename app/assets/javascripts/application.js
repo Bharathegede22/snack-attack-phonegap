@@ -12,11 +12,6 @@
 //
 //= require jquery/jquery
 //= require bootstrap
-//= require jquery/jquery.easing
-//= require jquery/jquery.touchSwipe.min
-//= require jquery/picker
-//= require jquery/picker.date
-//= require jquery/picker.time
-//= require jquery/picker.legacy
+//= require bootstrap-datetimepicker
 //= require turbolinks
 //= require common

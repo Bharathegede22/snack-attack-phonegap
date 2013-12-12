@@ -70,11 +70,4 @@
 			if(oldonload){oldonload()}};
 		}());
 = render :partial => '/layouts/olark'
-#Overlay.overlay
-	.calculator-wrapper
-		#Calculator.calculator-modal
-			.content
-				#CalculatorContentWait.wait-box
-					.wait
-				#CalculatorContent
-		.close{:onclick => "hideCalculator();"}
+= render :partial => '/layouts/modal'

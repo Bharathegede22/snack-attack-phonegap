@@ -36,3 +36,11 @@ class Time
     Time.now.beginning_of_day 
   end
 end
+
+configurations = YAML.load(File.read(File.join(::Rails.root.to_s, 'config', 'configurations.yml')))
+HOSTNAME = configurations['hostname']
+FACEBOOK_ID = configurations['facebook_id']
+FACEBOOK_SECRET = configurations['facebook_secret']
+GOOGLE_ID = configurations['google_id']
+GOOGLE_SECRET = configurations['google_secret']
+GOOGLE_MAP_KEY = "#{configurations['google_map_api_key']}"

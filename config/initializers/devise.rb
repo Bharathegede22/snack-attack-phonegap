@@ -223,13 +223,13 @@ Devise.setup do |config|
   # config.navigational_formats = ['*/*', :html]
 
   # The default HTTP method used to sign out a resource. Default is :delete.
-  config.sign_out_via = :delete
+  config.sign_out_via = :get
 
   # ==> OmniAuth
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
-  config.omniauth :facebook, "459596907493026", "a7aeed99eb17d6939443929c69cc82b1"
-  config.omniauth :google_oauth2, "759895018496.apps.googleusercontent.com", "M8ZDJXn6Ex_BDd_VWnwvenpc", { access_type: "offline", approval_prompt: "" }
+  config.omniauth :facebook, FACEBOOK_ID, FACEBOOK_SECRET, {scope: 'email, user_location'}
+  config.omniauth :google_oauth2, GOOGLE_ID, GOOGLE_SECRET, { access_type: "offline", approval_prompt: "" }
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
