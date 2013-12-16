@@ -1,0 +1,21 @@
+- if bookings.blank?
+	No bookings were found.
+	%br/
+	%br/
+- else
+	%table.table-striped.table
+		%tr.active
+			%th Car
+			%th Location
+			%th Starts
+			%th Ends
+			%th
+		- bookings.each do |b|
+			%tr
+				%td #{b.cargroup.name}
+				%td #{b.location.shortname}
+				%td #{b.starts.strftime("%d %b, %Y %I:%M %p")}
+				%td #{b.ends.strftime("%d %b, %Y %I:%M %p")}
+				%td.t-r
+					%a.btn.btn-xs.btn-primary{href: "/bookings/#{b.encoded_id}", target: '_blank', role: "button", :title => 'See Details'}
+						%span.glyphicon.glyphicon-list

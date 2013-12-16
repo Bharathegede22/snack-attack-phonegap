@@ -55,6 +55,9 @@ GEM
     coffee-script-source (1.6.3)
     columnize (0.3.6)
     connection_pool (1.2.0)
+    countries (0.9.3)
+      currencies (~> 0.4.2)
+    currencies (0.4.2)
     dalli (2.6.4)
     debugger (1.6.2)
       columnize (>= 0.3.1)
@@ -128,7 +131,7 @@ GEM
     omniauth (1.1.4)
       hashie (>= 1.2, < 3)
       rack
-    omniauth-facebook (1.5.0)
+    omniauth-facebook (1.5.1)
       omniauth-oauth2 (~> 1.1.0)
     omniauth-google-oauth2 (0.2.1)
       omniauth (~> 1.0)
@@ -228,6 +231,7 @@ DEPENDENCIES
   aws-ses
   capistrano
   coffee-rails (~> 4.0.0)
+  countries
   dalli
   debugger
   devise

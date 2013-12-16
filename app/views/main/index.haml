@@ -112,7 +112,7 @@
 				.title.r-tl-5.r-tr-5
 					Book a Car
 				#SearchFormDiv.form
-					= render :partial => '/search/widget_homepage'
+					= render :partial => '/bookings/widget_homepage'
 .reviews
 	%h2 What our happy users say about Zoom
 	#ReviewSlider.carousel.slide{'data-ride' => "carousel", 'data-interval' => '10000', 'data-pause' => 'hover'}
@@ -196,15 +196,3 @@
 		%a.cnbc{:href => "http://www.moneycontrol.com/news/business/self-drive-your-way-to-gloryzoomcar-_901654.html", :rel => "nofollow", :target => "_blank", :title => "CNBC", :onclick => "_gaq.push(['_trackEvent', 'Homepage', 'Press', 'CNBC']);"}
 		%a.teambhp{:href => "http://www.team-bhp.com/news/zoom-pay-drive-new-self-drive-option-bangalore", :rel => "nofollow", :target => "_blank", :title => "Team BHP", :onclick => "_gaq.push(['_trackEvent', 'Homepage', 'Press', 'TeamBHP']);"}
 		.fc
-:javascript
-	function checkJquery() {
-		if (window.jQuery) {
-			$('.carousel').carousel();
-			$('.help').tooltip();
-			checkJail();
-			initializeDatePicker();
-		} else {
-			window.setTimeout(checkJquery, 1000);
-		}
-	}
-	checkJquery();

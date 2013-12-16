@@ -1,61 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<title><%= @meta_title %></title>
-		<meta  name="description" content="<%= @meta_description %>"/>
-		<meta name="keywords" content="<%= @meta_keywords %>"/>
-		<% if @canonical && !@canonical.empty? %>
-			<link rel="canonical" href="<%= @canonical %>" />
-		<% end %>
-		<% if Rails.env != 'production' || @noindex %>
-			<meta name="robots" content="noindex" />
-		<% else %>
-			<meta NAME="robot" CONTENT="index,follow" />
-		<% end %>
-		<meta NAME="copyright" CONTENT="© Copyright 2013 ZoomCar India Private Ltd. All rights reserved."/>
-		<meta NAME="author" CONTENT="ZoomCar India Private Ltd."/>
-		<meta NAME="generator" CONTENT="www.onlinemetatag.com"/>
-		<meta NAME="language" CONTENT="English"/>
-		<meta NAME="revisit-after" CONTENT="3"/>
-		<meta CHARSET="utf-8"/>
-		
-		<%= stylesheet_link_tag "application", :media => "screen" %>
-		<link rel="shortcut icon" href="<%= asset_path 'favicon.png' %>" type="image/png" />
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Sans" />
-		<% 
-			js = javascript_include_tag 'application'
-			js = js.split('src="').last
-			js = js.split('"').first
-		%>
-		<script type="text/javascript">
-			function downloadJSAtOnload() {
-				var element = document.createElement("script");
-				element.src = "<%= js %>";
-				document.body.appendChild(element);
-			}
-			if (window.addEventListener)
-				window.addEventListener("load", downloadJSAtOnload, false);
-			else if (window.attachEvent)
-				window.attachEvent("onload", downloadJSAtOnload);
-			else window.onload = downloadJSAtOnload;
-			
-			var _gaq = _gaq || [];
-			_gaq.push(['_setAccount', 'UA-38347989-1']);
-			_gaq.push(['_setDomainName', 'zoomcar.in']);
-			_gaq.push(['_setAllowLinker', true]);
-			_gaq.push(['_trackPageview']);
-			(function() {
-				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-			})();
-		</script>
-	</head>
+	<%= render :partial => "/layouts/head" %>
 	<body>
 		<%= render :partial => "/layouts/header" %>
-		<div class="AjaxContent">
-  		<%= yield %>
-  	</div>
+ 		<%= yield %>
 	  <%= render :partial => '/layouts/footer' %>
 	</body>
 </html>

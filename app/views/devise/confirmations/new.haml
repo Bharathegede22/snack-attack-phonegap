@@ -1,0 +1,16 @@
+.t-c
+	%h1.zoom.droid
+		Resend Confirmation Instructions
+	= form_for(resource, :as => resource_name, :url => confirmation_path(resource_name), :html => { :method => :post }) do |f|
+		- if !resource.errors.full_messages.blank?
+			.alert.alert-danger
+				= resource.errors.full_messages.join(', ')
+		.p-10
+			%b Please provide your email id to confirm your account.
+		.form-horizontal
+			.row.form-group
+				%label.col-sm-4.control-label Email *
+				.col-sm-4
+					= f.email_field :email, :autofocus => true, :class => 'form-control'
+		.t-c.p-5
+			= submit_tag "Submit", :class => 'btn btn-default'

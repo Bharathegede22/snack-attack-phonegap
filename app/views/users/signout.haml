@@ -1,0 +1,11 @@
+:javascript
+	$('#UserBar').popover({
+		title: 'Signout',
+		content: "You are logged out, please continue.",
+		placement: 'bottom'
+	});
+	$('#UserBar').popover('show');
+	$('#UserBar').bind("click", function() {
+		$('#UserBar').popover('destroy');
+	});
+	checkUser();

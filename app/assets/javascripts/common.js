@@ -52,17 +52,15 @@ function showSearch() {
 }
 
 function getData(complete_url,divId,divAction,divWait) {
-	checkajax = $("#AjaxActive").val();
-  if(checkajax == 1){
-  	if("undefined" != typeof(event)) event.returnValue = false;
-    return false;	
-  }
-  $("#AjaxActive").val(1);
+	//checkajax = $("#AjaxActive").val();
+  //if(checkajax == 1){
+  //	if("undefined" != typeof(event)) event.returnValue = false;
+  // return false;	
+  //}
+  //$("#AjaxActive").val(1);
   if(divWait) {
   	$("#"+divWait).show();
-  } else {
-		showOverlay();
-	}
+  }
   var resp = $.ajax({
   	url: complete_url, 
 		dataType: "json"
@@ -86,9 +84,61 @@ function getData(complete_url,divId,divAction,divWait) {
       }
       if(divWait) {
       	$("#"+divWait).hide();
+      }
+      //$("#AjaxActive").val(0);
+    }
+  );
+  resp.fail(
+  	function(jqXHR, textStatus) {
+  		if(divWait) {
+      	$("#"+divWait).hide();
+      }
+  		//$("#AjaxActive").val(0);
+  		if(jqXHR.getAllResponseHeaders()) {
+	  		alert("Request failed, please try again later.");
+	  	}
+		}
+	);
+	if("undefined" != typeof(event)) event.returnValue = false;
+	return false;
+}
+
+function postData(complete_url,divId,divAction,divWait,dataStr) {
+	checkajax = $("#AjaxActive").val();
+  if(checkajax == 1){
+  	if("undefined" != typeof(event)) event.returnValue = false;
+    return false;	
+  }
+  $("#AjaxActive").val(1);
+  if(divWait) {
+  	$("#"+divWait).show();
+  }
+  var resp = $.ajax({
+  	url: complete_url, 
+  	data: dataStr, 
+		dataType: "json",
+		type: 'POST'
+	});
+	resp.done(
+    function(data){
+      if(data["alert"]) {
+        alert(data["alert"]);
       } else {
-	      $("#Wait").hide();
-	    }
+      	if(divId) {
+      		if(divAction) {
+      			if(divAction == 'append') {
+      				$("#"+divId).append(data["html"]);
+      			} else {
+      				$("#"+divId).html(data["html"]);
+      			}
+      		} else {
+				    $("#"+divId).html(data["html"]);
+				  }
+			  }
+      }
+      if(divWait) {
+      	$("#"+divWait).hide();
+      }
       $("#AjaxActive").val(0);
     }
   );
@@ -96,9 +146,7 @@ function getData(complete_url,divId,divAction,divWait) {
   	function(jqXHR, textStatus) {
   		if(divWait) {
       	$("#"+divWait).hide();
-      } else {
-	      $("#Wait").hide();
-	    }
+      }
   		$("#AjaxActive").val(0);
   		if(jqXHR.getAllResponseHeaders()) {
 	  		alert("Request failed, please try again later.");
@@ -131,7 +179,7 @@ function SubmitForm(frm,url,divId){
 	} else {
 		hideDiv = null;
 	}
-  var new_url = url;
+  var new_url = '';
   var failed = false;
 	for(var i = 0; i < frm.elements.length; i++) {
     if(frm.elements[i].name != 'commit') {
@@ -202,7 +250,7 @@ function SubmitForm(frm,url,divId){
   }
   if(!failed){
   	$("#" + frmId.replace('Form','Submit')).hide();
-    getData(new_url,divId,'replace',hideDiv);
+    postData(url, divId, 'replace', hideDiv, new_url);
   }
   if("undefined" != typeof(event)) event.returnValue = false;
   return false;
@@ -221,6 +269,13 @@ function initializeDatePicker() {
 		autoclose: true,
 		minuteStep: 15,
 		todayHighlight: true
+	});
+	$(".dob").datetimepicker({
+		format: "dd/mm/yyyy",
+		endDate: (d.getFullYear() - 20) + "-" + (d.getMonth()+1) + "-" + d.getDate(),
+		startView: 4,
+		minView: 2, 
+		autoclose: true
 	});
 	$("#StartDate").click(function() {
 		$('#StartDateValError').hide();
@@ -283,6 +338,20 @@ function changeLocation(id,name) {
 	$('#LocationHtml').html(name);
 }
 
+function checkUser() {
+	getData("/users/status", 'UserBar', 'replace', null);
+}
+
+function logOut(url) {
+	getData(url, 'JsResponse', 'replace', null);
+}
+
+$('.carousel').carousel();
+$('.help').tooltip();
+checkJail();
+initializeDatePicker();
+checkUser();
+
 (function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) return;
@@ -298,6 +367,3 @@ function changeLocation(id,name) {
 })();
 
 (function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs"));
-
-$("#CalculatorButton").fadeIn();
-initializeDatePicker();

@@ -1,6 +1,34 @@
 class Booking < ActiveRecord::Base
 
-
+	belongs_to :car
+	belongs_to :cargroup
+	belongs_to :location
+	belongs_to :user
+	
+	has_many	:charges, :inverse_of => :booking, dependent: :destroy
+	has_many	:payments, :inverse_of => :booking, dependent: :destroy
+	has_many	:refunds, :inverse_of => :booking, dependent: :destroy
+	has_many	:reviews, :inverse_of => :booking, dependent: :destroy
+	has_many	:utilizations, -> {where "minutes > 0"}, dependent: :destroy
+	
+	def encoded_id
+		CommonHelper.encode('booking', self.id)
+	end
+	
+	def status?
+		if self.status > 5
+			return 'cancelled'
+		else
+			if self.starts <= Time.zone.now && self.ends >= Time.zone.now
+				return 'live'
+			elsif self.starts > Time.zone.now
+				return 'future'
+			elsif self.ends < Time.zone.now
+				return 'completed'
+			end
+		end
+	end
+	
 	def self.select_car(booking)
 		
  		start_day = booking.starts.to_date

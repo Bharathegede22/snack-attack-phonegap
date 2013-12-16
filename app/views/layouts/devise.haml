@@ -1,0 +1,10 @@
+!!!
+%html{lang: "en"}
+	%body
+		= render :partial => "/layouts/head"
+		= render :partial => "/layouts/header"
+		.content
+			.wrapper
+				.p-20.bg-f
+					= yield
+		= render :partial => '/layouts/footer'

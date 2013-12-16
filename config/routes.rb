@@ -2,17 +2,41 @@ Web::Application.routes.draw do
 	
 	root to: "main#index"
 	
-	devise_for :users, :controllers => {:omniauth_callbacks => "users/omniauth"}
+	devise_for :users, 
+		:controllers => {
+			:confirmations => "users/confirmations", 
+			:omniauth_callbacks => "users/omniauth", 
+			:passwords => "users/passwords", 
+			:registrations => "users/registrations", 
+			:sessions => "users/sessions"
+		}
 	
-	resources :search do
+	get '/search' => "bookings#search"
+	
+	resources :bookings do
 		collection do
 			get 'widget'
 		end
+		member do
+			get 'invoice'
+		end
 	end
 	
-	resources :user do
+	#as :user do
+	#	get 'signin' => 'users#signin', :as => :new_user_session
+	#	post 'signin' => 'users#signin', :as => :user_session
+	#end
+
+	resources :users do
 		collection do
-			get 'login'
+			get 'forgot'
+			get 'settings'
+			get 'social'
+			get 'signin'
+			get 'signup'
+			get 'status'
+			
+			post 'signup'
 		end
 	end
 	

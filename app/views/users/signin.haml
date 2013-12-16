@@ -1,0 +1,12 @@
+:javascript
+	$("#Modal").modal('hide');
+	$('#UserBar').popover({
+		title: 'Sign In',
+		content: "You are now logged in, please continue.",
+		placement: 'bottom'
+	});
+	$('#UserBar').popover('show');
+	$('#UserBar').bind("click", function() {
+		$('#UserBar').popover('destroy');
+	});
+	checkUser();

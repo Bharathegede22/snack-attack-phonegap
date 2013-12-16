@@ -1,0 +1,15 @@
+- @user ||= User.new
+.t-c
+	.p-10
+		Please enter your email id and we will send the password reset instructions
+	- render_flash
+	%form{:id => "ForgotForm", :onsubmit => "return SubmitForm(this,'#{password_path(:user)}','ModalContent');", :action => "javascript:void(0)", "data-ajax" => "false"}
+		.form-inline
+			.form-group
+				%input#ForgotEmail.validate-presence.form-control{name: 'user[email]', type: "text", value: @user.email}
+				#ForgotEmailError.error.t-l
+					= @user.errors[:email].uniq.join(', ')
+		#ForgotSubmit.p-5
+			= submit_tag "Submit", :class => 'btn btn-default'
+		#ForgotWait.p-5.hide
+			.wait

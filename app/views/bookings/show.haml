@@ -1,0 +1,124 @@
+.row
+	.col-md-8.size-16
+		.row
+			.col-md-4
+				.p-5 
+					%b Car
+			.col-md-8
+				.p-5
+					= @booking.cargroup.name
+		.row
+			.col-md-4 
+				.p-5
+					%b Rented From
+			.col-md-8
+				.p-5
+					= @booking.location.name
+		.row
+			.col-md-4
+				.p-5
+					%b Pickup Time
+			.col-md-8
+				.p-5
+					= @booking.starts.strftime("%d %b, %Y %I:%M %p")
+		.row
+			.col-md-4
+				.p-5
+					%b Dropoff Time
+			.col-md-8
+				.p-5
+					= @booking.ends.strftime("%d %b, %Y %I:%M %p")
+		.m-t20
+			- case @booking.status?
+			- when 'live'
+				%a.btn.btn-success{href: "#", role: "button"} Extend
+				%a.btn.btn-warning{href: "#", role: "button"} Shorten
+			- when 'future'
+				%a.btn.btn-success{href: "#", role: "button"} Extend
+				%a.btn.btn-warning{href: "#", role: "button"} Shorten
+				%a.btn.btn-danger{href: "#", role: "button"} Cancel
+			- else
+				%a.btn.btn-primary{href: "/bookings/#{@booking.encoded_id}/invoice", target: '_blank', role: "button"} Invoice
+		%br/
+		.m-t20
+			%h3.f-b Booking History
+		.size-12
+			= @booking.notes.html_safe
+	.col-md-4
+		- total = 0
+		- tmp = 0
+		%table.table.table-bordered
+			%tr.active
+				%td{:colspan => '2'}
+					%h4.f-b Fare Breakdown
+			- @booking.charges.each do |c|
+				- if c.activity != 'early_return_refund'
+					%tr
+						%td
+							= c.activity_text
+						%td.t-r
+							- if c.refund > 0
+								= "-" + c.amount.to_s
+								- tmp -= c.amount
+							- else
+								= c.amount
+								- tmp += c.amount
+			%tr.f-b
+				%td
+					Total
+				%td.t-r
+					= tmp
+					- total += tmp
+					- tmp = 0
+			%tr.active
+				%td{:colspan => '2'}
+					%h4.f-b Payments Received
+			- @booking.payments.each do |p|
+				%tr
+					%td
+						= p.through_text + " Payment"
+					%td.t-r
+						= p.amount
+						- tmp += p.amount
+			%tr.f-b
+				%td
+					Total
+				%td.t-r
+					= tmp
+					- total -= tmp
+					- tmp = 0
+			%tr.active
+				%td{:colspan => '2'}
+					%h4.f-b Refunds Issued
+			- @booking.refunds.each do |r|
+				- if r.through != 'early_return_credits'
+					%tr
+						%td
+							= r.through_text
+						%td.t-r
+							= r.amount
+							- tmp += p.amount
+			%tr.f-b
+				%td
+					Total
+				%td.t-r
+					= tmp
+					- total -= tmp
+			- if total > 0
+				%tr.danger.size-16
+					%td
+						%b Outstanding
+					%td.t-r
+						%b #{total}
+			- elsif total < 0
+				%tr.success.size-16
+					%td
+						%b Outstanding
+					%td.t-r
+						%b #{total}
+			- else
+				%tr.size-16
+					%td
+						%b Outstanding
+					%td.t-r
+						%b #{total}

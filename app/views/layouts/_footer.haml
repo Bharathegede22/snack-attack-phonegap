@@ -1,38 +1,35 @@
 .footer
 	.footer-text
 		.partition
-			%h3.size-16.grey How To Zoom?
-			.p-t5.size-14
-				.p-t5
-					%a{:href => "/howtozoom?ref=footer"} This is How You Zoom
-				.p-t5
-					%a{:href => "/safety?ref=footer"} Zoom in Safety
-				.p-t5
-					%a{:href => "/outstation?ref=footer"} Going Outstation?
-				.p-t5
-					%a{:href => "/reva?ref=footer"} Zoom's Electric!
-				.p-t5
-					%a{:href => "/privacy?ref=footer"} Privacy Policy
-				.p-t5
-					%a{:href => "/faq?ref=footer"} FAQs
-		.partition
-			%h3.size-16.grey About Us
-			.p-t5.size-14
-				.p-t5
-					%a{:href => "/about?ref=footer"} Zoom Team
-				.p-t5
-					%a{:href => "/careers?ref=footer"} Careers @ Zoom
-				.p-t5
-					%a{:href => "http://www.zoomcar.in/blog/", :target => "_blank"} Zoom Blog
-		.partition
-			%h3.size-16.grey Zoom Apps
-			.p-t10
-				%a.ios.fl{:href => "https://itunes.apple.com/us/app/zoom-mobile-key/id625896634?mt=8", :rel => "nofollow", :target => "_blank", :title => "Zoom now on iOS!"}
-				%a.android.fl.m-l10{:href => "https://play.google.com/store/apps/details?id=com.justshareit.zoom", :rel => "nofollow", :target => "_blank", :title => "Zoom now on Android!"}
-				.fc
+			%h3 How To Zoom?
+			.p-t5
+				%a{:href => "/howtozoom?ref=footer"} This is How You Zoom
+			.p-t5
+				%a{:href => "/safety?ref=footer"} Zoom in Safety
+			.p-t5
+				%a{:href => "/outstation?ref=footer"} Going Outstation?
+			.p-t5
+				%a{:href => "/reva?ref=footer"} Zoom's Electric!
+			.p-t5
+				%a{:href => "/privacy?ref=footer"} Privacy Policy
+			.p-t5
+				%a{:href => "/faq?ref=footer"} FAQs
+		.partition.t-c
+			%h3 About Us
+			.p-t5
+				%a{:href => "/about?ref=footer"} Zoom Team
+			.p-t5
+				%a{:href => "/careers?ref=footer"} Careers @ Zoom
+			.p-t5
+				%a{:href => "http://www.zoomcar.in/blog/", :target => "_blank"} Zoom Blog
+			.m-t10.lgrey
+				&copy; Copyright 2013 ZoomCar India Private Ltd.
+				%br/
+				All rights reserved.
+			%a.logo-rtt{:href => "http://www.rtt.co.in/", :rel => "nofollow"}
 		.partition.t-r
-			%h3.size16.grey Let's keep in touch
-			.p-t10.size-14.lgrey
+			%h3 Let's keep in touch
+			.p-t5.lgrey
 				Unit T-2, Gem Plaza (3rd Floor)
 				%br/
 				\#66, Infantry Road
@@ -49,10 +46,6 @@
 				%a.link{:href => "mailto:info@zoomcar.in", :rel => "nofollow", :target => "_blank", :title => "Drop us a mail!"}
 			.fc
 		.fc
-		.t-c
-			.m-t10
-				&copy; Copyright 2013 ZoomCar India Private Ltd. All rights reserved.
-			%a.logo-rtt{:href => "http://www.rtt.co.in/", :rel => "nofollow"}
 	:javascript
 		adroll_adv_id = "MAUPRE3VENEQ5LSSZFYO5Q";
 		adroll_pix_id = "Z4HCBGGE4NAGJBEHWRJCDS";
@@ -71,3 +64,8 @@
 		}());
 = render :partial => '/layouts/olark'
 = render :partial => '/layouts/modal'
+#fb-root
+.hide
+	%input#AjaxActive{:name => "ajax", :type => "hidden", :value => "0"}
+	#JsResponse
+	#DummyWait

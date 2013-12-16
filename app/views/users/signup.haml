@@ -1,0 +1,88 @@
+- if current_user
+	#DetailsDiv
+		- if current_user.name.blank? || current_user.phone.blank? || current_user.dob.blank? || !current_user.valid?
+			- render_flash
+			- current_user.country = 'IN' if current_user.country.blank?
+			- current_user.state = 'Karnataka' if current_user.state.blank?
+			%form{:id => "DetailsForm", :onsubmit => "return SubmitForm(this,'/users/signup','DetailsDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+				.form-horizontal
+					.row.form-group
+						%label.col-sm-4.control-label Name *
+						.col-sm-6
+							%input#DetailsName.validate-presence.form-control{name: 'user[name]', type: "text", value: current_user.name}
+							#DetailsNameError.error
+								= current_user.errors[:email].uniq.join(', ')
+					.row.form-group
+						%label.col-sm-4.control-label Phone *
+						.col-sm-6
+							%input#DetailsPhone.validate-presence.validate-numeric.validate-length.form-control{name: 'user[phone]', type: "text", value: current_user.phone, 'data-length' => 10}
+							#DetailsPhoneError.error
+								= current_user.errors[:phone].uniq.join(', ')
+					.row.form-group
+						%label.col-sm-4.control-label Date of Birth *
+						.col-sm-6
+							%input#DetailsDob.validate-presence.form-control.dob{name: 'user[dob]', type: "date", value: current_user.dob, readonly: true}
+							#DetailsDobError.error
+								= current_user.errors[:dob].uniq.join(', ')
+					.row.form-group
+						%label.col-sm-4.control-label Gender
+						.col-sm-6
+							%select#DetailsGender.form-control{name: 'user[gender]', placeholder: 'Gender *'}
+								- [['Male', 0], ['Female', 1]].each do |t|
+									- if current_user.gender == t[1]
+										%option{value: t[1], selected: true}
+											= t[0]
+									- else
+										%option{value: t[1]}
+											= t[0]
+					.row.form-group
+						%label.col-sm-4.control-label Country
+						.col-sm-6
+							%select#DetailsCountry.form-control{name: 'user[country]'}
+								- Country.all.each do |t|
+									- if current_user.country == t[1]
+										%option{value: t[1], selected: true}
+											= t[0]
+									- else
+										%option{value: t[1]}
+											= t[0]
+					.row.form-group
+						%label.col-sm-4.control-label Pincode / Zipcode
+						.col-sm-6
+							%input#DetailsPincode.validate-numeric.validate-length.form-control{name: 'user[pincode]', type: "text", value: current_user.pincode, 'data-length' => 6}
+							#DetailsPincodeError.error
+								= current_user.errors[:pincode].uniq.join(', ')
+					.row.form-group
+						%label.col-sm-4.control-label State
+						.col-sm-6
+							%select#DetailsState.form-control{name: 'user[state]'}
+								- CommonHelper::STATE.each do |t|
+									- if current_user.state == t
+										%option{value: t, selected: true}
+											= t
+									- else
+										%option{value: t}
+											= t
+					.row.form-group
+						%label.col-sm-4.control-label City
+						.col-sm-6
+							%input#DetailsCity.form-control{name: 'user[city]', type: "text", value: current_user.city}
+				.t-c
+					#DetailsSubmit.p-5
+						= submit_tag "Submit", :class => 'btn btn-default'
+					#DetailsWait.p-5.hide
+						.wait
+			- if session[:normal_signup] == 1
+				- session[:normal_signup] = nil
+				:javascript
+					initializeDatePicker();
+					checkUser();
+			- else
+				:javascript
+					initializeDatePicker();
+		- else
+			.alert.alert-success
+				%b Thanks for providing your details.
+			An email has been sent on 
+			%b #{current_user.email},
+			please follow instructions as mentioned in the email to activate your account.

@@ -13,5 +13,4 @@
 //= require jquery/jquery
 //= require bootstrap
 //= require bootstrap-datetimepicker
-//= require turbolinks
 //= require common

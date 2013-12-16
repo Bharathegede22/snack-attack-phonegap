@@ -19,10 +19,50 @@ module CommonHelper
 	
 	ENCODING_ARRAY = ["7", "c", "i", "j", "o", "k", "z", "l", "q", "r", "m", "8", "h", "u", "g", "w", "3", "1", "y", "p", "5", "s", "0", "d", "a", "e", "v", "t", "2", "4", "f", "b", "x", "6", "n", "9"]
   
+  STATE = [
+  	'Andaman and Nicobar Islands',
+		'Andhra Pradesh',
+		'Arunachal Pradesh',
+		'Assam',
+		'Bihar',
+		'Chandigarh',
+		'Chhattisgarh',
+		'Dadra and Nagar Haveli',
+		'Daman and Diu',
+		'Delhi',
+		'Goa',
+		'Gujarat',
+		'Haryana',
+		'Himachal Pradesh',
+		'Jammu and Kashmir',
+		'Jharkhand',
+		'Karnataka',
+		'Kerala',
+		'Lakshadweep',
+		'Madhya Pradesh',
+		'Maharashtra',
+		'Manipur',
+		'Meghalaya',
+		'Mizoram',
+		'Nagaland',
+		'Odisha',
+		'Puducherry',
+		'Punjab',
+		'Rajasthan',
+		'Sikkim',
+		'Tamil Nadu',
+		'Tripura',
+		'Uttar Pradesh',
+		'Uttarakhand',
+		'West Bengal'
+	]
+		
   class << self
   	def encode(c,id)
       temp = case c.downcase
       when 'attraction' then 10000000
+      when 'job' then 20000000
+      when 'booking' then 10000000000000
       else 0
       end
       str = ''
@@ -52,6 +92,8 @@ module CommonHelper
 		    id = id + ENCODING_ARRAY.index(s)*(36**pos)
 		    pos = pos + 1
 		  end
+		  return ['booking',id-10000000000000] if id > 10000000000000
+		  return ['job',id-20000000] if id > 20000000
       return ['attraction',id-10000000] if id > 10000000      
       return ['',nil]
     end

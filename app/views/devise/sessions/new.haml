@@ -1,0 +1,51 @@
+- @user ||= User.new
+#SignupDiv
+	.login.t-c
+		%table.m-auto
+			%tr
+				%td
+					%a.facebook{:href => "#{user_omniauth_authorize_path(:facebook)}"}
+				%td
+					- if false
+						%a.gplus{:href => "#{user_omniauth_authorize_path(:google_oauth2)}"}
+		%br/
+		OR
+		%br/
+		%br/
+		- render_flash
+		%form{:id => "LoginForm", :onsubmit => "return SubmitForm(this,'#{session_path(:user)}','SignupDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+			.form-horizontal
+				.row.form-group
+					.col-sm-2.col-sm-offset-2.t-r
+						%label.control-label Email
+					.col-sm-6
+						%input.validate-presence.form-control{:id => "LoginEmail", :name => 'user[email]', :type => "text"}
+						#LoginEmailError.error.t-l
+							= @user.errors[:email].uniq.join(', ')
+				.row.form-group
+					.col-sm-2.col-sm-offset-2.t-r
+						%label.control-label Password
+					.col-sm-6
+						%input.validate-presence.form-control{:id => "LoginPass", :name => "user[password]", :type => "password"}
+						#LoginPassError.error.t-l
+							= @user.errors[:password].uniq.join(', ')
+				- if devise_mapping.rememberable?
+					.row.form-group
+						.col-sm-offset-4.col-sm-6.t-l
+							.checkbox
+								%input{name: "user[remember_me]", type: "checkbox"} Remember me
+				.row
+					.col-sm-2.col-sm-offset-2
+					.col-sm-6.t-l
+						#LoginSubmit
+							= submit_tag "Submit", :class => 'btn btn-default'
+						#LoginWait.p-5.hide
+							.wait
+		.p-t10
+			.row.f-b
+				.col-sm-6.t-l
+					%a{:href => "javascript:void(0)", :onclick => "showModal('Sign Up', '/users/signup');"}
+						Sign Up?
+				.col-sm-6.t-r
+					%a{:href => "javascript:void(0)", :onclick => "showModal('Forgot Password', '/users/forgot');"}
+						Forgot your password?

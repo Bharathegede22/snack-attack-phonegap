@@ -1,0 +1,52 @@
+- if user_signed_in?
+	%a.dropdown-toggle{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
+		My Account
+		%b.caret
+	%ul.dropdown-menu
+		%li
+			%a{:href => "#{@sslhost}/bookings?ref=header"} My Bookings
+		%li
+			%a{:href => "#{@sslhost}/users/settings?ref=header"}
+				Account Settings
+		%li
+			%a{:href => "javascript:void(0)", :onclick => "logOut('#{destroy_user_session_path}');"}
+				Logout
+- else
+	%a.dropdown-toggle{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
+		My Account
+		%b.caret
+	%ul.dropdown-menu
+		%li
+			%a{:href => "javascript:void(0)", :onclick => "showModal('Sign Up', '/users/signup');"}
+				Sign Up
+		%li
+			%a{:href => "javascript:void(0)", :onclick => "showModal('Sign In', '/users/signin');"}
+				Sign In
+- if user_signed_in? && !session[:social_signup].blank?
+	- if session[:social_signup] == 0
+		- session[:social_signup] = nil
+		:javascript
+			$('#UserBar').popover({
+				title: 'Sign In',
+				content: "You are now logged in, please continue.",
+				placement: 'bottom'
+			});
+			$('#UserBar').popover('show');
+			$('#UserBar').bind("click", function() {
+				$('#UserBar').popover('destroy');
+			});
+	- else
+		:javascript
+			showModal('Sign Up', '/users/social');
+- if session[:confirmed] == 1
+	- session[:confirmed] = nil
+	:javascript
+		$('#UserBar').popover({
+			title: 'Signup',
+			content: "Your account is activated, please continue.",
+			placement: 'bottom'
+		});
+		$('#UserBar').popover('show');
+		$('#UserBar').bind("click", function() {
+			$('#UserBar').popover('destroy');
+		});

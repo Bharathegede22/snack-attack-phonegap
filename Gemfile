@@ -29,6 +29,7 @@ gem 'lacquer'
 gem 'dalli'
 gem 'sidekiq'
 gem 'fql'
+gem 'countries'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.

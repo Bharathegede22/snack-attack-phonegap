@@ -1,0 +1,111 @@
+- user = @booking.user
+.wrapper.droid
+	.m-10.t-c
+		= image_tag 'logo.jpg'
+	%table.table
+		%tr
+			%td.col-md-3
+				%b.size-16 Zoomcar India Pvt. Ltd.
+				%br/
+				Unit T-2, Gem Plaza (3rd Floor) 
+				%br/
+				66, Infantry Road, Bangalore - 560001 
+				%br/
+				Ph: 080-67684475
+				%br/
+				%b
+					= @booking.ends.strftime("%d %b, %Y")
+			%td.t-c
+				%h1.f-b
+					= "Receipt #" + @booking.encoded_id.upcase
+			%td.t-r.col-md-3
+				.bg-e.r-5.p-10
+					%b.size-16 Billed To
+					%br/
+					= user.name
+					%br/
+					= user.email
+					%br/
+					= user.phone
+	.row
+		.col-md-6.size-16
+			.row
+				.col-md-4
+					.p-5 
+						%b Car
+				.col-md-8
+					.p-5
+						= @booking.cargroup.name
+			.row
+				.col-md-4 
+					.p-5
+						%b Rented From
+				.col-md-8
+					.p-5
+						= @booking.location.name
+			.row
+				.col-md-4
+					.p-5
+						%b Pickup Time
+				.col-md-8
+					.p-5
+						= @booking.starts.strftime("%d %b, %Y %I:%M %p")
+			.row
+				.col-md-4
+					.p-5
+						%b Dropoff Time
+				.col-md-8
+					.p-5
+						= @booking.ends.strftime("%d %b, %Y %I:%M %p")
+		.col-md-6
+			- total = 0
+			- tmp = 0
+			%h4.f-b Fare Breakdown
+			%table.table.table-bordered
+				- @booking.charges.each do |c|
+					- if c.activity != 'early_return_refund'
+						%tr
+							%td
+								= c.activity_text
+							%td.t-r
+								- if c.refund > 0
+									= "-" + c.amount.to_s
+									- tmp -= c.amount
+								- else
+									= c.amount
+									- tmp += c.amount
+				%tr.active.f-b
+					%td
+						Total
+					%td.t-r
+						= tmp
+				%tr.success
+					%td
+						Payments Received
+					%td.t-r
+						:ruby
+							total += tmp
+							tmp = 0
+							@booking.payments.each do |p|
+								tmp += p.amount
+							end
+						= tmp
+				%tr.warning
+					%td
+						Refunds Issued
+					%td.t-r
+						:ruby
+							total -= tmp
+							tmp = 0
+							@booking.refunds.each do |r|
+								tmp += p.amount if r.through != 'early_return_credits'
+							end
+						= tmp
+				- total -= tmp
+				%tr.bg-c
+					%td
+						%b Outstanding
+					%td.t-r
+						%b #{total}
+	.m-20.t-c
+		This is an electronically generated receipt and doesn't require a signature

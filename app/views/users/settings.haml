@@ -1,0 +1,59 @@
+= form_tag do
+	.panel.panel-default
+		.panel-heading
+			%h3.panel-title Account Details
+		.panel-body
+			.form-horizontal
+				.form-group
+					%label.col-sm-2.control-label Email
+					.col-sm-10
+						%p.form-control-static
+							= current_user.email
+				.form-group
+					%label.col-sm-2.control-label{for: "Phone"} Mobile
+					.col-sm-10
+						%input#Phone.form-control{type: "tel"}/
+				.form-group
+					%label.col-sm-2.control-label{for: "Password"} Password
+					.col-sm-10
+						%input#Password.form-control{placeholder: "New Password", type: "password"}/
+		.panel-heading
+			%h3.panel-title Personal Details
+		.panel-body
+			.form-horizontal
+				.form-group
+					%label.col-sm-2.control-label{for: "Name"} Name
+					.col-sm-10
+						%input#Name.form-control{type: "text"}/
+				.form-group
+					%label.col-sm-2.control-label{for: "Dob"} Date of Birth
+					.col-sm-10
+						%input#Dob.form-control{type: "date"}/
+				.form-group
+					%label.col-sm-2.control-label{for: "Gender"} Gender
+					.col-sm-10
+						%select#Gender.form-control
+							%option Male
+							%option Female
+		.panel-heading
+			%h3.panel-title Location Details
+		.panel-body
+			.form-horizontal
+				.form-group
+					%label.col-sm-2.control-label{for: "Country"} Country
+					.col-sm-10
+						%select#Country.form-control
+							= options_for_select(Country.all)
+				.form-group
+					%label.col-sm-2.control-label{for: "State"} State
+					.col-sm-10
+						%select#State.form-control
+							= options_for_select(CommonHelper::STATE)
+				.form-group
+					%label.col-sm-2.control-label{for: "City"} City
+					.col-sm-10
+						%input#City.form-control{type: "text"}/
+				.form-group
+					%label.col-sm-2.control-label{for: "Pincode"} Pincode / Zipcode
+					.col-sm-10
+						%input#Pincode.form-control{type: "text"}/
