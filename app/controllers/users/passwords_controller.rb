@@ -1,15 +1,28 @@
 class Users::PasswordsController < Devise::PasswordsController
 	
 	def create
-    self.resource = resource_class.send_reset_password_instructions(resource_params)
-    yield resource if block_given?
-
-    if successfully_sent?(resource)
-      flash[:notice] = "Password reset instructins are emailed to <b>#{resource.email}</b>."
-  		return render json: {html: render_to_string('new.haml', layout: false)}
-    else
-      return render json: {html: render_to_string('new.haml', layout: false)}
-    end
+		if request.xhr?
+			self.resource = resource_class.send_reset_password_instructions(resource_params)
+			yield resource if block_given?
+			respond_to do |format|
+    		format.json {
+					if successfully_sent?(resource)
+						flash[:notice] = "Password reset instructions are emailed to <b>#{resource.email}</b>."
+						render json: {html: render_to_string('new.haml', layout: false)}
+					else
+						render json: {html: render_to_string('new.haml', layout: false)}
+					end
+    		}
+    	end
+		else
+			self.resource = resource_class.send_reset_password_instructions(resource_params)
+			yield resource if block_given?
+			if successfully_sent?(resource)
+			  respond_with({}, :location => after_sending_reset_password_instructions_path_for(resource_name))
+			else
+			  respond_with(resource)
+			end
+		end
   end
   
 end

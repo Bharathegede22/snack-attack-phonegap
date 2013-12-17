@@ -346,6 +346,42 @@ function logOut(url) {
 	getData(url, 'JsResponse', 'replace', null);
 }
 
+function userLogin() {
+	$('#UserBar').popover({
+		title: 'Sign In',
+		content: "You are now logged in, please continue.",
+		placement: 'bottom'
+	});
+	$('#UserBar').popover('show');
+	$('#UserBar').bind("click", function() {
+		$('#UserBar').popover('destroy');
+	});
+}
+
+function userLogout() {
+	$('#UserBar').popover({
+		title: 'Signout',
+		content: "You are logged out, please continue.",
+		placement: 'bottom'
+	});
+	$('#UserBar').popover('show');
+	$('#UserBar').bind("click", function() {
+		$('#UserBar').popover('destroy');
+	});
+}
+
+function userActive() {
+	$('#UserBar').popover({
+		title: 'Signup',
+		content: "Your account is activated, please continue.",
+		placement: 'bottom'
+	});
+	$('#UserBar').popover('show');
+	$('#UserBar').bind("click", function() {
+		$('#UserBar').popover('destroy');
+	});
+}
+
 $('.carousel').carousel();
 $('.help').tooltip();
 checkJail();

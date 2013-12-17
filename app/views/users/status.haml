@@ -26,27 +26,11 @@
 	- if session[:social_signup] == 0
 		- session[:social_signup] = nil
 		:javascript
-			$('#UserBar').popover({
-				title: 'Sign In',
-				content: "You are now logged in, please continue.",
-				placement: 'bottom'
-			});
-			$('#UserBar').popover('show');
-			$('#UserBar').bind("click", function() {
-				$('#UserBar').popover('destroy');
-			});
+			userLogin();
 	- else
 		:javascript
 			showModal('Sign Up', '/users/social');
 - if session[:confirmed] == 1
 	- session[:confirmed] = nil
 	:javascript
-		$('#UserBar').popover({
-			title: 'Signup',
-			content: "Your account is activated, please continue.",
-			placement: 'bottom'
-		});
-		$('#UserBar').popover('show');
-		$('#UserBar').bind("click", function() {
-			$('#UserBar').popover('destroy');
-		});
+		userActive();
