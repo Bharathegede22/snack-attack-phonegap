@@ -25,4 +25,10 @@ class Users::PasswordsController < Devise::PasswordsController
 		end
   end
   
+  protected
+  
+  def after_resetting_password_path_for(resource)
+    "/users/settings"
+  end
+  
 end

@@ -1,15 +1,24 @@
 - @user ||= User.new
-.t-c
-	.p-10
-		Please enter your email id and we will send the password reset instructions
-	- render_flash
-	%form{:id => "ForgotForm", :onsubmit => "return SubmitForm(this,'#{password_path(:user)}','ModalContent');", :action => "javascript:void(0)", "data-ajax" => "false"}
-		.form-inline
-			.form-group
-				%input#ForgotEmail.validate-presence.form-control{name: 'user[email]', type: "text", value: @user.email}
-				#ForgotEmailError.error.t-l
-					= @user.errors[:email].uniq.join(', ')
-		#ForgotSubmit.p-5
-			= submit_tag "Submit", :class => 'btn btn-default'
-		#ForgotWait.p-5.hide
-			.wait
+#SignupDiv
+	.t-c
+		.p-10
+			Please enter your email id and we will send the password reset instructions
+		- render_flash
+		%form{:id => "ForgotForm", :onsubmit => "return SubmitForm(this,'#{password_path(:user)}','ModalContent');", :action => "javascript:void(0)", "data-ajax" => "false"}
+			.form-inline
+				.form-group
+					%input#ForgotEmail.validate-presence.form-control{name: 'user[email]', type: "text", value: @user.email}
+					#ForgotEmailError.error.t-l
+						= errortxt(@user.errors[:email].uniq.join(', '))
+			#ForgotSubmit.p-5
+				= submit_tag "Submit", :class => 'btn btn-default'
+			#ForgotWait.p-5.hide
+				.wait
+		.p-t10
+			.row.f-b
+				.col-sm-6.t-l
+					%a{:href => "javascript:void(0)", :onclick => "getData('/users/signin', 'SignupDiv', 'replace', null);"}
+						Sign In?
+				.col-sm-6.t-r
+					%a{:href => "javascript:void(0)", :onclick => "getData('/users/signup', 'SignupDiv', 'replace', null);"}
+						Sign Up?

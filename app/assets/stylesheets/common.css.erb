@@ -808,7 +808,7 @@
 	text-transform: uppercase;
 }
 
-.button, .button-dis {
+.button, .button-dis, .btn-default, .btn-default:hover {
 	cursor:pointer;
 	font-size: 17px;
 	/*-webkit-border-radius: 5px;*/
@@ -821,14 +821,19 @@
   text-align:center;
   font-weight:bold;
   border:none;
+  text-shadow:none;
 }
 
 .button-dis {
 	background:#999999;
 }
 
-.button:hover {
+.button:hover, .btn-default:hover {
 	text-shadow: 1px 1px 1px #000;
+}
+
+.btn-default, .btn-default:hover {
+	padding:5px 15px;
 }
 
 /* Table */
@@ -851,6 +856,11 @@
 /********* Error Handling **********/
 .error {
 	color:#e2060a;
+}
+
+.error p {
+	margin:0;
+	padding:5px 0 0 12px;
 }
 
 .field_with_errors {

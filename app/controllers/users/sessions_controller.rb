@@ -13,6 +13,23 @@ class Users::SessionsController < Devise::SessionsController
 		end
   end
  
+ 	def new
+ 		respond_to do |format|
+			format.html {
+				self.resource = resource_class.new(sign_in_params)
+				clean_up_passwords(resource)
+				session[:blocked] = 1
+				redirect_to "/" and return
+				#respond_with(resource, serialize_options(resource))
+			}
+			format.json {
+				self.resource = resource_class.new(sign_in_params)
+				clean_up_passwords(resource)
+				render json: {html: render_to_string('new.haml', :layout => false)}
+			}
+		end
+  end
+  
   def sign_in_and_redirect(resource_or_scope, resource=nil)
     scope = Devise::Mapping.find_scope!(resource_or_scope)
     resource ||= resource_or_scope

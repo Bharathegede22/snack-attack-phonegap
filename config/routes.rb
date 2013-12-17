@@ -30,6 +30,7 @@ Web::Application.routes.draw do
 	resources :users do
 		collection do
 			get 'forgot'
+			get 'password'
 			get 'settings'
 			get 'social'
 			get 'signin'
@@ -37,6 +38,7 @@ Web::Application.routes.draw do
 			get 'status'
 			
 			post 'signup'
+			post 'update'
 		end
 	end
 	

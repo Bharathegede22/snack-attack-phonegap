@@ -1,18 +1,12 @@
 %head
-	%title= @meta_title
-	%meta{content: @meta_description, name: "description"}/
-	%meta{content: @meta_keywords, name: "keywords"}/
-	- if @canonical && !@canonical.empty?
-		%link{href: @canonical, rel: "canonical"}/
-	- if Rails.env != 'production' || @noindex
-		%meta{content: "noindex", name: "robots"}/
-	- else
-		%meta{content: "index,follow", name: "robot"}/
+	%title Zoomcar
+	%meta{content: 'Zoomcar', name: "description"}/
+	%meta{content: 'zoomcar', name: "keywords"}/
+	%meta{content: "noindex", name: "robots"}/
 	%meta{content: "© Copyright #{Time.now.year} ZoomCar India Private Ltd. All rights reserved.", name: "copyright"}/
 	%meta{content: "ZoomCar India Private Ltd.", name: "author"}/
 	%meta{content: "www.onlinemetatag.com", name: "generator"}/
 	%meta{content: "English", name: "language"}/
-	%meta{content: "3", name: "revisit-after"}/
 	%meta{charset: "utf-8"}/
 	= stylesheet_link_tag "application", :media => "screen"
 	%link{href: asset_path('favicon.png'), rel: "shortcut icon", type: "image/png"}/

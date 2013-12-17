@@ -1,59 +1,87 @@
-= form_tag do
+:ruby
+	current_user.country = 'IN' if current_user.country.blank?
+	current_user.state = 'Karnataka' if current_user.state.blank?
+= form_for(current_user, :url => "/users/update", :html => { :method => :post }) do |f|
+	- render_flash
 	.panel.panel-default
 		.panel-heading
 			%h3.panel-title Account Details
 		.panel-body
 			.form-horizontal
-				.form-group
+				.row.form-group
 					%label.col-sm-2.control-label Email
 					.col-sm-10
 						%p.form-control-static
 							= current_user.email
-				.form-group
-					%label.col-sm-2.control-label{for: "Phone"} Mobile
+				.row.form-group
+					%label.col-sm-2.control-label Mobile *
 					.col-sm-10
-						%input#Phone.form-control{type: "tel"}/
-				.form-group
-					%label.col-sm-2.control-label{for: "Password"} Password
+						= f.text_field :phone, :class => 'form-control', placeholder: '10 digit mobile no. (India only)'
+						.error
+							= errortxt(current_user.errors[:phone].uniq.join(', '))
+				.row.form-group
+					%label.col-sm-2.control-label Password
 					.col-sm-10
-						%input#Password.form-control{placeholder: "New Password", type: "password"}/
+						%p.form-control-static
+							%a{:href => edit_user_registration_path} Change Password 
 		.panel-heading
 			%h3.panel-title Personal Details
 		.panel-body
 			.form-horizontal
-				.form-group
-					%label.col-sm-2.control-label{for: "Name"} Name
+				.row.form-group
+					%label.col-sm-2.control-label Name *
 					.col-sm-10
-						%input#Name.form-control{type: "text"}/
-				.form-group
-					%label.col-sm-2.control-label{for: "Dob"} Date of Birth
+						= f.text_field :name, :class => 'form-control'
+						.error
+							= errortxt(current_user.errors[:name].uniq.join(', '))
+				.row.form-group
+					%label.col-sm-2.control-label Date of Birth *
 					.col-sm-10
-						%input#Dob.form-control{type: "date"}/
-				.form-group
-					%label.col-sm-2.control-label{for: "Gender"} Gender
+						- if current_user.dob.blank?
+							= f.text_field :dob, :class => 'form-control dob', placeholder: 'dd/mm/yyyy (min 23 years)'
+						- else
+							= f.text_field :dob, :value => current_user.dob.strftime("%d/%m/%Y"), :class => 'form-control dob', placeholder: 'dd/mm/yyyy (min 23 years)'
+						.error
+							= errortxt(current_user.errors[:dob].uniq.join(', '))
+				.row.form-group
+					%label.col-sm-2.control-label Gender
 					.col-sm-10
-						%select#Gender.form-control
-							%option Male
-							%option Female
+						= f.select :gender, [['Male', 0], ['Female', 1]], {}, :class => 'form-control'
 		.panel-heading
 			%h3.panel-title Location Details
 		.panel-body
 			.form-horizontal
-				.form-group
-					%label.col-sm-2.control-label{for: "Country"} Country
+				.row
+					.col-sm-2
 					.col-sm-10
-						%select#Country.form-control
-							= options_for_select(Country.all)
-				.form-group
-					%label.col-sm-2.control-label{for: "State"} State
+						.help-block.f-b
+							Please share your current address for optimized experience
+				.row.form-group
+					%label.col-sm-2.control-label Country
 					.col-sm-10
-						%select#State.form-control
-							= options_for_select(CommonHelper::STATE)
-				.form-group
-					%label.col-sm-2.control-label{for: "City"} City
-					.col-sm-10
-						%input#City.form-control{type: "text"}/
-				.form-group
-					%label.col-sm-2.control-label{for: "Pincode"} Pincode / Zipcode
-					.col-sm-10
-						%input#Pincode.form-control{type: "text"}/
+						= f.select :country, Country.all, {}, :class => 'form-control bind-country'
+				:ruby
+					if current_user.country == 'IN'
+						cls = ''
+					else
+						cls = 'hide'
+					end
+				%div{:class => cls + " bind-to-country"}
+					.row.form-group
+						%label.col-sm-2.control-label State
+						.col-sm-10
+							= f.select :state, CommonHelper::STATE, {}, :class => 'form-control'
+					.row.form-group
+						%label.col-sm-2.control-label City
+						.col-sm-10
+							= f.text_field :city, :class => 'form-control'
+					.row.form-group
+						%label.col-sm-2.control-label Pincode
+						.col-sm-10
+							= f.text_field :pincode, :class => 'form-control', placeholder: '6 digit current pincode'
+							.error
+								= errortxt(current_user.errors[:pincode].uniq.join(', '))
+			.row.form-group
+				.col-sm-2
+				.col-sm-10
+					= submit_tag "Submit", :class => 'btn btn-default'

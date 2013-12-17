@@ -11,19 +11,22 @@
 						.col-sm-6
 							%input#DetailsName.validate-presence.form-control{name: 'user[name]', type: "text", value: current_user.name}
 							#DetailsNameError.error
-								= current_user.errors[:email].uniq.join(', ')
+								= errortxt(current_user.errors[:email].uniq.join(', '))
 					.row.form-group
 						%label.col-sm-4.control-label Phone *
 						.col-sm-6
-							%input#DetailsPhone.validate-presence.validate-numeric.validate-length.form-control{name: 'user[phone]', type: "text", value: current_user.phone, 'data-length' => 10}
+							%input#DetailsPhone.validate-presence.validate-numeric.validate-length.form-control{name: 'user[phone]', type: "text", value: current_user.phone, 'data-length' => 10, placeholder: '10 digit mobile no. (India only)'}
 							#DetailsPhoneError.error
-								= current_user.errors[:phone].uniq.join(', ')
+								= errortxt(current_user.errors[:phone].uniq.join(', '))
 					.row.form-group
 						%label.col-sm-4.control-label Date of Birth *
 						.col-sm-6
-							%input#DetailsDob.validate-presence.form-control.dob{name: 'user[dob]', type: "date", value: current_user.dob, readonly: true}
+							- if current_user.dob.blank?
+								%input#DetailsDob.validate-presence.form-control.dob{name: 'user[dob]', type: "text", placeholder: 'dd/mm/yyyy (min 23 years)'}
+							- else
+								%input#DetailsDob.validate-presence.form-control.dob{name: 'user[dob]', type: "text", value: current_user.dob.strftime('%d/%m/%Y'), placeholder: 'dd/mm/yyyy (min 23 years)'}
 							#DetailsDobError.error
-								= current_user.errors[:dob].uniq.join(', ')
+								= errortxt(current_user.errors[:dob].uniq.join(', '))
 					.row.form-group
 						%label.col-sm-4.control-label Gender
 						.col-sm-6
@@ -38,7 +41,7 @@
 					.row.form-group
 						%label.col-sm-4.control-label Country
 						.col-sm-6
-							%select#DetailsCountry.form-control{name: 'user[country]'}
+							%select#DetailsCountry.form-control.bind-country{name: 'user[country]'}
 								- Country.all.each do |t|
 									- if current_user.country == t[1]
 										%option{value: t[1], selected: true}
@@ -46,27 +49,33 @@
 									- else
 										%option{value: t[1]}
 											= t[0]
-					.row.form-group
-						%label.col-sm-4.control-label Pincode / Zipcode
-						.col-sm-6
-							%input#DetailsPincode.validate-numeric.validate-length.form-control{name: 'user[pincode]', type: "text", value: current_user.pincode, 'data-length' => 6}
-							#DetailsPincodeError.error
-								= current_user.errors[:pincode].uniq.join(', ')
-					.row.form-group
-						%label.col-sm-4.control-label State
-						.col-sm-6
-							%select#DetailsState.form-control{name: 'user[state]'}
-								- CommonHelper::STATE.each do |t|
-									- if current_user.state == t
-										%option{value: t, selected: true}
-											= t
-									- else
-										%option{value: t}
-											= t
-					.row.form-group
-						%label.col-sm-4.control-label City
-						.col-sm-6
-							%input#DetailsCity.form-control{name: 'user[city]', type: "text", value: current_user.city}
+					.bind-to-country
+						.row
+							.col-sm-4
+							.col-sm-6
+								.help-block
+									Your current address for optimized experience
+						.row.form-group
+							%label.col-sm-4.control-label Pincode
+							.col-sm-6
+								%input#DetailsPincode.form-control{name: 'user[pincode]', type: "text", value: current_user.pincode, placeholder: '6 digit current pincode'}
+								#DetailsPincodeError.error
+									= errortxt(current_user.errors[:pincode].uniq.join(', '))
+						.row.form-group
+							%label.col-sm-4.control-label State
+							.col-sm-6
+								%select#DetailsState.form-control{name: 'user[state]'}
+									- CommonHelper::STATE.each do |t|
+										- if current_user.state == t
+											%option{value: t, selected: true}
+												= t
+										- else
+											%option{value: t}
+												= t
+						.row.form-group
+							%label.col-sm-4.control-label City
+							.col-sm-6
+								%input#DetailsCity.form-control{name: 'user[city]', type: "text", value: current_user.city, placeholder: 'current city'}
 				.t-c
 					#DetailsSubmit.p-5
 						= submit_tag "Submit", :class => 'btn btn-default'
@@ -77,9 +86,11 @@
 				:javascript
 					initializeDatePicker();
 					checkUser();
+					bindCountry();
 			- else
 				:javascript
 					initializeDatePicker();
+					bindCountry();
 		- else
 			.alert.alert-success
 				%b Thanks for providing your details.

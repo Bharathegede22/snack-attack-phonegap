@@ -19,12 +19,12 @@ class User < ActiveRecord::Base
   validates :phone, numericality: {only_integer: true}, if: Proc.new {|u| !u.phone.blank?}
   validates :pincode, numericality: {only_integer: true}, if: Proc.new {|u| !u.pincode.blank?}
   validates :phone, length: {is: 10, message: 'only indian mobile numbers without +91/091' }, if: Proc.new {|u| !u.phone.blank?}
-  validates :pincode, length: {is: 6}, if: Proc.new {|u| !u.pincode.blank?}
+  validates :pincode, length: {is: 6, message: 'should be of 6 digits'}, if: Proc.new {|u| !u.pincode.blank?}
   validate :check_dob
   
 
   def check_dob
-  	errors.add(:dob, "can't be less than 23 years") if !self.dob.blank? && self.dob > (Time.zone.now - 23.years)
+  	errors.add(:dob, "can't be less than 23 years") if !self.dob.blank? && (self.dob.to_datetime > (Time.zone.now - 23.years))
   end
   
   def get_bookings(action, page=0)
@@ -51,7 +51,20 @@ class User < ActiveRecord::Base
   			options = {:access_token => auth['credentials']['token']}
 				fql = Fql.execute("SELECT birthday_date, sex, pic_big FROM user WHERE uid = me()", options)[0]
   			user.name = auth.info.name if user.name.blank?
-  			user.city = auth.extra.raw_info.location.name if user.city.blank?
+  			if user.city.blank?
+  				if auth.extra.raw_info.location.name.include?(',')
+  					user.city = auth.extra.raw_info.location.name.split(',')[0].strip
+  					if user.country.blank? && Country.find_country_by_name(auth.extra.raw_info.location.name.split(',')[1].strip.downcase)
+ 							user.country = Country.find_country_by_name(auth.extra.raw_info.location.name.split(',')[1].strip.downcase).alpha2
+ 						end
+  				else
+  					user.city = auth.extra.raw_info.location.name
+  				end
+  			end
+  			user.state = auth.extra.raw_info.location.state if user.state.blank?
+  			if user.country.blank? && Country.find_country_by_name(auth.extra.raw_info.location.country)
+					user.country = Country.find_country_by_name(auth.extra.raw_info.location.country).alpha2
+				end
  				user.dob = Date.parse(fql['birthday_date']) if user.dob.blank? && !fql['birthday_date'].blank?
   			if !fql['sex'].blank?
   				if fql['sex'].downcase == 'male'

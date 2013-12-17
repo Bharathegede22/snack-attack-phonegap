@@ -4,13 +4,4 @@ class ApplicationController < ActionController::Base
   
   #protect_from_forgery with: :exception
   
-  private
-	
-	def meta
-		@meta_title = "Zoomcar"
-		@meta_description = "Zoomcar User Account"
-		@meta_keywords = "zoomcar"
-		@noindex = true
-	end
-	
 end

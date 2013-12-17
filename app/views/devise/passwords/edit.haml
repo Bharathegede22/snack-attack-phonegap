@@ -10,13 +10,13 @@
 			.col-sm-6
 				= f.password_field :password, :autofocus => true, :class => 'form-control'
 				.error
-					= @user.errors[:password].uniq.join(', ')
+					= errortxt(@user.errors[:password].uniq.join(', '))
 		.row.form-group
 			%label.col-sm-4.control-label Confirm Password
 			.col-sm-6
 				= f.password_field :password_confirmation, :class => 'form-control'
 				.error
-					= @user.errors[:password_confirmation].uniq.join(', ')
+					= errortxt(@user.errors[:password_confirmation].uniq.join(', '))
 		.row
 			.col-sm-4
 			.col-sm-6

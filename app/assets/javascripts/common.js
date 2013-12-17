@@ -172,6 +172,15 @@ function ValidateNumeric(numValue){
 	return true;
 }
 
+function ValidateDate(inputText) {
+	var dateformat = /^(0?[1-9]|[12][0-9]|3[01])[\/](0?[1-9]|1[012])[\/]\d{4}$/;
+	if(inputText.value.match(dateformat)) {  
+		return true;
+	} else {
+		return false;
+	}
+}  
+
 function SubmitForm(frm,url,divId){
 	var frmId = frm.id;
 	if($("#" + frmId.replace('Form','Submit')).length > 0 && $("#" + frmId.replace('Form','Wait')).length > 0){
@@ -190,7 +199,7 @@ function SubmitForm(frm,url,divId){
 		  } else {
 		  	new_url += "&" + frm.elements[i].name + "=" + frm.elements[i].value;
 		  }
-    	$('#' + frm.elements[i].id + 'Error').text("");
+    	$('#' + frm.elements[i].id + 'Error').html("");
     	$('#' + frm.elements[i].id + 'Error').hide();
 	    $(frm.elements[i]).removeClass('field_with_errors');
 	    if($(frm.elements[i]).hasClass('validate-presence') && (frm.elements[i].value.length == 0 || frm.elements[i].value == $('#'+frm.elements[i].id).attr('dummy-title'))) {
@@ -198,7 +207,7 @@ function SubmitForm(frm,url,divId){
 			    frm.elements[i].focus();
 			  }
 	    	if($('#' + frm.elements[i].id + 'Error').length > 0) {
-			    $('#' + frm.elements[i].id + 'Error').text("can't be empty");
+			    $('#' + frm.elements[i].id + 'Error').html("<p>can't be empty</p>");
 			    $('#' + frm.elements[i].id + 'Error').show();
 					$(frm.elements[i]).addClass('field_with_errors');
 				} else {
@@ -206,12 +215,12 @@ function SubmitForm(frm,url,divId){
 				}
 				failed = true;
 	    } else {
-				if($(frm.elements[i]).hasClass('validate-numeric') && (!ValidateNumeric(frm.elements[i].value))) {
+				if($(frm.elements[i]).hasClass('validate-numeric') && (frm.elements[i].value.length > 0) && (!ValidateNumeric(frm.elements[i].value))) {
 					if(!failed){
 		        frm.elements[i].focus();
 			    }
 			    if($('#' + frm.elements[i].id + 'Error').length > 0) {
-					  $('#' + frm.elements[i].id + 'Error').text("should be numeric");
+					  $('#' + frm.elements[i].id + 'Error').html("<p>should be numeric</p>");
 					  $('#' + frm.elements[i].id + 'Error').show();
 						$(frm.elements[i]).addClass('field_with_errors');
 					} else {
@@ -219,12 +228,12 @@ function SubmitForm(frm,url,divId){
 					}
 		      failed = true;
 			  }
-			  if($(frm.elements[i]).hasClass('validate-length') && (frm.elements[i].value.length != $(frm.elements[i]).data("length"))) {
+			  if($(frm.elements[i]).hasClass('validate-length') && (frm.elements[i].value.length > 0) && (frm.elements[i].value.length != $(frm.elements[i]).data("length"))) {
 					if(!failed){
 		        frm.elements[i].focus();
 			    }
 			    if($('#' + frm.elements[i].id + 'Error').length > 0) {
-					  $('#' + frm.elements[i].id + 'Error').text("need " + $(frm.elements[i]).data("length") + " characters");
+					  $('#' + frm.elements[i].id + 'Error').html("<p>need " + $(frm.elements[i]).data("length") + " characters</p>");
 					  $('#' + frm.elements[i].id + 'Error').show();
 						$(frm.elements[i]).addClass('field_with_errors');
 					} else {
@@ -232,16 +241,29 @@ function SubmitForm(frm,url,divId){
 					}
 		      failed = true;
 			  }
-			  if($(frm.elements[i]).hasClass('validate-email') && (!ValidateEmail(frm.elements[i].value))){
+			  if($(frm.elements[i]).hasClass('validate-email') && (frm.elements[i].value.length > 0) && (!ValidateEmail(frm.elements[i].value))){
 				  if(!failed){
 		        frm.elements[i].focus();
 			    }
 			    if($('#' + frm.elements[i].id + 'Error').length > 0) {
-					  $('#' + frm.elements[i].id + 'Error').text("is invalid");
+					  $('#' + frm.elements[i].id + 'Error').html("<p>is invalid</p>");
 					  $('#' + frm.elements[i].id + 'Error').show();
 						$(frm.elements[i]).addClass('field_with_errors');
 					} else {
 						alert("Email is invalid.");
+					}
+		      failed = true;
+			  }
+			  if($(frm.elements[i]).hasClass('validate-date') && (frm.elements[i].value.length > 0) && (!ValidateDate(frm.elements[i].value))){
+				  if(!failed){
+		        frm.elements[i].focus();
+			    }
+			    if($('#' + frm.elements[i].id + 'Error').length > 0) {
+					  $('#' + frm.elements[i].id + 'Error').html("<p>is invalid</p>");
+					  $('#' + frm.elements[i].id + 'Error').show();
+						$(frm.elements[i]).addClass('field_with_errors');
+					} else {
+						alert("Date is invalid.");
 					}
 		      failed = true;
 			  }
@@ -272,7 +294,7 @@ function initializeDatePicker() {
 	});
 	$(".dob").datetimepicker({
 		format: "dd/mm/yyyy",
-		endDate: (d.getFullYear() - 20) + "-" + (d.getMonth()+1) + "-" + d.getDate(),
+		endDate: d.getDate() + "/" + (d.getMonth()+1) + "/" + (d.getFullYear() - 22),
 		startView: 4,
 		minView: 2, 
 		autoclose: true
@@ -288,7 +310,7 @@ function initializeDatePicker() {
 		if($('#StartDateVal').val() != $('#StartDateVal').attr('dummy-title')) {
 			$('#EndDateVal').datetimepicker('show');
 		} else {
-			$('#EndDateValError').text('please select start date first');
+			$('#EndDateValError').html('please select start date first');
 			$('#EndDateValError').show();
 		}
 	});
@@ -379,6 +401,16 @@ function userActive() {
 	$('#UserBar').popover('show');
 	$('#UserBar').bind("click", function() {
 		$('#UserBar').popover('destroy');
+	});
+}
+
+function bindCountry() {
+	$('.bind-country').bind("change", function() {
+		if($(this).val() == 'IN') {
+			$('.bind-to-country').show();
+		} else {
+			$('.bind-to-country').hide();
+		}
 	});
 }
 

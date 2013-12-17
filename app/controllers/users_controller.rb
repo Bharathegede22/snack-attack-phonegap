@@ -1,7 +1,6 @@
 class UsersController < ApplicationController
 	
-	before_filter :authenticate_user!, :only => [:social, :settings]
-	before_filter :meta, :only => [:settings]
+	before_filter :authenticate_user!, :only => [:social, :settings, :update]
 	
 	def forgot
 		render json: {html: render_to_string('/devise/passwords/new.haml', :layout => false)}
@@ -50,6 +49,16 @@ class UsersController < ApplicationController
 	
 	def status
 		render json: {html: render_to_string('/users/status.haml', :layout => false)}
+	end
+	
+	def update
+		if current_user.update(signup_params)
+			flash[:notice] = 'Changes saved!'
+			redirect_to '/users/settings'
+		else
+			flash[:error] = 'Please fix the following error!'
+			render 'settings'
+		end
 	end
 	
 	private

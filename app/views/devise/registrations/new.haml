@@ -21,21 +21,21 @@
 					.col-sm-6
 						%input#LoginEmail.validate-presence.form-control{name: 'user[email]', type: "text", value: resource.email}
 						#LoginEmailError.error.t-l
-							= @user.errors[:email].uniq.join(', ')
+							= errortxt(@user.errors[:email].uniq.join(', '))
 				.row.form-group
 					.col-sm-3.col-sm-offset-1.t-r
 						%label.control-label Password
 					.col-sm-6
 						%input#LoginPass.validate-presence.form-control{name: "user[password]", type: "password", value: resource.password}
 						#LoginPassError.error.t-l
-							= @user.errors[:password].uniq.join(', ')
+							= errortxt(@user.errors[:password].uniq.join(', '))
 				.row.form-group
 					.col-sm-3.col-sm-offset-1.t-r
 						%label.control-label Confirm Password
 					.col-sm-6
 						%input#LoginPassConfirm.validate-presence.form-control{name: "user[password_confirmation]", type: "password"}
 						#LoginPassConfirmError.error.t-l
-							= @user.errors[:password_confirmation].join(', ')
+							= errortxt(@user.errors[:password_confirmation].join(', '))
 				.row
 					.col-sm-3.col-sm-offset-1
 					.col-sm-6.t-l
@@ -43,6 +43,11 @@
 							= submit_tag "Submit", :class => 'btn btn-default'
 						#LoginWait.p-5.hide
 							.wait
-		.p-t10.f-b.t-l
-			%a{:href => "javascript:void(0)", :onclick => "showModal('Sign In', '/users/signin');"}
-				Sign In?
+		.p-t10
+			.row.f-b
+				.col-sm-6.t-l
+					%a{:href => "javascript:void(0)", :onclick => "getData('/users/signin', 'SignupDiv', 'replace', null);"}
+						Sign In?
+				.col-sm-6.t-r
+					%a{:href => "javascript:void(0)", :onclick => "getData('/users/forgot', 'SignupDiv', 'replace', null);"}
+						Forgot your password?

@@ -13,7 +13,7 @@
 				Logout
 - else
 	%a.dropdown-toggle{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
-		My Account
+		Sign Up / Sign In
 		%b.caret
 	%ul.dropdown-menu
 		%li
@@ -22,6 +22,9 @@
 		%li
 			%a{:href => "javascript:void(0)", :onclick => "showModal('Sign In', '/users/signin');"}
 				Sign In
+		%li
+			%a{:href => "javascript:void(0)", :onclick => "showModal('Sign In', '/users/forgot');"}
+				Forgot Password
 - if user_signed_in? && !session[:social_signup].blank?
 	- if session[:social_signup] == 0
 		- session[:social_signup] = nil
@@ -34,3 +37,8 @@
 	- session[:confirmed] = nil
 	:javascript
 		userActive();
+- elsif session[:blocked] == 1
+	- session[:blocked] = nil
+	- flash[:notice] = "<b>Access Denied!</b> Please login to continue."
+	:javascript
+		showModal('Sign In', '/users/signin');
