@@ -11,7 +11,7 @@ class BookingsController < ApplicationController
 	end
 	
 	def payment
-		@payment = @booking.new_payment
+		@payment = @booking.check_payment
 		if @payment
 			render :layout => nil
 		else
@@ -39,17 +39,17 @@ class BookingsController < ApplicationController
 						booking.user_email + "|" + 
 						booking.user_name + "|" + 
 						params[:productinfo] + "|" + 
-						payment.amount.to_i.to_s + "|" + 
-						payment.encoded_id.downcase + "|" + 
+						params[:amount] + "|" + 
+						@payment.encoded_id.downcase + "|" + 
 						PAYU_KEY
-					if params[:amount] == @payment.amount && 
+					if params[:amount].to_i == @payment.amount.to_i && 
 						params[:firstname] == booking.user_name && 
 						params[:email] == booking.user_email && 
 						Digest::SHA512.hexdigest(hash) == params[:hash]
-						@payment.status = case params[:status]
-						when 'SUCCESS' then 1
-						when 'FAILURE' then 2
-						when 'PENDING' then 3
+						@payment.status = case params[:status].downcase
+						when 'success' then 1
+						when 'failure' then 2
+						when 'pending' then 3
 						end
 						if !params[:mode].blank?
 							@payment.mode = case params[:mode].downcase
@@ -60,7 +60,7 @@ class BookingsController < ApplicationController
 						@payment.key = params[:mihpayid] if !params[:mihpayid].blank?
 						@payment.notes = ''
 						@payment.notes << "<b>ERROR : </b>" + params[:error] + "<br/>" if !params[:error].blank?
-						@payment.notes << "<b>PG_TYPE : </b>" + params[:pg_type] + "<br/>" if !params[:pg_type].blank?
+						@payment.notes << "<b>PG TYPE : </b>" + params['PG_TYPE'] + "<br/>" if !params['PG_TYPE'].blank?
 						@payment.notes << "<b>Bank Ref Num : </b>" + params[:bank_ref_num] + "<br/>" if !params[:bank_ref_num].blank?
 						@payment.notes << "<b>Unmapped Status : </b>" + params[:unmappedstatus] + "<br/>" if !params[:unmappedstatus].blank?
 						@payment.save(:validate => false)

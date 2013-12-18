@@ -13,11 +13,7 @@ class Booking < ActiveRecord::Base
 	has_many	:reviews, :inverse_of => :booking, dependent: :destroy
 	has_many	:utilizations, -> {where "minutes > 0"}, dependent: :destroy
 	
-	def encoded_id
-		CommonHelper.encode('booking', self.id)
-	end
-	
-	def new_payment
+	def check_payment
 		total = self.outstanding
 		if total > 0
 			payment = Payment.find(:first, :conditions => ["booking_id = ? AND through = ? AND amount = ? AND status = 0", self.id, 'payu', total])
@@ -26,6 +22,10 @@ class Booking < ActiveRecord::Base
 			payment = nil
 		end
 		return payment
+	end
+	
+	def encoded_id
+		CommonHelper.encode('booking', self.id)
 	end
 	
 	def outstanding
