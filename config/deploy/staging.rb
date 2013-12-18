@@ -52,6 +52,8 @@ namespace :generic do
 	task :configs, :roles => [:app] do
 	  run "ln -s #{shared_path}/database.yml #{release_path}/config/database.yml"
 	  run "ln -s #{shared_path}/configurations.yml #{release_path}/config/configurations.yml"
+	  run "rm #{release_path}/public/robots.txt"
+	  run "ln -s #{shared_path}/robots.txt #{release_path}/public/robots.txt"
 	end
 	
 	desc "Zero-downtime restart of Unicorn"

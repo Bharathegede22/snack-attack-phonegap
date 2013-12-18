@@ -1,7 +1,5 @@
 class BookingsController < ApplicationController
 	
-	before_filter :meta, :except => [:search, :widget]
-	
 	def index
 		render layout: 'users'
 	end
