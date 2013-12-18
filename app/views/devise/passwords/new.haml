@@ -11,7 +11,7 @@
 					#ForgotEmailError.error.t-l
 						= errortxt(@user.errors[:email].uniq.join(', '))
 			#ForgotSubmit.p-5
-				= submit_tag "Submit", :class => 'btn btn-default'
+				= submit_tag "Submit", :class => 'btn btn-default btn-lg'
 			#ForgotWait.p-5.hide
 				.wait
 		.p-t10

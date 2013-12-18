@@ -5,6 +5,7 @@
 - else
 	%table.table-striped.table
 		%tr.active
+			%th #
 			%th Car
 			%th Location
 			%th Starts
@@ -12,10 +13,12 @@
 			%th
 		- bookings.each do |b|
 			%tr
+				%td
+					%b #{b.encoded_id.upcase}
 				%td #{b.cargroup.name}
 				%td #{b.location.shortname}
 				%td #{b.starts.strftime("%d %b, %Y %I:%M %p")}
 				%td #{b.ends.strftime("%d %b, %Y %I:%M %p")}
 				%td.t-r
-					%a.btn.btn-xs.btn-primary{href: "/bookings/#{b.encoded_id}", target: '_blank', role: "button", :title => 'See Details'}
+					%a.btn.btn-xs.btn-default{href: "/bookings/#{b.encoded_id}", target: '_blank', role: "button", :title => 'See Details'}
 						%span.glyphicon.glyphicon-list

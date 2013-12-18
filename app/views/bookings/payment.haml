@@ -1,0 +1,37 @@
+!!!
+%html{lang: "en"}
+	%head
+		%title Zoomcar
+		%meta{content: 'Zoomcar', name: "description"}/
+		%meta{content: 'zoomcar', name: "keywords"}/
+		%meta{content: "noindex", name: "robots"}/
+		%meta{content: "© Copyright #{Time.now.year} ZoomCar India Private Ltd. All rights reserved.", name: "copyright"}/
+		%meta{content: "ZoomCar India Private Ltd.", name: "author"}/
+		%meta{content: "www.onlinemetatag.com", name: "generator"}/
+		%meta{content: "English", name: "language"}/
+		%meta{charset: "utf-8"}/
+		%link{href: asset_path('favicon.png'), rel: "shortcut icon", type: "image/png"}/
+		:javascript
+			if (window.addEventListener)
+				window.addEventListener("load", downloadJSAtOnload, false);
+			else if (window.attachEvent)
+				window.attachEvent("onload", downloadJSAtOnload);
+			else window.onload = downloadJSAtOnload;
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-38347989-1']);
+			_gaq.push(['_setDomainName', 'zoomcar.in']);
+			_gaq.push(['_setAllowLinker', true]);
+			_gaq.push(['_trackPageview']);
+			(function() {
+				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+			})();
+		%body{:style => "font-family:Arial, Helvetica, sans-serif; background:#E6E6E6; color: #666666; font-size: 16px; text-align:center;"}
+			%br/
+			%br/
+			%div{:style => 'color:#6ABD19; font-size:40px; font-weight:bold; padding:10px 0;'}
+				%a{href: "http://www.zoomcar.in", style: "text-decoration:none; color:#6ABD19;"}
+					%img{:src => "http://#{HOSTNAME}/images/email/logo.jpg", :alt => 'Zoomcar', :border => '0'}/
+			%div{:style => "border-radius: 5px; background:#ffffff; padding:100px 0; width:600px; margin:auto; line-height:30px;"}
+				= render :partial => '/bookings/pg/payu'

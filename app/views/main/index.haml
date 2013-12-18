@@ -8,7 +8,7 @@
 				By the Hour or by the Day
 			.fc
 		.slider
-			#CarSlider.carousel.slide{'data-ride' => "carousel", 'data-interval' => '10000', 'data-pause' => 'click'}
+			#CarSlider.carousel.slide{'data-ride' => "carousel", 'data-interval' => '7000', 'data-pause' => 'click'}
 				%ol.carousel-indicators
 					- count = 0
 					- @cargroup.each do |cargroup|
@@ -48,7 +48,7 @@
 													#{cargroup.hourly_km_limit} Kms / hour. Max 200 Kms
 												.offer
 													Mon-Thurs 35% Discount
-											.item.r-5
+											.item.r-5.last
 												.head Daily Trip
 												.exp After 24 Hours
 												.fare
@@ -57,24 +57,6 @@
 													#{cargroup.daily_km_limit} Kms / day
 												.offer
 													Mon-Thurs 35% Discount
-											.item.r-5
-												.head Weekly Trip
-												.exp After 7 Days
-												.fare
-													%b ₹#{cargroup.hourly_fare} / week
-												.kms
-													#{cargroup.hourly_km_limit} Kms / week
-												.offer
-													Best price
-											.item.last.r-5
-												.head Monthly Trip
-												.exp After 4 Weeks
-												.fare
-													%b ₹#{cargroup.hourly_fare} / month
-												.kms
-													#{cargroup.hourly_km_limit} Kms / month
-												.offer
-													Best Price
 											.fc
 	.tariff-bg
 	.tariff
@@ -115,7 +97,7 @@
 					= render :partial => '/bookings/widget_homepage'
 .reviews
 	%h2 What our happy users say about Zoom
-	#ReviewSlider.carousel.slide{'data-ride' => "carousel", 'data-interval' => '10000', 'data-pause' => 'hover'}
+	#ReviewSlider.carousel.slide{'data-ride' => "carousel", 'data-interval' => '7000', 'data-pause' => 'hover'}
 		.carousel-inner
 			.item.active
 				.text

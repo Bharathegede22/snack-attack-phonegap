@@ -11,8 +11,8 @@
 .carousel-inner > .item {
   position: relative;
   display: none;
-  -webkit-transition: 0.6s ease-in-out left;
-          transition: 0.6s ease-in-out left;
+  -webkit-transition: 0.1s ease-in-out left;
+          transition: 0.1s ease-in-out left;
 }
 
 .carousel-inner > .item > img,
@@ -231,4 +231,12 @@
 
 .search-item .dropdown-toggle {
 	width:30px;
+}
+
+.carousel .item {
+	left: 0 !important;
+	-webkit-transition: opacity .4s; /*adjust timing here */
+	-moz-transition: opacity .4s;
+	-o-transition: opacity .4s;
+	transition: opacity .4s;
 }

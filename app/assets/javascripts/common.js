@@ -414,6 +414,12 @@ function bindCountry() {
 	});
 }
 
+function carouselPause() {
+	$('.carousel-indicators').find('li').bind("click", function() {
+		$('.carousel').carousel('pause');
+	});
+}
+
 function socialPlugins() {
 	(function(d, s, id) {
 		var js, fjs = d.getElementsByTagName(s)[0];
@@ -433,6 +439,7 @@ function socialPlugins() {
 }
 
 $('.carousel').carousel();
+carouselPause();
 $('.help').tooltip();
 checkJail();
 initializeDatePicker();

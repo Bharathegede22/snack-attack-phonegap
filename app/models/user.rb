@@ -22,7 +22,8 @@ class User < ActiveRecord::Base
   validates :pincode, length: {is: 6, message: 'should be of 6 digits'}, if: Proc.new {|u| !u.pincode.blank?}
   validate :check_dob
   
-
+	before_validation :before_validation_tasks
+	
   def check_dob
   	errors.add(:dob, "can't be less than 23 years") if !self.dob.blank? && (self.dob.to_datetime > (Time.zone.now - 23.years))
   end
@@ -127,6 +128,16 @@ class User < ActiveRecord::Base
   
   def signup?
     @signup
+  end
+  
+  private
+  
+  def before_validation_tasks
+  	if !self.country.blank? && self.country != 'IN'
+  		self.state = nil
+  		self.city = nil
+  		self.pincode = nil
+  	end
   end
   
 end

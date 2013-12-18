@@ -808,20 +808,26 @@
 	text-transform: uppercase;
 }
 
-.button, .button-dis, .btn-default, .btn-default:hover {
+.button, .button-dis, .btn-default, .btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active {
 	cursor:pointer;
-	font-size: 17px;
-	/*-webkit-border-radius: 5px;*/
-	/*border-radius: 5px;*/
 	color: #fff !important;
 	-webkit-font-smoothing: antialiased;
 	background: #6ABD19;
-	border-radius: 5px;
-  padding:5px 0;
-  text-align:center;
-  font-weight:bold;
-  border:none;
   text-shadow:none;
+  -webkit-border-radius: 5px;
+	-khtml-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	font-weight:bold;
+	behavior: url(<%= asset_path 'PIE.htc' %>);
+	border:none;
+}
+
+.button, .button-dis {
+	font-size: 18px;
+	padding:5px 0;
+  text-align:center;
+  border:none;
 }
 
 .button-dis {
@@ -830,10 +836,6 @@
 
 .button:hover, .btn-default:hover {
 	text-shadow: 1px 1px 1px #000;
-}
-
-.btn-default, .btn-default:hover {
-	padding:5px 15px;
 }
 
 /* Table */
@@ -883,4 +885,11 @@
 	position:fixed;
 	left:50%;
 	top:50%;
+}
+
+h1, h2, h3 {
+	margin:10px 0;
+	font-weight:bold;
+	font-family: 'Droid Sans', 'Arial', sans-serif;
+	color:#6ABD19;
 }

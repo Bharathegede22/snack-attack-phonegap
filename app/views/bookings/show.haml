@@ -1,3 +1,7 @@
+- render_flash
+%h1.t-c
+	= "# " + @booking.encoded_id.upcase
+%br/
 .row
 	.col-md-8.size-16
 		.row
@@ -40,12 +44,12 @@
 			- else
 				%a.btn.btn-primary{href: "/bookings/#{@booking.encoded_id}/invoice", target: '_blank', role: "button"} Invoice
 		%br/
-		.m-t20
-			%h3.f-b Booking History
-		.size-12
-			= @booking.notes.html_safe
+		.m-t20.panel.panel-default
+			.panel-heading.f-b.size-20 Booking History
+			.panel-body.size-12
+				= @booking.notes.html_safe
 	.col-md-4
-		- total = 0
+		- @total = 0
 		- tmp = 0
 		%table.table.table-bordered
 			%tr.active
@@ -68,12 +72,12 @@
 					Total
 				%td.t-r
 					= tmp
-					- total += tmp
+					- @total += tmp
 					- tmp = 0
 			%tr.active
 				%td{:colspan => '2'}
 					%h4.f-b Payments Received
-			- @booking.payments.each do |p|
+			- @booking.confirmed_payments.each do |p|
 				%tr
 					%td
 						= p.through_text + " Payment"
@@ -85,40 +89,42 @@
 					Total
 				%td.t-r
 					= tmp
-					- total -= tmp
+					- @total -= tmp
 					- tmp = 0
 			%tr.active
 				%td{:colspan => '2'}
 					%h4.f-b Refunds Issued
-			- @booking.refunds.each do |r|
+			- @booking.confirmed_refunds.each do |r|
 				- if r.through != 'early_return_credits'
 					%tr
 						%td
 							= r.through_text
 						%td.t-r
 							= r.amount
-							- tmp += p.amount
+							- tmp += r.amount
 			%tr.f-b
 				%td
 					Total
 				%td.t-r
 					= tmp
-					- total -= tmp
-			- if total > 0
+					- @total -= tmp
+			- if @total > 0
 				%tr.danger.size-16
 					%td
 						%b Outstanding
 					%td.t-r
-						%b #{total}
-			- elsif total < 0
+						%b #{@total}
+			- elsif @total < 0
 				%tr.success.size-16
 					%td
 						%b Outstanding
 					%td.t-r
-						%b #{total}
+						%b #{@total}
 			- else
 				%tr.size-16
 					%td
 						%b Outstanding
 					%td.t-r
-						%b #{total}
+						%b #{@total}
+		- if @total > 0
+			%a.btn.btn-default.btn-lg{href: "/bookings/#{@booking.encoded_id}/payment", role: "button"} Proceed to Payment

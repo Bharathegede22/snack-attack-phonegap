@@ -8,11 +8,44 @@ class Booking < ActiveRecord::Base
 	has_many	:charges, :inverse_of => :booking, dependent: :destroy
 	has_many	:payments, :inverse_of => :booking, dependent: :destroy
 	has_many	:refunds, :inverse_of => :booking, dependent: :destroy
+	has_many	:confirmed_payments, -> { where "status = 1" }, class_name: "Payment"
+	has_many	:confirmed_refunds, -> { where "status = 1" }, class_name: "Refund"
 	has_many	:reviews, :inverse_of => :booking, dependent: :destroy
 	has_many	:utilizations, -> {where "minutes > 0"}, dependent: :destroy
 	
 	def encoded_id
 		CommonHelper.encode('booking', self.id)
+	end
+	
+	def new_payment
+		total = self.outstanding
+		if total > 0
+			payment = Payment.find(:first, :conditions => ["booking_id = ? AND through = ? AND amount = ? AND status = 0", self.id, 'payu', total])
+			payment = Payment.create!(booking_id: self.id, through: 'payu', amount: total) if !payment
+		else
+			payment = nil
+		end
+		return payment
+	end
+	
+	def outstanding
+		total = 0
+		self.charges.each do |c|
+			if c.activity != 'early_return_refund'
+				if c.refund > 0
+					total -= c.amount
+				else
+					total += c.amount
+				end
+			end
+		end
+		self.confirmed_payments.each do |p|
+			total -= p.amount
+		end
+		self.confirmed_refunds.each do |r|
+			total -= r.amount if r.through != 'early_return_credits'
+		end		
+		return total.to_i
 	end
 	
 	def status?
