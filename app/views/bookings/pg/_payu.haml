@@ -1,45 +1,49 @@
-%b{:style => 'font-size:20px;'} Please wait while we redirect you to payment gateway
+%b.size-24 Please wait while we process your request
 %br
 Please dont refresh this page or use back button
 %br/
 %br/
-%img{:src => "http://#{HOSTNAME}/assets/loader.gif", :alt => '', :border => '0'}
+%img{:src => "http://#{HOSTNAME}/images/loader.gif", :alt => '', :border => '0'}
 %br/
 %br/
-Use the below button if you are not redirected in five seconds.
-:ruby
-	hash = PAYU_KEY + "|" + 
-		@payment.encoded_id + "|" + 
-		@payment.amount.to_i.to_s + "|" + 
-		@booking.car.name + "|" + 
-		@booking.user_name + "|" + 
-		@booking.user_email + "|||||||||||" + 
-		PAYU_SALT
-%form{:action => "#{PAYU_URL}", :id => 'pgForm', :method => "post"}
-	%div{:style => 'display:none;'}
-		= text_field_tag :key, PAYU_KEY
-		= text_field_tag :txnid, @payment.encoded_id
-		= text_field_tag :amount, @payment.amount.to_i
-		= text_field_tag :productinfo, @booking.car.name
-		= text_field_tag :firstname, @booking.user_name
-		= text_field_tag :email, @booking.user_email
-		= text_field_tag :phone, @booking.user_mobile
-		= text_field_tag :surl, (HOSTNAME + "/bookings/payu")
-		= text_field_tag :curl, (HOSTNAME + "/bookings/payu")
-		= text_field_tag :furl, (HOSTNAME + "/bookings/payu")
-		= text_field_tag :hash, Digest::SHA512.hexdigest(hash)
-		= text_field_tag :pg, 'CC'
-		= text_field_tag :drop_category, 'NB,CASH,EMI,COD'
-		= text_field_tag :api_version , '1'
-	= submit_tag "Proceed To Payment", :class => 'btn btn-default btn-lg'
-:javascript
-	window.onload = function() {
-		var auto = setTimeout(function(){ autoRefresh(); }, 100);
-		function submitform() {
-			document.forms["pgForm"].submit();
-		}
-		function autoRefresh() {
-			clearTimeout(auto);
-			auto = setTimeout(function(){ submitform(); autoRefresh(); }, 2000);
-		}
-	}
+#Hide{:style => "display:none;"}
+	Use the below button if you are not redirected within 10 seconds
+	.p-t10
+		:ruby
+			hash = PAYU_KEY + "|" + 
+				@payment.encoded_id + "|" + 
+				@payment.amount.to_i.to_s + "|" + 
+				@booking.car.name + "|" + 
+				@booking.user_name + "|" + 
+				@booking.user_email + "|||||||||||" + 
+				PAYU_SALT
+		%form{:action => "#{PAYU_URL}", :id => 'pgForm', :method => "post"}
+			.hide
+				= text_field_tag :key, PAYU_KEY
+				= text_field_tag :txnid, @payment.encoded_id
+				= text_field_tag :amount, @payment.amount.to_i
+				= text_field_tag :productinfo, @booking.car.name
+				= text_field_tag :firstname, @booking.user_name
+				= text_field_tag :email, @booking.user_email
+				= text_field_tag :phone, @booking.user_mobile
+				= text_field_tag :surl, ("http://" + HOSTNAME + "/bookings/payu")
+				= text_field_tag :curl, ("http://" + HOSTNAME + "/bookings/payu")
+				= text_field_tag :furl, ("http://" + HOSTNAME + "/bookings/payu")
+				= text_field_tag :hash, Digest::SHA512.hexdigest(hash)
+				= text_field_tag :pg, 'CC'
+				= text_field_tag :drop_category, 'NB,CASH,EMI,COD'
+				= text_field_tag :api_version , '1'
+			= submit_tag "Proceed To Payment Gateway", :class => 'btn btn-default'
+		:javascript
+			window.onload = function() {
+				var auto = setTimeout(function(){ submitform(); }, 3000);
+				function submitform() {
+					clearTimeout(auto);
+					auto = setTimeout(function(){ showSubmit(); }, 10000);
+					document.forms["pgForm"].submit();
+				}
+				function showSubmit() {
+					$('#Hide').slideDown();
+					clearTimeout(auto);
+				}
+			}

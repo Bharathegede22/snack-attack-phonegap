@@ -1,0 +1,25 @@
+%div.droid.size-14.grey.t-c
+	%br/
+	.p-20.zoom.size-14.f-b
+		%img{:src => "http://#{HOSTNAME}/images/logo.jpg", :alt => 'Zoomcar', :border => '0'}/
+	%br/
+	.bs-zoom.r-10{:style => "background:#eeeeee; padding:50px 0; width:600px; margin:auto; line-height:30px;"}
+		%b.size-24 Please wait while we process your request
+		%br
+		Please dont refresh this page or use back button
+		%br/
+		%br/
+		%img{:src => "http://#{HOSTNAME}/images/loader.gif", :alt => '', :border => '0'}
+		%br/
+		%br/
+		Use the below button if you are not redirected within 10 seconds
+		.p-t10
+			%a.btn.btn-default{href: "/bookings/" + @booking.encoded_id} Proceed to Zoomcar
+	:javascript
+		window.onload = function() {
+			var auto = setTimeout(function(){ submitform(); }, 3000);
+			function submitform() {
+				clearTimeout(auto);
+				window.location = "http://#{HOSTNAME}/bookings/#{@booking.encoded_id}";
+			}
+		}

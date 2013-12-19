@@ -21,7 +21,7 @@ class Payment < ActiveRecord::Base
 	def status_text
 		case self.status
 		when 0 then 'Initiated'
-		when 1 then 'Processed'
+		when 1 then 'Success'
 		when 2 then 'Failed'
 		when 3 then 'Pending'
 		end

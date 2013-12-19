@@ -16,8 +16,7 @@ class Booking < ActiveRecord::Base
 	def check_payment
 		total = self.outstanding
 		if total > 0
-			payment = Payment.find(:first, :conditions => ["booking_id = ? AND through = ? AND amount = ? AND status = 0", self.id, 'payu', total])
-			payment = Payment.create!(booking_id: self.id, through: 'payu', amount: total) if !payment
+			payment = Payment.create!(booking_id: self.id, through: 'payu', amount: total)
 		else
 			payment = nil
 		end

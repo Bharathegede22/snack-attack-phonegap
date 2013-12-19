@@ -12,6 +12,7 @@
 				%ol.carousel-indicators
 					- count = 0
 					- @cargroup.each do |cargroup|
+						- next if cargroup.id == 5
 						- if cargroup == @cargroup[0]
 							%li.active{'data-target' => "#CarSlider", 'data-slide-to' => "#{count}"}
 								= cargroup.display_name.gsub('Mahindra ','')
@@ -21,6 +22,7 @@
 						- count += 1
 				.carousel-inner
 					- @cargroup.each do |cargroup|
+						- next if cargroup.id == 5
 						:ruby
 							if cargroup == @cargroup[0]
 								style = "background:url(#{asset_path 'cars/' + cargroup.id.to_s + '.jpg'}) no-repeat center top;"

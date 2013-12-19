@@ -361,7 +361,9 @@ function changeLocation(id,name) {
 }
 
 function checkUser() {
-	getData("/users/status", 'UserBar', 'replace', null);
+	if($('#UserBar').length) {
+		getData("/users/status", 'UserBar', 'replace', null);
+	}
 }
 
 function logOut(url) {

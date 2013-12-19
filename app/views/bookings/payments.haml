@@ -1,0 +1,47 @@
+- render_flash
+%h1.t-c
+	= "# " + @booking.encoded_id.upcase
+.m-t20.panel.panel-default
+	.panel-heading.f-b.size-20 Payment History
+	.panel-body.size-12
+		- tmp = 0
+		%table.table.table-bordered
+			- @booking.payments.each do |p|
+				:ruby
+					cls = case p.status 
+					when 0 then ''
+					when 1 then 'success'
+					when 2 then 'danger'
+					when 3 then 'warning'
+					end
+				%tr{:class => cls}
+					%td
+						.row
+							.col-md-4
+								.f-b
+									= "# " + p.encoded_id.upcase + " (" + p.through_text + ")"
+								%br/
+								- if !p.key.blank?
+									Key : 
+									= p.key
+									%br/
+								- if !p.mode.blank?
+									Mode : 
+									= p.mode_text
+									%br/
+								= p.created_at.strftime("%d/%m/%Y %H:%M %p")
+							.col-md-8.t-r
+								.f-b
+									= p.status_text
+								%br/
+								= p.notes.html_safe if !p.notes.blank?
+					%td.t-r
+						= p.amount
+						- tmp += p.amount if p.status == 1
+						%br/
+						%br/
+			%tr.f-b.size-16.active
+				%td
+					Total
+				%td.t-r
+					= tmp

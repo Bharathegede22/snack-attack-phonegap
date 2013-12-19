@@ -15,14 +15,17 @@ Web::Application.routes.draw do
 	
 	resources :bookings do
 		collection do
-			get 'widget'
+			get 'complete'
+			get 'payment'
 			get 'payu'
+			get 'widget'
 			
 			post 'payu'
 		end
 		member do
+			get 'dopayment'
 			get 'invoice'
-			get 'payment'
+			get 'payments'
 		end
 	end
 	

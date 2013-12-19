@@ -19,14 +19,14 @@
 					.col-sm-2.col-sm-offset-2.t-r
 						%label.control-label Email
 					.col-sm-6
-						%input.validate-presence.form-control{:id => "LoginEmail", :name => 'user[email]', :type => "text"}
+						%input#LoginEmail.validate-presence.form-control{name: 'user[email]', type: "text", value: @user.email}
 						#LoginEmailError.error.t-l
 							= errortxt(@user.errors[:email].uniq.join(', '))
 				.row.form-group
 					.col-sm-2.col-sm-offset-2.t-r
 						%label.control-label Password
 					.col-sm-6
-						%input.validate-presence.form-control{:id => "LoginPass", :name => "user[password]", :type => "password"}
+						%input#LoginPass.validate-presence.form-control{name: "user[password]", type: "password"}
 						#LoginPassError.error.t-l
 							= errortxt(@user.errors[:password].uniq.join(', '))
 				- if devise_mapping.rememberable?
