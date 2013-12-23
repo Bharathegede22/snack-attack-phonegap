@@ -28,9 +28,7 @@ class MainController < ApplicationController
 		@meta_description = "Self-drive car hire in Bangalore. Enjoy the Freedom of Four Wheels by renting a car by the hour or by the day.  All-inclusive tariff covers fuel, insurance & taxes"
 		@meta_keywords = "zoomcar, self drive car, self drive car rental, renting a car, self drive cars"
 		@canonical = "http://www.zoomcar.in"
-		if session[:starts] && session[:ends]
-			redirect_to action: "book"
-		end
+		render layout: false
 	end
 
 

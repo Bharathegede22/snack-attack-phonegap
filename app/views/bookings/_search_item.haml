@@ -1,0 +1,55 @@
+- car = inventory[1]
+- locs = inventory[0]
+.search-item
+	.p-10
+		.img
+			%div{:class => 'car' + car.id.to_s}
+		.details
+			.name
+				= car.display_name
+			.cap
+				= car.seating
+				Seater
+			.fc
+			.avail
+				- if locs[0][1][0] == 1
+					.yes{id: 'Avail' + car.id.to_s}
+						Available
+				- else
+					.no{id: 'Avail' + car.id.to_s}
+						Not Available
+				.at
+					at
+				.loc
+					.btn-group
+						%button.btn.btn-default{type: "button", id: 'LocName' + car.id.to_s}
+							= locs[0][1][1].shortname
+						%button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", type: "button"}
+							%span.caret
+							%span.sr-only Toggle Dropdown
+						%ul.dropdown-menu{role: "menu", id: "LocMenu" + car.id.to_s}
+							- locs.each do |l|
+								- if l == locs[0]
+									%li.active{:id => ("LocSel" + car.id.to_s + l[1][1].id.to_s)}
+										%a{href: "javascript:void(0)", onclick: "showAvailability(#{car.id}, #{l[1][1].id}, #{l[1][0]}, '#{l[1][1].shortname}');"}
+											= l[1][1].shortname
+								- else
+									%li{:id => ("LocSel" + car.id.to_s + l[1][1].id.to_s)}
+										%a{href: "javascript:void(0)", onclick: "showAvailability(#{car.id}, #{l[1][1].id}, #{l[1][0]}, '#{l[1][1].shortname}');"}
+											= l[1][1].shortname
+				.fc
+		.actions
+			- fare = car.check_fare(@booking.starts, @booking.ends)
+			.tariff.r-5.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-placement' => 'left', 'data-title' => "<div class='size-12 t-l'><b class='zoom size-16'>Fare Breakup</b><br/><table width='200'><tr><td>Normal Tariff</td><td>#{fare[:estimate]}</td></tr><tr><td>Discount</td><td>#{fare[:discount]}</td></tr><tr><td>Total</td><td>#{(fare[:estimate] - fare[:discount])}</td></tr></table></div>"}
+				= (fare[:estimate] - fare[:discount])
+			- if locs[0][1][0] == 1
+				.button{id: 'ButtonYes' + car.id.to_s, onclick: "doBooking(#{car.id}, #{locs[0][1][1].id});"}
+					Book
+				.button-dis{id: 'ButtonNo' + car.id.to_s, style: 'display:none;'}
+					Book
+			- else
+				.button{id: 'ButtonYes' + car.id.to_s, style: 'display:none;'}
+					Book
+				.button-dis{id: 'ButtonNo' + car.id.to_s}
+					Book
+		.fc

@@ -13,7 +13,7 @@ Please dont refresh this page or use back button
 			hash = PAYU_KEY + "|" + 
 				@payment.encoded_id + "|" + 
 				@payment.amount.to_i.to_s + "|" + 
-				@booking.car.name + "|" + 
+				@booking.cargroup.display_name + "|" + 
 				@booking.user_name + "|" + 
 				@booking.user_email + "|||||||||||" + 
 				PAYU_SALT
@@ -22,7 +22,7 @@ Please dont refresh this page or use back button
 				= text_field_tag :key, PAYU_KEY
 				= text_field_tag :txnid, @payment.encoded_id
 				= text_field_tag :amount, @payment.amount.to_i
-				= text_field_tag :productinfo, @booking.car.name
+				= text_field_tag :productinfo, @booking.cargroup.display_name
 				= text_field_tag :firstname, @booking.user_name
 				= text_field_tag :email, @booking.user_email
 				= text_field_tag :phone, @booking.user_mobile

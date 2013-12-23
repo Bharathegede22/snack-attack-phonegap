@@ -16,7 +16,11 @@ class Users::OmniauthController < Devise::OmniauthCallbacksController
   	session[:social_signup], user = User.find_for_oauth(request.env["omniauth.auth"], current_user)
   	remember_me(user)
   	sign_in('user', user)
-   	redirect_to "/" and return
+  	if session[:book].blank?
+   		redirect_to "/" and return
+   	else
+   		redirect_to "/bookings/do" and return
+   	end
   end
 
 end

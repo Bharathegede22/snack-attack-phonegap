@@ -16,6 +16,7 @@ module CommonHelper
 	CUSTOMER_CARE = "080-67684475"
 	CUSTOMER_CARE_EMAIL = "contact@zoomcar.in"
 	LIABILITY = '5,000'
+	ALLOTMENT = 90
 	
 	ENCODING_ARRAY = ["7", "c", "i", "j", "o", "k", "z", "l", "q", "r", "m", "8", "h", "u", "g", "w", "3", "1", "y", "p", "5", "s", "0", "d", "a", "e", "v", "t", "2", "4", "f", "b", "x", "6", "n", "9"]
   

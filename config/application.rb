@@ -1,6 +1,7 @@
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
+require 'rack/cache'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -34,6 +35,9 @@ module Web
 			Devise::Mailer.layout "email"
 		end
 		
+		# Disabling Rack Caching
+    config.middleware.delete Rack::Cache
+    
   end
 end
 class Time

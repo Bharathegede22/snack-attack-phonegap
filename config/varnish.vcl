@@ -39,8 +39,8 @@ sub vcl_recv {
 		return(lookup);
   }
   
-	# Pipe requests for jsi proxy and assets
-  if (req.url ~ "^/jsi/*" || req.url ~ "^/assets/*" || req.url ~ "^/blog/*") {
+	# Pipe requests for assets, users, search & bookings
+  if (req.url ~ "^/assets/*" || req.url ~ "^/users/*" || req.url ~ "^/search/*" || req.url ~ "^/bookings/*") {
     return(pipe);
   }
   

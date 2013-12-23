@@ -1,152 +1,50 @@
 .content
-	.search-steps-bg
-		.search-steps.droid.f-b
-			.active
-				.step
-					%p 1
-				.txt.active
-					Select Car
-			.step 
-				%p 2
-			.txt
-				Register or Signin
-			.step 
-				%p 3
-			.txt
-				Enter Details
-			.step
-				%p 4
-			.txt
-				Checkout
-			.fc
+	= render :partial => "/bookings/search_steps", locals: {step: 1}
 	.wrapper
-		.main-content
-			- Cargroup.list.each do |c|
-				.search-item
-					.p-10
-						.img
-							%div{:class => 'car' + c.id.to_s}
-						.details
-							.name
-								= c.display_name
-							.cap
-								= c.seating
-								Seater
-							.fc
-							.avail
-								- if c.id == (c.id/2)*2
-									.yes
-										Available
-								- else
-									.no
-										Not Available
-								.at
-									at
-								.loc
-									.btn-group
-										- locs = c.locations
-										- locs = locs.sample(locs.length)
-										%button.btn.btn-default{type: "button"}
-											= locs[0].name.split(',').last
-										%button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", type: "button"}
-											%span.caret
-											%span.sr-only Toggle Dropdown
-										%ul.dropdown-menu{role: "menu"}
-											- (1..(locs.length-1)).each do |i|
-												%li
-													%a{href: "#"}
-														= locs[i].name.split(',').last.strip
-								.fc
-						.actions
-							.tariff.r-5
-								= c.daily_fare
-							- if c.id == (c.id/2)*2
-								.button
-									Book
-							- else
-								.button-dis
-									Book
-						.fc
+		.main-content.search-page
+			- if !@inventory.blank?
+				- @inventory.each do |i|
+					= render :partial => 'search_item', :locals => {inventory: i}
+			- else
+				Nothing
 		#Sidebar.sidebar
 			.mapwrap
 				#Gmap.map
-			.offers
-				.title.droid
-					Zoom Offers
-				#OfferSlider.carousel.slide{'data-ride' => "carousel", 'data-interval' => '10000', 'data-pause' => 'hover'}
-					.carousel-inner
-						.item.active
-							.head
-								ZOOM ON THE CHEAP DURING THE WEEK!
-							.text
-								Book a vehicle for Monday, Tuesday, Wednesday or Thursday and receive 35% off the normal tariff!
-							.how
-								Discounts automatically applied at time of check-out.
-							.disclaimer
-								%b.black
-									PLEASE NOTE:
-								%br/
-								A reservation beginning on Sunday will not have the first 24-hour period qualify for discount.
-						.item
-							.head
-								HAPPY HOURS FOR WOMEN ON TUESDAYS!
-							.text
-								Women, book a vehicle for Tuesday and receive 85% off the normal tariff!
-							.how
-								Discounts will be refunded back to your account.
-							.disclaimer
-								%b.black
-									PLEASE NOTE: 
-								%br/
-								Multi-day reservation will only get the 85% off for Tuesday, rest of the days will remain same. 
-								%br/
-								Discount will be applicable only when a woman picks up and drops off the vehicle. 
-							.exception
-								Discount will not be applicable on 24th and 31st December, 2013.
-					%a.left.carousel-control{:href => "#OfferSlider", 'data-slide' => "prev"}
-					%a.right.carousel-control{:href => "#OfferSlider", 'data-slide' => "next"}
-					%ol.carousel-indicators
-						%li.active{'data-target' => "#OfferSlider", 'data-slide-to' => "0"}
-							0
-						%li{'data-target' => "#OfferSlider", 'data-slide-to' => "1"}
-							1
-= javascript_tag do
-	:plain
-		function initializeMap() {
-			var myLatlng = new google.maps.LatLng(12.9667, 77.5667);
-			var mapOptions = {
-				zoom: 11,
-				center: myLatlng,
-				mapTypeId: google.maps.MapTypeId.ROADMAP
-			}
-			var map = new google.maps.Map(document.getElementById("Gmap"), mapOptions);
-	- Location.find(:all, :conditions => "lat IS NOT NULL AND lng IS NOT NULL").each do |l|
+- if !@inventory.blank?
+	= javascript_tag do
 		:plain
-			var myLatlng = new google.maps.LatLng(#{l.lat}, #{l.lng});
-			var marker = new google.maps.Marker({
-				position: myLatlng,
-				map: map,
-				animation: google.maps.Animation.DROP,
-				title:"#{l.name}"
-			});
-	:plain
-		}
-		function checkJquery() {
-			if (window.jQuery) {
-				$('#BookButton').addClass('active');
-				$('#BookButton').slideDown();
-				showSearch();
-				if($(window).width() > 1024) {
-					$("#Sidebar").width((($(window).width()-960)/2)+250);
+			function initializeMap() {
+				var myLatlng = new google.maps.LatLng(12.9667, 77.5667);
+				var mapOptions = {
+					zoom: 11,
+					center: myLatlng,
+					mapTypeId: google.maps.MapTypeId.ROADMAP
 				}
-				var script = document.createElement("script");
-				script.type = "text/javascript";
-				script.src = "http://maps.googleapis.com/maps/api/js?key=#{GOOGLE_MAP_KEY}&sensor=true&callback=initializeMap";
-				document.body.appendChild(script);
-				$("#Sidebar").slideDown();
-				$('.carousel').carousel();
-			} else {
-				window.setTimeout(checkJquery, 1000);
+				var map = new google.maps.Map(document.getElementById("Gmap"), mapOptions);
+		- Location.find(:all, :conditions => "lat IS NOT NULL AND lng IS NOT NULL").each do |l|
+			:plain
+				var myLatlng = new google.maps.LatLng(#{l.lat}, #{l.lng});
+				var marker = new google.maps.Marker({
+					position: myLatlng,
+					map: map,
+					animation: google.maps.Animation.DROP,
+					title:"#{l.name}"
+				});
+		:plain
 			}
-		}
-		checkJquery();
+			function checkJquery() {
+				if (window.jQuery) {
+					if($(window).width() > 1024) {
+						$("#Sidebar").width((($(window).width()-960)/2)+250);
+					}
+					var script = document.createElement("script");
+					script.type = "text/javascript";
+					script.src = "http://maps.googleapis.com/maps/api/js?key=#{GOOGLE_MAP_KEY}&sensor=true&callback=initializeMap";
+					document.body.appendChild(script);
+					$("#Sidebar").slideDown();
+					$('.carousel').carousel();
+				} else {
+					window.setTimeout(checkJquery, 1000);
+				}
+			}
+			checkJquery();

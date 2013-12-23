@@ -48,7 +48,7 @@ function showSearch() {
 	$('#SHContent').html('');
 	$('#SH').show();
 	$('#NavBuffer').css('height', 95);
-	getData('/search/widget', 'SHContent', 'replace' ,'SHWait');
+	getData('/bookings/widget', 'SHContent', 'replace' ,'SHWait');
 }
 
 function getData(complete_url,divId,divAction,divWait) {
@@ -353,11 +353,43 @@ function hideCalculator() {
 function changeCar(id,name) {
 	$('#CarVal').val(id);
 	$('#CarHtml').html(name);
+	$('#CarsMenu').find('li').removeClass('active');
+	$('#Car'+id).addClass('active');
 }
 
 function changeLocation(id,name) {
 	$('#LocationVal').val(id);
 	$('#LocationHtml').html(name);
+	$('#LocationsMenu').find('li').removeClass('active');
+	$('#Location'+id).addClass('active');
+}
+
+function showAvailability(carId, locId, avail, locName) {
+	$('#Avail' + carId).removeClass('yes no');
+	if(avail == 1) {
+		$('#Avail' + carId).text("Available");
+		$('#Avail' + carId).addClass('yes');
+		$("#ButtonYes" + carId).attr("onClick", "doBooking(" + carId + ", " + locId + ");");
+		$("#ButtonYes" + carId).show();
+		$("#ButtonNo" + carId).hide();
+	} else {
+		$('#Avail' + carId).text("Not Available");
+		$('#Avail' + carId).addClass('no');
+		$("#ButtonYes" + carId).attr("onClick", "");
+		$("#ButtonYes" + carId).hide();
+		$("#ButtonNo" + carId).show();
+	}
+	$('#LocName' + carId).text(locName);
+	$('#LocMenu' + carId).find('li').removeClass('active');
+	$('#LocSel' + carId + locId).addClass('active');
+}
+
+function doBooking(carId, locId) {
+	window.location = "/bookings/do?car=" + carId + "&loc=" + locId;
+}
+
+function checkout() {
+	window.location = "/bookings/docreate";
 }
 
 function checkUser() {

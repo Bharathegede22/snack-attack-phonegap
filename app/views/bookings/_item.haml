@@ -10,6 +10,7 @@
 			%th Location
 			%th Starts
 			%th Ends
+			%th Status
 			%th
 		- bookings.each do |b|
 			%tr
@@ -19,6 +20,7 @@
 				%td #{b.location.shortname}
 				%td #{b.starts.strftime("%d %b, %Y %I:%M %p")}
 				%td #{b.ends.strftime("%d %b, %Y %I:%M %p")}
+				%td #{b.status_text}
 				%td.t-r
 					%a.btn.btn-xs.btn-default{href: "/bookings/#{b.encoded_id}", target: '_blank', role: "button", :title => 'Payment History'}
 						%span.glyphicon.glyphicon-list

@@ -1,0 +1,93 @@
+:ruby
+	if !@booking
+		@booking = Booking.new
+		if !session[:search].blank?
+			@booking.starts = DateTime.parse(session[:search][:starts] + " +05:30") if !session[:search][:starts].blank?
+			@booking.ends = DateTime.parse(session[:search][:ends] + " +05:30") if !session[:search][:starts].blank?
+			@booking.location_id = session[:search][:loc]
+			@booking.cargroup_id = session[:search][:car]
+		end
+	end
+.wrapper
+	%form{:id => "SearchForm", :onsubmit => "return SubmitForm(this,'/search/nav','SearchFormDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+		.item
+			#StartDate.box
+				.cal
+				.txt
+					- if @booking.starts.blank?
+						%input#StartDateVal.datetime.validate-presence{name: 'starts', type: "text", value: "Pickup Date & Time*", readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
+					- else
+						%input#StartDateVal.datetime.validate-presence{name: 'starts', type: "text", value: @booking.starts.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
+				.arrw
+				.fc
+			#StartDateValError.error
+				= errortxt(@booking.errors[:starts].uniq.join(', '))
+		.item
+			#EndDate.box
+				.cal
+				.txt
+					- if @booking.ends.blank?
+						%input#EndDateVal.datetime.validate-presence{name: 'ends', type: "text", value: "Dropoff Date & Time*", readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
+					- else
+						%input#EndDateVal.datetime.validate-presence{name: 'ends', type: "text", value: @booking.ends.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
+				.arrw
+				.fc
+			#EndDateValError.error
+				= errortxt(@booking.errors[:ends].uniq.join(', '))
+		.item
+			.dropdown
+				#Locations.dropdown-toggle.box{'data-toggle' => "dropdown"}
+					.loc
+					#LocationHtml.txt
+						- if @booking.location_id.blank?
+							Choose your location
+						- else
+							= @booking.location.shortname
+					.arrw
+					.fc
+				%ul.dropdown-menu{:role => "menu", 'aria-labelledby' => 'Locations'}
+					- Location.live.each do |l|
+						- if l.id == @booking.location_id
+							%li.active{:id => ("Location" + l.id.to_s), :role => "presentation"}
+								%a{:href => "javascript:void(0)", :onclick => "changeLocation(#{l.id},'#{l.shortname}');"}
+									= l.shortname
+						- else
+							%li{:id => ("Location" + l.id.to_s), :role => "presentation"}
+								%a{:href => "javascript:void(0)", :onclick => "changeLocation(#{l.id},'#{l.shortname}');"}
+									= l.shortname
+		.item
+			.dropdown
+				#Cars.dropdown-toggle.box{'data-toggle' => "dropdown"}
+					.car
+					#CarHtml.txt
+						- if @booking.cargroup_id.blank?
+							Select a car
+						- else
+							= @booking.cargroup.shortname
+					.arrw
+					.fc
+				%ul.dropdown-menu{:role => "menu", 'aria-labelledby' => 'Cars'}
+					- Cargroup.list.each do |c|
+						- if c.id == @booking.cargroup_id
+							%li.active{:id => ("Car" + c.id.to_s), :role => "presentation"}
+								%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.name}');"}
+									= c.shortname
+						- else
+							%li{:id => ("Car" + c.id.to_s), :role => "presentation"}
+								%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.name}');"}
+									= c.shortname
+		.hide
+			%input#LocationVal{name: 'loc', type: "text", value: @booking.location_id, readonly: 'true'}
+			%input#CarVal{name: 'car', type: "text", value: @booking.cargroup_id, readonly: 'true'}
+		#SearchSubmit.fl
+			= submit_tag "", :class => 'button'
+		#SearchWait.p-5.hide
+			.wait
+		.fc
+- if @booking
+	- if request.post?
+		:javascript
+			window.location = "http://#{HOSTNAME}/search";
+	- else
+		:javascript
+			initializeDatePicker();

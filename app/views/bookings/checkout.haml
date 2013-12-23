@@ -1,0 +1,45 @@
+.content
+	= render :partial => "/bookings/search_steps", locals: {step: 4}
+	.wrapper
+		- render_flash
+		.main-content.fl.bg-w.bs-9
+			.p-20
+				.alert.alert-info
+					%b Please check the details before proceeding further
+				.p-b10
+					%b.droid.size-20 User Details
+				%table.table
+					%tr
+						%td
+							%b Name
+						%td
+							= current_user.name
+					%tr
+						%td
+							%b Email
+						%td
+							= current_user.email
+					%tr
+						%td
+							%b Mobile
+						%td
+							= current_user.phone
+					%tr
+						%td
+							%b Date of Birth
+						%td
+							= current_user.dob.strftime("%d/%m/%Y")
+					%tr
+						%td
+							%b Gender
+						%td
+							= current_user.gender ? 'Female' : 'Male'
+					%tr
+						%td
+							%b Country
+						%td
+							= Country.find_country_by_alpha2(current_user.country).name
+		.sidebar-fixed.fr
+			= render :partial => "/bookings/sidebar", locals: {step: 4}
+		.fc
+		%br/

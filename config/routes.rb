@@ -12,10 +12,16 @@ Web::Application.routes.draw do
 		}
 	
 	get '/search' => "bookings#search"
+	post '/search/:id' => "bookings#search"
 	
 	resources :bookings do
 		collection do
+			get 'checkout'
 			get 'complete'
+			get 'do'
+			get 'docreate'
+			get 'license'
+			get 'login'
 			get 'payment'
 			get 'payu'
 			get 'widget'

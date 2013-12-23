@@ -75,6 +75,10 @@ a {
 	height:50px;
 }
 
+.nav-buffer-big {
+	height:95px;
+}
+
 .header {
 	background:url(<%= asset_path 'v.png' %>) repeat-x;
 	height:90px;
@@ -356,11 +360,6 @@ ul.navbar-nav li ul li {
 .homepage .widget .bg {
 	background:url(<%= asset_path 'bg-white.png' %>);
 	width:270px;
-	-webkit-border-radius: 5px;
-	-khtml-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-	behavior: url(<%= asset_path 'PIE.htc' %>);
 }
 
 .homepage .widget .title {
@@ -406,7 +405,7 @@ ul.navbar-nav li ul li {
 }
 
 .search-header .txt, .homepage .widget .txt {
-	color:#666666;
+	color:#323a45;
 	font-size:14px;
 	float:left;
 	padding-top:6px;
@@ -414,8 +413,7 @@ ul.navbar-nav li ul li {
 
 .search-header .error, .homepage .widget .error {
 	font-size:12px;
-	padding:5px 0 0 40px;
-	display:none;
+	padding-left:28px;
 }
 
 .search-header .txt input, .homepage .widget .txt input {
@@ -423,7 +421,7 @@ ul.navbar-nav li ul li {
 	margin:0;
 	width:150px;
 	border:0;
-	color:#666666;
+	color:#323a45;
 	cursor:pointer;
 }
 
@@ -452,7 +450,6 @@ ul.navbar-nav li ul li {
 	background:#ffffff;
 	border-top:1px solid #323a45;
 	padding:7px 0 5px 0;
-	display:none;
 }
 
 .search-header .item {
@@ -488,7 +485,7 @@ ul.navbar-nav li ul li {
 }
 
 .search-header .error {
-	padding:5px 0 0 30px;
+	padding-left:20px;
 }
 
 .search-header .button {
@@ -591,12 +588,19 @@ ul.navbar-nav li ul li {
 	width:677px;
 }
 
+.search-page {
+	min-height:700px;
+}
+
 .content .sidebar {
 	width:265px;
 	position:absolute;
 	top:55px;
 	right:15px;
-	display:none;
+}
+
+.content .sidebar-fixed {
+	width:265px;
 }
 
 .content .sidebar .mapwrap {
@@ -682,7 +686,7 @@ ul.navbar-nav li ul li {
 }
 
 .search-steps {
-	width:600px;
+	width:620px;
 	margin:auto;
 	padding:7px 0;
 }
@@ -699,8 +703,8 @@ ul.navbar-nav li ul li {
 	float:left;
 }
 
-.search-steps .active {
-	float:left;
+.search-steps .complete {
+	cursor:pointer;
 }
 
 .search-steps .active .step {
@@ -740,61 +744,60 @@ ul.navbar-nav li ul li {
 .search-item .img {
 	width:120px;
 	float:left;
-	border-right:1px solid #cccccc;
-	margin:0px 25px 0px 15px;
+	margin:0px 15px 0px 15px;
 }
 
-.search-item .car1, .search-item .car2, .search-item .car3, .search-item .car4, .search-item .car5, .search-item .car6 {
+.content .car1, .content .car2, .content .car3, .content .car4, .content .car5, .content .car6 {
 	background:url(<%= asset_path 'cars/strip.jpg' %>) no-repeat;
 	width:100px;
 	height:80px;
 }
 
-.search-item .car1 {
+.content .car1 {
 	background-position:0px 0px;
 }
 
-.search-item .car2 {
+.content .car2 {
 	background-position:-100px 0px;
 }
 
-.search-item .car3 {
+.content .car3 {
 	background-position:-200px 0px;
 }
 
-.search-item .car4 {
+.content .car4 {
 	background-position:-300px 0px;
 }
 
-.search-item .car5 {
+.content .car5 {
 	background-position:-400px 0px;
 }
 
-.search-item .car6 {
+.content .car6 {
 	background-position:-500px 0px;
 }
 
-.search-item:hover .car1 {
+.search-item:hover .car1, .sidebar-fixed .car1 {
 	background-position:0px -80px;
 }
 
-.search-item:hover .car2 {
+.search-item:hover .car2, .sidebar-fixed .car2 {
 	background-position:-100px -80px;
 }
 
-.search-item:hover .car3 {
+.search-item:hover .car3, .sidebar-fixed .car3 {
 	background-position:-200px -80px;
 }
 
-.search-item:hover .car4 {
+.search-item:hover .car4, .sidebar-fixed .car4 {
 	background-position:-300px -80px;
 }
 
-.search-item:hover .car5 {
+.search-item:hover .car5, .sidebar-fixed .car5 {
 	background-position:-400px -80px;
 }
 
-.search-item:hover .car6 {
+.search-item:hover .car6, .sidebar-fixed .car6 {
 	background-position:-500px -80px;
 }
 
@@ -869,6 +872,14 @@ ul.navbar-nav li ul li {
 	font-weight:bold;
 	font-size:30px;
 	margin-bottom:10px;
+}
+
+.search-item .btn-default, .search-item .btn-default:hover, .search-item .btn-default:active {
+	background:#ffffff;
+	border:1px solid #ccc;
+	color:#727272 !important;
+	text-shadow:none;
+	display:block;
 }
 
 .static {

@@ -1,17 +1,11 @@
 #DocTop
-- if !@header.blank?
-	#NavBuffer.nav-buffer-big
-- else
-	#NavBuffer.nav-buffer
+#NavBuffer.nav-buffer
 %nav.navbar.navbar-right.navbar-fixed-top{:role => "navigation"}
 	.wrapper.t-r
 		%a.logo{:href => '/'}
 		%a.logo-rtt{:href => 'http://www.rtt.co.in', :target => '_blank', :rel => 'nofollow'}
 		.fr
 			%ul.nav.navbar-nav
-				- cls = (!@header.blank? && @header == 'search') ? 'active' : ''
-				%li{class: cls}
-					%a{:href => "javascript:void(0)", :onclick => "showSearch();"} Book Cars
 				%li.dropdown
 					%a.dropdown-toggle{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
 						Tariffs
@@ -67,15 +61,4 @@
 							%a{:href => "javascript:void(0)", :onclick => "showModal('Sign In', '/users/forgot');"}
 								Forgot Password
 		.fc
-	- cls = (!@header.blank? && @header == 'search') ? '' : 'hide'
-	- if !@header.blank? && @header == 'search'
-		#SH
-			#SearchFormDiv.search-header
-				= render :partial => '/bookings/widget'
-	- else
-		#SH{:style => 'display:none;'}
-			#SearchFormDiv.search-header
-				#SHContent
-				#SHWait.t-c
-					.wait.m-auto
 #Flash.wrapper

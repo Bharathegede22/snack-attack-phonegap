@@ -1,14 +1,58 @@
 class BookingsController < ApplicationController
 	
 	before_filter :check_booking, :only => [:complete, :dopayment, :invoice, :payment, :payments, :show]
+	before_filter :check_search, :only => [:docreate, :license, :login, :checkout]
+	
+	def checkout
+		generic_meta
+	end
 	
 	def complete
 		render layout: 'plain'
 	end
 	
+	def do
+		if !params[:car].blank? && !params[:loc].blank? && !session[:search].blank? && !session[:search][:starts].blank? && !session[:search][:ends].blank?
+			session[:book] = {:starts => session[:search][:starts], :ends => session[:search][:ends], :loc => params[:loc], :car => params[:car]}
+		elsif !session[:book].blank?
+		else
+			render_404 and return
+		end
+		if user_signed_in?
+			if current_user.check_details
+				if true #current_user.license
+					redirect_to "/bookings/checkout"
+				else
+					redirect_to "/bookings/license"
+				end
+			else
+				redirect_to "/bookings/login"
+			end
+		else
+			redirect_to "/bookings/login"
+		end
+	end
+	
+	def docreate
+		@booking.user_id = current_user.id
+		@booking.user_name = current_user.name
+		@booking.user_email = current_user.email
+		@booking.user_mobile = current_user.phone
+		@booking.through_signup = true
+		@booking.save!
+		session[:booking_id] = @booking.encoded_id
+		session[:search] = nil
+		session[:book] = nil
+		redirect_to "/bookings/payment"
+	end
+	
 	def dopayment
 		session[:booking_id] = @booking.encoded_id
 		redirect_to "/bookings/payment"
+	end
+	
+	def generate
+		@booking
 	end
 	
 	def index
@@ -17,6 +61,14 @@ class BookingsController < ApplicationController
 	
 	def invoice
 		render layout: 'plain'
+	end
+	
+	def license
+		generic_meta
+	end
+	
+	def login
+		generic_meta
 	end
 	
 	def payment
@@ -107,6 +159,30 @@ class BookingsController < ApplicationController
 		@meta_description = "Enjoy the Freedom of Four Wheels with self-drive car hire by the hour or by the day. Now in Bangalore!"
 		@meta_keywords = "car hire, car rental, car rent, car sharing, car share, shared car, car club, rental car, car-sharing, hire car, renting a car, bangalore, bangalore car hire, bangalore car rental, bangalore car rent, bangalore car sharing, bangalore car share, bangalore car club, bangalore rental car, bangalore car-sharing, bangalore hire car, bagalore renting a car, India, Indian, Indian car-sharing, India car-sharing, Indian car-share, India car-share, India car club, Indian car club, India car sharing, Indian car, Zoomcar, Zoom car, travel india, travel bangalore, explore india, explore bangalore, travel, explore, self-drive, self drive, self-drive bangalore, self drive bangalore"
 		@canonical = "https://www.zoomcar.in/search"
+		if request.post?
+			@booking = Booking.new
+			@booking.starts = DateTime.parse(params[:starts] + " +05:30") if !params[:starts].blank?
+			@booking.ends = DateTime.parse(params[:ends] + " +05:30") if !params[:ends].blank?
+			@booking.location_id = params[:loc] if !params[:loc].blank?
+			@booking.cargroup_id = params[:car] if !params[:car].blank?
+			@booking.through_search = true
+			@booking.valid?
+			session[:search] = {:starts => params[:starts], :ends => params[:ends], :loc => params[:loc], :car => params[:car]}
+			if params[:id] == 'homepage'
+				render json: {html: render_to_string('_widget_homepage.haml', layout: false)}
+			else
+				render json: {html: render_to_string('_widget.haml', layout: false)}
+			end
+		else
+			@booking = Booking.new
+			@booking.starts = DateTime.parse(session[:search][:starts] + " +05:30") if !session[:search].blank? && !session[:search][:starts].blank?
+			@booking.ends = DateTime.parse(session[:search][:ends] + " +05:30") if !session[:search].blank? && !session[:search][:ends].blank?
+			@booking.location_id = session[:search][:loc] if !session[:search].blank? && !session[:search][:loc].blank?
+			@booking.cargroup_id = session[:search][:car] if !session[:search].blank? && !session[:search][:car].blank?
+			@booking.through_search = true
+			@inventory = Inventory.check(@booking.starts, @booking.ends, @booking.cargroup_id, @booking.location_id) if @booking.valid?
+			@header = 'search'
+		end
 	end
 	
 	def show
@@ -115,7 +191,7 @@ class BookingsController < ApplicationController
 	end
 	
 	def widget
-		render json: {html: render_to_string('widget.haml')}
+		render json: {html: render_to_string('_widget.haml', layout: false)}
 	end
 	
 	private
@@ -135,6 +211,20 @@ class BookingsController < ApplicationController
 			else
 				render_404
 			end
+		else
+			render_404
+		end
+	end
+	
+	def check_search
+		if !session[:book].blank? && !session[:book][:starts].blank? && !session[:book][:ends].blank? && !session[:book][:car].blank? && !session[:book][:loc].blank?
+			@booking = Booking.new
+			@booking.starts = DateTime.parse(session[:book][:starts] + " +05:30")
+			@booking.ends = DateTime.parse(session[:book][:ends] + " +05:30")
+			@booking.location_id = session[:book][:loc]
+			@booking.cargroup_id = session[:book][:car]
+			@available = Inventory.check(@booking.starts, @booking.ends, @booking.cargroup_id, @booking.location_id)[0][0][0][1][0]
+			flash[:error] = "Sorry, but the car is no longer available" if @available == 0
 		else
 			render_404
 		end

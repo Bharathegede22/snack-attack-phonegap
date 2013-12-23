@@ -97,3 +97,18 @@
 			An email has been sent on 
 			%b #{current_user.email},
 			please follow instructions as mentioned in the email to activate your account.
+			- if !session[:book].blank?
+				%br/
+				%br/
+				%br/
+				%br/
+				%b.size-16 Please wait while we take you to the next step
+				%br/
+				%br/
+				%img{:src => "http://#{HOSTNAME}/images/loader.gif", :alt => '', :border => '0'}
+				:javascript
+					var auto = setTimeout(function(){ submitRedirect(); }, 5000);
+					function submitRedirect() {
+						clearTimeout(auto);
+						window.location = "/bookings/do";
+					}

@@ -1,0 +1,62 @@
+- cargroup = @booking.cargroup
+- fare = cargroup.check_fare(@booking.starts, @booking.ends)
+.bg-w.bs-9.grey.droid.size-14
+	.bg-zoomb.white.p-5.f-b.size-20.p-l10
+		Booking Summary
+	.p-10.t-c.size-16
+		%b
+			= cargroup.display_name
+		%br/
+		.m-auto{:class => 'car' + @booking.cargroup_id.to_s}
+	.p-10.bg-e
+		.p-b5.f-b
+			.fl
+				Pickup Time
+			.fr
+				Dropoff Time
+			.fc
+		.size-12
+			.fl
+				= @booking.starts.strftime("%d/%m/%y %I:%M %p")
+			.fr
+				= @booking.ends.strftime("%d/%m/%y %I:%M %p")
+			.fc
+	.p-10.bg-c.t-c
+		:ruby
+			tmp = ''
+			if fare[:days] == 1
+				tmp << "1 day, "
+			elsif fare[:days] > 0
+				tmp << fare[:days].to_s + " days, "
+			end
+			if fare[:hours] == 1
+				tmp << "1 hour"
+			elsif fare[:hours] > 0
+				tmp << fare[:hours].to_s + " hours"
+			end
+		Rented for
+		%b
+			= tmp.chomp(', ')
+	.p-10
+		%table{width: '100%'}
+			%tr
+				%td.p-5
+					%b Normal Tariff
+				%td.p-5.t-r
+					= fare[:estimate]
+			%tr
+				%td.p-5
+					%b Discount
+				%td.p-5.t-r
+					= fare[:discount]
+	.bg-6.t-c.white.f-b.size-16.p-10
+		Total -
+		= fare[:estimate] - fare[:discount]
+	- if !step.blank? && step == 4
+		.p-20
+			- if @available == 1
+				.button{onclick: "checkout();"} Checkout
+			- else
+				.button-dis Checkout
+%br/
+%br/

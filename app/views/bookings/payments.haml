@@ -1,6 +1,6 @@
 - render_flash
 %h1.t-c
-	= "# " + @booking.encoded_id.upcase
+	= "Booking # " + @booking.encoded_id.upcase
 .m-t20.panel.panel-default
 	.panel-heading.f-b.size-20 Payment History
 	.panel-body.size-12
@@ -18,9 +18,8 @@
 					%td
 						.row
 							.col-md-4
-								.f-b
+								.p-b5.f-b
 									= "# " + p.encoded_id.upcase + " (" + p.through_text + ")"
-								%br/
 								- if !p.key.blank?
 									Key : 
 									= p.key
@@ -34,7 +33,7 @@
 								.f-b
 									= p.status_text
 								%br/
-								= p.notes.html_safe if !p.notes.blank?
+								= p.notes.html_safe if false #!p.notes.blank?
 					%td.t-r
 						= p.amount
 						- tmp += p.amount if p.status == 1

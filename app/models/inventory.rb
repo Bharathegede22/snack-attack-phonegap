@@ -12,20 +12,18 @@ class Inventory < ActiveRecord::Base
 	def manage_cache
 		Rails.cache.delete("inventory-#{self.cargroup_id}-#{self.location_id}-#{self.slot.beginning_of_day.to_i}")
 	end
-
 	
-	def self.block(cargroup, location, start_time, end_time,status)
-		check = Inventory.check(cargroup, location, start_time, end_time)
-		if check == 2			
-				Inventory.find(:all, :conditions => ["cargroup_id = ? AND location_id = ? AND slot >= ? AND slot <= ?", cargroup, location, start_time, end_time]).each do |i|
-					i.total -= 1 if status == 0
-					i.total += 1 if statis == 1
-					i.save!
-				end			
+	def self.block(cargroup, location, starts, ends)
+		check = Inventory.check(starts, ends, cargroup, location)[0][0][0][1][0]
+		if check == 1
+			ActiveRecord::Base.connection.execute("UPDATE inventories SET total = (total-1) WHERE 
+				cargroup_id = #{cargroup} AND 
+				location_id = #{location} AND 
+				slot >= '#{(starts + 330.minutes).to_s(:db)}' AND 
+				slot < '#{(ends + 330.minutes).to_s(:db)}'")
 		end
 		return check
 	end
-
 	
 	def self.cache
 		start_date = '2013-11-01 00:00:00'.to_datetime
@@ -40,176 +38,71 @@ class Inventory < ActiveRecord::Base
 			end
 		end
 	end
-
 	
-	def self.check(cargroup, location, start_time, end_time)
-		check = true
-		check_l = false
-		day = nil
-		date = start_time.to_datetime
-
-		while date <= end_time.to_datetime do  
-			if day != date.to_date
-				day = date.to_date
-				inv = Inventory.get(cargroup, location, day)
-			end
-			check_l = true if inv[date.to_i.to_s]
-			check = false if !inv[date.to_i.to_s] || (inv[date.to_i.to_s] == 0)
-			date += 15.minutes 
-		end
-
-		if check_l
-			if check
-				return 2
-			else
-				return 1
-			end
+	def self.check(start_time, end_time, cargroup, location)
+		if cargroup
+			cars = [Cargroup.find(cargroup)]
 		else
-			return 0
+			cars = Cargroup.list
 		end
+		location = Location.find(location) if location
+		h = []
+		cars.each do |c|
+			if location
+				locs = [location]
+			else
+				locs = c.locations
+			end
+			check = {}
+			locs.each do |l|
+				check[l.id.to_s] = [1, l]
+			end
+			day = nil
+			date = start_time + 330.minutes
+			while date.to_i < (end_time.to_i + 330.minutes.to_i + c.wait_period.minutes.to_i) do
+				if day != date.to_date
+					day = date.to_date
+					inv = Inventory.get(c.id, day)
+				end
+				locs.each do |l|
+					check[l.id.to_s][0] = 0 if inv[l.id.to_s][date.to_i.to_s] == 0
+				end
+				date += 15.minutes
+			end
+			h << [check.to_a, c]
+		end
+		return h
 	end
-
-
 	
-	def self.get(cargroup, location, day)
+	def self.get(cargroup, day)
 		date = day.to_datetime
-		Rails.cache.fetch("inventory-#{cargroup}-#{location}-#{date.to_i}") do
-			h = Hash.new
-			date = date - (5.hours + 30.minutes)                                          
-			Inventory.find_by_sql("SELECT slot, total FROM inventories 
+		Rails.cache.fetch("inventory-#{cargroup}-#{date.to_i}") do
+			h = {}
+			l = nil
+			tmp = {}
+			Inventory.find_by_sql("SELECT slot, total, location_id FROM inventories 
 				WHERE cargroup_id = #{cargroup} AND 
-				location_id = #{location} AND                                              
 				slot >= '#{date.to_s(:db)}' AND 
 				slot < '#{(date + 1.days).to_s(:db)}' 
-				ORDER BY slot ASC").each do |i|
-				h[i.slot.to_i.to_s] = i.total
+				ORDER BY location_id ASC, slot ASC").each do |i|
+				if l && l != i.location_id
+					h[l.to_s] = tmp
+					tmp = {}
+				end
+				l = i.location_id if l != i.location_id
+				tmp[i.slot.to_i.to_s] = i.total
 			end
+			h[l.to_s] = tmp
 			return h
 		end
 	end
-
-
-	#db queries is not cached
-
-
-	def self.get_available_cars(booking)
-		available_cars=Array.new
-
-		if booking[:cargroup_id] == '' && booking[:location_id] == ''	
-			cars=Car.find(:all,:group => "cargroup_id,location_id")			
-			cars.each do |car| 
-				booking[:cargroup_id] = car.cargroup_id 
-				booking[:location_id] = car.location_id 
-				if Inventory.check(booking[:cargroup_id],booking[:location_id],booking[:starts],booking[:ends]) == 2									
-					available_cars << car 
-				end
-			end 
-			return available_cars
-
-		elsif booking[:cargroup_id] != '' && booking[:location_id] == ''		
-			cars=Car.find(:all,:conditions => ["cargroup_id =?",booking[:cargroup_id]],:group => "cargroup_id,location_id")
-			cars.each do |car|
-				booking[:cargroup_id] = car.cargroup_id
-				booking[:location_id] = car.location_id									
-				if Inventory.check(booking[:cargroup_id],booking[:location_id],booking[:starts],booking[:ends]) == 2									
-					available_cars << car 
-				end							
-			end 
-			return available_cars
-
-		elsif booking[:cargroup_id] == '' && booking[:location_id] != ''			
-			cars=Car.find(:all,:conditions => ["location_id =?",booking[:location_id]],:group => "cargroup_id,location_id")
-			cars.each do |car|
-				booking[:cargroup_id] = car.cargroup_id
-				booking[:location_id] = car.location_id									
-				if Inventory.check(booking[:cargroup_id],booking[:location_id],booking[:starts],booking[:ends]) == 2									
-					available_cars << car 
-				end							
-			end 
-			return available_cars	
-
-		else			
-			return Car.find(:all,:conditions =>["cargroup_id  =? AND location_id = ?", 
-				booking[:cargroup_id], booking[:location_id]],:group => "cargroup_id,location_id")
-		end		
-	end
-
-
-	def self.seed
-		start_date = '2013-11-01 00:00:00'.to_datetime
-		end_date = '2014-01-01 00:00:00'.to_datetime
-		Cargroup.find(:all).each do |car|
-			Location.find(:all).each do |loc|
-				num = Car.count(:conditions => ["cargroup_id = ? AND location_id = ?", car.id, loc.id])
-				if num > 0
-					date = start_date
-					while date < end_date do
-						inv = Inventory.create(:cargroup_id => car.id, :location_id => loc.id, :city_id => 1, :total => num, :slot => date)
-						date += 15.minutes
-					end
-				end
-			end
-		end
-	end
-
-
-	def self.reschedule(booking)
-
-		
-		 if booking[:extended] 	
-		 	
-		 	count = Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:actual_ends] + 15.minutes,
-		 		booking[:ends],0)
-
-		 elsif booking[:cancel]
-		 	count = Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:starts],booking[:ends],1)
-
-		 elsif booking[:early]		 	
-		 	count = Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:ends].to_datetime + 15.minutes,booking[:actual_ends],1)
-
-		 elsif booking[:rescheduled]
-
-		 	if booking[:starts] < booking[:actual_starts] && booking[:ends] > booking[:actual_starts]
-
-		 		count = Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:starts],
-		 			booking[:actual_starts].to_datetime - 15.minutes,0)
-
-		 	elsif booking[:starts] > booking[:actual_starts] && booking[:starts] < booking[:actual_ends]	 		
-
-		 		count = Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:actual_starts],booking[:starts].to_datetime - 15.minutes,1)
-
-
-			elsif booking[:starts] >= booking[:actual_ends]
-
-		 		count = Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:starts],booking[:ends],0)
-		 		count += Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:actual_starts],booking[:actual_ends],1)
-			end
-
-
-
-			if booking[:ends] > booking[:actual_ends] && booking[:starts] < booking[:actual_ends]				
-
-		 		count = Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:actual_ends].to_datetime + 15.minutes, booking[:ends],0)
-
-			elsif booking[:ends] < booking[:actual_ends] && booking[:ends] > booking[:actual_starts]				
-
-				count = Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:ends].to_datetime + 15.minutes, booking[:actual_ends],1)
-
-
-			elsif booking[:ends] <= booking[:actual_starts]
-
-				count = Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:starts], booking[:ends],0)
-				count += Inventory.block(booking[:cargroup_id],booking[:location_id],booking[:actual_starts], booking[:actual_ends],1)
-
-
-			end		 		 		
-		 	
-		
-		 end
-
-		 return count
-
-
+	
+	def self.release(cargroup, location, start_time, end_time)
+		ActiveRecord::Base.connection.execute("UPDATE inventories SET total = (total+1) WHERE 
+			cargroup_id = #{cargroup} AND 
+			location_id = #{location} AND 
+			slot >= '#{start_time.to_s(:db)}' AND 
+			slot < '#{end_time.to_s(:db)}'")
 	end
 	
 	private

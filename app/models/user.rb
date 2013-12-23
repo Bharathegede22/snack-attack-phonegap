@@ -24,6 +24,10 @@ class User < ActiveRecord::Base
   
 	before_validation :before_validation_tasks
 	
+	def check_details
+		return !self.name.blank? && !self.phone.blank? && !self.dob.blank?
+	end
+	
   def check_dob
   	errors.add(:dob, "can't be less than 23 years") if !self.dob.blank? && (self.dob.to_datetime > (Time.zone.now - 23.years))
   end
@@ -38,7 +42,11 @@ class User < ActiveRecord::Base
   	return Booking.find_by_sql("SELECT * FROM bookings WHERE " + sql + " ORDER BY id DESC LIMIT 10 OFFSET #{page*10}")
   end
   
-  def self.find_for_oauth(auth, signed_in=nil)
+  def license
+		return Image.find(:first, :conditions => ["imageable_id = ? AND imageable_type = 'License'", self.id])
+	end
+	
+	def self.find_for_oauth(auth, signed_in=nil)
   	is_new = 0
   	case auth.provider
   	when 'facebook'

@@ -4,6 +4,13 @@ class ApplicationController < ActionController::Base
   
   #protect_from_forgery with: :exception
   
+  def generic_meta
+  	@meta_title = "Zoomcar"
+		@meta_description = "Zoomcar"
+		@meta_keywords = "zoomcar"
+		@noindex
+  end
+  
   def render_404
   	render :file => Rails.root.join("public/404.html"),  :status => 404, :layout => nil
   end
