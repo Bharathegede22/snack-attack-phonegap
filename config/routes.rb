@@ -29,9 +29,14 @@ Web::Application.routes.draw do
 			post 'payu'
 		end
 		member do
+			get 'cancel'
 			get 'dopayment'
 			get 'invoice'
 			get 'payments'
+			get 'reschedule'
+			
+			post 'cancel'
+			post 'reschedule'
 		end
 	end
 	

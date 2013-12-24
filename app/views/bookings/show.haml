@@ -4,6 +4,13 @@
 %br/
 .row
 	.col-md-8
+		.row.size-20
+			.col-md-3
+				.p-5
+					%b Status
+			.col-md-9
+				.p-5
+					= @booking.status_help
 		.row
 			.col-md-3
 				.p-5 
@@ -17,7 +24,7 @@
 					%b Car Hired
 			.col-md-9
 				.p-5
-					- if @booking.status == 1
+					- if @booking.paid?
 						- if !@booking.car_id.blank?
 							- car = @booking.car
 							%b #{car.name}
@@ -48,29 +55,34 @@
 			.col-md-9
 				.p-5
 					= @booking.ends.strftime("%d %b, %Y %I:%M %p")
-		.m-t20.row
-			.col-md-3
-				.p-5
-					%b Status
-			.col-md-9
-				.p-5
-					= @booking.status_help
-		.m-t20
-			- case @booking.status?
-			- when 'live'
-				%a.btn.btn-success{href: "#", role: "button"} Extend
-				%a.btn.btn-warning{href: "#", role: "button"} Shorten
-			- when 'future'
-				%a.btn.btn-success{href: "#", role: "button"} Extend
-				%a.btn.btn-warning{href: "#", role: "button"} Shorten
-				%a.btn.btn-danger{href: "#", role: "button"} Cancel
-			- else
-				%a.btn.btn-primary{href: "/bookings/#{@booking.encoded_id}/invoice", target: '_blank', role: "button"} Invoice
+		- if @booking.paid?
+			.m-t20
+				- case @booking.status?
+				- when 'live'
+					.btn.btn-success{onclick: "showModal('Extend Your Booking', '/bookings/#{@booking.encoded_id}/reschedule');"}
+						Extend
+					.btn.btn-warning{onclick: "showModal('Shorten Your Booking', '/bookings/#{@booking.encoded_id}/reschedule');"}
+						Shorten
+				- when 'future'
+					.btn.btn-success{onclick: "showModal('Extend Your Booking', '/bookings/#{@booking.encoded_id}/reschedule');"}
+						Extend
+					.btn.btn-warning{onclick: "showModal('Shorten Your Booking', '/bookings/#{@booking.encoded_id}/reschedule');"}
+						Shorten
+					.btn.btn-danger{onclick: "showModal('Cancel Your Booking', '/bookings/#{@booking.encoded_id}/cancel');"}
+						Cancel
+				- else
+					- if @booking.total_payments > 0
+						%a.btn.btn-primary{href: "/bookings/#{@booking.encoded_id}/invoice", target: '_blank', role: "button"} Invoice
 		%br/
-		.m-t20.panel.panel-default
-			.panel-heading.f-b.size-20 Booking History
-			.panel-body.size-12
-				= @booking.notes.html_safe
+		.m-t20
+		.panel-group#Accordion
+			.panel.panel-default
+				.panel-heading.f-b.size-16
+					%a{'data-toggle' => "collapse", 'data-parent' => "#Accordion", href: "#History"}
+						Booking History
+				#History.panel-collapse.collapse
+					.panel-body.size-12
+						= @booking.notes.html_safe
 	.col-md-4
 		- @total = 0
 		- tmp = 0

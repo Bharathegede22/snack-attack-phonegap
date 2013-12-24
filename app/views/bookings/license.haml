@@ -1,0 +1,11 @@
+.content
+	= render :partial => "/bookings/search_steps", locals: {step: 3}
+	.wrapper
+		- render_flash
+		.main-content.fl.bg-w.bs-9
+			.p-20
+				
+		.sidebar-fixed.fr
+			= render :partial => "/bookings/sidebar", locals: {step: 3}
+		.fc
+		%br/

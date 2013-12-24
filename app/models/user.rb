@@ -33,13 +33,18 @@ class User < ActiveRecord::Base
   end
   
   def get_bookings(action, page=0)
-  	sql = case action
-  	when 'live' then "starts <= '#{Time.zone.now.to_s(:db)}' AND ends >= '#{Time.zone.now.to_s(:db)}' AND status < 5"
-  	when 'future' then "starts > '#{Time.zone.now.to_s(:db)}' AND status < 5"
-  	when 'completed' then "ends < '#{Time.zone.now.to_s(:db)}' AND status <= 5"
-  	when 'cancelled' then "status > 5"
+  	sql, order = case action
+  	when 'live' then ["starts <= '#{Time.zone.now.to_s(:db)}' AND ends >= '#{Time.zone.now.to_s(:db)}' AND status < 5", 'starts ASC']
+  	when 'future' then ["starts > '#{Time.zone.now.to_s(:db)}' AND status < 5", 'starts ASC']
+  	when 'completed' then ["ends < '#{Time.zone.now.to_s(:db)}' AND status <= 5", 'id DESC']
+  	when 'cancelled' then ["status > 5", 'id DESC']
   	end
-  	return Booking.find_by_sql("SELECT * FROM bookings WHERE " + sql + " ORDER BY id DESC LIMIT 10 OFFSET #{page*10}")
+  	
+  	if Rails.env == 'production'
+  		return Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND #{sql} ORDER BY #{order} LIMIT 10 OFFSET #{page*10}")
+  	else
+  		return Booking.find_by_sql("SELECT * FROM bookings WHERE #{sql} ORDER BY #{order} LIMIT 10 OFFSET #{page*10}")
+  	end
   end
   
   def license

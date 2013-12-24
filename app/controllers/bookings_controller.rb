@@ -1,7 +1,17 @@
 class BookingsController < ApplicationController
 	
-	before_filter :check_booking, :only => [:complete, :dopayment, :invoice, :payment, :payments, :show]
+	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :invoice, :payment, :payments, :reschedule, :show]
 	before_filter :check_search, :only => [:docreate, :license, :login, :checkout]
+	
+	def cancel
+		if request.post?
+			fare = @booking.do_cancellation
+			flash[:notice] = "Your booking is successfully <b>cancelled</b>. <b>#{fare}</b> will be refunded to you shortly."
+		else
+			@fare = @booking.check_cancellation
+		end
+		render json: {html: render_to_string('_cancel.haml', layout: false)}
+	end
 	
 	def checkout
 		generic_meta
@@ -20,7 +30,7 @@ class BookingsController < ApplicationController
 		end
 		if user_signed_in?
 			if current_user.check_details
-				if true #current_user.license
+				if current_user.license
 					redirect_to "/bookings/checkout"
 				else
 					redirect_to "/bookings/license"
@@ -152,6 +162,49 @@ class BookingsController < ApplicationController
 		else
 			exception
 		end
+	end
+	
+	def reschedule
+		@confirm = !params[:confirm].blank?
+		if request.post?
+			if @confirm
+				@booking.ends = DateTime.parse(params[:ends] + " +05:30") if !params[:ends].blank?
+				@booking.through_signup = true
+				if @booking.valid?
+					@string, @fare = @booking.do_reschedule
+					if !@fare
+						flash[:error] = "Sorry, but the car is no longer available"
+					else
+						tmp = ''
+						if @fare[:days] == 1
+							tmp << "1 day, "
+						elsif @fare[:days] > 0
+							tmp << @fare[:days].to_s + " days, "
+						end
+						if @fare[:hours] == 1
+							tmp << "1 hour"
+						elsif @fare[:hours] > 0
+							tmp << @fare[:hours].to_s + " hours"
+						end
+						flash[:notice] = "Your booking <b>" + @string.downcase.gsub('ing', 'ed') + "</b> by " + tmp.chomp(', ') + " successfully"
+						@success = true
+						@confirm = @string = @fare = nil
+					end
+				else
+					flash[:error] = "Please fix the error!"
+				end
+			else
+				@booking.ends = DateTime.parse(params[:ends] + " +05:30") if !params[:ends].blank?
+				if @booking.valid?
+					@string, @fare = @booking.check_reschedule
+					flash[:error] = "Sorry, but the car is no longer available" if !@fare && @string == 'NA'
+					@confirm = true
+				else
+					flash[:error] = "Please fix the error!"
+				end
+			end
+		end
+		render json: {html: render_to_string('_reschedule.haml', layout: false)}
 	end
 	
 	def search

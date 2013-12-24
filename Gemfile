@@ -30,6 +30,8 @@ gem 'dalli'
 gem 'sidekiq'
 gem 'fql'
 gem 'countries'
+gem 'flash_cookie_session'
+gem 'uploadify-rails'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.

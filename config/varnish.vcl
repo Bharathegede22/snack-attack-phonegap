@@ -24,21 +24,6 @@ sub vcl_recv {
     return(pipe);
   }
 	
-	# Cache JSI Request
-  if (req.url ~ "^/jsi/*" && req.url ~ "autoComplete.do$") {
-  	set req.http.user-agent = "Mozilla";
-		return(lookup);
-  }
-  
-	# Cache JSI Assets
-  if (req.url ~ "^/jsi/*" && req.url ~ "\.(png|gif|jpg|swf|css|js)$") {
-  	set req.http.user-agent = "Mozilla";
-    unset req.http.cookie;
-		unset req.http.authorization;
-		unset req.http.If-None-Match;
-		return(lookup);
-  }
-  
 	# Pipe requests for assets, users, search & bookings
   if (req.url ~ "^/assets/*" || req.url ~ "^/users/*" || req.url ~ "^/search/*" || req.url ~ "^/bookings/*") {
     return(pipe);

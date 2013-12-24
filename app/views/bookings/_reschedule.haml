@@ -1,0 +1,125 @@
+- render_flash
+- if !@success
+	.p-b10.size-16
+		.row.f-b
+			.col-md-6
+				Current Start Time
+			.col-md-6.t-r
+				Current End Time
+		.row
+			.col-md-6
+				= @booking.starts.strftime("%d/%m/%Y %H:%M %p (%A)")
+			.col-md-6.t-r
+				= @booking.last_ends.strftime("%d/%m/%Y %H:%M %p (%A)")
+	.row
+		.col-md-6
+			%h4
+				Please select a new end time
+			%form{:id => "SearchForm", :onsubmit => "return SubmitForm(this,'/bookings/#{@booking.encoded_id}/reschedule','ModalContent');", :action => "javascript:void(0)", "data-ajax" => "false"}
+				.search-header
+					.hide
+						.item
+							#StartDate.box
+								.cal
+								.txt
+									%input#StartDateVal.datetime.validate-presence{name: 'starts', type: "text", value: @booking.starts.strftime("%d/%m/%Y %H:%M"), readonly: 'true'}
+								.arrw
+								.fc
+							#StartDateValError.error
+								= errortxt(@booking.errors[:starts].uniq.join(', '))
+						- if @confirm
+							%input{name: 'confirm', type: "text", value: '1', readonly: 'true'}
+					.item
+						#EndDate.box
+							.cal
+							.txt
+								%input#EndDateVal.datetime.validate-presence{name: 'ends', type: "text", value: @booking.ends.strftime("%d/%m/%Y %H:%M"), readonly: 'true'}
+							.arrw
+							.fc
+						#EndDateValError.error
+							= errortxt(@booking.errors[:ends].uniq.join(', '))
+					.fc
+				- if @confirm
+					- if @fare
+						.p-t10.size-20
+							- case @string
+							- when 'Extending'
+								- if @fare[:billed_hours] > 0
+									.label.label-danger
+										%b
+											= @fare[:estimate] - @fare[:discount]
+										will be charged
+								- else
+									.label.label-info
+										No extra charge
+							- when 'Shortening'
+								- if @fare[:billed_hours] > 0
+									.label.label-info
+										%b
+											= @fare[:estimate] - @fare[:discount]
+										will be refunded
+								- else
+									.label.label-danger
+										No refund
+						.p-t10
+							#SearchSubmit
+								= submit_tag "Confirm", :class => 'btn btn-default'
+							#SearchWait.p-5.hide
+								.wait
+					- else
+						%h4.zoom No change in booking
+				- else
+					.p-t10
+						#SearchSubmit
+							= submit_tag "Submit", :class => 'btn btn-default'
+						#SearchWait.p-5.hide
+							.wait
+		.col-md-6
+			- if @confirm
+				- if @fare
+					:ruby
+						tmp = ''
+						if @fare[:days] == 1
+							tmp << "1 day, "
+						elsif @fare[:days] > 0
+							tmp << @fare[:days].to_s + " days, "
+						end
+						if @fare[:hours] == 1
+							tmp << "1 hour"
+						elsif @fare[:hours] > 0
+							tmp << @fare[:hours].to_s + " hours"
+						end
+					%h4.t-r.zoom
+						= @string
+						by
+						= tmp.chomp(', ')
+					.p-t5
+						- if @fare[:billed_hours] > 0
+							%table.table.table-bordered
+								%tr
+									%td
+										%b Normal Tariff
+									%td.t-r
+										= @fare[:estimate]
+								%tr
+									%td
+										%b Discount
+									%td.t-r
+										= @fare[:discount]
+								%tr.active
+									%td
+										%b Total
+									%td.t-r
+										= @fare[:estimate] - @fare[:discount]
+						- else
+							No change in tariff
+		.fc
+	:javascript
+		initializeDatePicker();
+- else
+	:javascript
+		var auto = setTimeout(function(){ submitRedirect(); }, 3000);
+		function submitRedirect() {
+			clearTimeout(auto);
+			location.reload();
+		}

@@ -14,15 +14,23 @@ class Inventory < ActiveRecord::Base
 	end
 	
 	def self.block(cargroup, location, starts, ends)
-		check = Inventory.check(starts, ends, cargroup, location)[0][0][0][1][0]
-		if check == 1
-			ActiveRecord::Base.connection.execute("UPDATE inventories SET total = (total-1) WHERE 
-				cargroup_id = #{cargroup} AND 
-				location_id = #{location} AND 
-				slot >= '#{(starts + 330.minutes).to_s(:db)}' AND 
-				slot < '#{(ends + 330.minutes).to_s(:db)}'")
-		end
+		check = check(starts, ends, cargroup, location)[0][0][0][1][0]
+		block_plain(cargroup, location, starts, ends) if check == 1
 		return check
+	end
+	
+	def self.block_extension(cargroup, location, starts, ends)
+		check = check_extension(starts, ends, cargroup, location)[0][0][0][1][0]
+		block_plain(cargroup, location, starts, ends) if check == 1
+		return check
+	end
+	
+	def self.block_plain(cargroup, location, starts, ends)
+		ActiveRecord::Base.connection.execute("UPDATE inventories SET total = (total-1) WHERE 
+			cargroup_id = #{cargroup} AND 
+			location_id = #{location} AND 
+			slot >= '#{(starts + 330.minutes).to_s(:db)}' AND 
+			slot < '#{(ends + 330.minutes).to_s(:db)}'")
 	end
 	
 	def self.cache
@@ -40,6 +48,41 @@ class Inventory < ActiveRecord::Base
 	end
 	
 	def self.check(start_time, end_time, cargroup, location)
+		if cargroup
+			cars = [Cargroup.find(cargroup)]
+		else
+			cars = Cargroup.list
+		end
+		location = Location.find(location) if location
+		h = []
+		cars.each do |c|
+			if location
+				locs = [location]
+			else
+				locs = c.locations
+			end
+			check = {}
+			locs.each do |l|
+				check[l.id.to_s] = [1, l]
+			end
+			day = nil
+			date = start_time + 330.minutes - c.wait_period.minutes
+			while date.to_i < (end_time.to_i + 330.minutes.to_i + c.wait_period.minutes.to_i) do
+				if day != date.to_date
+					day = date.to_date
+					inv = Inventory.get(c.id, day)
+				end
+				locs.each do |l|
+					check[l.id.to_s][0] = 0 if inv[l.id.to_s][date.to_i.to_s] == 0
+				end
+				date += 15.minutes
+			end
+			h << [check.to_a, c]
+		end
+		return h
+	end
+	
+	def self.check_extension(start_time, end_time, cargroup, location)
 		if cargroup
 			cars = [Cargroup.find(cargroup)]
 		else
@@ -97,12 +140,12 @@ class Inventory < ActiveRecord::Base
 		end
 	end
 	
-	def self.release(cargroup, location, start_time, end_time)
+	def self.release(cargroup, location, starts, ends)
 		ActiveRecord::Base.connection.execute("UPDATE inventories SET total = (total+1) WHERE 
 			cargroup_id = #{cargroup} AND 
 			location_id = #{location} AND 
-			slot >= '#{start_time.to_s(:db)}' AND 
-			slot < '#{end_time.to_s(:db)}'")
+			slot >= '#{(starts + 330.minutes).to_s(:db)}' AND 
+			slot < '#{(ends + 330.minutes).to_s(:db)}'")
 	end
 	
 	private

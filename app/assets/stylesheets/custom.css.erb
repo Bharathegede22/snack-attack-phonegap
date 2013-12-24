@@ -76,7 +76,7 @@ a {
 }
 
 .nav-buffer-big {
-	height:95px;
+	height:94px;
 }
 
 .header {
@@ -86,11 +86,10 @@ a {
 
 .logo {
 	background:url(<%= asset_path 'r.png' %>) no-repeat;
-	height:40px;
-	width:140px;
+	height:50px;
+	width:135px;
 	display:block;
 	float:left;
-	margin-top:5px;
 }
 
 .logo-rtt {
@@ -218,7 +217,7 @@ ul.navbar-nav li ul li {
 	overflow:hidden;
 	color:#727272;
 	position:absolute;
-	top:575px;
+	top:560px;
 	left:0;
 	text-align:center;
 }
@@ -269,7 +268,7 @@ ul.navbar-nav li ul li {
 
 .homepage .tariff-bg {
 	background:#323a45;
-	height:310px;
+	height:290px;
 	position:absolute;
 	z-index:1;
 	top:450px;
@@ -313,8 +312,8 @@ ul.navbar-nav li ul li {
 
 .homepage .all-in, .homepage .fuel, .homepage .insurance, .homepage .taxes, .homepage .navigation, .homepage .deposit {
 	background:url(<%= asset_path 'bubbles.png' %>) no-repeat;
-	width:30px;
-	height:30px;
+	width:20px;
+	height:20px;
 	margin:auto;
 	opacity:0.8;
 }
@@ -324,28 +323,28 @@ ul.navbar-nav li ul li {
 }
 
 .homepage .fuel {
-	background-position:-30px 0px;
+	background-position:-20px 0px;
 }
 
 .homepage .insurance {
-	background-position:-60px 0px;
+	background-position:-40px 0px;
 }
 
 .homepage .taxes {
-	background-position:-90px 0px;
+	background-position:-60px 0px;
 }
 
 .homepage .navigation {
-	background-position:-120px 0px;
+	background-position:-80px 0px;
 }
 
 .homepage .deposit {
-	background-position:-150px 0px;
+	background-position:-100px 0px;
 }
 
 .homepage .item .text {
 	text-align:center;
-	padding-top:10px;
+	padding-top:5px;
 }
 
 .homepage .widget {
@@ -448,7 +447,6 @@ ul.navbar-nav li ul li {
 
 .search-header {
 	background:#ffffff;
-	border-top:1px solid #323a45;
 	padding:7px 0 5px 0;
 }
 
@@ -493,6 +491,17 @@ ul.navbar-nav li ul li {
 	height:30px;
 	padding:0;
 	margin:0;
+}
+
+.search-header .button input {
+	background:url(<%= asset_path 'r.png' %>) no-repeat;
+	background-position:-290px -80px;
+	width:20px;
+	height:20px;
+	margin:0;
+	padding:0;
+	margin:5px auto;
+	border:0;
 }
 
 .reviews {
@@ -597,6 +606,7 @@ ul.navbar-nav li ul li {
 	position:absolute;
 	top:55px;
 	right:15px;
+	display:none;
 }
 
 .content .sidebar-fixed {
@@ -686,8 +696,6 @@ ul.navbar-nav li ul li {
 }
 
 .search-steps {
-	width:620px;
-	margin:auto;
 	padding:7px 0;
 }
 
@@ -700,7 +708,6 @@ ul.navbar-nav li ul li {
 	-moz-border-radius: 13px;
 	border-radius: 13px;
 	behavior: url(<%= asset_path 'PIE.htc' %>);
-	float:left;
 }
 
 .search-steps .complete {
@@ -720,9 +727,8 @@ ul.navbar-nav li ul li {
 
 .search-steps .txt {
 	font-size:16px;
-	margin:3px 20px 0 5px;
+	margin:2px 20px 0 5px;
 	color:#999999;
-	float:left;
 }
 
 .search-steps .active .txt {

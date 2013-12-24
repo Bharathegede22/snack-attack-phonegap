@@ -25,47 +25,53 @@ class Booking < ActiveRecord::Base
 	after_save :after_save_tasks
 	before_save :before_save_tasks
 	
-	def check_fare(start_date, end_date)
-		temp = {:estimate => 0, :discount => 0, :days => 0, :normal_days => 0, :discounted_days => 0, :hours => 0, :normal_hours => 0, :discounted_hours => 0}
-		cargroup = self.cargroup
-		rate = [cargroup.hourly_fare, cargroup.daily_fare]
-		h = (end_date.to_i - start_date.to_i)/3600
-		h += 1 if (end_date.to_i - start_date.to_i) > h*3600
-		d = h/24
-		h = h - d*24
-		temp[:days] = d
-		temp[:hours] = h
-		
-		# Daily Fair
-		if d > 0
-			(0..(d-1)).each do |i|
-				wday = (start_date + i.days).wday
-				temp[:estimate] += rate[1]
-				if wday > 0 && wday < 5
-					temp[:discount] += rate[1]*0.35
-					temp[:discounted_days] += 1
+	def check_cancellation
+		total = 0
+		self.charges.each do |c|
+			if !c.activity.include?('charge')
+				if c.refund > 0
+					total -= c.amount
 				else
-					temp[:normal_days] += 1
+					total += c.amount
 				end
 			end
 		end
-		# Hourly Fair
-		wday = (start_date + d.days).wday
-		if h <= 10
-			tmp = rate[0]*h
-		else
-			tmp = rate[1]
+		if Time.now > (self.starts - 24.hours)
+			if (0.25*total).round > 2000
+				total -= 2000
+			else
+				total -= (total*0.25).round
+			end
 		end
-		temp[:estimate] += tmp
-		if wday > 0 && wday < 5
-			temp[:discount] += tmp*0.35
-			temp[:discounted_hours] += h
-		else
-			temp[:normal_hours] += h
+		return total
+	end
+	
+	def check_late
+		data = {:hours => 0, :billed_hours => 0, :standard_hours => 0, :discounted_hours => 0, :estimate => 0, :discount => 0}
+		if !self.returned_at.blank? && self.returned_at > (self.ends + 30.minutes)
+			cargroup = self.car
+			rate = cargroup.hourly_fare
+			data[:hours] = (self.returned_at.to_i - self.ends.to_i)/3600
+			data[:hours] += 1 if (self.returned_at.to_i - self.ends.to_i) > data[:hours]*3600
+			data[:billed_hours] += data[:hours]
+			
+			min = 1
+			wday = self.ends.wday
+			while min <= data[:hours]*60
+				if min == ((min/60)*60)
+					data[:estimate] += rate
+					if [0,5,6].include?(wday)
+						data[:standard_hours] += 1
+					else
+						data[:discounted_hours] += 1
+						data[:discount] += rate*0.35
+					end
+					wday = (self.ends + min.minutes).wday
+				end
+				min += 1
+			end
 		end
-		temp[:estimate] = temp[:estimate].round
-		temp[:discount] = temp[:discount].round
-		return temp
+		return data
 	end
 	
 	def check_payment
@@ -78,6 +84,29 @@ class Booking < ActiveRecord::Base
 		return payment
 	end
 	
+	def check_reschedule
+		str, fare = ['', nil]
+		if !self.returned_at.blank?
+			if self.returned_at < self.ends
+				str, fare = ['Early Return', get_adjusted_fare('early')]
+			elsif self.returned_at > self.ends
+				str, fare = ['Late', check_late]
+			end
+		elsif (self.starts != self.last_starts || self.ends != self.last_ends)
+			if self.ends > self.last_ends
+				check = Inventory.check_extension(self.last_ends, self.ends, self.cargroup_id, self.location_id)[0][0][0][1][0]
+				if check
+					str, fare = ['Extending', get_adjusted_fare('extend')]
+				else
+					str, fare = ['NA', nil]
+				end
+			elsif self.ends < self.last_ends
+				str, fare = ['Shortening', get_adjusted_fare('short')]
+			end
+		end
+		return [str, fare]
+	end
+	
 	def dates_order
 		if !self.starts.blank? && !self.ends.blank?
 			if self.starts > self.ends
@@ -88,32 +117,275 @@ class Booking < ActiveRecord::Base
 		end
 	end
 	
+	def do_cancellation
+		total = 0
+		if status != 10
+			Inventory.release(self.cargroup_id, self.location_id, self.ends, self.last_ends)
+			self.charges.each do |c|
+				if !c.activity.include?('charge')
+					if c.refund > 0
+						total -= c.amount
+					else
+						total += c.amount
+					end
+				end
+			end
+			if Time.now > (self.starts - 24.hours)
+				fee = (0.25*total).round
+				fee = 2000 if fee > 2000
+			else
+				fee = 0
+			end
+			charge = Charge.new(:booking_id => self.id, :refund => 1, :activity => 'cancellation_refund', :estimate => total, :discount => 0, :amount => total)
+			if charge.save
+				note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs."
+				note += total.to_s + " - Cancellation Refund.<br/>"
+				self.notes += note
+			end
+			if fee > 0
+				total -= fee
+				charge = Charge.new(:booking_id => self.id, :activity => 'cancellation_charge', :estimate => fee, :discount => 0, :amount => fee)
+				if charge.save
+					note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs."
+					note += fee.to_s + " - Cancellation Charge.<br/>"
+					self.notes += note
+				end
+			end
+			self.status = 10
+			self.save(validate: false)
+		end
+		return total
+	end
+	
+	def do_reschedule
+		str, fare = ['', nil]
+		if !self.returned_at.blank?
+			if self.returned_at < self.ends
+				action_text = 'early_return_refund'
+				str, fare = ['Early Return', get_fare('early')]
+				self.early = true
+			elsif self.returned_at > (self.ends + 30.minutes)
+				action_text = 'late_fee'
+				str, fare = ['Late Return', check_late]
+				self.late = true
+			end
+		elsif (self.starts != self.last_starts || self.ends != self.last_ends)
+			if self.ends > self.last_ends
+				action_text = 'extension_fee'
+				check = Inventory.block_extension(self.cargroup_id, self.location_id, self.last_ends, self.ends)
+				if check
+					str, fare = ['Extending', get_fare('extend')]
+					self.extended = true
+				else
+					str, fare = ['NA', nil]
+				end
+			elsif self.ends < self.last_ends
+				action_text = 'shortened_trip_refund'
+				str, fare = ['Shortening', get_fare('short')]
+				Inventory.release(self.cargroup_id, self.location_id, self.ends, self.last_ends)
+				self.rescheduled = true
+			end
+		end
+		if fare
+			if fare[:billed_hours] > 0
+				charge = Charge.new(:booking_id => self.id, :activity => action_text, :estimate => 0, :discount => 0, :amount => 0)
+				charge.hours = fare[:hours].round
+				charge.billed_total_hours += fare[:billed_hours].round
+				charge.billed_discounted_hours += fare[:discounted_hours].round
+				charge.billed_standard_hours += fare[:standard_hours].round
+				charge.estimate += fare[:estimate]
+				charge.discount += fare[:discount]
+				charge.amount += (fare[:estimate] - fare[:discount])
+				charge.refund = 1 if action_text.include?('refund')
+				if charge.save
+					note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs."
+					note << case str
+					when 'Early Return' then charge.amount.to_s + ' - Early Return Credits.' + self.ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.returned_at.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+					when 'Late Return' then charge.amount.to_s + " - Late Charges." + self.ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.returned_at.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+					when 'Extending' then charge.amount.to_s + " - Extension Charges." + self.last_ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+					when 'Shortening' then charge.amount.to_s + " - Reschedule Refund." + self.last_ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+					end
+					self.notes += note
+				end
+				# Trip modification charges
+				if action_text == 'early_return_refund' || (action_text == 'shortened_trip_refund' && (Time.now > (self.ends - 24.hours)))
+					fare_new = case action_text 
+					when 'early_return_refund' then get_adjusted_fare('early')
+					when 'shortened_trip_refund' then get_adjusted_fare('short')
+					end
+					charge = Charge.new(:booking_id => self.id, :activity => action_text.gsub('refund', 'charge'), :estimate => 0, :discount => 0, :amount => 0)
+					charge.hours = fare[:hours].round
+					charge.billed_total_hours += fare[:billed_hours].round
+					charge.billed_discounted_hours += fare[:discounted_hours].round
+					charge.billed_standard_hours += fare[:standard_hours].round
+					charge.estimate += (fare[:estimate] - fare_new[:estimate])
+					charge.discount += (fare[:discount] - fare_new[:discount])
+					charge.amount += charge.estimate - charge.discount
+					if charge.save
+						note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs."
+						note << case str
+						when 'Early Return' then charge.amount.to_s + ' - Early Return Charge.' + self.ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.returned_at.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+						when 'Shortening' then charge.amount.to_s + " - Reschedule Charge." + self.last_ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+						end
+						note << self.starts.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+						self.notes += note
+					end
+				end
+			else
+				note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b>"
+				note << case str
+				when 'Early Return' then 'No Early Return Credits.' + self.ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.returned_at.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+				when 'Extending' then "No Extension Charges." + self.last_ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+				when 'Shortening' then "No Reschedule Refund." + self.last_ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+				end
+				self.notes += note
+			end
+			self.save(validate: false)
+		end
+		return [str, fare]
+	end
+	
 	def encoded_id
 		CommonHelper.encode('booking', self.id)
 	end
 	
-	def outstanding
-		total = 0
-		self.charges.each do |c|
-			if c.activity != 'early_return_refund'
-				if c.refund > 0
-					total -= c.amount
-				else
-					total += c.amount
-				end
+	def get_adjusted_fare(action)
+		data = get_fare(action)
+		if data[:billed_hours] > 0
+			if action == 'early'
+				data[:estimate] = (data[:estimate]/4).round
+				data[:discount] = (data[:discount]/4).round
+			elsif action == 'short' && (Time.now > (self.ends - 24.hours))
+				data[:estimate] = (data[:estimate]/2).round
+				data[:discount] = (data[:discount]/2).round
 			end
 		end
-		self.confirmed_payments.each do |p|
-			total -= p.amount
+		data[:estimate] = data[:estimate].round
+		data[:discount] = data[:discount].round
+		return data
+	end
+	
+	def get_fare(action)
+		case action
+		when 'early'
+			start_date = self.starts
+			end_date_old = self.returned_at
+			end_date_new = self.ends
+		when 'extend'
+			start_date = self.starts
+			end_date_old = self.last_ends
+			end_date_new = self.ends
+		when 'short'
+			start_date = self.starts
+			end_date_old = self.ends
+			end_date_new = self.last_ends
 		end
-		self.confirmed_refunds.each do |r|
-			total -= r.amount if r.through != 'early_return_credits'
-		end		
+		data = {:hours => 0, :billed_hours => 0, :standard_hours => 0, :discounted_hours => 0, :estimate => 0, :discount => 0}
+		cargroup = self.cargroup
+		rate = {:hourly => (cargroup.hourly_fare/60.0), :daily => cargroup.daily_fare}
+		
+		# Old Values
+		min_old = (end_date_old.to_i - start_date.to_i)/60
+		hour_old = min_old/60
+		hour_old += 1 if (end_date_old.to_i - start_date.to_i) > hour_old*3600
+		
+		# New Values
+		min_new = (end_date_new.to_i - start_date.to_i)/60
+		hour_new = min_new/60
+		hour_new += 1 if (end_date_new.to_i - start_date.to_i) > hour_new*3600
+		
+		data[:hours] = hour_new - hour_old
+		
+		min = 0
+		billed = 0
+		billed_total = 0
+		daily = {:actual => 0, :billed => 0}
+		daily_last = {:actual => 0, :billed => 0}
+		wday = start_date.wday
+		wday_c = start_date.wday
+		array = []
+		rev = 0
+		disc = 0
+		while min <= (hour_new*60)
+			if (min-((min/1440)*1440)) == 0
+				billed = 0
+				wday_c = (start_date + min.minutes).wday
+			end
+			if ((((start_date + min.minutes).hour == 0) && ((start_date + min.minutes).min == 0)) || (min == hour_new*60))
+				if daily_last[:billed] > 0
+					array_last = array.last
+					if array_last && ((array_last + daily_last[:actual]) >= 600)
+						rev = (rate[:daily] - ((600 - daily_last[:billed])*rate[:hourly]))
+					else
+						rev = daily_last[:billed]*rate[:hourly]
+					end
+					if [0,1,6].include?(wday)
+						data[:standard_hours] += daily_last[:billed]/60
+						disc = 0
+					else
+						data[:discounted_hours] += daily_last[:billed]/60
+						disc = rev*0.35
+					end
+					data[:estimate] += rev
+					data[:discount] += disc
+				end
+				if daily[:billed] > 0
+					if (daily[:actual] >= 600)
+						rev = (rate[:daily] - ((600 - daily[:billed])*rate[:hourly]))
+					else
+						rev = daily[:billed]*rate[:hourly]
+					end
+					if [0,5,6].include?(wday)
+						data[:standard_hours] += daily[:billed]/60
+						disc = 0
+					else
+						data[:discounted_hours] += daily[:billed]/60
+						disc = rev*0.35
+					end
+					data[:estimate] += rev
+					data[:discount] += disc
+				end
+				array << daily[:actual]
+				daily = {:actual => 0, :billed => 0}
+				daily_last = {:actual => 0, :billed => 0}
+				wday = (start_date + min.minutes).wday
+				date = (start_date + min.minutes).to_date
+			end
+			if billed < 600
+				if wday == wday_c
+					daily[:actual] += 1
+					daily[:billed] += 1 if min >= (hour_old*60)
+				else
+					daily_last[:actual] += 1
+					daily_last[:billed] += 1 if min >= (hour_old*60)
+				end
+				billed_total += 1 if min >= (hour_old*60)
+			end
+			billed += 1
+			min += 1
+		end
+		data[:billed_hours] = billed_total/60
+		data[:days] = data[:hours]/24
+		data[:hours] = data[:hours] - (data[:hours]/24)*24
+		data[:estimate] = data[:estimate].round
+		data[:discount] = data[:discount].round
+		return data
+	end
+	
+	
+	def outstanding
+		total = self.total_charges
+		total -= self.total_payments
+		total -= self.total_refunds
 		return total.to_i
 	end
 	
+	def paid?
+		return (self.status > 0 || !self.jsi.blank?)
+	end
+	
 	def set_fare
-		tmp = check_fare(self.starts, self.ends)
+		tmp = self.cargroup.check_fare(self.starts, self.ends)
 		self.estimate = tmp[:estimate].round
 		self.discount = tmp[:discount].round
 		self.days = tmp[:days]
@@ -188,6 +460,36 @@ class Booking < ActiveRecord::Base
 		return txt
 	end
 	
+	def total_charges
+		total = 0
+		self.charges.each do |c|
+			if !c.activity.include?('early_return')
+				if c.refund > 0
+					total -= c.amount
+				else
+					total += c.amount
+				end
+			end
+		end
+		return total.to_i
+	end
+	
+	def total_payments
+		total = 0
+		self.confirmed_payments.each do |p|
+			total += p.amount
+		end
+		return total.to_i
+	end
+	
+	def total_refunds
+		total = 0
+		self.confirmed_refunds.each do |r|
+			total += r.amount if r.through != 'early_return_credits'
+		end		
+		return total.to_i
+	end
+	
 	def through_search?
     @through_search
   end
@@ -250,7 +552,7 @@ class Booking < ActiveRecord::Base
 		end
 		self.last_starts = self.starts
 		self.last_ends = self.ends
-		self.unblocks = self.ends + self.cargroup.wait_period.minutes
+		#self.unblocks = self.ends + self.cargroup.wait_period.minutes
 	end
 	
 end
