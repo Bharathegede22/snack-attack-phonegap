@@ -10,26 +10,52 @@
 				%td{class: cls, onclick: "#{onclick}"}
 					.txt
 						Select Car
-				- cls = (step == 2 ? 'active' : (step > 2 ? 'complete' : 'normal'))
-				- onclick = (step > 2 ? "window.location = '/bookings/login';" : "")
-				%td{class: cls, onclick: "#{onclick}"}
-					.step 
-						%p 2
-				%td{class: cls, onclick: "#{onclick}"}
-					.txt
-						Register or Signin
-				- cls = (step == 3 ? 'active' : (step > 3 ? 'complete' : 'normal'))
-				- onclick = (step > 3 ? "window.location = '/bookings/license';" : "")
-				%td{class: cls, onclick: "#{onclick}"}
-					.step 
-						%p 3
-				%td{class: cls, onclick: "#{onclick}"}
-					.txt
-						License Details
-				- cls = (step == 4 ? 'active' : 'normal')
-				%td{class: cls}
-					.step
-						%p 4
-				%td{class: cls}
-					.txt
-						Checkout
+				- if user_signed_in?
+					- if current_user.license_pic
+						- cls = (step == 4 ? 'active' : 'normal')
+						%td{class: cls}
+							.step
+								%p 2
+						%td{class: cls}
+							.txt
+								Checkout
+					- else
+						- cls = (step == 3 ? 'active' : (step > 3 ? 'complete' : 'normal'))
+						- onclick = (step > 3 ? "window.location = '/bookings/license';" : "")
+						%td{class: cls, onclick: "#{onclick}"}
+							.step 
+								%p 2
+						%td{class: cls, onclick: "#{onclick}"}
+							.txt
+								License Details
+						- cls = (step == 4 ? 'active' : 'normal')
+						%td{class: cls}
+							.step
+								%p 3
+						%td{class: cls}
+							.txt
+								Checkout
+				- else
+					- cls = (step == 2 ? 'active' : (step > 2 ? 'complete' : 'normal'))
+					- onclick = (step > 2 ? "window.location = '/bookings/login';" : "")
+					%td{class: cls, onclick: "#{onclick}"}
+						.step 
+							%p 2
+					%td{class: cls, onclick: "#{onclick}"}
+						.txt
+							Register or Signin
+					- cls = (step == 3 ? 'active' : (step > 3 ? 'complete' : 'normal'))
+					- onclick = (step > 3 ? "window.location = '/bookings/license';" : "")
+					%td{class: cls, onclick: "#{onclick}"}
+						.step 
+							%p 3
+					%td{class: cls, onclick: "#{onclick}"}
+						.txt
+							License Details
+					- cls = (step == 4 ? 'active' : 'normal')
+					%td{class: cls}
+						.step
+							%p 4
+					%td{class: cls}
+						.txt
+							Checkout

@@ -36,10 +36,10 @@ Please dont refresh this page or use back button
 			= submit_tag "Proceed To Payment Gateway", :class => 'btn btn-default'
 		:javascript
 			window.onload = function() {
-				var auto = setTimeout(function(){ submitform(); }, 3000);
+				var auto = setTimeout(function(){ submitform(); }, 1000);
 				function submitform() {
 					clearTimeout(auto);
-					auto = setTimeout(function(){ showSubmit(); }, 10000);
+					auto = setTimeout(function(){ showSubmit(); }, 5000);
 					document.forms["pgForm"].submit();
 				}
 				function showSubmit() {

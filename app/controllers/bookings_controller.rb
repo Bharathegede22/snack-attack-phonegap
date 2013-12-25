@@ -24,13 +24,25 @@ class BookingsController < ApplicationController
 	def do
 		if !params[:car].blank? && !params[:loc].blank? && !session[:search].blank? && !session[:search][:starts].blank? && !session[:search][:ends].blank?
 			session[:book] = {:starts => session[:search][:starts], :ends => session[:search][:ends], :loc => params[:loc], :car => params[:car]}
-		elsif !session[:book].blank?
-		else
-			render_404 and return
+			if user_signed_in?
+				if current_user.check_details
+					if current_user.license_pic
+						session[:book][:steps] = 2
+					else
+						session[:book][:steps] = 3
+					end
+				else
+					session[:book][:steps] = 4
+				end
+			else
+				session[:book][:steps] = 4
+			end
+		elsif session[:book].blank?
+			redirect_to "/" and return
 		end
 		if user_signed_in?
 			if current_user.check_details
-				if current_user.license
+				if current_user.license_pic
 					redirect_to "/bookings/checkout"
 				else
 					redirect_to "/bookings/license"
@@ -74,10 +86,35 @@ class BookingsController < ApplicationController
 	end
 	
 	def license
+		redirect_to "/bookings/do" and return if user_signed_in? && current_user.license_pic
+		if request.post?
+			if !params[:image].blank?
+				image = Image.new(image_params)
+				image.imageable_id = current_user.id
+				image.imageable_type = 'License'
+				if image.save
+					if !params[:license].blank?
+						current_user.license = params[:license]
+						current_user.save(validate: false)
+					end
+					flash[:notice] = 'Thanks for uploading your license image.'
+				else
+					if image.errors[:avatar_content_type].length > 0
+						flash[:error] = 'Please attach a valid license image. Only allow formats are jpg, jpeg, gif and png.'
+					else
+						flash[:error] = 'Please attach a valid license image. Maximum allowedd file size is 2 MB.'
+					end
+					redirect_to "/bookings/do" and return
+				end
+			else
+				flash[:error] = 'Please attach a license image'
+			end
+		end
 		generic_meta
 	end
 	
 	def login
+		redirect_to "/bookings/do" and return if user_signed_in? && current_user.check_details
 		generic_meta
 	end
 	
@@ -279,8 +316,12 @@ class BookingsController < ApplicationController
 			@available = Inventory.check(@booking.starts, @booking.ends, @booking.cargroup_id, @booking.location_id)[0][0][0][1][0]
 			flash[:error] = "Sorry, but the car is no longer available" if @available == 0
 		else
-			render_404
+			redirect_to "/" and return
 		end
+	end
+	
+	def image_params
+		params.require(:image).permit(:avatar)
 	end
 	
 end

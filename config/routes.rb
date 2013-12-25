@@ -26,6 +26,7 @@ Web::Application.routes.draw do
 			get 'payu'
 			get 'widget'
 			
+			post 'license'
 			post 'payu'
 		end
 		member do

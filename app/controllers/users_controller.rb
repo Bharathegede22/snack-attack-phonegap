@@ -52,19 +52,46 @@ class UsersController < ApplicationController
 	end
 	
 	def update
+		notice = ''
+		error = ''
 		if current_user.update(signup_params)
-			flash[:notice] = 'Changes saved!'
-			redirect_to '/users/settings'
+			notice = 'Profile changes are saved! '
 		else
-			flash[:error] = 'Please fix the following error!'
+			error = 'Please fix the following error! '
+		end
+		if !params[:image].blank?
+			@image = current_user.license_pic
+			if @image
+				@image.update(image_params)
+			else
+				@image = Image.new(image_params)
+				@image.imageable_id = current_user.id
+				@image.imageable_type = 'License'
+				@image.save
+			end
+			if @image.valid?
+				notice << 'Thanks for uploading your license image.'
+			else
+				error << 'License image was not uploaded. Please fix the erros!'
+			end
+		end
+		flash[:notice] = notice if !notice.blank?
+		flash[:error] = error if !error.blank?
+		if error.blank?
+			redirect_to "/users/settings"
+		else
 			render 'settings'
 		end
 	end
 	
 	private
-
+	
+	def image_params
+		params.require(:image).permit(:avatar)
+	end
+	
   def signup_params
-    params.require(:user).permit(:name, :phone, :dob, :gender, :country, :pincode, :state, :city)
+    params.require(:user).permit(:name, :phone, :dob, :gender, :country, :pincode, :state, :city, :license)
   end
   
 end

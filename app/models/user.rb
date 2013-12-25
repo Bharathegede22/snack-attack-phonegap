@@ -20,6 +20,7 @@ class User < ActiveRecord::Base
   validates :pincode, numericality: {only_integer: true}, if: Proc.new {|u| !u.pincode.blank?}
   validates :phone, length: {is: 10, message: 'only indian mobile numbers without +91/091' }, if: Proc.new {|u| !u.phone.blank?}
   validates :pincode, length: {is: 6, message: 'should be of 6 digits'}, if: Proc.new {|u| !u.pincode.blank?}
+  validates :license, uniqueness: true, if: Proc.new {|u| !u.license.blank?}
   validate :check_dob
   
 	before_validation :before_validation_tasks
@@ -47,7 +48,7 @@ class User < ActiveRecord::Base
   	end
   end
   
-  def license
+  def license_pic
 		return Image.find(:first, :conditions => ["imageable_id = ? AND imageable_type = 'License'", self.id])
 	end
 	

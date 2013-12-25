@@ -47,7 +47,7 @@ function showSearch() {
 	$('#SHWait').show();
 	$('#SHContent').html('');
 	$('#SH').show();
-	$('#NavBuffer').css('height', 94);
+	$('#NavBuffer').css('height', 90);
 	getData('/bookings/widget', 'SHContent', 'replace' ,'SHWait');
 }
 

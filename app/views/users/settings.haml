@@ -1,7 +1,7 @@
 :ruby
 	current_user.country = 'IN' if current_user.country.blank?
 	current_user.state = 'Karnataka' if current_user.state.blank?
-= form_for(current_user, :url => "/users/update", :html => { :method => :post }) do |f|
+= form_for(current_user, :url => "/users/update", :html => { :method => :post, :multipart => true }) do |f|
 	- render_flash
 	.panel.panel-default
 		.panel-heading
@@ -81,7 +81,40 @@
 							= f.text_field :pincode, :class => 'form-control', placeholder: '6 digit current pincode'
 							.error
 								= errortxt(current_user.errors[:pincode].uniq.join(', '))
-			.row.form-group
-				.col-sm-2
-				.col-sm-10
-					= submit_tag "Submit", :class => 'btn btn-default btn-lg'
+		.panel-heading
+			%h3.panel-title License Details
+		.panel-body
+			.form-horizontal
+				.row
+					.col-sm-2
+					.col-sm-10
+						.help-block
+							Zoom will manually check the validity of your license. 
+							.p-t5.f-b
+								%i Any discrepancy will lead to immediate cancellation and blocking of account.
+				.row.form-group
+					%label.col-sm-2.control-label License Number
+					.col-sm-10
+						= f.text_field :license, :class => 'form-control'
+						.error
+							= errortxt(current_user.errors[:license].uniq.join(', '))
+				.row.form-group
+					%label.col-sm-2.control-label License Image
+					.col-sm-5
+						%input{type: "file", name: "image[avatar]", accept: "image/*"}
+						- if @image
+							.error
+								- if @image.errors[:avatar_content_type].length > 0
+									= errortxt('is invalid, allow formats are jpg, jpeg, gif and png.')
+								- else
+									= errortxt('is invalid, maximum allowed file size is 2 MB.')
+						.help-block
+							maximum file size is 2 MB
+							%br/
+							allowed format : jpg, jpeg, gif, png
+						%br/
+						= submit_tag "Submit", :class => 'btn btn-default btn-lg'
+					.col-sm-5
+						- license = current_user.license_pic
+						%a{href: license.avatar.url(:profile), target: '_blank'}
+							= image_tag license.avatar.url(:thumb)

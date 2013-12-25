@@ -12,6 +12,8 @@ class Image < ActiveRecord::Base
 					{:thumb => "200x200>", :profile => "1000x1000>"}
 				elsif a.instance.imageable_type == 'User'
 					{:thumb => "100x100>", :profile => "300x300>"}
+				else
+					{:thumb => "200x200>", :profile => "1000x1000>"}
 				end
 			}, 
 			:convert_options => {
@@ -22,7 +24,9 @@ class Image < ActiveRecord::Base
   
   belongs_to :imageable, :polymorphic => true
   
-  validates_attachment_presence :avatar
+  validates_attachment :avatar, :presence => true, :content_type => { :content_type => ["image/jpeg", "image/jpg", "image/gif", "image/png"] }, :size => { :in => 0..3.megabyte }
+  
+  validates :imageable_id, :imageable_type, presence: true
   validates :imageable_id, uniqueness: {scope: :imageable_type}
   
 end

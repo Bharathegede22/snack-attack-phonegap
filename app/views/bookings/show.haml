@@ -28,7 +28,7 @@
 						- if !@booking.car_id.blank?
 							- car = @booking.car
 							%b #{car.name}
-							= "(" + car.license + ")"
+							= "(" + car.license + ")" if !car.license.blank?
 						- else
 							.red
 								Your car will be allocated by 

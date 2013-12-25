@@ -4,7 +4,32 @@
 		- render_flash
 		.main-content.fl.bg-w.bs-9
 			.p-20
-				
+				.p-20.f-b.size-16.grey.t-c
+					Please provide your license details
+				.p-20
+					%form{action: "/bookings/license", enctype: "multipart/form-data", method: "post"}
+						.form-horizontal
+							.row.form-group
+								%label.col-sm-4.control-label License Image *
+								.col-sm-6
+									%input{type: "file", name: "image[avatar]", accept: "image/*"}
+									.help-block
+										maximum file size is 2 MB
+										%br/
+										allowed format : jpg, jpeg, gif, png
+							.row.form-group
+								%label.col-sm-4.control-label License Number *
+								.col-sm-6
+									%input.form-control{name: 'license', type: "text", value: current_user.license}
+							.t-c
+								.p-5
+									Zoom will manually check the validity of your license.
+								.p-b10
+									%i Any discrepancy will lead to immediate cancellation and blocking of account.
+							.row.form-group
+								.col-sm-4
+								.col-sm-6
+									= submit_tag "Submit", :class => 'btn btn-default btn-lg'
 		.sidebar-fixed.fr
 			= render :partial => "/bookings/sidebar", locals: {step: 3}
 		.fc
