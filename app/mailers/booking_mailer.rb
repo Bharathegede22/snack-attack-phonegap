@@ -8,14 +8,14 @@ class BookingMailer < ActionMailer::Base
 		@booking = booking
 		@charge = charge
 		@user = booking.user
-		mail(:to => @user.email, :subject => "Your Zoom reservation has been cancelled.")
+		mail(:to => @user.email, :subject => "You've cancelled a Zoom reservation.")
 	end
 	
 	def change(booking, charge)
 		@booking = booking
 		@charge = charge
 		@user = booking.user
-		mail(:to => @user.email, :subject => "You've cancelled a Zoom reservation.")
+		mail(:to => @user.email, :subject => "Your Zoom reservation details have been changed.")
 	end
 	
   def payment(booking)
