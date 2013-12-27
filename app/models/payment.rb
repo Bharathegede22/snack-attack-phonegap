@@ -43,6 +43,7 @@ class Payment < ActiveRecord::Base
 					else
 						b.status = 6
 					end
+					BookingMailer.payment(b).deliver
 				end
 				b.notes += "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs." + self.amount.to_s + " - Payment Received through <u>" + self.through_text + "</u>.<br/>"
 				b.save(:validate => false)

@@ -91,7 +91,7 @@
 				%td{:colspan => '2'}
 					%h4.f-b Fare Breakdown
 			- @booking.charges.each do |c|
-				- if c.activity != 'early_return_refund'
+				- if !c.activity.include?('early_return')
 					%tr
 						%td
 							= c.activity_text

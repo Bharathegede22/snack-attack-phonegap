@@ -95,9 +95,11 @@ class BookingsController < ApplicationController
 				if image.save
 					if !params[:license].blank?
 						current_user.license = params[:license]
+						#current.license_check = true
 						current_user.save(validate: false)
 					end
 					flash[:notice] = 'Thanks for uploading your license image.'
+					redirect_to "/bookings/do" and return
 				else
 					if image.errors[:avatar_content_type].length > 0
 						flash[:error] = 'Please attach a valid license image. Only allow formats are jpg, jpeg, gif and png.'

@@ -10,7 +10,7 @@
 				%td{class: cls, onclick: "#{onclick}"}
 					.txt
 						Select Car
-				- if user_signed_in?
+				- if false #user_signed_in?
 					- if current_user.license_pic
 						- cls = (step == 4 ? 'active' : 'normal')
 						%td{class: cls}

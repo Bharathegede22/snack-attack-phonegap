@@ -25,6 +25,15 @@ class Booking < ActiveRecord::Base
 	after_save :after_save_tasks
 	before_save :before_save_tasks
 	
+	def cancellation_charge
+		total = Charge.find_by_booking_id_and_activity(self.id, 'cancellation_charge')
+		if total
+			return total.amount
+		else
+			return 0
+		end
+	end
+	
 	def check_cancellation
 		total = 0
 		self.charges.each do |c|
@@ -49,12 +58,11 @@ class Booking < ActiveRecord::Base
 	def check_late
 		data = {:hours => 0, :billed_hours => 0, :standard_hours => 0, :discounted_hours => 0, :estimate => 0, :discount => 0}
 		if !self.returned_at.blank? && self.returned_at > (self.ends + 30.minutes)
-			cargroup = self.car
+			cargroup = self.cargroup
 			rate = cargroup.hourly_fare
 			data[:hours] = (self.returned_at.to_i - self.ends.to_i)/3600
 			data[:hours] += 1 if (self.returned_at.to_i - self.ends.to_i) > data[:hours]*3600
 			data[:billed_hours] += data[:hours]
-			
 			min = 1
 			wday = self.ends.wday
 			while min <= data[:hours]*60
@@ -153,6 +161,7 @@ class Booking < ActiveRecord::Base
 			end
 			self.status = 10
 			self.save(validate: false)
+			BookingMailer.cancel(self, charge).deliver
 		end
 		return total
 	end
@@ -241,6 +250,11 @@ class Booking < ActiveRecord::Base
 				self.notes += note
 			end
 			self.save(validate: false)
+			if charge
+				BookingMailer.change(self, charge).deliver
+			else
+				BookingMailer.change(self, nil).deliver
+			end
 		end
 		return [str, fare]
 	end
@@ -372,6 +386,9 @@ class Booking < ActiveRecord::Base
 		return data
 	end
 	
+	def link
+		return "http://" + HOSTNAME + "/bookings/" + self.encoded_id
+	end
 	
 	def outstanding
 		total = self.total_charges
@@ -501,6 +518,8 @@ class Booking < ActiveRecord::Base
   protected
 	
 	def after_create_tasks
+		self.confirmation_key = self.encoded_id.upcase
+		self.save(validate: false)
 		charge = Charge.new(:booking_id => self.id, :activity => 'booking_fee')
 		charge.hours = self.days*24 + self.hours
 		charge.billed_total_hours = self.days*10
@@ -526,33 +545,17 @@ class Booking < ActiveRecord::Base
 			self.notes = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs." + self.total.to_i.to_s + " - Booking Charges."
 			self.notes += self.starts.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
 		else
-			if false
-				if self.status < 5
-					if self.starts != self.last_starts || self.ends != self.last_ends
-						check_extended
-						check_short
-					end
-					check_early
-					check_late
-				end 
-				if !self.returned_at.blank?
-					self.ends = self.returned_at
-					self.status = 5
-				end
-				if !self.comment.blank?
-					self.notes += "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : Comment Added - </b>" + self.comment + "<br/>"
-					self.comment = ''
-				end
-				if self.status > 8
-					handle_cancellation
-				else
-					check_mileage
-				end
+			if !self.returned_at.blank?
+				self.ends = self.returned_at
+				self.status = 5
+			end
+			if !self.comment.blank?
+				self.notes += "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : Comment Added - </b>" + self.comment + "<br/>"
+				self.comment = ''
 			end
 		end
 		self.last_starts = self.starts
 		self.last_ends = self.ends
-		#self.unblocks = self.ends + self.cargroup.wait_period.minutes
 	end
 	
 end

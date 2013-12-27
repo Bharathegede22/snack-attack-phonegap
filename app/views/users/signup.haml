@@ -107,7 +107,7 @@
 				%br/
 				%img{:src => "http://#{HOSTNAME}/images/loader.gif", :alt => '', :border => '0'}
 				:javascript
-					var auto = setTimeout(function(){ submitRedirect(); }, 5000);
+					var auto = setTimeout(function(){ submitRedirect(); }, 1000);
 					function submitRedirect() {
 						clearTimeout(auto);
 						window.location = "/bookings/do";

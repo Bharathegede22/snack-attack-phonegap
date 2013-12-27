@@ -116,5 +116,6 @@
 						= submit_tag "Submit", :class => 'btn btn-default btn-lg'
 					.col-sm-5
 						- license = current_user.license_pic
-						%a{href: license.avatar.url(:profile), target: '_blank'}
-							= image_tag license.avatar.url(:thumb)
+						- if licence
+							%a{href: license.avatar.url(:profile), target: '_blank'}
+								= image_tag license.avatar.url(:thumb)

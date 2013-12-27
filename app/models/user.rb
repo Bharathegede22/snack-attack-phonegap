@@ -11,16 +11,18 @@ class User < ActiveRecord::Base
          :omniauthable, :omniauth_providers => [:facebook, :google_oauth2]
 	
 	attr_writer :signup
+	attr_writer :license_check
 	
 	validates :email, presence: true
   validates :email, uniqueness: true
   validates :name, :phone, :dob, presence: true, if: Proc.new {|u| u.signup?}
   validates :phone, uniqueness: true, if: Proc.new {|u| u.signup?}
+  validates :license, presence: true, if: Proc.new {|u| u.license_check?}
+  validates :license, uniqueness: true, if: Proc.new {|u| u.license_check? && !u.license.blank?}
   validates :phone, numericality: {only_integer: true}, if: Proc.new {|u| !u.phone.blank?}
   validates :pincode, numericality: {only_integer: true}, if: Proc.new {|u| !u.pincode.blank?}
   validates :phone, length: {is: 10, message: 'only indian mobile numbers without +91/091' }, if: Proc.new {|u| !u.phone.blank?}
   validates :pincode, length: {is: 6, message: 'should be of 6 digits'}, if: Proc.new {|u| !u.pincode.blank?}
-  validates :license, uniqueness: true, if: Proc.new {|u| !u.license.blank?}
   validate :check_dob
   
 	before_validation :before_validation_tasks
@@ -46,6 +48,10 @@ class User < ActiveRecord::Base
   	else
   		return Booking.find_by_sql("SELECT * FROM bookings WHERE #{sql} ORDER BY #{order} LIMIT 10 OFFSET #{page*10}")
   	end
+  end
+  
+  def license_check?
+    @license_check
   end
   
   def license_pic

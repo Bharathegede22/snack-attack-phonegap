@@ -27,7 +27,7 @@ class UsersController < ApplicationController
 			current_user.city = user.city
 			current_user.signup = true
 			if current_user.save
-				flash[:notice] = 'Details saved, please carry on!'
+				flash[:notice] = 'Details saved, please carry on!' if session[:book].blank?
 			else
 				flash[:error] = 'Please fix the following errors.'
 			end
