@@ -1,5 +1,11 @@
-- car = inventory[1]
-- locs = inventory[0]
+:ruby
+	locs = []
+	org_locs.each do |l|
+		locs << [l, 1] if inventory[l.id.to_s] > 0
+	end
+	org_locs.each do |l|
+		locs << [l, 0] if inventory[l.id.to_s] < 1
+	end
 .search-item
 	.p-10
 		.img
@@ -12,7 +18,7 @@
 				Seater
 			.fc
 			.avail
-				- if locs[0][1][0] == 1
+				- if locs[0][1] == 1
 					.yes{id: 'Avail' + car.id.to_s}
 						Available
 				- else
@@ -23,27 +29,27 @@
 				.loc
 					.btn-group
 						%button.btn.btn-default{type: "button", id: 'LocName' + car.id.to_s}
-							= locs[0][1][1].shortname
+							= locs[0][0].shortname
 						%button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", type: "button"}
 							%span.caret
 							%span.sr-only Toggle Dropdown
 						%ul.dropdown-menu{role: "menu", id: "LocMenu" + car.id.to_s}
 							- locs.each do |l|
 								- if l == locs[0]
-									%li.active{:id => ("LocSel" + car.id.to_s + l[1][1].id.to_s)}
-										%a{href: "javascript:void(0)", onclick: "showAvailability(#{car.id}, #{l[1][1].id}, #{l[1][0]}, '#{l[1][1].shortname}');"}
-											= l[1][1].shortname
+									%li.active{:id => ("LocSel" + car.id.to_s + l[0].id.to_s)}
+										%a{href: "javascript:void(0)", onclick: "showAvailability(#{car.id}, #{l[0].id}, #{l[1]}, '#{l[0].shortname}');"}
+											= l[0].shortname
 								- else
-									%li{:id => ("LocSel" + car.id.to_s + l[1][1].id.to_s)}
-										%a{href: "javascript:void(0)", onclick: "showAvailability(#{car.id}, #{l[1][1].id}, #{l[1][0]}, '#{l[1][1].shortname}');"}
-											= l[1][1].shortname
+									%li{:id => ("LocSel" + car.id.to_s + l[0].id.to_s)}
+										%a{href: "javascript:void(0)", onclick: "showAvailability(#{car.id}, #{l[0].id}, #{l[1]}, '#{l[0].shortname}');"}
+											= l[0].shortname
 				.fc
 		.actions
 			- fare = car.check_fare(@booking.starts, @booking.ends)
 			.tariff.r-5.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-placement' => 'left', 'data-title' => "<div class='size-12 t-l'><b class='zoom size-16'>Fare Breakup</b><br/><table width='200'><tr><td>Normal Tariff</td><td>#{fare[:estimate]}</td></tr><tr><td>Discount</td><td>#{fare[:discount]}</td></tr><tr><td>Total</td><td>#{(fare[:estimate] - fare[:discount])}</td></tr></table></div>"}
 				= (fare[:estimate] - fare[:discount])
-			- if locs[0][1][0] == 1
-				.button{id: 'ButtonYes' + car.id.to_s, onclick: "doBooking(#{car.id}, #{locs[0][1][1].id});"}
+			- if locs[0][1] == 1
+				.button{id: 'ButtonYes' + car.id.to_s, onclick: "doBooking(#{car.id}, #{locs[0][0].id});"}
 					Book
 				.button-dis{id: 'ButtonNo' + car.id.to_s, style: 'display:none;'}
 					Book

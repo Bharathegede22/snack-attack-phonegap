@@ -102,7 +102,7 @@ class Booking < ActiveRecord::Base
 			end
 		elsif (self.starts != self.last_starts || self.ends != self.last_ends)
 			if self.ends > self.last_ends
-				check = Inventory.check_extension(self.last_ends, self.ends, self.cargroup_id, self.location_id)[0][0][0][1][0]
+				check = Inventory.check_extension(self.last_ends, self.ends, self.cargroup_id, self.location_id)
 				if check
 					str, fare = ['Extending', get_adjusted_fare('extend')]
 				else
@@ -127,8 +127,8 @@ class Booking < ActiveRecord::Base
 	
 	def do_cancellation
 		total = 0
-		if status != 10
-			Inventory.release(self.cargroup_id, self.location_id, self.ends, self.last_ends)
+		if self.status < 9
+			Inventory.release(self.cargroup_id, self.location_id, self.starts, self.ends)
 			self.charges.each do |c|
 				if !c.activity.include?('charge')
 					if c.refund > 0

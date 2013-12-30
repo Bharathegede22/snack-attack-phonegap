@@ -23,15 +23,13 @@ gem "exception_notification"
 gem 'haml-rails'
 gem "rfc822"
 gem "paperclip"
-gem 'aws-ses'
 gem 'rack-cache'
 gem 'lacquer'
 gem 'dalli'
 gem 'sidekiq'
 gem 'fql'
 gem 'countries'
-gem 'flash_cookie_session'
-gem 'uploadify-rails'
+gem 'aws-sdk'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.

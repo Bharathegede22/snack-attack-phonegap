@@ -14,13 +14,13 @@ class Inventory < ActiveRecord::Base
 	end
 	
 	def self.block(cargroup, location, starts, ends)
-		check = check(starts, ends, cargroup, location)[0][0][0][1][0]
+		check = check(starts, ends, cargroup, location)
 		block_plain(cargroup, location, starts, ends) if check == 1
 		return check
 	end
 	
 	def self.block_extension(cargroup, location, starts, ends)
-		check = check_extension(starts, ends, cargroup, location)[0][0][0][1][0]
+		check = check_extension(starts, ends, cargroup, location)
 		block_plain(cargroup, location, starts, ends) if check == 1
 		return check
 	end
@@ -48,73 +48,96 @@ class Inventory < ActiveRecord::Base
 	end
 	
 	def self.check(start_time, end_time, cargroup, location)
-		if cargroup
-			cars = [Cargroup.find(cargroup)]
+		if !cargroup.blank? && !location.blank?
+			return check_plain(start_time, end_time, cargroup, location, true, true, true)[cargroup.to_s][location.to_s]
 		else
-			cars = Cargroup.list
+			return check_plain(start_time, end_time, cargroup, location, true, true, true)
 		end
-		location = Location.find(location) if location
-		h = []
-		cars.each do |c|
-			if location
-				locs = [location]
-			else
-				locs = c.locations
-			end
-			check = {}
-			locs.each do |l|
-				check[l.id.to_s] = [1, l]
-			end
-			day = nil
-			date = start_time + 330.minutes - c.wait_period.minutes
-			while date.to_i < (end_time.to_i + 330.minutes.to_i + c.wait_period.minutes.to_i) do
-				if day != date.to_date
-					day = date.to_date
-					inv = Inventory.get(c.id, day)
-				end
-				locs.each do |l|
-					check[l.id.to_s][0] = 0 if inv[l.id.to_s][date.to_i.to_s] == 0
-				end
-				date += 15.minutes
-			end
-			h << [check.to_a, c]
-		end
-		return h
 	end
 	
 	def self.check_extension(start_time, end_time, cargroup, location)
-		if cargroup
-			cars = [Cargroup.find(cargroup)]
-		else
-			cars = Cargroup.list
-		end
-		location = Location.find(location) if location
-		h = []
-		cars.each do |c|
-			if location
-				locs = [location]
+		return check_plain(start_time, end_time, cargroup, location, true, false, true)[cargroup.to_s][location.to_s]
+	end
+	
+	def self.check_plain(start_time, end_time, cargroup, location, timezone_padding=false, start_padding=false, end_padding=false)
+		if true
+			if cargroup
+				cars = [Cargroup.find(cargroup)]
 			else
-				locs = c.locations
+				cars = Cargroup.list
+			end
+			if location
+				locs = [Location.find(location)]
+			else
+				locs = Location.live
 			end
 			check = {}
-			locs.each do |l|
-				check[l.id.to_s] = [1, l]
-			end
-			day = nil
-			date = start_time + 330.minutes
-			while date.to_i < (end_time.to_i + 330.minutes.to_i + c.wait_period.minutes.to_i) do
-				if day != date.to_date
-					day = date.to_date
-					inv = Inventory.get(c.id, day)
-				end
+			cars.each do |c|
+				tmp = {}
 				locs.each do |l|
-					check[l.id.to_s][0] = 0 if inv[l.id.to_s][date.to_i.to_s] == 0
+					tmp[l.id.to_s] = 1
 				end
-				date += 15.minutes
+				start_date = start_time
+				start_date += 330.minutes if timezone_padding
+				start_date -= c.wait_period.minutes if start_padding 
+			
+				end_date = end_time
+				end_date += 330.minutes if timezone_padding
+				end_date += c.wait_period.minutes if end_padding
+			
+				Inventory.find_by_sql("SELECT slot, total, location_id FROM inventories 
+					WHERE cargroup_id = #{c.id} AND 
+					location_id IN (#{locs.collect {|l| l.id}.join(',')}) AND 
+					slot >= '#{start_date.to_s(:db)}' AND 
+					slot < '#{(end_date).to_s(:db)}' AND 
+					total < 1 
+					GROUP BY location_id").each do |i|
+					tmp[i.location_id.to_s] = 0
+				end
+				check[c.id.to_s] = tmp
 			end
-			h << [check.to_a, c]
+			return check
+		else
+			if cargroup
+				cars = [Cargroup.find(cargroup)]
+			else
+				cars = Cargroup.list
+			end
+			location = Location.find(location) if location
+			h = []
+			cars.each do |c|
+				if location
+					locs = [location]
+				else
+					locs = c.locations
+				end
+				check = {}
+				locs.each do |l|
+					check[l.id.to_s] = [1, l]
+				end
+				day = nil
+			
+				date = start_time
+				date += 330.minutes if timezone_padding
+				date -= c.wait_period.minutes if start_padding
+			
+				end_date = end_time
+				end_date += 330.minutes if timezone_padding
+				end_date += c.wait_period.minutes if end_padding
+				while date.to_i < end_date.to_i do
+					if day != date.to_date
+						day = date.to_date
+						inv = Inventory.get(c.id, day)
+					end
+					locs.each do |l|
+						check[l.id.to_s][0] = 0 if inv[l.id.to_s][date.to_i.to_s] == 0
+					end
+					date += 15.minutes
+				end
+				h << [check.to_a, c]
+			end
+			return h
 		end
-		return h
 	end
 	
 	def self.get(cargroup, day)

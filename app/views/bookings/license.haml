@@ -17,10 +17,11 @@
 										maximum file size is 2 MB
 										%br/
 										allowed format : jpg, jpeg, gif, png
-							.row.form-group
-								%label.col-sm-4.control-label License Number
-								.col-sm-6
-									%input.form-control{name: 'license', type: "text", value: current_user.license}
+							- if false
+								.row.form-group
+									%label.col-sm-4.control-label License Number
+									.col-sm-6
+										%input.form-control{name: 'license', type: "text", value: current_user.license}
 							.t-c
 								.p-5
 									Zoom will manually check the validity of your license.

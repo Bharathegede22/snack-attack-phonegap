@@ -17,7 +17,11 @@
 					%b Car Type
 			.col-md-9
 				.p-5
-					= @booking.cargroup.display_name
+					- cargroup = @booking.cargroup
+					= cargroup.display_name
+					- if !cargroup.disclaimer.blank?
+						.red.size-10
+							= cargroup.disclaimer.html_safe
 		.row
 			.col-md-3
 				.p-5
@@ -40,7 +44,11 @@
 					%b Rented From
 			.col-md-9
 				.p-5
-					= @booking.location.name
+					- location = @booking.location
+					= location.shortname
+					- if !location.disclaimer.blank?
+						.red.size-10
+							= location.disclaimer.html_safe
 		.row
 			.col-md-3
 				.p-5

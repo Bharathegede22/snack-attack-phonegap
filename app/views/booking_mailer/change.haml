@@ -11,28 +11,39 @@ Your Zoom reservation end time has been changed.
 Please review the details of your reservation:
 %br/
 %br/
-%table{border: '0', cellpadding: '5', cellspacing: '0', style: "background:#eeeeee; font-size:12px; color:#333333;"}
-	%tr
-		%td Vehicle:
-		%td
-			%b #{cargroup.display_name}
-	%tr
-		%td Pick-up location: 
-		%td
-			%b #{location.name}
-			= "("
-			%a{href: "#{location.map_link}", target: "_blank"} View Map
-			= ")"
-	%tr
-		%td Reservation begins: 
-		%td
-			%b #{@booking.starts.strftime("%d/%m/%y %I:%M %p")}
-	%tr
-		%td Reservation Confirmation Number:
-		%td
-			%b
+%div{style: "border-radius:5px; background:#eeeeee; padding:5px; margin:0px;"}
+	%table{border: '0', cellpadding: '5', cellspacing: '0', style: "font-size:12px; color:#333333;"}
+		%tr
+			%td{valign: 'top'} Vehicle:
+			%td{valign: 'top'}
+				%b #{cargroup.display_name}
+				%br/
+				- if !cargroup.disclaimer.blank?
+					%p{style: 'color:red; margin:0; padding:0;'}
+						= cargroup.disclaimer.html_safe
+		%tr
+			%td{valign: 'top'} Pick-up Location: 
+			%td{valign: 'top'}
+				%b #{location.name}
+				%br/
+				= "("
+				%a{href: "#{location.map_link}", target: "_blank"} View Map
+				= ")"
+				%br/
+				- if !location.disclaimer.blank?
+					%p{style: 'color:red; margin:0; padding:0;'}
+						= location.disclaimer.html_safe
+		%tr
+			%td{valign: 'top'} Reservation Begins: 
+			%td{valign: 'top'}
+				%b #{@booking.starts.strftime("%d/%m/%y %I:%M %p")}
+		%tr
+			%td{valign: 'top'} Reservation Confirmation Number:
+			%td{valign: 'top'}
+				%b #{@booking.confirmation_key}
+				%br/
 				%a{href: "#{@booking.link}", target: "_blank"}
-					= @booking.confirmation_key
+					manage your reservation
 %br/
 %br/
 %b
@@ -61,21 +72,55 @@ Please review the details of your reservation:
 		- if @booking.starts < Time.now
 			Please clear all your outstanding amount when you drop the vehicle back to Zoom.
 		- else
-			Please clear all your outstanding amount when you pick the vehicle from Zoom. Zoom reserve the right of cancelling the booking against any pending payment.
+			%a{href: "#{@booking.link}", target: "_blank"}
+				Make payment
+	- elsif outstanding < 0
+		%b
+			Rs.
+			#{0-outstanding}
+		will be refunded back to your account.
+		%i Please note that all refunds are processed at the time the vehicle is returned back to Zoom and the reservation has officially ended. It will then take 3-4 days for the reimbursed amount to reflect in your account.
 %br/
 %br/
 - if @booking.starts < Time.now
 	%div{style: "margin:0px; padding:0px;"}
 		%b{style: "color:red; font-style:italic;"} IMPORTANT!
 		%br/
-		\- Please remember to carry your original driving license at the time of picking the car. Zoom reserves the right of cancelling the reservation if the original driving license is not produced.
-		%br/
-		\- As a friendly reminder, each reservation comes with 40 free km/hr (w/ 200 km/day max cap). Any excess kms will be charged at 
-		Rs #{cargroup.excess_kms}/km.
-		%br/
-		\- Please remember to carry your valid credit / debit card for paying any fee at the time you return the vehicle.
+		%p{style: "margin:5px 0 0 0; padding:0;"}
+			\- Please remember to carry your original driving license at the time of picking the car. Zoom reserves the right of cancelling the reservation if the original driving license is not produced.
+		%p{style: "margin:5px 0 0 0; padding:0;"}
+			\- As a friendly reminder, each reservation comes with 40 free km/hr (w/ 200 km/day max cap). Any excess kms will be charged at 
+			Rs #{cargroup.excess_kms}/km.
+		%p{style: "margin:5px 0 0 0; padding:0;"}
+			\- Please remember to carry your valid credit / debit card for paying any fee at the time you return the vehicle.
 	%br/
 	%br/
+%b Your Details
+%br/
+%div{style: "padding:5px; margin:0px;"}
+	%table{border: '0', cellpadding: '5', cellspacing: '0', style: "font-size:12px; color:#333333;"}
+		%tr
+			%td{valign: 'top'} Name:
+			%td{valign: 'top'}
+				%b #{@user.name}
+		%tr
+			%td{valign: 'top'} Email: 
+			%td{valign: 'top'}
+				%b #{@user.email}
+		%tr
+			%td{valign: 'top'} Mobile: 
+			%td{valign: 'top'}
+				%b #{@user.phone}
+		%tr
+			%td{valign: 'top'} License:
+			%td{valign: 'top'}
+				- license = @user.license_pic
+				- if license
+					%a{href: license.avatar.url(:profile), target: '_blank'}
+						See license
+				- else
+					= "-"
+%br/
 %br/
 If you have any questions about your reservation you can contact Zoom at help@zoomcar.in.
 %br/

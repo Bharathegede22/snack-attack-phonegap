@@ -64,7 +64,7 @@
 						.p-t10
 							#SearchSubmit
 								= submit_tag "Confirm", :class => 'btn btn-default'
-							#SearchWait.p-5.hide
+							#SearchWait.p-5{style: 'display:none;'}
 								.wait
 					- else
 						%h4.zoom No change in booking
@@ -72,7 +72,7 @@
 					.p-t10
 						#SearchSubmit
 							= submit_tag "Submit", :class => 'btn btn-default'
-						#SearchWait.p-5.hide
+						#SearchWait.p-5{style: 'display:none;'}
 							.wait
 		.col-md-6
 			- if @confirm

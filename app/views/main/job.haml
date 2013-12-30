@@ -1,0 +1,62 @@
+.job
+	%h1
+		= @job.title
+	%h3
+		.grey
+			= CommonHelper::HIRE_TYPE[@job.hire_type][0] + " / " + CommonHelper::DEPARTMENT[@job.department][0] + " / Bangalore"
+	.p-t5
+		= raw(@job.description)
+	%br/
+	%h3 About Zoom
+	Zoom is India's first 100% self-drive car hire service. We're a membership-based service that allows customers to rent cars out by the hour or by the day. At present, we have a fleet of 
+	= Car.active
+	vehicles across 
+	= Location.active.length
+	different locations in Bangalore. We offer the 
+	- array = []
+	- Cargroup.name_list.each do |c|
+		- array << c.display_name.split('7')[0].strip.split('8')[0].strip
+	- array = array.uniq
+	= array.join(', ').gsub(', ' + array.last, '')
+	and
+	= array.last + "."
+	We're in rapid expansion mode as we look to grow across Bangalore and other Indian metros in 2014.
+	%br/
+	%br/
+	%h3 How To Apply
+	%table{:cellpadding => '0', :cellspacing => '0'}
+		%tr
+			%td{:valign => 'middle'}
+				Send your resume to
+			%td{:valign => 'middle'}
+				= image_tag("careers.png", :alt => '')
+			%td{:valign => 'middle'}
+				along with the link of the job.
+	%br/
+	%table{:cellpadding => '0', :cellspacing => '0', :width => '100%'}
+		%tr
+			%td
+				%b Min Work Experience
+				%br/
+				= !@job.min_workex.blank? ? (@job.min_workex.to_s + ' Years') : '-'
+				%br/
+				%br/
+			%td{:align => 'right'}
+				%b Status
+				%br/
+				= @job.status ? 'Live' : 'Closed'
+				%br/
+				%br/
+		%tr
+			%td
+				%b Relevant Work Experience
+				%br/
+				= !@job.relevant_workex.blank? ? (@job.relevant_workex.to_s + ' Years') : '-'
+				%br/
+				%br/
+			%td{:align => 'right'}
+				%b Posted On
+				%br/
+				= @job.created_at.strftime("%d/%m/%Y")
+				%br/
+				%br/

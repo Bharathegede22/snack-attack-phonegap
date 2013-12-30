@@ -27,15 +27,27 @@ class User < ActiveRecord::Base
   
 	before_validation :before_validation_tasks
 	
+	def admin?
+		return self.role == 10
+	end
+	
 	def check_details
 		return !self.name.blank? && !self.phone.blank? && !self.dob.blank?
+	end
+	
+	def check_license
+		return (!self.license.blank? || self.license_pic)
 	end
 	
   def check_dob
   	errors.add(:dob, "can't be less than 23 years") if !self.dob.blank? && (self.dob.to_datetime > (Time.zone.now - 23.years))
   end
   
-  def get_bookings(action, page=0)
+  def fleet?
+		return self.role >= 5
+	end
+	
+	def get_bookings(action, page=0)
   	sql, order = case action
   	when 'live' then ["starts <= '#{Time.zone.now.to_s(:db)}' AND ends >= '#{Time.zone.now.to_s(:db)}' AND status < 5", 'starts ASC']
   	when 'future' then ["starts > '#{Time.zone.now.to_s(:db)}' AND status < 5", 'starts ASC']

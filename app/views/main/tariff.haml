@@ -1,0 +1,168 @@
+.static
+	%h1 Zoom Standard Tariffs
+	.m-t10.size-20.t-c
+		%i Zoom offers the simplest, easiest to understand car-hire tariff in India
+	%br/
+	.t-c
+		%table.m-auto{:cellpadding => '0', :cellspacing => '0', :border => '0', :width => '650'}
+			%thead.bg-zoom.white
+				%tr
+					%th{:style => "border-right:1px solid #fff;"}
+						.p-5 Car
+					%th{:style => "border-left:1px solid #fff;border-right:1px solid #fff;"}
+						.p-5 Hourly
+					%th{:style => "border-left:1px solid #fff;"}
+						.p-5 
+							Daily
+							%span{:style => "font-size:26px; line-height:6px;"} *
+							%br/
+							(24 hours)
+					%th{:style => "border-left:1px solid #fff;"}
+						.p-5 
+							Beyond
+							%br/
+							Max Usage
+							%span{:style => "font-size:26px; line-height:6px;"} **
+			%tbody
+				- @cargroup.each do |cargroup|
+					%tr
+						%td.border-zoom
+							.p-5
+								= image_tag("cars/#{cargroup.id}small.jpg", :alt => cargroup.display_name)
+								%br/
+								%p.f-b{:style => "text-align: center;"} #{cargroup.display_name}
+						%td.border-zoom
+							.p-5 ₹ #{cargroup.hourly_fare}
+						%td.border-zoom
+							.p-5
+								₹ #{cargroup.daily_fare}
+						%td.border-zoom
+							.p-5
+								₹ #{cargroup.excess_kms} /Km
+				%tr
+					%td{:colspan => '4'}
+						.p-10.t-l
+							%span.red
+								%b
+									= "# - "
+								Mahindra Reva has a maximum range of
+								%b 100 Km
+								on a full charge.
+							%br/
+							%b 
+								= "* - "
+							Any 24 hour period.
+							%br/
+							%b
+								= "** - "
+							All Zoom reservations will come with 40 km per hour of free driving, up to 200 km per day. Any kms in excess of these limits will be charged at the rates shown above.
+	#Weekday.tariff-special
+		.p-20
+			%h2.size-30
+				%b ZOOM ON THE CHEAP DURING THE WEEK!
+			%p.size-18.black.f-b
+				Book a vehicle for Monday, Tuesday, Wednesday or Thursday
+				%br/
+				and receive 35% off the normal tariff!
+			%p Discounts automatically applied at time of check-out.
+			%div
+				%b.black PLEASE NOTE:
+				%br/
+				A reservation beginning on Sunday will not have
+				%br/
+				the first 24-hour period qualify for discount.
+	%br/
+	#Women.tariff-special
+		.p-20
+			%h2.size-30
+				%b HAPPY HOURS FOR WOMEN ON TUESDAYS!
+			%p.size-18.black.f-b
+				Women, book a vehicle for Tuesday
+				%br/
+				and receive 85% off the normal tariff!
+			%p Discounts will be refunded back to your account.
+			%div
+				%b.black PLEASE NOTE:
+				%br/
+				Multi-day reservation will only get the 85% off for Tuesday, rest of the days will remain same.
+				%br/
+				%i Discount will be applicable only when a woman picks up and drops off the vehicle.
+				%br/
+				%b.black Discount will not be applicable on 24th and 31st December, 2013.
+	%br/
+	%table.m-auto{:cellpadding => '0', :cellspacing => '0', :border => '0', :width => '650'}
+		%thead.bg-zoom.white
+			%tr
+				%th{:style => "border-right:1px solid #fff;"}
+					.p-5 Included in Zoom Tariff
+				%th{:style => "border-left:1px solid #fff;border-right:1px solid #fff;"}
+					.p-5 Excluded from Zoom Tariff
+		%tbody
+			%tr
+				%td.border-zoom 
+					.p-5 ✓ 200km in daily driving
+				%td.border-zoom 
+					.p-5 ✗ More than 200km per day of reservation
+			%tr
+				%td.border-zoom
+					.p-5 
+						✓ Fuel
+						%span{:style => "font-size:26px;"} ***
+				%td.border-zoom
+					.p-5 
+						✗ Tolls and road taxes (in-state & out-state)
+						%span{:style => "font-size:26px;"} ****
+			%tr
+				%td.border-zoom 
+					.p-5 ✓ Unlimited, full-wrap insurance
+				%td.border-zoom 
+					.p-5 ✗ ₹#{CommonHelper::LIABILITY} damage deductible
+			%tr
+				%td.border-zoom 
+					.p-5 ✓ Taxes
+				%td.border-zoom 
+					.p-5 ✗ Traffic & parking violations
+			%tr
+				%td.border-zoom
+					.p-5 
+						✓ Roadside assistance, towing, and impounding caused by
+						%b vehicle
+						failure
+				%td.border-zoom
+					.p-5 
+						✗ Roadside assistance, towing, and impounding caused by
+						%b member
+						failure
+			%tr
+				%td.border-zoom 
+					.p-5 ✓ Routine maintenance & cleaning
+				%td.border-zoom 
+					.p-5 ✗ Filth requiring extra cleaning
+			%tr
+				%td.border-zoom 
+					.p-5 ✓ Navigation technology
+				%td.border-zoom 
+					.p-5 ✗ Penalty fee for violating Zoom rules
+			%tr
+				%td.border-zoom 
+					.p-5 ✓ 24-hour customer support
+				%td.border-zoom 
+					.p-5 ✗ Car washing during member reservation
+			%tr
+				%td{:colspan => "2"}
+					.p-10
+						%span{:style => "font-size:26px;"} ***
+						If you refuel the vehicle during your reservation, you will be reimbursed the full amount you pay (Fuel Receipt required).
+			%tr
+				%td{:colspan => "2"}
+					.p-10
+						%span{:style => "font-size:26px;"} ****
+						Permit costs to enter
+						%b Andhra Pradesh
+						will be reimbursed by Zoom.
+	%div{:style => "margin: 20px auto; width: 650px;"}
+		%p{:style => "font-size:16px;"}
+			Please book more time than you think you will need for your journey.  Zoom is fully committed to reliably providing vehicles when our members have them reserved, so please do return your vehicle on-time. If you return a vehicle late and it causes an inconvenience to another member, you will be charged a penalty to compensate them.
+		%br/
+		%p{:style => "font-size:16px;"}
+			But we don't want you to pay more than you should for time you aren't Zooming! If you return a vehicle 1 hour or more before your reservation ends, you will get a driving credit for ½ of the unused time.  If you have a vehicle only with a daily tariff component, you are eligible for a credit equivalent to ½ of the daily tariff in the event you return the car a day or more early (e.g. a 3 day hire that is returned 1 full day early will result in a driving credit equal to ½ of the standard daily tariff for that respective vehicle).

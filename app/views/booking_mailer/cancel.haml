@@ -9,32 +9,43 @@ Hi #{@user.name},
 You've cancelled the following reservation:
 %br/
 %br/
-%table{border: '0', cellpadding: '5', cellspacing: '0', style: "background:#eeeeee; font-size:12px; color:#333333;"}
-	%tr
-		%td Vehicle:
-		%td
-			%b #{cargroup.display_name}
-	%tr
-		%td Pick-up location: 
-		%td
-			%b #{location.name}
-			= "("
-			%a{href: "#{location.map_link}", target: "_blank"} View Map
-			= ")"
-	%tr
-		%td Reservation begins: 
-		%td
-			%b #{@booking.starts.strftime("%d/%m/%y %I:%M %p")}
-	%tr
-		%td Reservation ends:
-		%td
-			%b #{@booking.ends.strftime("%d/%m/%y %I:%M %p")}
-	%tr
-		%td Reservation Confirmation Number:
-		%td
-			%b
+%div{style: "border-radius:5px; background:#eeeeee; padding:5px; margin:0px;"}
+	%table{border: '0', cellpadding: '5', cellspacing: '0', style: "font-size:12px; color:#333333;"}
+		%tr
+			%td{valign: 'top'} Vehicle:
+			%td{valign: 'top'}
+				%b #{cargroup.display_name}
+				%br/
+				- if !cargroup.disclaimer.blank?
+					%p{style: 'color:red; margin:0; padding:0;'}
+						= cargroup.disclaimer.html_safe
+		%tr
+			%td{valign: 'top'} Pick-up Location: 
+			%td{valign: 'top'}
+				%b #{location.name}
+				%br/
+				= "("
+				%a{href: "#{location.map_link}", target: "_blank"} View Map
+				= ")"
+				%br/
+				- if !location.disclaimer.blank?
+					%p{style: 'color:red; margin:0; padding:0;'}
+						= location.disclaimer.html_safe
+		%tr
+			%td{valign: 'top'} Reservation Begins: 
+			%td{valign: 'top'}
+				%b #{@booking.starts.strftime("%d/%m/%y %I:%M %p")}
+		%tr
+			%td{valign: 'top'} Reservation Ends:
+			%td{valign: 'top'}
+				%b #{@booking.ends.strftime("%d/%m/%y %I:%M %p")}
+		%tr
+			%td{valign: 'top'} Reservation Confirmation Number:
+			%td{valign: 'top'}
+				%b #{@booking.confirmation_key}
+				%br/
 				%a{href: "#{@booking.link}", target: "_blank"}
-					= @booking.confirmation_key
+					manage your reservation
 %br/
 %br/
 %div{style: "background:#eeeeee; margin:0px; padding:10px; color:#000000;"}
@@ -50,16 +61,12 @@ You've cancelled the following reservation:
 		%b
 			No change in your reservation charges.
 	%br/
-	- if outstanding > 0
-		You have
+	- if outstanding < 0
 		%b
 			Rs.
-			#{outstanding}
-		is outstanding against the reservation.
-		- if @booking.starts < Time.now
-			Please clear all your outstanding amount when you drop the vehicle back to Zoom.
-		- else
-			Please clear all your outstanding amount when you pick the vehicle from Zoom. Zoom reserve the right of cancelling the booking against any pending payment.
+			#{0-outstanding}
+		will be refunded back to your account.
+		%i Please note that it will take 3-4 days for the reimbursed amount to reflect in your account.
 %br/
 %br/
 We're sorry that this reservation won't work out for you now, but check out what else is available for another time by logging onto

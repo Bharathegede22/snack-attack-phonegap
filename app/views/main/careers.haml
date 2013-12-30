@@ -1,0 +1,53 @@
+.static
+	%h1 Careers @ Zoom
+	- jobs = Job.live
+	- if jobs.blank?
+		%b No positions are open right now.
+		%br/
+		Please check again after sometime.
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+	- else
+		- department = nil
+		%table{:cellpadding => '0', :cellspacing => '0', :width => '100%'}
+			- jobs.each do |j|
+				- if department != j.department
+					%tr.bg-e
+						%td{:colspan => '2'}
+							.p-t10.p-l10
+								%h2
+									= CommonHelper::DEPARTMENT[j.department][0]
+				%tr
+					%td
+						.p-5.f-b
+							= link_to j.title, j.link, :target => '_blank'
+						%br/
+					%td{:align => 'right'}
+						.p-5
+							= CommonHelper::HIRE_TYPE[j.hire_type][0] + ", Bangalore"
+						%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/

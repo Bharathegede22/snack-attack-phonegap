@@ -1,6 +1,7 @@
 class BookingsController < ApplicationController
 	
 	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :invoice, :payment, :payments, :reschedule, :show]
+	before_filter :check_booking_user, :only => [:cancel, :dopayment, :invoice, :payment, :payments, :reschedule]
 	before_filter :check_search, :only => [:docreate, :license, :login, :checkout]
 	
 	def cancel
@@ -26,7 +27,7 @@ class BookingsController < ApplicationController
 			session[:book] = {:starts => session[:search][:starts], :ends => session[:search][:ends], :loc => params[:loc], :car => params[:car]}
 			if user_signed_in?
 				if current_user.check_details
-					if current_user.license_pic
+					if current_user.check_license
 						session[:book][:steps] = 2
 					else
 						session[:book][:steps] = 3
@@ -42,7 +43,7 @@ class BookingsController < ApplicationController
 		end
 		if user_signed_in?
 			if current_user.check_details
-				if current_user.license_pic
+				if current_user.check_license
 					redirect_to "/bookings/checkout"
 				else
 					redirect_to "/bookings/license"
@@ -86,7 +87,7 @@ class BookingsController < ApplicationController
 	end
 	
 	def license
-		redirect_to "/bookings/do" and return if user_signed_in? && current_user.license_pic
+		redirect_to "/bookings/do" and return if user_signed_in? && current_user.check_license
 		if request.post?
 			if !params[:image].blank?
 				image = Image.new(image_params)
@@ -308,6 +309,25 @@ class BookingsController < ApplicationController
 		end
 	end
 	
+	def check_booking_user
+		if user_signed_in?
+			if !current_user.fleet? && @booking.user_id != current_user.id
+				flash[:error] = "Booking doesn't belongs to you"
+				if request.xhr?
+					render json: {html: render_to_string('/devise/sessions/new.haml', :layout => false)} and return
+				else
+					redirect_to "/users/sign_in" and return
+				end
+			end
+		else
+			if request.xhr?
+				render json: {html: render_to_string('/devise/sessions/new.haml', :layout => false)} and return
+			else
+				redirect_to "/users/sign_in" and return
+			end
+		end
+	end
+	
 	def check_search
 		if !session[:book].blank? && !session[:book][:starts].blank? && !session[:book][:ends].blank? && !session[:book][:car].blank? && !session[:book][:loc].blank?
 			@booking = Booking.new
@@ -315,7 +335,7 @@ class BookingsController < ApplicationController
 			@booking.ends = DateTime.parse(session[:book][:ends] + " +05:30")
 			@booking.location_id = session[:book][:loc]
 			@booking.cargroup_id = session[:book][:car]
-			@available = Inventory.check(@booking.starts, @booking.ends, @booking.cargroup_id, @booking.location_id)[0][0][0][1][0]
+			@available = Inventory.check(@booking.starts, @booking.ends, @booking.cargroup_id, @booking.location_id)
 			flash[:error] = "Sorry, but the car is no longer available" if @available == 0
 		else
 			redirect_to "/" and return

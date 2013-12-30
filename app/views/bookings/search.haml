@@ -1,15 +1,50 @@
 .content
-	= render :partial => "/bookings/search_steps", locals: {step: 1}
-	.wrapper
-		.main-content.search-page
-			- if !@inventory.blank?
-				- @inventory.each do |i|
-					= render :partial => 'search_item', :locals => {inventory: i}
-			- else
-				Nothing
-		#Sidebar.sidebar
-			.mapwrap
-				#Gmap.map
+	- if !@inventory.blank?
+		= render :partial => "/bookings/search_steps", locals: {step: 1}
+		.wrapper
+			.main-content.search-page
+				:ruby
+					if !@booking.cargroup_id.blank?
+						cargroups = [@booking.cargroup]
+					else
+						cargroups = Cargroup.list
+					end
+					if !@booking.location_id.blank?
+						locs = [@booking.location]
+					else
+						locs = Location.live
+					end
+				- cargroups.each do |c|
+					= render :partial => 'search_item', :locals => {inventory: @inventory[c.id.to_s], car: c, org_locs: locs}
+			#Sidebar.sidebar
+				.mapwrap
+					#Gmap.map
+	- else
+		.wrapper.bg-f
+			.p-20
+				%br/
+				%h1 Search Self-Drive Cars in Bangalore
+				.fl
+					.f-b.size-20.droid.p-5
+						Zoom offers the following vehicles :
+					%ul
+						- Cargroup.list.each do |c|
+							%li.p-5
+								= c.shortname
+								- if !c.disclaimer.blank?
+									.red.size-10
+										= c.disclaimer.html_safe
+				.fr.t-r
+					.f-b.size-20.droid.p-5
+						@ following locations :
+					%ul
+						- Location.live.each do |l|
+							%li.p-5
+								= l.shortname
+								- if !l.disclaimer.blank?
+									.red.size-10
+										= l.disclaimer.html_safe
+				.fc
 - if !@inventory.blank?
 	= javascript_tag do
 		:plain
@@ -23,12 +58,19 @@
 				var map = new google.maps.Map(document.getElementById("Gmap"), mapOptions);
 		- Location.find(:all, :conditions => "lat IS NOT NULL AND lng IS NOT NULL").each do |l|
 			:plain
-				var myLatlng = new google.maps.LatLng(#{l.lat}, #{l.lng});
-				var marker = new google.maps.Marker({
-					position: myLatlng,
+				var infowindow#{l.id} = new google.maps.InfoWindow({
+					content: "#{l.mapcontent}",
+					maxWidth: 300
+				});
+				var myLatlng#{l.id} = new google.maps.LatLng(#{l.lat}, #{l.lng});
+				var marker#{l.id} = new google.maps.Marker({
+					position: myLatlng#{l.id},
 					map: map,
 					animation: google.maps.Animation.DROP,
-					title:"#{l.name}"
+					title:"#{l.shortname}"
+				});
+				google.maps.event.addListener(marker#{l.id}, 'click', function() {
+					infowindow#{l.id}.open(map,marker#{l.id});
 				});
 		:plain
 			}

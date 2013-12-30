@@ -10,57 +10,102 @@ Glad to see you've made a reservation!
 Please review the details of your reservation:
 %br/
 %br/
-%table{border: '0', cellpadding: '5', cellspacing: '0', style: "background:#eeeeee; font-size:12px; color:#333333;"}
-	%tr
-		%td Vehicle:
-		%td
-			%b #{cargroup.display_name}
-	%tr
-		%td Pick-up location: 
-		%td
-			%b #{location.name}
-			= "("
-			%a{href: "#{location.map_link}", target: "_blank"} View Map
-			= ")"
-	%tr
-		%td Reservation begins: 
-		%td
-			%b #{@booking.starts.strftime("%d/%m/%y %I:%M %p")}
-	%tr
-		%td Reservation ends:
-		%td
-			%b #{@booking.ends.strftime("%d/%m/%y %I:%M %p")}
-	%tr
-		%td Estimated Cost:
-		%td
-			%b
-				Rs.
-				#{@booking.total}*
-			(this may not reflect final cost)
-%br/
-%br/ 
-Your reservation confirmation number is 
-%b
-	%a{href: "#{@booking.link}", target: "_blank"}
-		#{@booking.confirmation_key}.
+%div{style: "border-radius:5px; background:#eeeeee; padding:5px; margin:0px;"}
+	%table{border: '0', cellpadding: '5', cellspacing: '0', style: "font-size:12px; color:#333333;"}
+		%tr
+			%td{valign: 'top'} Vehicle:
+			%td{valign: 'top'}
+				%b #{cargroup.display_name}
+				%br/
+				- if !cargroup.disclaimer.blank?
+					%p{style: 'color:red; margin:0; padding:0;'}
+						= cargroup.disclaimer.html_safe
+		%tr
+			%td{valign: 'top'} Pick-up Location: 
+			%td{valign: 'top'}
+				%b #{location.name}
+				%br/
+				= "("
+				%a{href: "#{location.map_link}", target: "_blank"} View Map
+				= ")"
+				%br/
+				- if !location.disclaimer.blank?
+					%p{style: 'color:red; margin:0; padding:0;'}
+						= location.disclaimer.html_safe
+		%tr
+			%td{valign: 'top'} Reservation Begins: 
+			%td{valign: 'top'}
+				%b #{@booking.starts.strftime("%d/%m/%y %I:%M %p")}
+		%tr
+			%td{valign: 'top'} Reservation Ends:
+			%td{valign: 'top'}
+				%b #{@booking.ends.strftime("%d/%m/%y %I:%M %p")}
+		%tr
+			%td{valign: 'top'} Reservation Confirmation Number:
+			%td{valign: 'top'}
+				%b #{@booking.confirmation_key}
+				%br/
+				%a{href: "#{@booking.link}", target: "_blank"}
+					manage your reservation
+		%tr
+			%td{valign: 'top'} Estimated Cost:
+			%td{valign: 'top'}
+				%b
+					Rs.
+					#{@booking.total}*
+				%br/
+				* - 
+				%i
+					This may not reflect final cost. See our 
+					%a{href: 'http://www.zoomcar.in/tariff'} tariff
+					and
+					%a{href: 'http://www.zoomcar.in/fees'} fee policy
+					for more.
 %br/
 %br/
 %div{style: "margin:0px; padding:0px;"}
 	%b{style: "color:red; font-style:italic;"} IMPORTANT!
 	%br/
-	\- Please remember to carry your original driving license at the time of picking the car. Zoom reserves the right of cancelling the reservation if the original driving license is not produced.
-	%br/
-	\- As a friendly reminder, each reservation comes with 40 free km/hr (w/ 200 km/day max cap). Any excess kms will be charged at 
-	Rs #{cargroup.excess_kms}/km.
-	%br/
-	\- Please remember to carry your valid credit / debit card for paying any fee at the time you return the vehicle.
-%br/
+	%p{style: "margin:5px 0 0 0; padding:0;"}
+		\- Please remember to carry your original driving license at the time of picking the car. Zoom reserves the right of cancelling the reservation if the original driving license is not produced.
+	%p{style: "margin:5px 0 0 0; padding:0;"}
+		\- As a friendly reminder, each reservation comes with 40 free km/hr (w/ 200 km/day max cap). Any excess kms will be charged at 
+		Rs #{cargroup.excess_kms}/km.
+	%p{style: "margin:5px 0 0 0; padding:0;"}
+		\- Please remember to carry your valid credit / debit card for paying any fee at the time you return the vehicle.
 %br/
 %div{style: "background:#eeeeee; margin:0px; padding:10px; color:#000000;"}
 	Please note that for a reservation that is cancelled less than 24 hours before it is scheduled to start, you will be obligated to pay 25% of the reservation amount, with a maximum of Rs 2000. See our
 	%a{href: "http://www.zoomcar.in/fees#MemberResponsibility", target: "_blank"}
 		cancellation policy
 	for more details.
+%br/
+%br/
+%b Your Details
+%br/
+%div{style: "padding:5px; margin:0px;"}
+	%table{border: '0', cellpadding: '5', cellspacing: '0', style: "font-size:12px; color:#333333;"}
+		%tr
+			%td{valign: 'top'} Name:
+			%td{valign: 'top'}
+				%b #{@user.name}
+		%tr
+			%td{valign: 'top'} Email: 
+			%td{valign: 'top'}
+				%b #{@user.email}
+		%tr
+			%td{valign: 'top'} Mobile: 
+			%td{valign: 'top'}
+				%b #{@user.phone}
+		%tr
+			%td{valign: 'top'} License:
+			%td{valign: 'top'}
+				- license = @user.license_pic
+				- if license
+					%a{href: license.avatar.url(:profile), target: '_blank'}
+						See license
+				- else
+					= "-"
 %br/
 %br/
 If you have any questions about your reservation you can contact Zoom at help@zoomcar.in.

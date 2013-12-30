@@ -591,6 +591,11 @@ ul.navbar-nav li ul li {
 	background:url(<%= asset_path 'bg-line.png' %>);
 	position:relative;
 	padding:1px 0;
+	min-height:600px;
+}
+
+.content .wrapper {
+	min-height:600px;
 }
 
 .content .main-content {
@@ -712,11 +717,7 @@ ul.navbar-nav li ul li {
 
 .search-steps .complete {
 	cursor:pointer;
-}
-
-.search-steps .active .step {
-	color:#323a45;
-	background:#ffffff;
+	color:#6ABD19;
 }
 
 .search-steps .step p {
@@ -731,7 +732,17 @@ ul.navbar-nav li ul li {
 	color:#999999;
 }
 
-.search-steps .active .txt {
+.search-steps .complete .step {
+	color:#ffffff;
+	background:#6ABD19;
+}
+
+.search-steps .active .step {
+	color:#323a45;
+	background:#ffffff;
+}
+
+.search-steps .complete .txt, .search-steps .active .txt {
 	color:#ffffff;
 }
 

@@ -1,4 +1,5 @@
 - cargroup = @booking.cargroup
+- location = @booking.location
 - fare = cargroup.check_fare(@booking.starts, @booking.ends)
 .bg-w.bs-9.grey.droid.size-14
 	.bg-zoomb.white.p-5.f-b.size-20.p-l10
@@ -7,7 +8,16 @@
 		%b
 			= cargroup.display_name
 		%br/
+		- if !cargroup.disclaimer.blank?
+			.red.size-10
+				= cargroup.disclaimer.html_safe
 		.m-auto{:class => 'car' + @booking.cargroup_id.to_s}
+		Available at 
+		%b 
+			= location.shortname
+		- if !location.disclaimer.blank?
+			.red.size-10
+				= location.disclaimer.html_safe
 	.p-10.bg-e
 		.p-b5.f-b
 			.fl

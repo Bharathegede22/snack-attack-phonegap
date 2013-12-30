@@ -1,0 +1,98 @@
+.static
+	%h1 Zoom in Safety
+	%p
+		At Zoom, the safety of our Member's is our #1 priority.
+		In the event of an accident or a vehicle breakdown, Zoom is 100% committed to providing the help you need to get back to zooming quickly and safely.
+	%br/
+	%h2 What to do in case of an accident or breakdown:
+	%p
+		1. Remain calm.
+	%p
+		2. Call our 24x7 Customer Support number at
+		%b #{CommonHelper::CUSTOMER_CARE}
+		%br/
+		.m-l20
+			You can also contact our fleet executives based out of Zoom locations for any queries.
+		%br/
+		.m-l10
+			%table.table
+				%tr
+					%td{:width => '350'}
+						%b Zoom Location
+					%td
+						%b Mobile No.
+				- Location.live.each do |l|
+					- if !l.mobile.blank?
+						%tr
+							%td
+								= l.name
+							%td
+								= l.mobile
+		%br/
+		.m-l20
+			Our helpful team will communicate with the respective service center to ensure that you are fully supported. Zoom will arrange a local tow truck to provide help wherever you are. Our technology allows us to monitor each vehicle's location remotely so we can tell your exact location when you're in trouble. This will further help expedite the incident resolution.
+	%p
+		3. In the event that you prefer to reach out directly to the vehicle manufacturer, here are the contact details:
+		.m-l10
+			%table{:cellpadding => '10', :cellspacing => '10'}
+				%tr
+					%td{:colspan => '2'}
+						%b Ford India
+				%tr
+					%td{:width => '350'} Mon-Fri 9am-6pm
+					%td 1-800-425-2500
+				%tr
+					%td National toll free number (24/7)
+					%td 1-800-102-2020
+				%tr
+					%td{:colspan => '2'}
+						%br/
+						%b Mahindra
+				%tr
+					%td Bangalore helpline number (24/7)
+					%td +91 99808 08090
+				%tr
+					%td National toll free number (24/7)
+					%td 1-800-209-6006
+				%tr
+					%td{:colspan => '2'}
+						%br/
+						%b Volkswagen
+				%tr
+					%td Bangalore helpline number (24/7)
+					%td +91 96866 69091
+				%tr
+					%td National toll free number (24/7)
+					%td 1-800-102-0909
+				%tr
+					%td{:colspan => '2'}
+						%br/
+						%b BMW
+				%tr
+					%td Bangalore helpline number (24/7)
+					%td +91 95919 99406
+				%tr
+					%td National toll free number (24/7)
+					%td 1-800-103-2211
+	%br/	
+	%h2 Please have the following information available:
+	%p
+		Your location – as exact as possible
+	%p
+		The phone number and mail ID where you can be reached
+	%p
+		The description of your vehicle – color, make, model and year
+	%p
+		Zoom vehicle plate number
+	%p
+		Insurance information, if requested
+	%p.f-b
+		Having all of this information makes it substantially easier for the road side team to help you as quickly as possible.
+	%br/
+	%br/
+	%p
+		Please refer to
+		%a.f-b{:href => "/fees"} Zoom's Fee Policy
+		and
+		%a.f-b{:href => "/member"} Member Agreement
+		for a more detailed explanation of any costs to a member.
