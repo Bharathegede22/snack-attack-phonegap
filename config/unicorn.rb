@@ -1,5 +1,5 @@
-worker_processes 2
-timeout 30
+worker_processes 10
+timeout 300
 preload_app true
 user 'root'
 working_directory "/var/www/web/current"

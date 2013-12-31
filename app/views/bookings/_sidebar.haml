@@ -2,8 +2,12 @@
 - location = @booking.location
 - fare = cargroup.check_fare(@booking.starts, @booking.ends)
 .bg-w.bs-9.grey.droid.size-14
-	.bg-zoomb.white.p-5.f-b.size-20.p-l10
-		Booking Summary
+	.bg-zoomb.white.p-5.f-b.size-20.p-l10.p-r10
+		.fl
+			Booking Summary
+		.fr
+			.glyphicon.glyphicon-pencil.pointer{:onclick => "showSearch();"}
+		.fc
 	.p-10.t-c.size-16
 		%b
 			= cargroup.display_name

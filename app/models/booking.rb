@@ -161,7 +161,7 @@ class Booking < ActiveRecord::Base
 			end
 			self.status = 10
 			self.save(validate: false)
-			BookingMailer.cancel(self, charge).deliver
+			BookingMailer.cancel(self.id, charge).deliver
 		end
 		return total
 	end
@@ -251,9 +251,9 @@ class Booking < ActiveRecord::Base
 			end
 			self.save(validate: false)
 			if charge
-				BookingMailer.change(self, charge).deliver
+				BookingMailer.change(self.id, charge).deliver
 			else
-				BookingMailer.change(self, nil).deliver
+				BookingMailer.change(self.id, nil).deliver
 			end
 		end
 		return [str, fare]

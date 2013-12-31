@@ -17,6 +17,9 @@
 				= car.seating
 				Seater
 			.fc
+			.disclaimer
+				- if !car.disclaimer.blank?
+					= car.disclaimer.html_safe
 			.avail
 				- if locs[0][1] == 1
 					.yes{id: 'Avail' + car.id.to_s}
@@ -34,15 +37,42 @@
 							%span.caret
 							%span.sr-only Toggle Dropdown
 						%ul.dropdown-menu{role: "menu", id: "LocMenu" + car.id.to_s}
-							- locs.each do |l|
-								- if l == locs[0]
-									%li.active{:id => ("LocSel" + car.id.to_s + l[0].id.to_s)}
-										%a{href: "javascript:void(0)", onclick: "showAvailability(#{car.id}, #{l[0].id}, #{l[1]}, '#{l[0].shortname}');"}
-											= l[0].shortname
-								- else
-									%li{:id => ("LocSel" + car.id.to_s + l[0].id.to_s)}
-										%a{href: "javascript:void(0)", onclick: "showAvailability(#{car.id}, #{l[0].id}, #{l[1]}, '#{l[0].shortname}');"}
-											= l[0].shortname
+							:ruby
+								avail = false
+								notavail = false
+								locs.each do |l|
+									if l[1] == 1
+										avail = true
+									else
+										notavail = true
+									end
+								end
+							- if avail
+								%li.dropdown-header{role: "presentation"} Available at
+								- locs.each do |l|
+									- if l[1] == 1
+										- if l == locs[0]
+											%li.active{:id => ("LocSel" + car.id.to_s + l[0].id.to_s)}
+												%a{href: "javascript:void(0)", onclick: "showAvailability(#{car.id}, #{l[0].id}, #{l[1]}, '#{l[0].shortname}');"}
+													= l[0].shortname
+										- else
+											%li{:id => ("LocSel" + car.id.to_s + l[0].id.to_s)}
+												%a{href: "javascript:void(0)", onclick: "showAvailability(#{car.id}, #{l[0].id}, #{l[1]}, '#{l[0].shortname}');"}
+													= l[0].shortname
+							- if avail and notavail
+								%li.divider{role: "presentation"}
+							- if notavail
+								%li.dropdown-header{role: "presentation"} Not Available at
+								- locs.each do |l|
+									- if l[1] == 0
+										- if l == locs[0]
+											%li.active{:id => ("LocSel" + car.id.to_s + l[0].id.to_s)}
+												%a{href: "javascript:void(0)", onclick: "showAvailability(#{car.id}, #{l[0].id}, #{l[1]}, '#{l[0].shortname}');"}
+													= l[0].shortname
+										- else
+											%li{:id => ("LocSel" + car.id.to_s + l[0].id.to_s)}
+												%a{href: "javascript:void(0)", onclick: "showAvailability(#{car.id}, #{l[0].id}, #{l[1]}, '#{l[0].shortname}');"}
+													= l[0].shortname
 				.fc
 		.actions
 			- fare = car.check_fare(@booking.starts, @booking.ends)

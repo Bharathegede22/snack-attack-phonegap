@@ -1,6 +1,6 @@
 - render_flash
 %h1.t-c
-	= "Booking # " + @booking.encoded_id.upcase
+	= "Booking # " + @booking.confirmation_key.upcase
 %br/
 .row
 	.col-md-8
@@ -33,11 +33,13 @@
 							- car = @booking.car
 							%b #{car.name}
 							= "(" + car.license + ")" if !car.license.blank?
-						- else
+						- elsif @booking.status < 6
 							.red
 								Your car will be allocated by 
 								%b
 									= (@booking.ends - CommonHelper::ALLOTMENT.minutes).strftime("%d %b, %Y %I:%M %p")
+						- else
+							\-
 		.row
 			.col-md-3 
 				.p-5
@@ -80,7 +82,7 @@
 						Cancel
 				- else
 					- if @booking.total_payments > 0
-						%a.btn.btn-primary{href: "/bookings/#{@booking.encoded_id}/invoice", target: '_blank', role: "button"} Invoice
+						%a.btn.btn-default{href: "/bookings/#{@booking.encoded_id}/invoice", target: '_blank', role: "button"} Invoice
 		%br/
 		.m-t20
 		.panel-group#Accordion

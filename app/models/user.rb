@@ -55,7 +55,7 @@ class User < ActiveRecord::Base
   	when 'cancelled' then ["status > 5", 'id DESC']
   	end
   	
-  	if Rails.env == 'production'
+  	if true #Rails.env == 'production'
   		return Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND #{sql} ORDER BY #{order} LIMIT 10 OFFSET #{page*10}")
   	else
   		return Booking.find_by_sql("SELECT * FROM bookings WHERE #{sql} ORDER BY #{order} LIMIT 10 OFFSET #{page*10}")

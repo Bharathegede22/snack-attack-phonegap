@@ -311,7 +311,7 @@ class BookingsController < ApplicationController
 	
 	def check_booking_user
 		if user_signed_in?
-			if !current_user.fleet? && @booking.user_id != current_user.id
+			if !current_user.support? && @booking.user_id != current_user.id
 				flash[:error] = "Booking doesn't belongs to you"
 				if request.xhr?
 					render json: {html: render_to_string('/devise/sessions/new.haml', :layout => false)} and return

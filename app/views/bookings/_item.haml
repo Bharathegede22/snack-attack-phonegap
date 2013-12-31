@@ -15,7 +15,7 @@
 		- bookings.each do |b|
 			%tr
 				%td
-					%b #{b.encoded_id.upcase}
+					%b #{b.confirmation_key.upcase}
 				%td #{b.cargroup.name}
 				%td #{b.location.shortname}
 				%td #{b.starts.strftime("%d %b, %Y %I:%M %p")}

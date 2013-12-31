@@ -50,8 +50,9 @@ end
 namespace :generic do	
 	desc "Link up config files."
 	task :configs, :roles => [:app] do
-	  run "ln -s #{shared_path}/database.yml #{release_path}/config/database.yml"
 	  run "ln -s #{shared_path}/configurations.yml #{release_path}/config/configurations.yml"
+	  run "ln -s #{shared_path}/database.yml #{release_path}/config/database.yml"
+	  run "ln -s #{shared_path}/database.yml #{release_path}/config/varnishd.yml"
 	  run "rm #{release_path}/public/robots.txt"
 	  run "ln -s #{shared_path}/robots.txt #{release_path}/public/robots.txt"
 	end
@@ -70,7 +71,13 @@ namespace :generic do
   task :unicorn_stop, :roles => :app do
     run "/etc/init.d/unicorn stop_web"
   end
+  
+  desc "Removing Varnish Cache"
+  task :clear_cache, :roles => :app do
+    run "cd #{release_path} ; bundle exec rails runner -e production \"Lacquer::Varnish.new.purge('.*')\""
+  end
 end
 before "deploy:assets:precompile", "generic:configs"
 after "deploy", "generic:unicorn_restart"
 after "deploy", "deploy:cleanup"
+after "deploy", "generic:clear_cache"

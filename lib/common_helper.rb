@@ -60,14 +60,25 @@ module CommonHelper
 		
   class << self
   	def encode(c,id)
-      temp = case c.downcase
-      when 'attraction' then 10000000
-      when 'job' then 20000000
-      when 'payment' then 30000000
-      when 'booking' then 10000000000000
-      #when 'payment' then 20000000000000
-      else 0
-      end
+  		if Rails.env == 'production'
+		    temp = case c.downcase
+		    when 'attraction' then 10000000
+		    when 'job' then 20000000
+		    #when 'payment' then 30000000
+		    when 'booking' then 10000000000000
+		    when 'payment' then 20000000000000
+		    else 0
+		    end
+		  else
+		  	temp = case c.downcase
+		    when 'attraction' then 10000000
+		    when 'job' then 20000000
+		    when 'payment' then 30000000
+		    when 'booking' then 10000000000000
+		    #when 'payment' then 20000000000000
+		    else 0
+		    end
+		  end
       str = ''
 			temp = 0 + temp + id
 			while temp > 35
@@ -95,12 +106,21 @@ module CommonHelper
 		    id = id + ENCODING_ARRAY.index(s)*(36**pos)
 		    pos = pos + 1
 		  end
-		  #return ['payment',id-20000000000000] if id > 20000000000000
-		  return ['booking',id-10000000000000] if id > 10000000000000
-		  return ['payment',id-30000000] if id > 30000000
-		  return ['job',id-20000000] if id > 20000000
-      return ['attraction',id-10000000] if id > 10000000      
-      return ['',nil]
+		  if Rails.env == 'production'
+				return ['payment',id-20000000000000] if id > 20000000000000
+				return ['booking',id-10000000000000] if id > 10000000000000
+				#return ['payment',id-30000000] if id > 30000000
+				return ['job',id-20000000] if id > 20000000
+		    return ['attraction',id-10000000] if id > 10000000      
+		    return ['',nil]
+		  else
+		  	#return ['payment',id-20000000000000] if id > 20000000000000
+				return ['booking',id-10000000000000] if id > 10000000000000
+				return ['payment',id-30000000] if id > 30000000
+				return ['job',id-20000000] if id > 20000000
+		    return ['attraction',id-10000000] if id > 10000000      
+		    return ['',nil]
+		  end
     end
   end
   
