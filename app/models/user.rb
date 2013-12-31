@@ -164,6 +164,10 @@ class User < ActiveRecord::Base
     @signup
   end
   
+  def support?
+		return self.role.to_i > 5
+	end
+	
   private
   
   def before_validation_tasks

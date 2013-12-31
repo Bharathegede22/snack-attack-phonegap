@@ -273,7 +273,14 @@ class BookingsController < ApplicationController
 			@booking.location_id = session[:search][:loc] if !session[:search].blank? && !session[:search][:loc].blank?
 			@booking.cargroup_id = session[:search][:car] if !session[:search].blank? && !session[:search][:car].blank?
 			@booking.through_search = true
-			@inventory = Inventory.check(@booking.starts, @booking.ends, @booking.cargroup_id, @booking.location_id) if @booking.valid?
+			if @booking.valid?
+				if !@booking.cargroup_id.blank? && !@booking.location_id.blank?
+					@inventory = {}
+					@inventory[@booking.cargroup_id.to_s] = {@booking.location_id.to_s => Inventory.check(@booking.starts, @booking.ends, @booking.cargroup_id, @booking.location_id)}
+				else
+					@inventory = Inventory.check(@booking.starts, @booking.ends, @booking.cargroup_id, @booking.location_id)
+				end
+			end
 			@header = 'search'
 		end
 	end
@@ -311,7 +318,8 @@ class BookingsController < ApplicationController
 	
 	def check_booking_user
 		if user_signed_in?
-			if !current_user.support? && @booking.user_id != current_user.id
+			if current_user.support? || @booking.user_id == current_user.id
+			else
 				flash[:error] = "Booking doesn't belongs to you"
 				if request.xhr?
 					render json: {html: render_to_string('/devise/sessions/new.haml', :layout => false)} and return
