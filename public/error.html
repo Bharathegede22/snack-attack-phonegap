@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <title>Zoomcar</title>
+    <meta content='noindex' name='robots'>
+    <link href='https://fonts.googleapis.com/css?family=Droid+Sans' rel='stylesheet'>
+  </head>
+  <body>
+  	<style>
+  		.droid {
+				font-family: 'Droid Sans', 'Arial', sans-serif;
+			}
+			.grey {
+				color: #666666;
+			}
+			.t-c {
+				text-align: center;
+			}
+			.size-14 {
+				font-size: 14px;
+			}
+			.p-20 {
+				padding: 20px;
+			}
+			.bs-zoom {
+				-webkit-box-shadow: 0px 0px 10px #6ABD19;
+				-moz-box-shadow: 0px 0px 10px #6ABD19;
+				box-shadow: 0px 0px 10px #6ABD19;
+				behavior: url(<%= asset_path 'PIE.htc' %>);
+			}
+			.zoom {
+				color:#6ABD19;
+			}
+			.f-b {
+				font-weight: bold;
+			}
+			.size-24 {
+				font-size: 24px;
+			}
+			.size-60 {
+				font-size: 60px;
+			}
+			.r-10 {
+				-webkit-border-radius: 10px;
+				-khtml-border-radius: 10px;
+				-moz-border-radius: 10px;
+				border-radius: 10px;
+			}
+  	</style>
+    <div class='droid size-14 grey t-c'>
+      <br>
+      <div class='p-20 zoom size-60 f-b'>
+        Zoomcar
+      </div>
+      <br>
+      <div class='bs-zoom r-10' style='background:#eeeeee; padding:100px 0; width:600px; margin:auto; line-height:30px;'>
+        <b class='size-24'>We are improving the awesomeness!</b>
+        <br>
+        <br>
+        Please check back after some time.
+        <br>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,7 +1,7 @@
 class BookingsController < ApplicationController
 	
 	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :invoice, :payment, :payments, :reschedule, :show]
-	before_filter :check_booking_user, :only => [:cancel, :dopayment, :invoice, :payment, :payments, :reschedule]
+	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule]
 	before_filter :check_search, :only => [:docreate, :license, :login, :checkout]
 	
 	def cancel
