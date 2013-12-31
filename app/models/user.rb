@@ -84,19 +84,21 @@ class User < ActiveRecord::Base
   			options = {:access_token => auth['credentials']['token']}
 				fql = Fql.execute("SELECT birthday_date, sex, pic_big FROM user WHERE uid = me()", options)[0]
   			user.name = auth.info.name if user.name.blank?
-  			if user.city.blank?
-  				if auth.extra.raw_info.location.name.include?(',')
-  					user.city = auth.extra.raw_info.location.name.split(',')[0].strip
-  					if user.country.blank? && Country.find_country_by_name(auth.extra.raw_info.location.name.split(',')[1].strip.downcase)
- 							user.country = Country.find_country_by_name(auth.extra.raw_info.location.name.split(',')[1].strip.downcase).alpha2
- 						end
-  				else
-  					user.city = auth.extra.raw_info.location.name
-  				end
-  			end
-  			user.state = auth.extra.raw_info.location.state if user.state.blank?
-  			if user.country.blank? && Country.find_country_by_name(auth.extra.raw_info.location.country)
-					user.country = Country.find_country_by_name(auth.extra.raw_info.location.country).alpha2
+  			if !auth.extra.raw_info.location.blank?
+					if user.city.blank?
+						if auth.extra.raw_info.location.name.include?(',')
+							user.city = auth.extra.raw_info.location.name.split(',')[0].strip
+							if user.country.blank? && Country.find_country_by_name(auth.extra.raw_info.location.name.split(',')[1].strip.downcase)
+	 							user.country = Country.find_country_by_name(auth.extra.raw_info.location.name.split(',')[1].strip.downcase).alpha2
+	 						end
+						else
+							user.city = auth.extra.raw_info.location.name
+						end
+					end
+					user.state = auth.extra.raw_info.location.state if user.state.blank?
+					if user.country.blank? && Country.find_country_by_name(auth.extra.raw_info.location.country)
+						user.country = Country.find_country_by_name(auth.extra.raw_info.location.country).alpha2
+					end
 				end
  				user.dob = Date.parse(fql['birthday_date']) if user.dob.blank? && !fql['birthday_date'].blank?
   			if !fql['sex'].blank?
