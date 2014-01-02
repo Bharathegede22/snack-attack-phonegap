@@ -34,11 +34,12 @@
 							%b Gender
 						%td
 							= current_user.gender ? 'Female' : 'Male'
-					%tr
-						%td
-							%b Country
-						%td
-							= Country.find_country_by_alpha2(current_user.country).name
+					- if !current_user.country.blank?
+						%tr
+							%td
+								%b Country
+							%td
+								= Country.find_country_by_alpha2(current_user.country).name
 		.sidebar-fixed.fr
 			= render :partial => "/bookings/sidebar", locals: {step: 4}
 		.fc

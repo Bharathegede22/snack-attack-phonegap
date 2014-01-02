@@ -1,5 +1,8 @@
 module CommonHelper
 	
+	HIRE_TYPE = [['Full Time', 0],['Part Time',1],['Internship',2]]
+	DEPARTMENT = [['Call Centre',0],['Marketing',1],['Technology',2],['Operations',3]]
+	
 	FUNFACTS = [
 		"For every Zoom vehicle added to the road, we will take off 15-17 vehicles", 
 		"Over the life of a Zoom vehicle, we will help save 150 tons of CO2 from entering Bangalore's air", 
