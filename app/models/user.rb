@@ -109,6 +109,8 @@ class User < ActiveRecord::Base
   				end
   			end
  				user.password = Devise.friendly_token.first(12) if user.encrypted_password.blank?
+ 				user.phone = user.phone.to_i.to_s if !user.phone.blank?
+ 				user.phone = nil if user.phone.length != 10
   			user.save!
   			if !img
 					io = nil
