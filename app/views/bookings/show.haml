@@ -37,7 +37,7 @@
 							.red
 								Your car will be allocated by 
 								%b
-									= (@booking.ends - CommonHelper::ALLOTMENT.minutes).strftime("%d %b, %Y %I:%M %p")
+									= (@booking.starts - CommonHelper::ALLOTMENT.minutes).strftime("%d %b, %Y %I:%M %p")
 						- else
 							\-
 		.row

@@ -158,7 +158,7 @@ class BookingsController < ApplicationController
 						@payment.encoded_id.downcase + "|" + 
 						PAYU_KEY
 					if params[:amount].to_i == @payment.amount.to_i && 
-						params[:firstname] == @booking.user_name && 
+						params[:firstname] == @booking.user_name.strip && 
 						params[:email] == @booking.user_email && 
 						Digest::SHA512.hexdigest(hash) == params[:hash]
 						@payment.status = case params[:status].downcase

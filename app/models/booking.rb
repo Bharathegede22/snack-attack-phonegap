@@ -419,6 +419,8 @@ class Booking < ActiveRecord::Base
 		self.actual_ends = self.ends
 		self.last_starts = self.starts
 		self.last_ends = self.ends
+		self.user_name = self.user_name.strip if !self.user_name.blank?
+		self.user_email = self.user_email.strip.downcase if !self.user_email.blank?
 		cargroup = self.cargroup
 		if cargroup
 			self.daily_fare = cargroup.daily_fare
