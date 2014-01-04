@@ -3,6 +3,7 @@ class BookingsController < ApplicationController
 	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :invoice, :payment, :payments, :reschedule, :show]
 	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule]
 	before_filter :check_search, :only => [:docreate, :license, :login, :checkout]
+	before_filter :check_inventory, :only => [:checkout, :docreate, :dopayment, :license, :login, :payment]
 	
 	def cancel
 		if request.post?
@@ -336,6 +337,20 @@ class BookingsController < ApplicationController
 		end
 	end
 	
+	def check_inventory
+		if @booking
+			if @booking.jsi.blank? && @booking.status == 0
+				@available = Inventory.check(@booking.starts, @booking.ends, @booking.cargroup_id, @booking.location_id)
+				if @available == 0
+					flash[:error] = "Sorry, but the car is no longer available"
+					redirect_to(:back) and return
+				end
+			end
+		else
+			redirect_to "/" and return
+		end
+	end
+	
 	def check_search
 		if !session[:book].blank? && !session[:book][:starts].blank? && !session[:book][:ends].blank? && !session[:book][:car].blank? && !session[:book][:loc].blank?
 			@booking = Booking.new
@@ -343,8 +358,6 @@ class BookingsController < ApplicationController
 			@booking.ends = DateTime.parse(session[:book][:ends] + " +05:30")
 			@booking.location_id = session[:book][:loc]
 			@booking.cargroup_id = session[:book][:car]
-			@available = Inventory.check(@booking.starts, @booking.ends, @booking.cargroup_id, @booking.location_id)
-			flash[:error] = "Sorry, but the car is no longer available" if @available == 0
 		else
 			redirect_to "/" and return
 		end

@@ -17,7 +17,7 @@
 					= @booking.ends.strftime("%d %b, %Y")
 			%td.t-c
 				%h1.f-b
-					= "Receipt #" + @booking.encoded_id.upcase
+					= "Receipt #" + @booking.confirmation_key.upcase
 			%td.t-r.col-md-3
 				.bg-e.r-5.p-10
 					%b.size-16 Billed To

@@ -49,13 +49,14 @@ class User < ActiveRecord::Base
 	
 	def get_bookings(action, page=0)
   	sql, order = case action
-  	when 'live' then ["starts <= '#{Time.zone.now.to_s(:db)}' AND ends >= '#{Time.zone.now.to_s(:db)}' AND status < 5", 'starts ASC']
-  	when 'future' then ["starts > '#{Time.zone.now.to_s(:db)}' AND status < 5", 'starts ASC']
-  	when 'completed' then ["ends < '#{Time.zone.now.to_s(:db)}' AND status <= 5", 'id DESC']
+  	when 'live' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND starts <= '#{Time.zone.now.to_s(:db)}' AND ends >= '#{Time.zone.now.to_s(:db)}' AND status < 5", 'starts ASC']
+  	when 'future' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND starts > '#{Time.zone.now.to_s(:db)}' AND status < 5", 'starts ASC']
+  	when 'completed' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND ends < '#{Time.zone.now.to_s(:db)}' AND status <= 5", 'id DESC']
   	when 'cancelled' then ["status > 5", 'id DESC']
+  	when 'unfinished' then ["jsi IS NULL AND status = 0", 'id DESC']
   	end
   	
-  	if true #Rails.env == 'production'
+  	if Rails.env == 'production'
   		return Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND #{sql} ORDER BY #{order} LIMIT 10 OFFSET #{page*10}")
   	else
   		return Booking.find_by_sql("SELECT * FROM bookings WHERE #{sql} ORDER BY #{order} LIMIT 10 OFFSET #{page*10}")

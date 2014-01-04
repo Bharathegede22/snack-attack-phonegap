@@ -25,6 +25,17 @@ class Booking < ActiveRecord::Base
 	after_save :after_save_tasks
 	before_save :before_save_tasks
 	
+	def block_extension
+		if self.car_id.blank?
+			return Inventory.block_extension(self.cargroup_id, self.location_id, self.last_ends, self.ends)
+		else
+			c = self.car
+			check = c.check_extension(self.last_ends, self.ends)
+			c.manage_inventory(self.last_ends, self.ends, true) if check == 1
+			return check
+		end
+	end
+	
 	def cancellation_charge
 		total = Charge.find_by_booking_id_and_activity(self.id, 'cancellation_charge')
 		if total
@@ -53,6 +64,14 @@ class Booking < ActiveRecord::Base
 			end
 		end
 		return total
+	end
+	
+	def check_extension
+		if self.car_id.blank?
+			return Inventory.check_extension(self.last_ends, self.ends, self.cargroup_id, self.location_id)
+		else
+			return self.car.check_extension(self.last_ends, self.ends)
+		end
 	end
 	
 	def check_late
@@ -102,8 +121,8 @@ class Booking < ActiveRecord::Base
 			end
 		elsif (self.starts != self.last_starts || self.ends != self.last_ends)
 			if self.ends > self.last_ends
-				check = Inventory.check_extension(self.last_ends, self.ends, self.cargroup_id, self.location_id)
-				if check
+				check = self.check_extension
+				if check == 1
 					str, fare = ['Extending', get_adjusted_fare('extend')]
 				else
 					str, fare = ['NA', nil]
@@ -128,7 +147,7 @@ class Booking < ActiveRecord::Base
 	def do_cancellation
 		total = 0
 		if self.status < 9
-			Inventory.release(self.cargroup_id, self.location_id, self.starts, self.ends)
+			self.manage_inventory(self.starts, self.ends, false)
 			self.charges.each do |c|
 				if !c.activity.include?('charge')
 					if c.refund > 0
@@ -181,8 +200,8 @@ class Booking < ActiveRecord::Base
 		elsif (self.starts != self.last_starts || self.ends != self.last_ends)
 			if self.ends > self.last_ends
 				action_text = 'extension_fee'
-				check = Inventory.block_extension(self.cargroup_id, self.location_id, self.last_ends, self.ends)
-				if check
+				check = self.block_extension
+				if check == 1
 					str, fare = ['Extending', get_fare('extend')]
 					self.extended = true
 				else
@@ -191,7 +210,7 @@ class Booking < ActiveRecord::Base
 			elsif self.ends < self.last_ends
 				action_text = 'shortened_trip_refund'
 				str, fare = ['Shortening', get_fare('short')]
-				Inventory.release(self.cargroup_id, self.location_id, self.ends, self.last_ends)
+				self.manage_inventory(self.ends, self.last_ends, false)
 				self.rescheduled = true
 			end
 		end
@@ -390,6 +409,20 @@ class Booking < ActiveRecord::Base
 		return "http://" + HOSTNAME + "/bookings/" + self.encoded_id
 	end
 	
+	def manage_inventory(start_time, end_time, block)
+		if self.car_id.blank?
+			if block
+				# Block Inventory
+				Inventory.block_plain(self.cargroup_id, self.location_id, start_time, end_time)
+			else
+				# Release Inventory
+				Inventory.release(self.cargroup_id, self.location_id, start_time, end_time)
+			end
+		else
+			self.car.manage_inventory(start_time, end_time, block)
+		end
+	end
+	
 	def outstanding
 		total = self.total_charges
 		total -= self.total_payments
@@ -431,7 +464,7 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def status?
-		if self.status > 5
+		if self.status > 8
 			return 'cancelled'
 		else
 			if self.starts <= Time.zone.now && self.ends >= Time.zone.now
@@ -445,16 +478,30 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def status_help
-		txt = case self.status.to_i
-		when 0 then 'Booking initiated but no payment received.'
-		when 1 then 'Booking confirmed and payment received.'
-		when 2 then 'Checkout'
-		when 5 then 'Completed'
-		when 6 then 'No Inventory'
-		when 7 then 'No Car'
-		when 9 then 'No Show'
-		when 10 then 'Cancelled'
-		else '-'
+		if self.jsi.blank?
+			txt = case self.status.to_i
+			when 0 then 'Booking NOT CONFIRMED as payment not received.'
+			when 1 then 'Booking confirmed and payment received.'
+			when 2 then 'Checkout'
+			when 5 then 'Completed'
+			when 6 then 'No Inventory'
+			when 7 then 'No Car'
+			when 9 then 'No Show'
+			when 10 then 'Cancelled'
+			else '-'
+			end
+		else
+			txt = case self.status.to_i
+			when 0 then 'Booking confirmed, but payment not received.'
+			when 1 then 'Booking confirmed and payment received.'
+			when 2 then 'Checkout'
+			when 5 then 'Completed'
+			when 6 then 'No Inventory'
+			when 7 then 'No Car'
+			when 9 then 'No Show'
+			when 10 then 'Cancelled'
+			else '-'
+			end
 		end
 		txt << "<br/>"
 		txt << "Early<br/>" if self.early

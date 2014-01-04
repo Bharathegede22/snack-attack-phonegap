@@ -39,3 +39,13 @@
 				bk = []
 			end
 		= render :partial => 'item', :locals => {:bookings => bk}
+	.panel-heading
+		%h3.panel-title Unconfirmed (Not Paid) Bookings
+	.panel-body
+		:ruby
+			if user_signed_in?
+				bk = current_user.get_bookings('unfinished')
+			else
+				bk = []
+			end
+		= render :partial => 'item', :locals => {:bookings => bk}
