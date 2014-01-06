@@ -38,7 +38,9 @@ class Payment < ActiveRecord::Base
 			b = self.booking
 			if b
 				if b.status == 0
-					if Inventory.block(b.cargroup_id, b.location_id, b.starts, b.ends) == 1
+					if !self.car_id.blank?
+						b.status = 1
+					elsif Inventory.block(b.cargroup_id, b.location_id, b.starts, b.ends) == 1
 						b.status = 1
 					else
 						b.status = 6
