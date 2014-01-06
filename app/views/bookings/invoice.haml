@@ -98,7 +98,7 @@
 							total -= tmp
 							tmp = 0
 							@booking.refunds.each do |r|
-								tmp += p.amount if r.through != 'early_return_credits'
+								tmp += r.amount if r.through != 'early_return_credits'
 							end
 						= tmp
 				- total -= tmp

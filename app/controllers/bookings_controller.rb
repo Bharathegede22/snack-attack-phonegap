@@ -137,69 +137,18 @@ class BookingsController < ApplicationController
 	end
 	
 	def payu
-		if !params[:status].blank? && 
-			!params[:key].blank? && params[:key] == PAYU_KEY &&
-			!params[:txnid].blank? && 
-			!params[:amount].blank? && 
-			!params[:productinfo].blank? && 
-			!params[:firstname].blank? && 
-			!params[:email].blank? && 
-			!params[:hash].blank?
-			str,id = CommonHelper.decode(params[:txnid])
-			if !str.blank? && str == 'payment'
-				@payment = Payment.find(id)
-				if @payment
-					@booking = @payment.booking
-					hash = PAYU_SALT + "|" + 
-						params[:status] + "|||||||||||" + 
-						@booking.user_email + "|" + 
-						@booking.user_name + "|" + 
-						params[:productinfo] + "|" + 
-						params[:amount] + "|" + 
-						@payment.encoded_id.downcase + "|" + 
-						PAYU_KEY
-					if params[:amount].to_i == @payment.amount.to_i && 
-						params[:firstname] == @booking.user_name.strip && 
-						params[:email] == @booking.user_email && 
-						Digest::SHA512.hexdigest(hash) == params[:hash]
-						@payment.status = case params[:status].downcase
-						when 'success' then 1
-						when 'failure' then 2
-						when 'pending' then 3
-						end
-						if !params[:mode].blank?
-							@payment.mode = case params[:mode].downcase
-							when 'cc' then 0
-							when 'dc' then 1
-							end
-						end
-						@payment.key = params[:mihpayid] if !params[:mihpayid].blank?
-						@payment.notes = ''
-						@payment.notes << "<b>ERROR : </b>" + params[:error] + "<br/>" if !params[:error].blank?
-						@payment.notes << "<b>ERROR MESSAGE : </b>" + params[:error_Message] + "<br/>" if !params[:error_Message].blank?
-						@payment.notes << "<b>PG TYPE : </b>" + params['PG_TYPE'] + "<br/>" if !params['PG_TYPE'].blank?
-						@payment.notes << "<b>Bank Ref Num : </b>" + params[:bank_ref_num] + "<br/>" if !params[:bank_ref_num].blank?
-						@payment.notes << "<b>Unmapped Status : </b>" + params[:unmappedstatus] + "<br/>" if !params[:unmappedstatus].blank?
-						@payment.notes << "<b>Name On Card : </b>" + params[:name_on_card] + "<br/>" if !params[:name_on_card].blank?
-						@payment.notes << "<b>Card Number : </b>" + params[:cardnum] + "<br/>" if !params[:cardnum].blank?
-						@payment.save(:validate => false)
-					else
-						@payment = nil
-					end
-				end
-			end
-		end
+		@payment = Payment.do_create(params)
 		if @payment
+			@booking = @payment.booking
 			if @payment.status == 1
-        flash[:notice] = "Thanks for the payment. Please continue."
-      elsif @payment.status == 3
-        flash[:error] = "Your transaction is subject to manual approval by the payment gateway. We will keep you updated about the same through email."
-      else
-        flash[:error] = "Your transaction has failed. Please do a fresh transaction."
-      end
-      session[:booking_id] = @booking.encoded_id
-      logger.debug "BOOKING ID : #{session[:booking_id]}"
-      redirect_to "/bookings/complete"
+		    flash[:notice] = "Thanks for the payment. Please continue."
+		  elsif @payment.status == 3
+		    flash[:error] = "Your transaction is subject to manual approval by the payment gateway. We will keep you updated about the same through email."
+		  else
+		    flash[:error] = "Your transaction has failed. Please do a fresh transaction."
+		  end
+		  session[:booking_id] = @booking.encoded_id
+		  redirect_to "/bookings/complete"
 		else
 			exception
 		end
