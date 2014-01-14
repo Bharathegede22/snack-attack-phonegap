@@ -75,6 +75,7 @@ class User < ActiveRecord::Base
   	is_new = 0
   	case auth.provider
   	when 'facebook'
+  		return [0, nil] if auth.info.email.blank?
   		user = User.where(:email => auth.info.email).first
   		unless user
   			is_new = 1

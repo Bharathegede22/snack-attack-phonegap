@@ -1,0 +1,15 @@
+.static
+	%h1.zoom List of Holidays #{Time.now.year}
+	%table.table.table-bordered
+		%tr.active
+			%th Holiday
+			%th Date
+			%th Day
+		- Holiday.list.each do |h|
+			%tr
+				%td
+					= h.name	
+				%td
+					= h.day.strftime("%d %b")
+				%td
+					= h.day.strftime("%A")

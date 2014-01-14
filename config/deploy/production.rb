@@ -19,9 +19,9 @@ set :use_sudo, false
 set :deploy_to, "/var/www/#{application}"
 set :rails_env, "production"
 
-role :web, "180.179.52.169"
-role :app, "180.179.52.169"
-role :db,  "180.179.52.169", :primary => true
+role :web, "180.179.52.177"
+role :app, "180.179.52.177"
+role :db,  "180.179.52.177", :primary => true
 
 ssh_options[:user] = "root"
 ssh_options[:keys] = "/root/.ssh/id_rsa"

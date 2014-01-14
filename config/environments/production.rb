@@ -52,10 +52,20 @@ Web::Application.configure do
   # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
 
   # Use a different cache store in production.
-  # config.cache_store = :mem_cache_store
-
+  config.cache_store = :dalli_store, '180.179.52.168:11211', {:namespace => 'zoom'}
+  
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
-  # config.action_controller.asset_host = "http://assets.example.com"
+  config.action_controller.asset_host = Proc.new { |source|
+  	if source.starts_with?('/assets')
+  		"http://assets.zoomcar.in"
+    elsif source.starts_with?('/images')
+      "http://images.zoomcar.in"
+    elsif source.starts_with?('/system')
+      "http://uploads.zoomcar.in"
+    else
+      "http://assets.zoomcar.in"
+    end
+  }
 
   # Precompile additional assets.
   # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.

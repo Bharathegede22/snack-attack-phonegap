@@ -14,13 +14,21 @@ class Users::OmniauthController < Devise::OmniauthCallbacksController
   
   def manage
   	session[:social_signup], user = User.find_for_oauth(request.env["omniauth.auth"], current_user)
-  	remember_me(user)
-  	sign_in('user', user)
-  	if session[:book].blank?
-   		redirect_to "/" and return
-   	else
-   		redirect_to "/bookings/do" and return
-   	end
+  	if user
+			sign_in('user', user)
+			if session[:book].blank?
+		 		redirect_to "/" and return
+		 	else
+		 		redirect_to "/bookings/do" and return
+		 	end
+		else
+			flash[:error] = "Sorry, we could not access your email id from facebook. Please signup using normal procees."
+			if session[:book].blank?
+		 		redirect_to "/" and return
+		 	else
+		 		redirect_to "/bookings/do" and return
+		 	end
+		end
   end
 
 end

@@ -158,7 +158,7 @@ class BookingsController < ApplicationController
 		@confirm = !params[:confirm].blank?
 		if request.post?
 			if @confirm
-				@booking.ends = DateTime.parse(params[:ends] + " +05:30") if !params[:ends].blank?
+				@booking.ends = Time.zone.parse(params[:ends]) if !params[:ends].blank?
 				@booking.through_signup = true
 				if @booking.valid?
 					@string, @fare = @booking.do_reschedule
@@ -184,7 +184,7 @@ class BookingsController < ApplicationController
 					flash[:error] = "Please fix the error!"
 				end
 			else
-				@booking.ends = DateTime.parse(params[:ends] + " +05:30") if !params[:ends].blank?
+				@booking.ends = Time.zone.parse(params[:ends]) if !params[:ends].blank?
 				if @booking.valid?
 					@string, @fare = @booking.check_reschedule
 					flash[:error] = "Sorry, but the car is no longer available" if !@fare && @string == 'NA'
@@ -204,8 +204,8 @@ class BookingsController < ApplicationController
 		@canonical = "https://www.zoomcar.in/search"
 		if request.post?
 			@booking = Booking.new
-			@booking.starts = DateTime.parse(params[:starts] + " +05:30") if !params[:starts].blank?
-			@booking.ends = DateTime.parse(params[:ends] + " +05:30") if !params[:ends].blank?
+			@booking.starts = Time.zone.parse(params[:starts]) if !params[:starts].blank?
+			@booking.ends = Time.zone.parse(params[:ends]) if !params[:ends].blank?
 			@booking.location_id = params[:loc] if !params[:loc].blank?
 			@booking.cargroup_id = params[:car] if !params[:car].blank?
 			@booking.through_search = true
@@ -218,12 +218,12 @@ class BookingsController < ApplicationController
 			end
 		else
 			@booking = Booking.new
-			@booking.starts = DateTime.parse(session[:search][:starts] + " +05:30") if !session[:search].blank? && !session[:search][:starts].blank?
-			@booking.ends = DateTime.parse(session[:search][:ends] + " +05:30") if !session[:search].blank? && !session[:search][:ends].blank?
+			@booking.starts = Time.zone.parse(session[:search][:starts]) if !session[:search].blank? && !session[:search][:starts].blank?
+			@booking.ends = Time.zone.parse(session[:search][:ends]) if !session[:search].blank? && !session[:search][:ends].blank?
 			@booking.location_id = session[:search][:loc] if !session[:search].blank? && !session[:search][:loc].blank?
 			@booking.cargroup_id = session[:search][:car] if !session[:search].blank? && !session[:search][:car].blank?
 			@booking.through_search = true
-			if @booking.valid?
+			if !session[:search].blank? && @booking.valid?
 				if !@booking.cargroup_id.blank? && !@booking.location_id.blank?
 					@inventory = {}
 					@inventory[@booking.cargroup_id.to_s] = {@booking.location_id.to_s => Inventory.check(@booking.starts, @booking.ends, @booking.cargroup_id, @booking.location_id)}
@@ -303,8 +303,8 @@ class BookingsController < ApplicationController
 	def check_search
 		if !session[:book].blank? && !session[:book][:starts].blank? && !session[:book][:ends].blank? && !session[:book][:car].blank? && !session[:book][:loc].blank?
 			@booking = Booking.new
-			@booking.starts = DateTime.parse(session[:book][:starts] + " +05:30")
-			@booking.ends = DateTime.parse(session[:book][:ends] + " +05:30")
+			@booking.starts = Time.zone.parse(session[:book][:starts])
+			@booking.ends = Time.zone.parse(session[:book][:ends])
 			@booking.location_id = session[:book][:loc]
 			@booking.cargroup_id = session[:book][:car]
 		else

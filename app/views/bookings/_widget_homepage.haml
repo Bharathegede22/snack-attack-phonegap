@@ -2,8 +2,8 @@
 	if !@booking
 		@booking = Booking.new
 		if request.post? && !session[:search].blank?
-			@booking.starts = DateTime.parse(session[:search][:starts] + " +05:30") if !session[:search][:starts].blank?
-			@booking.ends = DateTime.parse(session[:search][:ends] + " +05:30") if !session[:search][:starts].blank?
+			@booking.starts = Time.zone.parse(session[:search][:starts]) if !session[:search][:starts].blank?
+			@booking.ends = Time.zone.parse(session[:search][:ends]) if !session[:search][:starts].blank?
 			@booking.location_id =  session[:search][:loc]
 			@booking.cargroup_id =  session[:search][:car]
 		end

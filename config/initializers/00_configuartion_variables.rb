@@ -13,3 +13,6 @@ PAYU_SALT = configurations['payu_salt']
 
 AWS_SES_ID = configurations['aws_ses_id']
 AWS_SES_KEY = configurations['aws_ses_key']
+
+VARNISH_HOST = configurations['varnish_host']
+VARNISH_PORT = configurations['varnish_port']

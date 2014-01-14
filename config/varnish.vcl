@@ -25,7 +25,7 @@ sub vcl_recv {
   }
 	
 	# Pipe requests for assets, users, search & bookings
-  if (req.url ~ "^/assets/*" || req.url ~ "^/users/*" || req.url ~ "^/search/*" || req.url ~ "^/bookings/*") {
+  if (req.url ~ "^/assets/*" || req.url ~ "^/users/*" || req.url ~ "^/search/*" || req.url ~ "^/bookings/*" || req.url ~ "^/admin/*") {
     return(pipe);
   }
   

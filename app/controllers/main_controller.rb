@@ -138,6 +138,13 @@ class MainController < ApplicationController
 		@canonical = "http://www.zoomcar.in/fees"
 	end
 	
+	def holidays
+		@meta_title = "List of Holidays | Zoomcar.in"
+		@meta_description = "Zoom off on Holidays "
+		@meta_keywords = "zoomcar holidays"
+		@canonical = "http://www.zoomcar.in/holidays"
+	end
+	
 	def howtozoom
 		@meta_title = "8 Steps To Be A Better Zoom Member | Zoomcar.in"
 		@meta_description = "Help us build the Zoom community by following these 8 easy steps"
