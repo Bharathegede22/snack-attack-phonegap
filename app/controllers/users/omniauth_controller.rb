@@ -19,6 +19,7 @@ class Users::OmniauthController < Devise::OmniauthCallbacksController
 			if session[:book].blank?
 		 		redirect_to "/" and return
 		 	else
+		 		session[:social_signup] = nil
 		 		redirect_to "/bookings/do" and return
 		 	end
 		else

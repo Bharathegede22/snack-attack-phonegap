@@ -472,6 +472,16 @@ function socialPlugins() {
 	(function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs"));
 }
 
+function deltaX() {
+	(function(d,w,s,l,i){
+		w[l]=w[l]||[];w[l].push({xb:i,'start':new Date().getTime()});
+		var x = d.createElement(s);x.async = true;
+		x.src = ('https:' == d.location.protocol ? 'https://d1adj61x0fgvmc.cloudfront.net/' : 'http://s.adx.io/')+i+'/uni.js';
+		var s = d.getElementsByTagName(s)[0];s.parentNode.insertBefore(x, s);
+	})(document, window, 'script', 'universal_variable', '35BDU410');
+}
+
+deltaX();
 $('.carousel').carousel();
 carouselPause();
 $('.help').tooltip();

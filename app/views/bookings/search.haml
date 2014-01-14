@@ -48,6 +48,17 @@
 - if !@inventory.blank?
 	= javascript_tag do
 		:plain
+			var _adx = {};
+			_adx.xb  = '35BDU410';
+			_adx.xt  = 'conversion';
+			_adx.xgid  = '6AMDo21';
+			(function(d){
+				var x = d.createElement('script');
+				x.async = true;
+				x.src = ('https:' == d.location.protocol ? 'https://d1adj61x0fgvmc.cloudfront.net' : 'http://s.adx.io') + '/dxjet.js';
+				var s = d.getElementsByTagName('script')[0];
+				s.parentNode.insertBefore(x, s);
+			})(document);
 			function initializeMap() {
 				var myLatlng = new google.maps.LatLng(12.9667, 77.5667);
 				var mapOptions = {

@@ -9,7 +9,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 			    #set_flash_message :notice, :signed_up if is_flashing_format?
 			    sign_up(resource_name, resource)
 			    flash[:notice] = "<b>Thanks for signing up</b>. Please provide the following details."
-			    session[:normal_signup] = 1
+			    session[:normal_signup] = 1 if session[:book].blank?
 					respond_to do |format|
 		    		format.json {render json: {html: render_to_string('/users/signup.haml', layout: false)}}
 		    	end

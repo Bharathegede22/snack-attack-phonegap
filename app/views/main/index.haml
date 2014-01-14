@@ -18,7 +18,7 @@
 							- count = 0
 							- @cargroup.each do |cargroup|
 								- next if cargroup.id == 5
-								- if cargroup == @cargroup[0]
+								- if cargroup == @cargroup.first
 									%li.active{'data-target' => "#CarSlider", 'data-slide-to' => "#{count}"}
 										= cargroup.shortname
 								- else
@@ -29,7 +29,7 @@
 							- @cargroup.each do |cargroup|
 								- next if cargroup.id == 5
 								:ruby
-									if cargroup == @cargroup[0]
+									if cargroup == @cargroup.first
 										style = "background:url(#{asset_path 'cars/' + cargroup.id.to_s + '.jpg'}) no-repeat center top;"
 										databg = ''
 										cls = 'active'
