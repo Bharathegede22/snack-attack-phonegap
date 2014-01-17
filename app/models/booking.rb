@@ -125,6 +125,7 @@ class Booking < ActiveRecord::Base
 				if check == 1
 					str, fare = ['Extending', get_adjusted_fare('extend')]
 				else
+					BookingMailer.change_failed(self).deliver
 					str, fare = ['NA', nil]
 				end
 			elsif self.ends < self.last_ends
@@ -205,6 +206,7 @@ class Booking < ActiveRecord::Base
 					str, fare = ['Extending', get_fare('extend')]
 					self.extended = true
 				else
+					BookingMailer.change_failed(self).deliver
 					str, fare = ['NA', nil]
 				end
 			elsif self.ends < self.last_ends

@@ -1,0 +1,50 @@
+%br/
+Hi Support,
+%br/
+%br/
+%br/
+User has tried to extend the following booking but faile because of no inventory :
+%br/
+%br/
+%div{style: "border-radius:5px; background:#eeeeee; padding:5px; margin:0px;"}
+	%table{border: '0', cellpadding: '5', cellspacing: '0', style: "font-size:12px; color:#333333;"}
+		%tr
+			%td{valign: 'top'} Vehicle:
+			%td{valign: 'top'}
+				%b #{@booking.cargroup.display_name}
+				%br/
+				- if !@booking.car_id.blank?
+					= @booking.car.name
+		%tr
+			%td{valign: 'top'} Location: 
+			%td{valign: 'top'}
+				%b #{@booking.location.name}
+		%tr
+			%td{valign: 'top'} Original Starts: 
+			%td{valign: 'top'}
+				%b #{@booking.starts.strftime("%d/%m/%y %I:%M %p")}
+		%tr
+			%td{valign: 'top'} Original Ends: 
+			%td{valign: 'top'}
+				%b #{@booking.ends_was.strftime("%d/%m/%y %I:%M %p")}
+		%tr
+			%td{valign: 'top'} New Ends: 
+			%td{valign: 'top'}
+				%b #{@booking.ends.strftime("%d/%m/%y %I:%M %p")}
+		%tr
+			%td{valign: 'top'} Reservation Confirmation Number:
+			%td{valign: 'top'}
+				%b #{@booking.confirmation_key}
+				%br/
+				%a{href: "#{@booking.link}", target: "_blank"}
+					manage your reservation
+%br/
+%br/
+Since the car is with the user, please make sure to talk to him to resolve any potential operation issues.
+%br/
+Also check for any carblocks in place which can be removed for the customer.
+%br/
+%br/ 
+The Zoom Team
+%br/
+%br/

@@ -12,6 +12,10 @@ class Car < ActiveRecord::Base
 			end
 			check = 0 if tmp[self.cargroup_id.to_s][cm.location_id.to_s] == 0
 		end
+		# Check Carblock
+		if check == 1
+			check = 0 if Carblock.count(:conditions => ["car_id = ? AND ((starts <= ? AND ends > ?) OR (starts >= ? AND starts <= ?))", self.id, starts, starts, starts, ends]) > 0
+		end
 		return check
 	end
 	

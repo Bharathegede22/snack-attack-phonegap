@@ -18,6 +18,11 @@ class BookingMailer < ActionMailer::Base
 		mail(:to => @user.email, :subject => "Your Zoom reservation details have been changed.")
 	end
 	
+	def change_failed(booking)
+		@booking = booking
+		mail(:to => 'support@zoomcar.in', :subject => "Booking extension failed because of no inventory.")
+	end
+	
   def payment(booking)
 		@booking = booking
 		@user = @booking.user

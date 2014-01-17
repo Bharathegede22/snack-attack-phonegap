@@ -26,7 +26,7 @@ class Location < ActiveRecord::Base
 	def self.live
 		Location.find_by_sql("SELECT l.* FROM locations l 
 			INNER JOIN cars c ON c.location_id = l.id 
-			WHERE c.status > 0 
+			WHERE c.status > 0 AND l.status > 0 
 			GROUP BY l.id
 			ORDER BY id DESC")
 	end

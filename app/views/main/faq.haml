@@ -1,16 +1,19 @@
+:ruby
+	locs = Location.live.collect {|l| l.name.gsub(',', ' at')}
+	cars = Cargroup.list.collect {|c| c.name}
 .static
 	%h1 Frequently Asked Questions
 	.accordian
 		%h2 Basics
 		%h3.accordion-header 1) What is Zoom?
 		.accordion-content
-			%p Zoom is India's first membership-based, self-drive car rental service which allows individuals to hire cars by the hour or by the day. Reservations are made through the website or through mobile (OS or Android).
+			%p Zoom is India's first membership-based, self-drive car rental service which allows individuals to hire cars by the hour or by the day. Reservations are made through the website.
 		%h3.accordion-header 2) Where are Zoom vehicles located?
 		.accordion-content
-			%p Zoom offers vehicles at three locations in Bangalore: St. Johns Road in Ulsoor, Brigade Millennium Complex in JP Nagar, Brigade Gateway Complex in Malleshwaram. We are always expanding to new locations. If you want Zoom vehicles near you, let us know your location.
+			%p Zoom offers vehicles at #{locs.length} locations in Bangalore: #{locs.join(', ')}. We are always expanding to new locations. If you want Zoom vehicles near you, let us know your location.
 		%h3.accordion-header 3) What type of vehicles does Zoom offer?
 		.accordion-content
-			%p Zoom offers Ford Figo ZXI, Mahindra Scorpio LX and SLE, and BMW 320d vehicles. For eco-conscious customers, we will soon be rolling out the new Reva E2O from Mahindra.
+			%p Zoom offers #{cars.join(', ')}.
 		%h3.accordion-header 4) Are there restrictions on where I can travel?
 		.accordion-content
 			%p Most of Zoom's vehicle are equipped with an All India Permit, so you are free to Zoom anywhere in India. Vehicles without an All India Permit are specified on the website. Visit Zoom's Outstation section for more tips on traveling between states.
@@ -22,7 +25,7 @@
 			%p Zoom does not provide drivers. But, if you would like to arrange for a driver for your Zoom vehicle, just make sure the driver signs up to become a Zoom member first.
 		%h3.accordion-header 7) Do the vehicles have manual or automatic transmission?
 		.accordion-content
-			%p The Figos and Scorpios have manual transmission. The BMWs and Revas have automatic transmission.
+			%p The Figos, Ventos and Scorpios have manual transmission. The BMWs and Revas have automatic transmission.
 		%br/
 		%h2 Becoming a member
 		%h3.accordion-header 8) How do I become a member?
@@ -47,7 +50,7 @@
 		%h2 Booking
 		%h3.accordion-header 13) How do I book a vehicle?
 		.accordion-content
-			%p It's simple on our online reservation system or our easy to use Android and iPhone apps! Just select the type of car you want, the location you want to pick it up from, and the start and end time for your reservation. Then enter your payment details (credit or debit card) and you are ready to Zoom!
+			%p It's simple on our online reservation system! Just select the type of car you want, the location you want to pick it up from, and the start and end time for your reservation. Then enter your payment details (credit or debit card) and you are ready to Zoom!
 		%h3.accordion-header 14) Can I book for any period of time?
 		.accordion-content
 			%p Cars can be booked in either hourly or daily increments. The minimum reservation period is one hour, and the maximum reservation time is 14 days.
@@ -59,7 +62,7 @@
 			%p Please dial Zoom's helpful 24x7 call center - #{CommonHelper::CUSTOMER_CARE} - and we will work with you to ensure your schedule is accommodated provided that a vehicle is available at that time. Your credit or debit card will then be charged the new amount, just like with the initial transaction. If your reservation has already started, you can use Zoom's mobile app or connected in-car tablet to modify the reservation. Simply go to your "Accounts" page and make the change through the normal reservation system.
 		%h3.accordion-header 17) How do I cancel a reservation?
 		.accordion-content
-			%p Reservations can be cancelled from Zoom's website or mobile app. You can manage a reservation on your Accounts page. This is where you have the option to cancel your reservation.
+			%p Reservations can be cancelled from Zoom's website. You can manage a reservation on your Accounts page. This is where you have the option to cancel your reservation.
 		%h3.accordion-header 18) If I cancel my reservation, do I still have to pay?
 		.accordion-content
 			%p For a reservation that is cancelled 24 hours or more before it is scheduled to start, you will receive a refund for the full amount of the reservation. For a reservation that is cancelled less than 24 hours before it is scheduled to start, you will be obligated to pay 25% of the full reservation amount, with a maximum of Rs 2000.
