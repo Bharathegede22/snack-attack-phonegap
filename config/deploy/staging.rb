@@ -33,17 +33,14 @@ set :bundle_dir, File.join(fetch(:shared_path), 'bundle')
 namespace :deploy do	
 	desc "Start Application"
   task :start, :roles => [:app] do
-    run "touch #{release_path}/tmp/restart.txt"
   end
 
 	desc "Stop Application"
   task :stop, :roles => [:app] do
-    # Do nothing.
   end
 
   desc "Restart Application"
   task :restart, :roles => [:app] do
-    run "touch #{release_path}/tmp/restart.txt"
   end  
 end
 

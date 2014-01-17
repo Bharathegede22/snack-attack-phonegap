@@ -4,58 +4,83 @@
 		%i Zoom offers the simplest, easiest to understand car-hire tariff in India
 	%br/
 	.t-c
-		%table.m-auto{:cellpadding => '0', :cellspacing => '0', :border => '0', :width => '650'}
-			%thead.bg-zoom.white
-				%tr
-					%th{:style => "border-right:1px solid #fff;"}
-						.p-5 Car
-					%th{:style => "border-left:1px solid #fff;border-right:1px solid #fff;"}
-						.p-5 Hourly
-					%th{:style => "border-left:1px solid #fff;"}
-						.p-5 
-							Daily
-							%span{:style => "font-size:26px; line-height:6px;"} *
-							%br/
-							(24 hours)
-					%th{:style => "border-left:1px solid #fff;"}
-						.p-5 
-							Beyond
-							%br/
-							Max Usage
-							%span{:style => "font-size:26px; line-height:6px;"} **
+		%table.table.table-bordered
+			%tr.success
+				%th.t-c{width: '220'}
+					Car
+				%th.t-c{width: '140'}
+					Hourly
+					%sup 1
+				%th.t-c{width: '140'}
+					Daily
+					%sup 2
+				%th.t-c{width: '140'}
+					Weekly
+					%sup 3
+				%th.t-c{width: '140'}
+					Monthly
+					%sup 4
+				%th
+					Beyond Free Usage
+					%sup **
 			%tbody
 				- @cargroup.each do |cargroup|
 					%tr
-						%td.border-zoom
-							.p-5
-								= image_tag("cars/#{cargroup.id}small.jpg", :alt => cargroup.display_name)
-								%br/
-								%p.f-b{:style => "text-align: center;"} #{cargroup.display_name}
-						%td.border-zoom
-							.p-5 ₹ #{cargroup.hourly_fare}
-						%td.border-zoom
-							.p-5
-								₹ #{cargroup.daily_fare}
-						%td.border-zoom
-							.p-5
-								₹ #{cargroup.excess_kms} /Km
-				%tr
-					%td{:colspan => '4'}
-						.p-10.t-l
-							%span.red
-								%b
-									= "# - "
-								Mahindra Reva has a maximum range of
-								%b 100 Km
-								on a full charge.
+						%td
+							= image_tag("cars/#{cargroup.id}small.jpg", :alt => cargroup.display_name)
 							%br/
-							%b 
-								= "* - "
-							Any 24 hour period.
+							%p.f-b{:style => "text-align: center;"}
+								#{cargroup.display_name}
+								- if cargroup.id == 5
+									\#
+						%td
 							%br/
 							%b
-								= "** - "
-							All Zoom reservations will come with 40 km per hour of free driving, up to 200 km per day. Any kms in excess of these limits will be charged at the rates shown above.
+								₹ #{cargroup.hourly_fare}
+							%br/
+							%br/
+							#{cargroup.hourly_km_limit} Kms
+							%br/
+							(Max #{cargroup.daily_km_limit})
+						%td
+							%br/
+							%b ₹ #{cargroup.daily_fare}
+							%br/
+							%br/
+							#{cargroup.daily_km_limit} Kms
+						%td
+							%br/
+							%b ₹ #{cargroup.weekly_fare}
+							%br/
+							%br/
+							#{cargroup.weekly_km_limit} Kms
+						%td
+							%br/
+							%b ₹ #{cargroup.monthly_fare}
+							%br/
+							%br/
+							#{cargroup.monthly_km_limit} Kms
+						%td
+							%br/
+							%br/
+							₹ #{cargroup.excess_kms}/Km
+				%tr.active
+					%td.t-l{:colspan => '6'}
+						%span.red
+							%b
+								= "# - "
+							Mahindra Reva has a maximum range of
+							%b 100 Km
+							on a full charge.
+						%br/
+						%b 
+							= "* - "
+						Any 24 hour period.
+						%br/
+						%b
+							= "** - "
+						All Zoom reservations will come with some kms of free driving as mentioned in the relevant heads. Any kms in excess of these limits will be charged at the rates shown here.
+	%br/
 	#Weekday.tariff-special
 		.p-20
 			%h2.size-30

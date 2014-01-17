@@ -317,7 +317,7 @@ class Booking < ActiveRecord::Base
 		end
 		data = {:hours => 0, :billed_hours => 0, :standard_hours => 0, :discounted_hours => 0, :estimate => 0, :discount => 0}
 		cargroup = self.cargroup
-		rate = {:hourly => (cargroup.hourly_fare/60.0), :daily => cargroup.daily_fare}
+		rate = {:hourly => (cargroup.hourly_fare/60.0), :daily => cargroup.daily_fare, :weekly => cargroup.weekly_fare, :monthly => cargroup.monthly_fare}
 		
 		# Old Values
 		min_old = (end_date_old.to_i - start_date.to_i)/60
@@ -330,6 +330,8 @@ class Booking < ActiveRecord::Base
 		hour_new += 1 if (end_date_new.to_i - start_date.to_i) > hour_new*3600
 		
 		data[:hours] = hour_new - hour_old
+		data[:days] = data[:hours]/24
+		data[:hours] = data[:hours] - (data[:hours]/24)*24
 		
 		min = 0
 		billed = 0
@@ -341,67 +343,96 @@ class Booking < ActiveRecord::Base
 		array = []
 		rev = 0
 		disc = 0
-		while min <= (hour_new*60)
-			if (min-((min/1440)*1440)) == 0
-				billed = 0
-				wday_c = (start_date + min.minutes).wday
-			end
-			if ((((start_date + min.minutes).hour == 0) && ((start_date + min.minutes).min == 0)) || (min == hour_new*60))
-				if daily_last[:billed] > 0
-					array_last = array.last
-					if array_last && ((array_last + daily_last[:actual]) >= 600)
-						rev = (rate[:daily] - ((600 - daily_last[:billed])*rate[:hourly]))
-					else
-						rev = daily_last[:billed]*rate[:hourly]
-					end
-					if [0,1,6].include?(wday)
-						data[:standard_hours] += daily_last[:billed]/60
-						disc = 0
-					else
-						data[:discounted_hours] += daily_last[:billed]/60
-						disc = rev*0.35
-					end
-					data[:estimate] += rev
-					data[:discount] += disc
-				end
-				if daily[:billed] > 0
-					if (daily[:actual] >= 600)
-						rev = (rate[:daily] - ((600 - daily[:billed])*rate[:hourly]))
-					else
-						rev = daily[:billed]*rate[:hourly]
-					end
-					if [0,5,6].include?(wday)
-						data[:standard_hours] += daily[:billed]/60
-						disc = 0
-					else
-						data[:discounted_hours] += daily[:billed]/60
-						disc = rev*0.35
-					end
-					data[:estimate] += rev
-					data[:discount] += disc
-				end
-				array << daily[:actual]
-				daily = {:actual => 0, :billed => 0}
-				daily_last = {:actual => 0, :billed => 0}
-				wday = (start_date + min.minutes).wday
-				date = (start_date + min.minutes).to_date
-			end
-			if billed < 600
-				if wday == wday_c
-					daily[:actual] += 1
-					daily[:billed] += 1 if min >= (hour_old*60)
-				else
-					daily_last[:actual] += 1
-					daily_last[:billed] += 1 if min >= (hour_old*60)
-				end
-				billed_total += 1 if min >= (hour_old*60)
-			end
-			billed += 1
-			min += 1
+		
+		if (hour_new/24) >= 7
+			hour_process = 7*24
+		else
+			hour_process = hour_new
 		end
-		data[:billed_hours] = billed_total/60
-		data[:days] = data[:hours]/24
-		data[:hours] = data[:hours] - (data[:hours]/24)*24
+		
+		# Hourly / Daily Tariff
+		if (hour_old/24) < 7
+			while min <= (hour_process*60)
+				if (min-((min/1440)*1440)) == 0
+					billed = 0
+					wday_c = (start_date + min.minutes).wday
+				end
+				if ((((start_date + min.minutes).hour == 0) && ((start_date + min.minutes).min == 0)) || (min == hour_process*60))
+					if daily_last[:billed] > 0
+						array_last = array.last
+						if array_last && ((array_last + daily_last[:actual]) >= 600)
+							rev = (rate[:daily] - ((600 - daily_last[:billed])*rate[:hourly]))
+						else
+							rev = daily_last[:billed]*rate[:hourly]
+						end
+						if [0,1,6].include?(wday)
+							data[:standard_hours] += daily_last[:billed]/60
+							disc = 0
+						else
+							data[:discounted_hours] += daily_last[:billed]/60
+							disc = rev*0.35
+						end
+						data[:estimate] += rev
+						data[:discount] += disc
+					end
+					if daily[:billed] > 0
+						if (daily[:actual] >= 600)
+							rev = (rate[:daily] - ((600 - daily[:billed])*rate[:hourly]))
+						else
+							rev = daily[:billed]*rate[:hourly]
+						end
+						if [0,5,6].include?(wday)
+							data[:standard_hours] += daily[:billed]/60
+							disc = 0
+						else
+							data[:discounted_hours] += daily[:billed]/60
+							disc = rev*0.35
+						end
+						data[:estimate] += rev
+						data[:discount] += disc
+					end
+					array << daily[:actual]
+					daily = {:actual => 0, :billed => 0}
+					daily_last = {:actual => 0, :billed => 0}
+					wday = (start_date + min.minutes).wday
+					date = (start_date + min.minutes).to_date
+				end
+				if billed < 600
+					if wday == wday_c
+						daily[:actual] += 1
+						daily[:billed] += 1 if min >= (hour_old*60)
+					else
+						daily_last[:actual] += 1
+						daily_last[:billed] += 1 if min >= (hour_old*60)
+					end
+					billed_total += 1 if min >= (hour_old*60)
+				end
+				billed += 1
+				min += 1
+			end
+			data[:billed_hours] = billed_total/60
+		end
+		
+		# Weekly Tariff
+		if (hour_new/24) >= 7 && (hour_old/24) < 28
+			if (hour_new/24) >= 28
+				hour_process = 21*24
+			else
+				hour_process = hour_new - (24*7)
+			end
+			hour_process -= (hour_old - (24*7)) if (hour_old/24) >= 7
+			data[:estimate] += (hour_process * (rate[:weekly]/(7*24.0)))
+			data[:billed_hours] += hour_process
+		end
+		
+		# Monthly Tariff
+		if (hour_new/24) >= 28
+			hour_process = hour_new - (24*28)
+			hour_process -= (hour_old - (24*28)) if (hour_old/24) >= 28
+			data[:estimate] += (hour_process * (rate[:monthly]/(28*24.0)))
+			data[:billed_hours] += hour_process
+		end
+		#debugger
 		data[:estimate] = data[:estimate].round
 		data[:discount] = data[:discount].round
 		return data

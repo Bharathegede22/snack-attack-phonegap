@@ -1,5 +1,5 @@
 set :stages, %w(production staging)
-set :default_stage, "production"
+set :default_stage, "staging"
 require 'capistrano/ext/multistage'
 
 set :application, "web"

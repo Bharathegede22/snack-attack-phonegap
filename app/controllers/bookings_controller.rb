@@ -176,7 +176,7 @@ class BookingsController < ApplicationController
 						elsif @fare[:hours] > 0
 							tmp << @fare[:hours].to_s + " hours"
 						end
-						flash[:notice] = "Your booking <b>" + @string.downcase.gsub('ing', 'ed') + "</b> by " + tmp.chomp(', ') + " successfully"
+						flash[:notice] = "Your booking successfully <b>" + @string.downcase.gsub('ing', 'ed') + "</b> by " + tmp.chomp(', ')
 						@success = true
 						@confirm = @string = @fare = nil
 					end
