@@ -74,8 +74,20 @@
 							on a full charge.
 						%br/
 						%b 
-							= "* - "
-						Any 24 hour period.
+							= "1 - "
+						Upto 24 hours. 1 - 10 Hours are charged, while 11 - 24 Hours are free.
+						%br/
+						%b 
+							= "2 - "
+						Beyond 24 hours. Full days are charged based on this fare, partial hours are charged based on hourly fare.
+						%br/
+						%b 
+							= "3 - "
+						Beyond 7 Days. Any subsequent partial days/hours are charged on pro-rated base of this fare only.
+						%br/
+						%b 
+							= "4 - "
+						Beyond 28 Days. Any subsequent partial days/hours are charged on pro-rated base of this fare only.
 						%br/
 						%b
 							= "** - "
@@ -88,7 +100,7 @@
 			%p.size-18.black.f-b
 				Book a vehicle for Monday, Tuesday, Wednesday or Thursday
 				%br/
-				and receive 35% off the normal tariff!
+				and receive #{CommonHelper::WEEKDAY_DISCOUNT}% off the normal tariff!
 			%p Discounts automatically applied at time of check-out.
 			%div
 				%b.black PLEASE NOTE:

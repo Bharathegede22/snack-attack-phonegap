@@ -7,7 +7,7 @@ class Cargroup < ActiveRecord::Base
   end  
 	
 	def check_fare(start_date, end_date)
-		temp = {:estimate => 0, :discount => 0, :days => 0, :normal_days => 0, :discounted_days => 0, :hours => 0, :normal_hours => 0, :discounted_hours => 0}
+		temp = {:estimate => 0, :discount => 0, :days => 0, :normal_days => 0, :discounted_days => 0, :hours => 0, :normal_hours => 0, :discounted_hours => 0, :kms => 0}
 		cargroup = self
 		h = (end_date.to_i - start_date.to_i)/3600
 		h += 1 if (end_date.to_i - start_date.to_i) > h*3600
@@ -21,19 +21,22 @@ class Cargroup < ActiveRecord::Base
 				# Monthly
 				h = d*24 + h
 				temp[:estimate] = ((cargroup.monthly_fare/(28*24.0))*h).round
+				temp[:kms] = ((cargroup.monthly_km_limit/(28*24.0))*h).round
 				return temp
 			elsif d >= 7
 				# Weekly
 				h = d*24 + h
 				temp[:estimate] = ((cargroup.weekly_fare/(7*24.0))*h).round
+				temp[:kms] = ((cargroup.weekly_km_limit/(7*24.0))*h).round
 				return temp
 			else
 				# Daily Fair
 				(0..(d-1)).each do |i|
 					wday = (start_date + i.days).wday
 					temp[:estimate] += cargroup.daily_fare
+					temp[:kms] += cargroup.daily_km_limit
 					if wday > 0 && wday < 5
-						temp[:discount] += cargroup.daily_fare*0.35
+						temp[:discount] += cargroup.daily_fare*(CommonHelper::WEEKDAY_DISCOUNT/100.0)
 						temp[:discounted_days] += 1
 					else
 						temp[:normal_days] += 1
@@ -50,13 +53,15 @@ class Cargroup < ActiveRecord::Base
 		end
 		temp[:estimate] += tmp
 		if wday > 0 && wday < 5
-			temp[:discount] += tmp*0.35
+			temp[:discount] += tmp*(CommonHelper::WEEKDAY_DISCOUNT/100.0)
 			temp[:discounted_hours] += h
 		else
 			temp[:normal_hours] += h
 		end
+		temp[:kms] += ((cargroup.hourly_km_limit*h) < cargroup.daily_km_limit) ? (cargroup.hourly_km_limit*h) : cargroup.daily_km_limit
 		temp[:estimate] = temp[:estimate].round
 		temp[:discount] = temp[:discount].round
+		temp[:kms] = temp[:kms].round
 		return temp
 	end
 	

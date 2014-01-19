@@ -11,102 +11,62 @@ class MainController < ApplicationController
 		@action = params[:id]
 		case @action
 		when 'tariff'
-			@calcar = params[:calcar]
-			@calstart = params[:calstart]
-			@calend = params[:calend]
-			@calmileage = params[:calmileage]
-		
-			rate = [0, 0, 0]
-
-		  cargroup = Cargroup.find_by_display_name(@calcar)
-			rate = [cargroup.hourly_fare.to_i, cargroup.daily_fare.to_i, cargroup.excess_kms.to_i] if cargroup
-
-			start_date = DateTime.parse(@calstart + ' +05:30')
-			end_date = DateTime.parse(@calend + ' +05:30')
-			if rate[0] == 0
-				flash[:error] = 'Unindentified Vehicle.'
-			elsif start_date >= end_date
-				flash[:error] = 'Pickup and Return time are not in increasing order.'
+			if request.post?
+				@car = Cargroup.find_by_id(params[:car]) if !params[:car].blank?
+				@starts = Time.zone.parse(params[:starts]) if !params[:starts].blank?
+				@ends = Time.zone.parse(params[:ends]) if !params[:ends].blank?
+				@kms = params[:kms]
+				
+				if @car.blank?
+					flash[:error] = 'Unindentified Vehicle.'
+				elsif @starts >= @ends
+					flash[:error] = 'Pickup and Return time are not in increasing order.'
+				end
+				
+				@tariff = @car.check_fare(@starts, @ends) if flash[:error].blank?
 			end
-			h = (end_date.to_i - start_date.to_i)/3600
-			h += 1 if (end_date.to_i - start_date.to_i) > h*3600
-			d = h/24
-			h = h - d*24
-			flash[:error] = "Sorry, but you can't book for more than 7 days." if d > 7
-			if flash[:error].blank?
-				@tariff = ['', 0, 0, 0, '', '']
-				@tariff[0] << d.to_s + (d == 1 ? ' Day, ' : ' Days, ') if d > 0
-				@tariff[0] << h.to_s + (h == 1 ? ' Hour' : ' Hours') if h > 0
-				@tariff[0] = @tariff[0].chomp(', ')
-				if h > 10
-					d += 1
-					h = 0
-				end
-				# Tariff Detail
-				@tariff[5] = rate[0].to_s + '/hour, ' + rate[1].to_s + '/day'
-				# Extra Fare
-				fare_kms = h*40
-				fare_kms = 200 if fare_kms > 200
-				fare_kms += d*200
-				if @calmileage.to_i > 0 && (@calmileage.to_i-fare_kms) > 0
-					@tariff[4] = (@calmileage.to_i-fare_kms).to_s + ' Kms @ Rs.' + rate[2].to_s + "/Kms"
-					@tariff[3] = (@calmileage.to_i-fare_kms)*rate[2]
-				else
-					@tariff[4] = 'Rs.' + rate[2].to_s + "/Kms after " + fare_kms.to_s + ' Kms'
-				end
-				# Daily Fair
-				if d > 0
-					(0..(d-1)).each do |i|
-						wday = (start_date + i.days).wday
-						@tariff[1] += rate[1]
-						@tariff[2] += rate[1]*0.35 if wday > 0 && wday < 5
-					end
-				end
-				# Hourly Fair
-				wday = (start_date + d.days).wday
-				@tariff[1] += rate[0]*h
-				@tariff[2] += rate[0]*h*0.35 if wday > 0 && wday < 5
-			end
-			render json: {html: render_to_string("/layouts/calculator/tariff.haml")}
+			render json: {html: render_to_string("/layouts/calculator/tariff.haml", layout: false)}
 		when 'reschedule'
-			@calcar = params[:calcar]
-			@calstart = params[:calstart]
-			@calend = params[:calend]
-			@calret = params[:calret]
-			@calmileage = params[:calmileage]
+			if request.post?
+				@calcar = params[:calcar]
+				@calstart = params[:calstart]
+				@calend = params[:calend]
+				@calret = params[:calret]
+				@calmileage = params[:calmileage]
 			
-			cargroup = Cargroup.find_by_display_name(@calcar)
-			if !cargroup
-				flash[:error] = 'Unindentified Vehicle.'
-			elsif DateTime.parse(params[:calstart]) >= DateTime.parse(params[:calend])
-				flash[:error] = 'Pickup and Original Return time are not in increasing order.'
-			elsif DateTime.parse(params[:calstart]) >= DateTime.parse(params[:calret])
-				flash[:error] = 'Pickup and New Return time are not in increasing order.'
-			elsif DateTime.parse(params[:calend]) == DateTime.parse(params[:calret])
-				flash[:error] = 'Old and New Return time are same.'
+				cargroup = Cargroup.find_by_display_name(@calcar)
+				if !cargroup
+					flash[:error] = 'Unindentified Vehicle.'
+				elsif DateTime.parse(params[:calstart]) >= DateTime.parse(params[:calend])
+					flash[:error] = 'Pickup and Original Return time are not in increasing order.'
+				elsif DateTime.parse(params[:calstart]) >= DateTime.parse(params[:calret])
+					flash[:error] = 'Pickup and New Return time are not in increasing order.'
+				elsif DateTime.parse(params[:calend]) == DateTime.parse(params[:calret])
+					flash[:error] = 'Old and New Return time are same.'
+				end
+			
+				@booking = Booking.new
+				@booking.cargroup_id = cargroup.id
+				@booking.starts = DateTime.parse(params[:calstart] + ' +05:30')
+				@booking.last_ends = DateTime.parse(params[:calend] + ' +05:30')
+				@booking.ends = DateTime.parse(params[:calret] + ' +05:30')
+				@booking.start_km = 0
+				@booking.end_km = params[:calmileage]
+			
+				@tariff = {}
+				if flash[:error].blank?
+					@tariff[:late] = @booking.check_late
+					@tariff[:extend] = @booking.check_extended
+					@tariff[:short] = @booking.check_short
+					@tariff[:short_late] = @booking.check_short_late
+					@tariff[:early] = @booking.check_early
+					@tariff[:mileage] = @booking.check_mileage
+					@tariff[:mileage_fee] = @booking.check_mileage_charge
+					@tariff[:cancel] = @booking.handle_cancellation
+					@tariff[:cancel_late] = @booking.handle_cancellation_late
+				end
 			end
-			
-			@booking = Booking.new
-			@booking.cargroup_id = cargroup.id
-			@booking.starts = DateTime.parse(params[:calstart] + ' +05:30')
-			@booking.last_ends = DateTime.parse(params[:calend] + ' +05:30')
-			@booking.ends = DateTime.parse(params[:calret] + ' +05:30')
-			@booking.start_km = 0
-			@booking.end_km = params[:calmileage]
-			
-			@tariff = {}
-			if flash[:error].blank?
-				@tariff[:late] = @booking.check_late
-				@tariff[:extend] = @booking.check_extended
-				@tariff[:short] = @booking.check_short
-				@tariff[:short_late] = @booking.check_short_late
-				@tariff[:early] = @booking.check_early
-				@tariff[:mileage] = @booking.check_mileage
-				@tariff[:mileage_fee] = @booking.check_mileage_charge
-				@tariff[:cancel] = @booking.handle_cancellation
-				@tariff[:cancel_late] = @booking.handle_cancellation_late
-			end
-			render json: {html: render_to_string("/layouts/calculator/reschedule.haml")}
+			render json: {html: render_to_string("/layouts/calculator/reschedule.haml", layout: false)}
 		end
 	end
 	
@@ -217,15 +177,6 @@ class MainController < ApplicationController
 		@meta_keywords = @object.meta_keywords
 		@canonical = @object.link
 		render "/seo/" + str
-	end
-	
-	def showcal
-		case params[:id]
-		when 'tariff'
-			render json: {html: render_to_string('/layouts/calculator/tariff.haml')}
-		else
-			render json: {html: render_to_string('/layouts/calculator/reschedule.haml')}
-		end
 	end
 	
 	def tariff

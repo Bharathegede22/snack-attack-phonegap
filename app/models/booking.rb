@@ -91,7 +91,7 @@ class Booking < ActiveRecord::Base
 						data[:standard_hours] += 1
 					else
 						data[:discounted_hours] += 1
-						data[:discount] += rate*0.35
+						data[:discount] += rate*(CommonHelper::WEEKDAY_DISCOUNT/100.0)
 					end
 					wday = (self.ends + min.minutes).wday
 				end
@@ -370,7 +370,7 @@ class Booking < ActiveRecord::Base
 							disc = 0
 						else
 							data[:discounted_hours] += daily_last[:billed]/60
-							disc = rev*0.35
+							disc = rev*(CommonHelper::WEEKDAY_DISCOUNT/100.0)
 						end
 						data[:estimate] += rev
 						data[:discount] += disc
@@ -386,7 +386,7 @@ class Booking < ActiveRecord::Base
 							disc = 0
 						else
 							data[:discounted_hours] += daily[:billed]/60
-							disc = rev*0.35
+							disc = rev*(CommonHelper::WEEKDAY_DISCOUNT/100.0)
 						end
 						data[:estimate] += rev
 						data[:discount] += disc

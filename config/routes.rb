@@ -61,6 +61,8 @@ Web::Application.routes.draw do
 		end
 	end
 	
+	post 'calculator/:id' => 'main#calculator'
+	
 	get 'bangalore/:id' => 'main#seo'
 	get 'job/:id' => 'main#job'
   get 'bangalore/:id' => 'main#seo'
