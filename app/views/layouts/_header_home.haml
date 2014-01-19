@@ -12,53 +12,56 @@
 						%b.caret
 					%ul.dropdown-menu
 						%li
-							%a{:href => "/tariff?ref=header"}
+							%a{href: "/tariff?ref=header"}
 								Tariffs Details
 						%li
-							%a{:href => "/fees?ref=header"}
+							%a{href: "/fees?ref=header"}
 								Fee Policy
 						%li
-							%a{:href => "/eligibility?ref=header"}
+							%a{href: "javascript:void(0)", onclick: "showModal('Tariff Calculator', '/calculator/tariff');"}
+								Tariff Calculator
+						%li
+							%a{href: "/eligibility?ref=header"}
 								Eligibility
 						%li
-							%a{:href => "/member?ref=header"}
+							%a{href: "/member?ref=header"}
 								Member Agreement
 				%li.dropdown
-					%a.dropdown-toggle{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
+					%a.dropdown-toggle{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
 						How To Zoom
 						%b.caret
 					%ul.dropdown-menu
 						%li
-							%a{:href => "/howtozoom?ref=header"}
+							%a{href: "/howtozoom?ref=header"}
 								This is How You Zoom
 						%li
-							%a{:href => "/safety?ref=header"}
+							%a{href: "/safety?ref=header"}
 								Zoom in Safety
 						%li
-							%a{:href => "/outstation?ref=header"}
+							%a{href: "/outstation?ref=header"}
 								Going Outstation?
 						%li
-							%a{:href => "/reva?ref=header"}
+							%a{href: "/reva?ref=header"}
 								Zoom's Electric!
 						%li
-							%a{:href => "/privacy?ref=header"}
+							%a{href: "/privacy?ref=header"}
 								Privacy Policy
 						%li
-							%a{:href => "/faq?ref=header"}
+							%a{href: "/faq?ref=header"}
 								FAQs
 				%li#UserBar.dropdown
-					%a.dropdown-toggle{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
+					%a.dropdown-toggle{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
 						Sign Up / Sign In
 						%b.caret
 					%ul.dropdown-menu
 						%li
-							%a{:href => "javascript:void(0)", :onclick => "showModal('Sign Up', '/users/signup');"}
+							%a{href: "javascript:void(0)", onclick: "showModal('Sign Up', '/users/signup');"}
 								Sign Up
 						%li
-							%a{:href => "javascript:void(0)", :onclick => "showModal('Sign In', '/users/signin');"}
+							%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/signin');"}
 								Sign In
 						%li
-							%a{:href => "javascript:void(0)", :onclick => "showModal('Sign In', '/users/forgot');"}
+							%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/forgot');"}
 								Forgot Password
 		.fc
 #Flash.wrapper
