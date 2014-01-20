@@ -63,7 +63,7 @@
 			%h4.f-b Fare Breakdown
 			%table.table.table-bordered
 				- @booking.charges.each do |c|
-					- if c.activity != 'early_return_refund'
+					- if !c.activity.include?('early_return')
 						%tr
 							%td
 								= c.activity_text
@@ -86,7 +86,7 @@
 						:ruby
 							total += tmp
 							tmp = 0
-							@booking.payments.each do |p|
+							@booking.confirmed_payments.each do |p|
 								tmp += p.amount
 							end
 						= tmp
@@ -98,7 +98,7 @@
 							total -= tmp
 							tmp = 0
 							@booking.refunds.each do |r|
-								tmp += r.amount if r.through != 'early_return_credits'
+								tmp += r.amount if !r.through.include?('early_return')
 							end
 						= tmp
 				- total -= tmp

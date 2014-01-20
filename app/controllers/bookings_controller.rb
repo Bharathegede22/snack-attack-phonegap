@@ -255,7 +255,7 @@ class BookingsController < ApplicationController
 			id = params[:id]
 		end
 		if id
-			str,id = CommonHelper.decode(id)
+			str,id = CommonHelper.decode(id.downcase)
 			if !str.blank? && str == 'booking'
 				@booking = Booking.find(id)
 			else

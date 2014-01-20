@@ -73,6 +73,7 @@ namespace :generic do
   desc "Removing Varnish Cache"
   task :clear_cache, :roles => :app do
     run "cd #{release_path} ; bundle exec rails runner -e production \"Lacquer::Varnish.new.purge('.*')\""
+    run "cd #{release_path} ; bundle exec rails runner -e production \"Rails.cache.clear\""
   end
 end
 before "deploy:assets:precompile", "generic:configs"

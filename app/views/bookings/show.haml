@@ -126,7 +126,7 @@
 							%h4.f-b Payments Received
 						.col-md-2
 							- if @booking.payments.length > 0
-								.m-t10
+								.m-t5
 									%a.btn.btn-xs.btn-default{href: "/bookings/#{@booking.encoded_id}/payments", target: '_blank', role: "button", :title => 'See Details'}
 										%span.glyphicon.glyphicon-list
 			- @booking.confirmed_payments.each do |p|
@@ -141,17 +141,20 @@
 					Total
 				%td.t-r
 					= tmp
-					- @total -= tmp
-					- tmp = 0
-			- @booking.confirmed_refunds.each do |r|
-				- tmp += r.amount if r.through != 'early_return_credits'
-			- @total -= tmp
+			:ruby
+				@total -= tmp
+				tmp = 0
+				refunds = @booking.confirmed_refunds
+				refunds.each do |r|
+					tmp += r.amount if !r.through.include?('early_return')
+				end
+				@total += tmp
 			- if tmp > 0
 				%tr.active
 					%td{:colspan => '2'}
 						%h4.f-b Refunds Issued
 				- @booking.confirmed_refunds.each do |r|
-					- if r.through != 'early_return_credits'
+					- if !r.through.include?('early_return')
 						%tr
 							%td
 								= r.through_text
