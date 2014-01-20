@@ -82,17 +82,22 @@ Please review the details of your reservation:
 		%i Please note that all refunds are processed at the time the vehicle is returned back to Zoom and the reservation has officially ended. It will then take 3-4 days for the reimbursed amount to reflect in your account.
 %br/
 %br/
-- if @booking.starts < Time.now
-	%div{style: "margin:0px; padding:0px;"}
-		%b{style: "color:red; font-style:italic;"} IMPORTANT!
-		%br/
+%div{style: "margin:0px; padding:0px;"}
+	%b{style: "color:red; font-style:italic;"} IMPORTANT!
+	%br/
+	- if @booking.starts > Time.now
 		%p{style: "margin:5px 0 0 0; padding:0;"}
 			\- Please remember to carry your original driving license at the time of picking the car. Zoom reserves the right of cancelling the reservation if the original driving license is not produced.
 		%p{style: "margin:5px 0 0 0; padding:0;"}
-			\- As a friendly reminder, each reservation comes with 40 free km/hr (w/ 200 km/day max cap). Any excess kms will be charged at 
-			Rs #{cargroup.excess_kms}/km.
-		%p{style: "margin:5px 0 0 0; padding:0;"}
 			\- Please remember to carry your valid credit / debit card for paying any fee at the time you return the vehicle.
+	%p{style: "margin:5px 0 0 0; padding:0;"}
+		- fare = cargroup.check_fare(@booking.starts, @booking.ends)
+		\- As a friendly reminder, your reservation comes with 
+		%b
+			#{fare[:kms]}
+		free Kms. Any excess kms will be charged at 
+		%b
+			Rs #{cargroup.excess_kms}/Km.
 	%br/
 	%br/
 %b Your Details

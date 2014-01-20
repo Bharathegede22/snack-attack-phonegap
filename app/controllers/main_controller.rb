@@ -131,6 +131,10 @@ class MainController < ApplicationController
 		end
 	end
 	
+	def join
+		
+	end
+	
 	def member
 		@meta_title = "Zoom Member Agreement | Zoomcar.in"
 		@meta_description = "The Zoom Member agreement is the contract that governs the use of Zoom vehicles"
