@@ -350,11 +350,11 @@ function hideCalculator() {
 	$('#Overlay').toggle('explode');
 }
 
-function changeCar(id,name) {
-	$('#CarVal').val(id);
-	$('#CarHtml').html(name);
-	$('#CarsMenu').find('li').removeClass('active');
-	$('#Car'+id).addClass('active');
+function changeCar(id,name,dom) {
+	$('#'+dom+'Val').val(id);
+	$('#'+dom+'Html').html(name);
+	$('#'+dom+'Menu').find('li').removeClass('active');
+	$('#'+dom+id).addClass('active');
 }
 
 function changeLocation(id,name) {

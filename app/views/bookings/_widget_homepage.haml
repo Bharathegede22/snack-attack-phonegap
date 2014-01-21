@@ -58,7 +58,7 @@
 		.dropdown
 			#Cars.dropdown-toggle.box{'data-toggle' => "dropdown"}
 				.car
-				#CarHtml.txt 
+				#CarsHtml.txt 
 					- if @booking.cargroup_id.blank?
 						Select a car
 					- else
@@ -66,21 +66,21 @@
 				.arrw
 				.fc
 			%ul#CarsMenu.dropdown-menu{:role => "menu", 'aria-labelledby' => 'Cars'}
-				%li{:id => ("Car"), :role => "presentation"}
-					%a{:href => "javascript:void(0)", :onclick => "changeCar('','All Cars');"}
+				%li{:id => ("Cars"), :role => "presentation"}
+					%a{:href => "javascript:void(0)", :onclick => "changeCar('','All Cars','Cars');"}
 						All Cars
 				- Cargroup.list.each do |c|
 					- if c.id == @booking.cargroup_id
-						%li.active{:id => ("Car" + c.id.to_s), :role => "presentation"}
-							%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.name}');"}
+						%li.active{:id => ("Cars" + c.id.to_s), :role => "presentation"}
+							%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.shortname}','Cars');"}
 								= c.shortname
 					- else
-						%li{:id => ("Car" + c.id.to_s), :role => "presentation"}
-							%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.name}');"}
+						%li{:id => ("Cars" + c.id.to_s), :role => "presentation"}
+							%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.shortname}','Cars');"}
 								= c.shortname
 		.hide
 			%input#LocationVal{name: 'loc', type: "text", value: @booking.location_id, readonly: 'true'}
-			%input#CarVal{name: 'car', type: "text", value: @booking.cargroup_id, readonly: 'true'}
+			%input#CarsVal{name: 'car', type: "text", value: @booking.cargroup_id, readonly: 'true'}
 		#SearchSubmit
 			= submit_tag "Search Car", :class => 'button size-12 m-auto'
 		#SearchWait.p-t15.p-b5{:style => 'display:none;'}

@@ -8,61 +8,61 @@
 			.col-md-6
 				- cargroups = Cargroup.list
 				.dropdown
-					#Cars.dropdown-toggle.box{'data-toggle' => "dropdown"}
+					#CalCars.dropdown-toggle.box{'data-toggle' => "dropdown"}
 						.car
-						#CarHtml.txt 
+						#CalCarsHtml.txt 
 							- if @car.blank?
 								= cargroups.first.shortname
 							- else
 								= @car.shortname
 						.arrw
 						.fc
-					%ul#CarsMenu.dropdown-menu{:role => "menu", 'aria-labelledby' => 'Cars'}
-						%li{:id => ("Car"), :role => "presentation"}
+					%ul#CalCarsMenu.dropdown-menu{:role => "menu", 'aria-labelledby' => 'Cars'}
+						%li{:id => ("CalCars"), :role => "presentation"}
 						- cargroups.each do |c|
 							- if (@car.blank? && c == cargroups.first) || (!@car.blank? && c.id == @car.id)
-								%li.active{:id => ("Car" + c.id.to_s), :role => "presentation"}
-									%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.name}');"}
+								%li.active{:id => ("CalCars" + c.id.to_s), :role => "presentation"}
+									%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.name}','CalCars');"}
 										= c.shortname
 							- else
-								%li{:id => ("Car" + c.id.to_s), :role => "presentation"}
-									%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.name}');"}
+								%li{:id => ("CalCars" + c.id.to_s), :role => "presentation"}
+									%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.name}','CalCars');"}
 										= c.shortname
 					.hide
 						- if @car.blank?
-							%input#CarVal{name: 'car', type: "text", value: cargroups.first.id, readonly: 'true'}
+							%input#CalCarsVal{name: 'car', type: "text", value: cargroups.first.id, readonly: 'true'}
 						- else
-							%input#CarVal{name: 'car', type: "text", value: @car.id, readonly: 'true'}
+							%input#CalCarsVal{name: 'car', type: "text", value: @car.id, readonly: 'true'}
 		.row
 			.col-md-5
 				.p-t20.t-r
 					%b Pickup Date & Time *
 			.col-md-6
-				#StartDate.box
+				#CalStartDate.box
 					.cal
 					.txt
 						- if @starts.blank?
-							%input#StartDateVal.datetime.validate-presence{name: 'starts', type: "text", value: "", readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
+							%input#CalStartDateVal.datetime.validate-presence{name: 'starts', type: "text", value: "", readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
 						- else
-							%input#StartDateVal.datetime.validate-presence{name: 'starts', type: "text", value: @starts.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
+							%input#CalStartDateVal.datetime.validate-presence{name: 'starts', type: "text", value: @starts.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
 					.arrw
 					.fc
-				#StartDateValError.error
+				#CalStartDateValError.error
 		.row
 			.col-md-5
 				.p-t20.t-r
 					%b Dropoff Date & Time *
 			.col-md-6
-				#EndDate.box
+				#CalEndDate.box
 					.cal
 					.txt
 						- if @ends.blank?
-							%input#EndDateVal.datetime.validate-presence{name: 'ends', type: "text", value: "", readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
+							%input#CalEndDateVal.datetime.validate-presence{name: 'ends', type: "text", value: "", readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
 						- else
-							%input#EndDateVal.datetime.validate-presence{name: 'ends', type: "text", value: @ends.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
+							%input#CalEndDateVal.datetime.validate-presence{name: 'ends', type: "text", value: @ends.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
 					.arrw
 					.fc
-				#EndDateValError.error
+				#CalEndDateValError.error
 		.row
 			.col-md-5
 				.p-t20.t-r
@@ -134,5 +134,11 @@
 						= (@tariff[:estimate] - @tariff[:discount]) + ((@kms.to_i - @tariff[:kms].to_i) * @car.excess_kms).to_i
 					- else
 						= @tariff[:estimate] - @tariff[:discount]
+.m-5.t-c.f-b
+	Zoom's fare includes fuel & taxes.
+.f-i.red.size-12.t-c
+	This calculator is only to help you estimate the cost of your booking.
+	%br/
+	A car will not be booked until you go through the full reservation process.
 :javascript
 	initializeDatePicker();

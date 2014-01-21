@@ -63,6 +63,7 @@ Web::Application.routes.draw do
 	
 	post 'calculator/:id' => 'main#calculator'
 	
+	get 'bangalore/offers' => 'main#offers'
 	get 'bangalore/:id' => 'main#seo'
 	get 'job/:id' => 'main#job'
   get 'bangalore/:id' => 'main#seo'

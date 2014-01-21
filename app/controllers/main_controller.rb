@@ -28,42 +28,28 @@ class MainController < ApplicationController
 			render json: {html: render_to_string("/layouts/calculator/tariff.haml", layout: false)}
 		when 'reschedule'
 			if request.post?
-				@calcar = params[:calcar]
-				@calstart = params[:calstart]
-				@calend = params[:calend]
-				@calret = params[:calret]
-				@calmileage = params[:calmileage]
-			
-				cargroup = Cargroup.find_by_display_name(@calcar)
-				if !cargroup
+				@car = Cargroup.find_by_id(params[:car]) if !params[:car].blank?
+				@starts = Time.zone.parse(params[:starts]) if !params[:starts].blank?
+				@ends = Time.zone.parse(params[:ends]) if !params[:ends].blank?
+				@newends = Time.zone.parse(params[:newends]) if !params[:newends].blank?
+				@kms = params[:kms]
+				
+				if @car.blank?
 					flash[:error] = 'Unindentified Vehicle.'
-				elsif DateTime.parse(params[:calstart]) >= DateTime.parse(params[:calend])
+				elsif @starts >= @ends
 					flash[:error] = 'Pickup and Original Return time are not in increasing order.'
-				elsif DateTime.parse(params[:calstart]) >= DateTime.parse(params[:calret])
+				elsif @starts >= @newends
 					flash[:error] = 'Pickup and New Return time are not in increasing order.'
-				elsif DateTime.parse(params[:calend]) == DateTime.parse(params[:calret])
-					flash[:error] = 'Old and New Return time are same.'
 				end
-			
-				@booking = Booking.new
-				@booking.cargroup_id = cargroup.id
-				@booking.starts = DateTime.parse(params[:calstart] + ' +05:30')
-				@booking.last_ends = DateTime.parse(params[:calend] + ' +05:30')
-				@booking.ends = DateTime.parse(params[:calret] + ' +05:30')
-				@booking.start_km = 0
-				@booking.end_km = params[:calmileage]
-			
-				@tariff = {}
+				
 				if flash[:error].blank?
-					@tariff[:late] = @booking.check_late
-					@tariff[:extend] = @booking.check_extended
-					@tariff[:short] = @booking.check_short
-					@tariff[:short_late] = @booking.check_short_late
-					@tariff[:early] = @booking.check_early
-					@tariff[:mileage] = @booking.check_mileage
-					@tariff[:mileage_fee] = @booking.check_mileage_charge
-					@tariff[:cancel] = @booking.handle_cancellation
-					@tariff[:cancel_late] = @booking.handle_cancellation_late
+					@tariff = {}
+					if @ends > @newends
+						@tariff[:reschedule] = @car.check_reschedule(@starts, @starts, @newends, @ends)
+					else
+						@tariff[:reschedule] = @car.check_reschedule(@starts, @starts, @ends, @newends)
+					end
+					@tariff[:cancel] = @car.check_fare(@starts, @ends)
 				end
 			end
 			render json: {html: render_to_string("/layouts/calculator/reschedule.haml", layout: false)}
@@ -82,6 +68,7 @@ class MainController < ApplicationController
 		@meta_description = "The eligibility policy for using Zoom's cars.  Members must be 23 years with valid driving license.  Payment is by credit or debit card only"
 		@meta_keywords = "zoomcar eligibility policy"
 		@canonical = "http://www.zoomcar.in/eligibility"
+		@header = 'policy'
 	end
 	
 	def faq
@@ -89,6 +76,7 @@ class MainController < ApplicationController
 		@meta_description = "Have questions about Zoom?  They might already be answered here!"
 		@meta_keywords = "zoomcar faqs"
 		@canonical = "http://www.zoomcar.in/faq"
+		@header = 'help'
 	end
 	
 	def fees
@@ -96,6 +84,7 @@ class MainController < ApplicationController
 		@meta_description = "Zoom fee policy for returning vehicle late, returning vehicle to wrong location, traffic and parking violations, key not returned at end of reservation, accident or other incident, & Zoom rule violations"
 		@meta_keywords = "zoomcar fees policy"
 		@canonical = "http://www.zoomcar.in/fees"
+		@header = 'policy'
 	end
 	
 	def holidays
@@ -110,6 +99,7 @@ class MainController < ApplicationController
 		@meta_description = "Help us build the Zoom community by following these 8 easy steps"
 		@meta_keywords = "zoomcar member"
 		@canonical = "http://www.zoomcar.in/howtozoom"
+		@header = 'help'
 	end
 	
 	def index
@@ -117,7 +107,7 @@ class MainController < ApplicationController
 		@meta_description = "Self-drive car hire in Bangalore. Enjoy the Freedom of Four Wheels by renting a car by the hour or by the day.  All-inclusive tariff covers fuel, insurance & taxes"
 		@meta_keywords = "zoomcar, self drive car, self drive car rental, renting a car, self drive cars"
 		@canonical = "http://www.zoomcar.in"
-		render layout: false
+		@header = 'homepage'
 	end
 	
 	def job
@@ -140,6 +130,15 @@ class MainController < ApplicationController
 		@meta_description = "The Zoom Member agreement is the contract that governs the use of Zoom vehicles"
 		@meta_keywords = "zoomcar Member agreement"
 		@canonical = "http://www.zoomcar.in/member"
+		@header = 'policy'
+	end
+	
+	def offers
+		@meta_title = "Zoom for Less in Bangalore | www.zoomcar.in"
+		@meta_description = "Offers running in Bangalore on Zoom"
+		@meta_keywords = "zoomcar offers"
+		@canonical = "http://www.zoomcar.in/bangalore/offers"
+		@header = 'offers'
 	end
 	
 	def outstation
@@ -147,6 +146,7 @@ class MainController < ApplicationController
 		@meta_description = "Zoom guidelines for a safe outstation experience"
 		@meta_keywords = "zoomcar, zoom, safety"
 		@canonical = "http://www.zoomcar.in/outstation"
+		@header = 'help'
 	end
 	
 	def privacy
@@ -154,6 +154,7 @@ class MainController < ApplicationController
 		@meta_description = "Privacy policy for using zoom"
 		@meta_keywords = "zoomcar, zoom, safety"
 		@canonical = "http://www.zoomcar.in/privacy"
+		@header = 'policy'
 	end
 	
 	def reva
@@ -161,6 +162,7 @@ class MainController < ApplicationController
 		@meta_description = "Zoom in India's only electric car"
 		@meta_keywords = "zoomcar mahindra reva e2o"
 		@canonical = "http://www.zoomcar.in/reva"
+		@header = 'help'
 	end
 	
 	def safety
@@ -168,6 +170,7 @@ class MainController < ApplicationController
 		@meta_description = "Zoom guidelines for a safe zooming experience"
 		@meta_keywords = "zoomcar, zoom, safety"
 		@canonical = "http://www.zoomcar.in/safety"
+		@header = 'help'
 	end
 	
 	def seo
@@ -189,6 +192,7 @@ class MainController < ApplicationController
 		@meta_keywords = "zoomcar hire tariffs"
 		@canonical = "http://www.zoomcar.in/tariff"
 		@cargroup = Cargroup.list
+		@header = 'tariff'
 	end
 	
 end

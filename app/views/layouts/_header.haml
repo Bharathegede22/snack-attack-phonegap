@@ -1,19 +1,45 @@
 #DocTop
-- if !@header.blank?
+- if !@header.blank? && @header == 'search'
 	#NavBuffer.nav-buffer-big
 - else
 	#NavBuffer.nav-buffer
-%nav.navbar.navbar-right.navbar-fixed-top{:role => "navigation"}
-	.wrapper.t-r
+%nav.navbar.navbar-fixed-top{:role => "navigation"}
+	.wrapper
 		%a.logo{:href => '/'}
 		%a.logo-rtt{:href => 'http://www.rtt.co.in', :target => '_blank', :rel => 'nofollow'}
-		.fr
-			%ul.nav.navbar-nav
-				- cls = (!@header.blank? && @header == 'search') ? 'active' : ''
-				%li{class: cls}
-					%a{:href => "javascript:void(0)", :onclick => "showSearch();"} Book Cars
+		.links
+			.broadcast
+				.fl
+					2 new sites are launched at
+					%b Domlur
+					and
+					%b Hebbal
+				.fr
+					#UserBar.dropdown
+						%a.dropdown-toggle.p-r10{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
+							Sign Up / Sign In
+							%b.caret
+						%ul.dropdown-menu.pull-right
+							%li
+								%a{href: "javascript:void(0)", onclick: "showModal('Sign Up', '/users/signup');"}
+									Sign Up
+							%li
+								%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/signin');"}
+									Sign In
+							%li
+								%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/forgot');"}
+									Forgot Password
+				.fc
+			.support
+				#{CommonHelper::CUSTOMER_CARE}
+			%ul.nav.navbar-nav.fr
+				- if @header.blank? || @header != 'homepage'
+					- cls = (!@header.blank? && @header == 'search') ? 'active' : ''
+					%li
+						%a{class: cls, href: "javascript:void(0)", onclick: "showSearch();"} Book Cars
 				%li.dropdown
-					%a.dropdown-toggle{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
+					- cls = (!@header.blank? && @header == 'tariff') ? 'dropdown-toggle active' : 'dropdown-toggle'
+					%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}
 						Tariffs
 						%b.caret
 					%ul.dropdown-menu
@@ -21,19 +47,17 @@
 							%a{href: "/tariff?ref=header"}
 								Tariffs Details
 						%li
-							%a{href: "/fees?ref=header"}
-								Fee Policy
-						%li
 							%a{href: "javascript:void(0)", onclick: "showModal('Tariff Calculator', '/calculator/tariff');"}
 								Tariff Calculator
 						%li
-							%a{href: "/eligibility?ref=header"}
-								Eligibility
+							%a{href: "javascript:void(0)", onclick: "showModal('Trip Modication Estimator', '/calculator/reschedule');"}
+								Trip Modication Estimator
 						%li
-							%a{href: "/member?ref=header"}
-								Member Agreement
+							%a{href: "/fees?ref=header"}
+								Fee Policy
 				%li.dropdown
-					%a.dropdown-toggle{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
+					- cls = (!@header.blank? && @header == 'help') ? 'dropdown-toggle active' : 'dropdown-toggle'
+					%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}
 						How To Zoom
 						%b.caret
 					%ul.dropdown-menu
@@ -50,25 +74,32 @@
 							%a{href: "/reva?ref=header"}
 								Zoom's Electric!
 						%li
-							%a{href: "/privacy?ref=header"}
-								Privacy Policy
-						%li
 							%a{href: "/faq?ref=header"}
 								FAQs
-				%li#UserBar.dropdown
-					%a.dropdown-toggle{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
-						Sign Up / Sign In
+				%li.dropdown
+					- cls = (!@header.blank? && @header == 'policy') ? 'dropdown-toggle active' : 'dropdown-toggle'
+					%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}
+						Policies
 						%b.caret
 					%ul.dropdown-menu
 						%li
-							%a{href: "javascript:void(0)", onclick: "showModal('Sign Up', '/users/signup');"}
-								Sign Up
+							%a{href: "/fees?ref=header"}
+								Fee Policy
 						%li
-							%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/signin');"}
-								Sign In
+							%a{href: "/eligibility?ref=header"}
+								Eligibility
 						%li
-							%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/forgot');"}
-								Forgot Password
+							%a{href: "/member?ref=header"}
+								Member Agreement
+						%li
+							%a{href: "/privacy?ref=header"}
+								Privacy Policy
+				%li
+					- cls = (!@header.blank? && @header == 'offers') ? 'active' : ''
+					%a{class: cls, href: "/bangalore/offers"} Offers
+				%li
+					%a{href: "/blog"} Blog
+			.fc
 		.fc
 	- cls = (!@header.blank? && @header == 'search') ? '' : 'hide'
 	- if !@header.blank? && @header == 'search'
