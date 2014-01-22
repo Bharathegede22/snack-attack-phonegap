@@ -1,6 +1,6 @@
 - render_flash
 .vertical-widget
-	%form{:id => "SearchForm", :onsubmit => "return SubmitForm(this,'/calculator/reschedule','ModalContent');", :action => "javascript:void(0)", "data-ajax" => "false"}
+	%form{:id => "ReschForm", :onsubmit => "return SubmitForm(this,'/calculator/reschedule','ModalContent');", :action => "javascript:void(0)", "data-ajax" => "false"}
 		.row
 			.col-md-5
 				.p-t20.t-r
@@ -84,81 +84,92 @@
 					%b Expected Kms
 			.col-md-6
 				.box
-					.loc
-					.txt
-						%input#KmsVal{name: 'kms', type: "text", value: @kms, 'dummy-title' => "Enter Kms"}
-					.fc
+					.unpointer
+						.loc
+						.txt
+							%input#KmsVal{name: 'kms', type: "text", value: @kms, 'dummy-title' => "Enter Kms"}
+						.fc
 		.t-c
-			#SearchSubmit
+			#ReschSubmit
 				= submit_tag "Calculate", :class => 'button size-12 m-auto'
-			#SearchWait.p-t15.p-b5{:style => 'display:none;'}
+			#ReschWait.p-t15.p-b5{:style => 'display:none;'}
 				.wait
 - if !@tariff.blank?
-	%table.table.table-bordered
+	%table.table.table-bordered.bg-f6
 		%tr
 			%td
 				Cancellation Refund **
 			%td
 				before 24 hours
 			%td.t-r
-				= @tariff[:cancel]
+				= @tariff[:old][:estimate]
 		%tr
 			%td
 				Cancellation Refund **
 			%td
 				within 24 hours
 			%td.t-r
-				= @tariff[:cancel_late]
-		- if !@tariff[:extend].blank? && @tariff[:extend] > 0
+				:ruby
+					tmp = (0.25*@tariff[:old][:estimate]).to_i
+					tmp = 2000 if tmp > 2000
+				= @tariff[:old][:estimate] - tmp
+		- if @ends < @newends
 			%tr
 				%td
 					Extension Charges
 				%td
 					&nbsp;
 				%td.t-r
-					= @tariff[:extend]
-		- if !@tariff[:late].blank? && @tariff[:late] > 0
-			%tr
+					= @tariff[:reschedule][:estimate]
+			%tr.danger
 				%td
 					Late Charges
 				%td
 					without inconvenience fee
 				%td.t-r
-					= @tariff[:late]
-		- if !@tariff[:short].blank? && @tariff[:short] > 0
+					= @tariff[:late][:estimate]
+		- else
 			%tr
 				%td
 					Shortening Refund
 				%td
 					before 24 hours
 				%td.t-r
-					= @tariff[:short]
-		- if !@tariff[:short_late].blank? && @tariff[:short_late] > 0
+					= @tariff[:reschedule][:estimate]
 			%tr
 				%td
 					Shortening Refund
 				%td
 					within 24 hours
 				%td.t-r
-					= @tariff[:short_late]
-		- if !@tariff[:early].blank? && @tariff[:early] > 0
+					= (@tariff[:reschedule][:estimate]/2)
 			%tr
 				%td
 					Early Return Credits
 				%td
 					&nbsp;
 				%td.t-r
-					= @tariff[:early]
-		- if !@tariff[:mileage].blank? && @tariff[:mileage] > 0
+					= (0.25*@tariff[:reschedule][:estimate]).to_i
+		- tmp = @kms.to_i - @tariff[:old][:kms]
+		- if tmp > 0
+			%tr.danger
+				%td
+					Extra Kms Charges
+				%td
+					= tmp
+					Kms @
+					Rs.#{@car.excess_kms}/Km
+				%td.t-r
+					= tmp * @car.excess_kms
+		- else
 			%tr
 				%td
 					Extra Kms Charges
 				%td
-					= @tariff[:mileage]
-					Kms
+					&nbsp;
 				%td.t-r
-					= @tariff[:mileage_fee]
-	.m-t10.t-c.f-b
+					0
+	.m-5.t-c.f-b
 		** - Cancellation of original booking
 .f-i.red.size-12.t-c
 	This calculator is only to help you estimate your charges, refunds & credits

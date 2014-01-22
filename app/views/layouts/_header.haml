@@ -52,9 +52,6 @@
 						%li
 							%a{href: "javascript:void(0)", onclick: "showModal('Trip Modication Estimator', '/calculator/reschedule');"}
 								Trip Modication Estimator
-						%li
-							%a{href: "/fees?ref=header"}
-								Fee Policy
 				%li.dropdown
 					- cls = (!@header.blank? && @header == 'help') ? 'dropdown-toggle active' : 'dropdown-toggle'
 					%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}

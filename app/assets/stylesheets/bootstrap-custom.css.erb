@@ -1,3 +1,75 @@
+.navbar {
+	border:none;
+	border-bottom:1px solid #323a45;
+}
+
+.navbar-nav a {
+	color:#323a45;
+	font-family: 'Droid Sans', 'Arial', sans-serif;
+	font-size:14px;
+}
+
+.nav .caret {
+	border-top-color:#323a45;
+	border-bottom-color:#323a45;
+}
+
+.navbar .broadcast .popover-content {
+	color:#323a45;
+}
+
+.navbar .broadcast a, .navbar .broadcast a:hover, .navbar .broadcast a:active {
+	color:#ffffff;
+	text-decoration:none;
+}
+
+.navbar .broadcast ul {
+	background:#70757D url(<%= asset_path 'bg-line.png' %>);
+	color:#ffffff;
+	border-radius:0;
+	border:0;
+}
+
+.navbar .broadcast .caret {
+	border-top-color:#ffffff;
+	border-bottom-color:#ffffff;
+}
+
+.navbar-nav > li > a {
+	line-height: 20px;
+	padding: 10px;
+}
+
+.navbar-nav > li > a:hover, .nav .open > a, .nav .open > a:hover, .nav .open > a:focus {
+	background:#70757D url(<%= asset_path 'bg-line.png' %>);
+	color:#ffffff;
+}
+
+.navbar-nav > li > a:hover .caret, .navbar-nav > li > .active .caret, .nav .open > a .caret, .nav .open > a:hover .caret, .nav .open > a:focus .caret {
+	border-top-color:#ffffff;
+	border-bottom-color:#ffffff;
+}
+
+.navbar-nav > li > .active {
+	background:#323a45;
+	color:#ffffff;
+}
+
+.navbar .dropdown-menu {
+	background:#70757D url(<%= asset_path 'bg-line.png' %>);
+	color:#ffffff;
+	border:0;
+}
+
+.navbar .dropdown-menu a {
+	color:#ffffff;
+}
+
+.navbar .dropdown-menu a:hover, .navbar .dropdown-menu a:active {
+	background:#ffffff;
+	color:#323a45;
+}
+
 .carousel {
   position: relative;
 }

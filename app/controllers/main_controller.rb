@@ -49,7 +49,9 @@ class MainController < ApplicationController
 					else
 						@tariff[:reschedule] = @car.check_reschedule(@starts, @starts, @ends, @newends)
 					end
-					@tariff[:cancel] = @car.check_fare(@starts, @ends)
+					@tariff[:late] = @car.check_late(@ends, @newends)
+					@tariff[:old] = @car.check_fare(@starts, @ends)
+					@tariff[:new] = @car.check_fare(@starts, @newends)
 				end
 			end
 			render json: {html: render_to_string("/layouts/calculator/reschedule.haml", layout: false)}
@@ -122,7 +124,7 @@ class MainController < ApplicationController
 	end
 	
 	def join
-		
+		head :moved_permanently, :location => "/users/sign_in" and return
 	end
 	
 	def member

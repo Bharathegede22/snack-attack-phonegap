@@ -223,14 +223,7 @@ class BookingsController < ApplicationController
 			@booking.location_id = session[:search][:loc] if !session[:search].blank? && !session[:search][:loc].blank?
 			@booking.cargroup_id = session[:search][:car] if !session[:search].blank? && !session[:search][:car].blank?
 			@booking.through_search = true
-			if !session[:search].blank? && @booking.valid?
-				if !@booking.cargroup_id.blank? && !@booking.location_id.blank?
-					@inventory = {}
-					@inventory[@booking.cargroup_id.to_s] = {@booking.location_id.to_s => Inventory.check(@booking.starts, @booking.ends, @booking.cargroup_id, @booking.location_id)}
-				else
-					@inventory = Inventory.check(@booking.starts, @booking.ends, @booking.cargroup_id, @booking.location_id)
-				end
-			end
+			@inventory = Inventory.check(@booking.starts, @booking.ends, nil, nil) if !session[:search].blank? && @booking.valid?
 			@header = 'search'
 		end
 	end

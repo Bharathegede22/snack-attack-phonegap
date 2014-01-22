@@ -4,18 +4,30 @@
 		.wrapper
 			.main-content.search-page
 				:ruby
+					cargroups = Cargroup.list
 					if !@booking.cargroup_id.blank?
-						cargroups = [@booking.cargroup]
-					else
-						cargroups = Cargroup.list
+						tmp = []
+						cargroups.each do |c|
+							tmp << c if c.id == @booking.cargroup_id
+						end
+						cargroups.each do |c|
+							tmp << c if c.id != @booking.cargroup_id
+						end
+						cargroups = tmp
 					end
+					locs = Location.live
 					if !@booking.location_id.blank?
-						locs = [@booking.location]
-					else
-						locs = Location.live
+						tmp = []
+						locs.each do |l|
+							tmp << l if l.id == @booking.location_id
+						end
+						locs.each do |l|
+							tmp << l if l.id != @booking.location_id
+						end
+						locs = tmp
 					end
 				- cargroups.each do |c|
-					= render :partial => 'search_item', :locals => {inventory: @inventory[c.id.to_s], car: c, org_locs: locs}
+					= render :partial => 'search_item', :locals => {inventory: @inventory[c.id.to_s], car: c, org_locs: locs, location: @booking.location_id}
 			#Sidebar.sidebar
 				.mapwrap
 					#Gmap.map

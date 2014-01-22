@@ -1,6 +1,6 @@
 - render_flash
 .vertical-widget
-	%form{:id => "SearchForm", :onsubmit => "return SubmitForm(this,'/calculator/tariff','ModalContent');", :action => "javascript:void(0)", "data-ajax" => "false"}
+	%form{:id => "TariffForm", :onsubmit => "return SubmitForm(this,'/calculator/tariff','ModalContent');", :action => "javascript:void(0)", "data-ajax" => "false"}
 		.row
 			.col-md-5
 				.p-t20.t-r
@@ -69,17 +69,18 @@
 					%b Expected Kms
 			.col-md-6
 				.box
-					.loc
-					.txt
-						%input#KmsVal{name: 'kms', type: "text", value: @kms, 'dummy-title' => "Enter Kms"}
-					.fc
+					.unpointer
+						.loc
+						.txt
+							%input#KmsVal{name: 'kms', type: "text", value: @kms, 'dummy-title' => "Enter Kms"}
+						.fc
 		.t-c
-			#SearchSubmit
+			#TariffSubmit
 				= submit_tag "Calculate", :class => 'button size-12 m-auto'
-			#SearchWait.p-t15.p-b5{:style => 'display:none;'}
+			#TariffWait.p-t15.p-b5{:style => 'display:none;'}
 				.wait
 - if !@tariff.blank?
-	%table.table.table-bordered
+	%table.table.table-bordered.bg-f6
 		%tr
 			%td
 				%b Rental Duration

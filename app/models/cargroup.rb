@@ -65,6 +65,33 @@ class Cargroup < ActiveRecord::Base
 		return temp
 	end
 	
+	def check_late(end_date_old, end_date_new)
+		data = {:hours => 0, :billed_hours => 0, :standard_hours => 0, :discounted_hours => 0, :estimate => 0, :discount => 0}
+		if end_date_old < end_date_new
+			cargroup = self
+			rate = cargroup.hourly_fare
+			data[:hours] = (end_date_new.to_i - end_date_old.to_i)/3600
+			data[:hours] += 1 if (end_date_new.to_i - end_date_old.to_i) > data[:hours]*3600
+			data[:billed_hours] += data[:hours]
+			min = 1
+			wday = end_date_old.wday
+			while min <= data[:hours]*60
+				if min == ((min/60)*60)
+					data[:estimate] += rate
+					if [0,5,6].include?(wday)
+						data[:standard_hours] += 1
+					else
+						data[:discounted_hours] += 1
+						data[:discount] += rate*(CommonHelper::WEEKDAY_DISCOUNT/100.0)
+					end
+					wday = (end_date_old + min.minutes).wday
+				end
+				min += 1
+			end
+		end
+		return data
+	end
+	
 	def check_reschedule(start_date_old, start_date_new, end_date_old, end_date_new)
 		start_date = start_date_new
 		data = {:hours => 0, :billed_hours => 0, :standard_hours => 0, :discounted_hours => 0, :estimate => 0, :discount => 0}
