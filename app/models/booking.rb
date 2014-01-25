@@ -463,6 +463,23 @@ class Booking < ActiveRecord::Base
 		return total.to_i
 	end
 	
+	def revenue
+		tmp = 0
+		self.charges.each do |a|
+			if !a.activity.include?('early_return') && a.activity != 'vehicle_damage_fee'
+				if a.refund > 0
+					tmp -= a.amount.to_i
+				else
+					tmp += a.amount.to_i
+				end
+			end
+		end
+		self.confirmed_payments.each do |a|
+			tmp -= a.amount.to_i if a.through == 'credits'
+		end
+		return tmp
+	end
+	
 	def paid?
 		return (self.status > 0 || !self.jsi.blank?)
 	end
@@ -584,7 +601,7 @@ class Booking < ActiveRecord::Base
 	def total_refunds
 		total = 0
 		self.confirmed_refunds.each do |r|
-			total += r.amount if r.through != 'early_return_credits'
+			total += r.amount if !r.through?('early_return')
 		end		
 		return total.to_i
 	end
@@ -617,7 +634,7 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def after_save_tasks
-		Utilization.manage(self)
+		Utilization.manage(self.id) if !self.jsi.blank? || self.status > 0
 	end
 	
 	def before_save_tasks

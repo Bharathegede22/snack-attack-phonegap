@@ -7,6 +7,7 @@ GOOGLE_ID = configurations['google_id']
 GOOGLE_SECRET = configurations['google_secret']
 GOOGLE_MAP_KEY = "#{configurations['google_map_api_key']}"
 
+PAYU_API = configurations['payu_api']
 PAYU_URL = configurations['payu_url']
 PAYU_KEY = configurations['payu_key']
 PAYU_SALT = configurations['payu_salt']

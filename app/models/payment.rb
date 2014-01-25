@@ -7,6 +7,37 @@ class Payment < ActiveRecord::Base
 	
 	after_save :after_save_tasks
 	
+	def change_status(params)
+		if !params['status'].blank? && !params['amt'].blank?
+			if params['amt'].to_i == self.amount.to_i
+				sta = case params['status'].downcase
+				when 'success' then 1
+				when 'failure' then 2
+				when 'pending' then 3
+				end
+				if self.status != sta
+					self.status = sta
+					if !params['mode'].blank?
+						self.mode = case params['mode'].downcase
+						when 'cc' then 0
+						when 'dc' then 1
+						end
+					end
+					self.key = params['mihpayid'] if !params['mihpayid'].blank?
+					self.notes = ''
+					self.notes << "<b>ERROR : </b>" + params['error'] + "<br/>" if !params['error'].blank?
+					self.notes << "<b>ERROR MESSAGE : </b>" + params['error_Message'] + "<br/>" if !params['error_Message'].blank?
+					self.notes << "<b>PG TYPE : </b>" + params['PG_TYPE'] + "<br/>" if !params['PG_TYPE'].blank?
+					self.notes << "<b>Bank Ref Num : </b>" + params['bank_ref_num'] + "<br/>" if !params['bank_ref_num'].blank?
+					self.notes << "<b>Unmapped Status : </b>" + params['unmappedstatus'] + "<br/>" if !params['unmappedstatus'].blank?
+					self.notes << "<b>Name On Card : </b>" + params['name_on_card'] + "<br/>" if !params['name_on_card'].blank?
+					self.notes << "<b>Card Number : </b>" + params['cardnum'] + "<br/>" if !params['cardnum'].blank?
+					self.save(:validate => false)
+				end
+			end
+		end
+	end
+	
 	def encoded_id
 		CommonHelper.encode('payment', self.id)
 	end
@@ -15,6 +46,12 @@ class Payment < ActiveRecord::Base
 		case self.mode
 		when 0 then 'Credit Card'
 		when 1 then 'Debit Card'
+		end
+	end
+	
+	def self.check_status
+		Payment.find(:all, :conditions => ["status = 0 AND created_at >= ? AND created_at < ?", Time.now - 1.hours, Time.now - 30.minutes]).each do |p|
+			Payu.check_status(p.encoded_id)
 		end
 	end
 	
