@@ -64,7 +64,7 @@
 				%br/
 				%table{:cellpadding => '0', :cellspacing => '0', :border => '0', :aling => 'left', :width => '100%'}
 					%tr.bg-e.dgrey
-						%td.border-zoom{:width => '120'}
+						%td.border-zoom{:width => '200'}
 							.p-5
 								%b Start Time *
 						%td.border-zoom{:width => '120'}
@@ -149,7 +149,74 @@
 				= '# -' 
 				Max. 10 hours can be billed in a 24 hour cycle.
 		%li
-			%h3 (B) Credits
+			%h3 (B) Free Kms
+			%ol
+				All Zoom reservation comes with free driving kms, which are calculated based on vehicle type and reservation duration. Any kms in excess of these limits will be charged at the appropriate rates. For weekly/monthly reservations, free kms will be given on pro-rated basis using weekly/monthly limit. For daily reservation, free kms can comprise of the daily and hourly free kms.
+				%br/
+				%b Free Kms are always calculated based on your actual return time (reservation end time for live or future bookings).
+				See the below table for the use cases
+				%br/
+				%table{:cellpadding => '0', :cellspacing => '0', :border => '0', :aling => 'left', :width => '100%'}
+					%tr.bg-e.dgrey
+						%td.border-zoom{:width => '200'}
+							.p-5
+								%b Action
+						%td.border-zoom
+							.p-5
+								%b Comment
+					%tr
+						%td.border-zoom
+							.p-5
+								Extending the booking
+						%td.border-zoom
+							.p-5
+								Free Kms will be calculated based on the new end date/time.
+								Should be 
+								%i
+									%u more than or equal 
+								to the last limit.
+					%tr
+						%td.border-zoom
+							.p-5
+								Cancelling the booking
+						%td.border-zoom
+							.p-5
+								NA
+					%tr
+						%td.border-zoom
+							.p-5
+								Shortening the booking
+						%td.border-zoom
+							.p-5
+								Free Kms will be calculated based on the new end date/time.
+								Should be 
+								%i
+									%u less than or equal 
+								to the last limit.
+					%tr
+						%td.border-zoom
+							.p-5
+								Early Return
+						%td.border-zoom
+							.p-5
+								Free Kms will be calculated based on the actual return time.
+								Should be 
+								%i
+									%u less than or equal 
+								to the last limit.
+					%tr
+						%td.border-zoom
+							.p-5
+								Late Return
+						%td.border-zoom
+							.p-5
+								Free Kms will be calculated based on the actual return time.
+								Should be 
+								%i
+									%u more than or equal 
+								to the last limit.
+		%li
+			%h3 (C) Credits
 			%ol{:start => "1"}
 				%li
 					Early Return Credit:
@@ -159,7 +226,8 @@
 							%b 
 								%i
 									%u paid hours
-							remaining for the reservation. If you have a vehicle only with a daily tariff component, you are eligible for credits equivalent to &frac14; of the daily tariff in the event you return the car a day or more early. See the below table for some examples.
+							remaining for the reservation. If you have a vehicle only with a daily tariff component, you are eligible for credits equivalent to &frac14; of the daily tariff in the event you return the car a day or more early. 
+							See the below table for some examples.
 							%br/
 							%table{:cellpadding => '0', :cellspacing => '0', :border => '0', :aling => 'left', :width => '100%'}
 								%tr.bg-e.dgrey
@@ -251,7 +319,7 @@
 							%b
 								See our Trip Modication Estimator to estimate your early return credits.
 		%li#MemberResponsibility
-			(C) Member's Responsibility
+			(D) Member's Responsibility
 			%ol{:start => "2"}
 				%li
 					Extending Reservation:
@@ -420,7 +488,7 @@
 						%li
 							Members must pay all inter-state taxes and fees upon entering into a neighbouring state. For the state of Andhra Pradesh, Zoom will reimburse the State entry fee cost paid by Member. Zoom members are liable to pay in full the state entry fee tax for all other states besides Andhra Pradesh.
 		%li
-			(D) Penalty Fees
+			(E) Penalty Fees
 			%ol{:start => "5"}
 				%li
 					Returning a Vehicle Late (in addition to the per hour fees for use of the vehicles):
