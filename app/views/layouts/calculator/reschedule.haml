@@ -150,7 +150,7 @@
 					&nbsp;
 				%td.t-r
 					= (0.25*@tariff[:reschedule][:estimate]).to_i
-		- tmp = @kms.to_i - @tariff[:old][:kms]
+		- tmp = @kms.to_i - @tariff[:new][:kms]
 		- if tmp > 0
 			%tr.danger
 				%td

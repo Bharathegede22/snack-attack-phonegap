@@ -3,6 +3,10 @@ module CommonHelper
 	HIRE_TYPE = [['Full Time', 0],['Part Time',1],['Internship',2]]
 	DEPARTMENT = [['Call Centre',0],['Marketing',1],['Technology',2],['Operations',3]]
 	
+	CAR_TYPE = [['Hatchback', 1], ['SUV', 2], ['Sedan', 3], ['Coupe2D', 4]]
+  DRIVE = [['Front Wheel', 1], ['Rear Wheel Drive', 2]]
+  FUEL = [['Diesel', 1], ['Electric', 2]]
+  
 	FUNFACTS = [
 		"For every Zoom vehicle added to the road, we will take off 15-17 vehicles", 
 		"Over the life of a Zoom vehicle, we will help save 150 tons of CO2 from entering Bangalore's air", 
@@ -69,6 +73,8 @@ module CommonHelper
 		    when 'attraction' then 10000000
 		    when 'job' then 20000000
 		    #when 'payment' then 30000000
+		    when 'cargroup' then 40000000
+		    when 'location' then 50000000
 		    when 'booking' then 10000000000000
 		    when 'payment' then 20000000000000
 		    else 0
@@ -78,6 +84,8 @@ module CommonHelper
 		    when 'attraction' then 10000000
 		    when 'job' then 20000000
 		    when 'payment' then 30000000
+		    when 'cargroup' then 40000000
+		    when 'location' then 50000000
 		    when 'booking' then 10000000000000
 		    #when 'payment' then 20000000000000
 		    else 0
@@ -113,6 +121,8 @@ module CommonHelper
 		  if Rails.env == 'production'
 				return ['payment',id-20000000000000] if id > 20000000000000
 				return ['booking',id-10000000000000] if id > 10000000000000
+				return ['location',id-50000000] if id > 50000000
+				return ['cargroup',id-40000000] if id > 40000000
 				#return ['payment',id-30000000] if id > 30000000
 				return ['job',id-20000000] if id > 20000000
 		    return ['attraction',id-10000000] if id > 10000000      
@@ -120,6 +130,8 @@ module CommonHelper
 		  else
 		  	#return ['payment',id-20000000000000] if id > 20000000000000
 				return ['booking',id-10000000000000] if id > 10000000000000
+				return ['location',id-50000000] if id > 50000000
+				return ['cargroup',id-40000000] if id > 40000000
 				return ['payment',id-30000000] if id > 30000000
 				return ['job',id-20000000] if id > 20000000
 		    return ['attraction',id-10000000] if id > 10000000      

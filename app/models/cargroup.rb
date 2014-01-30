@@ -217,21 +217,54 @@ class Cargroup < ActiveRecord::Base
 		return data
 	end
 	
+	def encoded_id
+		CommonHelper.encode('cargroup', self.id)
+	end
+	
+	def h1(city)
+		return "Hire #{self.name} In #{city.name}"
+	end
+	
+	def link(city)
+		return "http://www.zoomcar.in/" + CommonHelper.escape(city.name.downcase) + "/" + CommonHelper.escape(self.name.downcase) + "-car-rental_" + self.encoded_id
+	end
+	
 	def locations
   	Rails.cache.fetch("cargroup-locations-#{self.id}") do
 		 	Location.find_by_sql("SELECT l.* FROM locations l 
 		 		INNER JOIN cars c ON c.location_id = l.id 
-		 		WHERE c.cargroup_id = #{self.id} 
+		 		WHERE c.cargroup_id = #{self.id} AND c.status > 0 AND l.status > 0 
 		 		GROUP BY l.id 
 		 		ORDER BY l.id DESC")
 		end
   end
   
-  def self.list
+  def meta_description(city)
+		return "Hire #{self.name.downcase} for self drive in #{city.name}. All-inclusive tariff covers fuel, insurance & taxes"
+	end
+	
+	def meta_keywords(city)
+		@meta_keywords = "self drive car #{self.name.downcase} #{city.name.downcase}, zoomcar"
+	end
+	
+	def meta_title(city)
+		return "Hire #{self.name} For Self Drive In #{city.name} | Zoomcar.in"
+	end
+	
+	def self.list
   	Rails.cache.fetch("cargroup-list") do
   		Cargroup.find(:all, :conditions => "status = 1", :order => "priority ASC")
   	end
   end
+	
+	def self.live(city_id=1)
+		Cargroup.find_by_sql("SELECT cg.*, l.name AS l_name, l.id AS l_id, COUNT(DISTINCT c.id) AS total FROM cargroups cg 
+			INNER JOIN cars c ON c.cargroup_id = cg.id 
+			INNER JOIN locations l ON l.id = c.location_id 
+			WHERE cg.status > 0 AND c.status > 0 AND l.status > 0 AND l.city_id = #{city_id} 
+			GROUP BY cg.id, l.id 
+			ORDER BY cg.priority ASC")
+	end
 	
 	def self.name_list
 		Rails.cache.fetch("cargroup-name-list") do

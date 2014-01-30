@@ -65,6 +65,13 @@ class MainController < ApplicationController
 		@canonical = "http://www.zoomcar.in/careers"
 	end
 	
+	def city
+		@meta_title = @city.meta_title
+		@meta_description = @city.meta_description
+		@meta_keywords = @city.meta_keywords
+		@canonical = @city.link
+	end
+	
 	def eligibility
 		@meta_title = "Is Zoom For Me? | Eligibility Policy | Zoomcar.in"
 		@meta_description = "The eligibility policy for using Zoom's cars.  Members must be 23 years with valid driving license.  Payment is by credit or debit card only"
@@ -173,19 +180,6 @@ class MainController < ApplicationController
 		@meta_keywords = "zoomcar, zoom, safety"
 		@canonical = "http://www.zoomcar.in/safety"
 		@header = 'help'
-	end
-	
-	def seo
-		str,id = CommonHelper.decode(params[:id].split('_').last.strip)
-		case str
-		when 'attraction'
-			@object = Attraction.find(id)
-		end
-		@meta_title = @object.meta_title
-		@meta_description = @object.meta_description
-		@meta_keywords = @object.meta_keywords
-		@canonical = @object.link
-		render "/seo/" + str
 	end
 	
 	def tariff

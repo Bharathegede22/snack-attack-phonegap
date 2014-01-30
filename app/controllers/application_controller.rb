@@ -4,6 +4,12 @@ class ApplicationController < ActionController::Base
   
   #protect_from_forgery with: :exception
   
+  before_filter :check_params
+  
+  def check_params
+  	@city = City.find_by_name(params[:city]) if !params[:city].blank?
+  end
+  
   def generic_meta
   	@meta_title = "Zoomcar"
 		@meta_description = "Zoomcar"

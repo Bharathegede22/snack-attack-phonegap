@@ -20,6 +20,7 @@ Web::Application.routes.draw do
 			get 'complete'
 			get 'do'
 			get 'docreate'
+			get 'failed'
 			get 'license'
 			get 'login'
 			get 'payment'
@@ -63,10 +64,13 @@ Web::Application.routes.draw do
 	
 	post 'calculator/:id' => 'main#calculator'
 	
-	get 'bangalore/offers' => 'main#offers'
-	get 'bangalore/:id' => 'main#seo'
+	get '/:city' => 'main#city', constraints: {city: /bangalore/}
+	get '/:city/offers' => 'main#offers', constraints: {city: /bangalore/}
+	get '/:city/explore' => 'seo#explore', constraints: {city: /bangalore/}
+	get '/:city/nearby' => 'seo#nearby', constraints: {city: /bangalore/}
+	get '/:city/:id' => 'seo#index', constraints: {city: /bangalore/}
+	
 	get 'job/:id' => 'main#job'
-  get 'bangalore/:id' => 'main#seo'
   get ':action(.:format)' => 'main'
   get ':action/:id' => 'main'
   get ':action' => 'main'

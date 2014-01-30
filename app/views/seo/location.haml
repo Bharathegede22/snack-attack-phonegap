@@ -1,0 +1,82 @@
+:ruby
+	cars = @object.live
+.static
+	%h1
+		= @object.h1
+	.attraction
+		.right
+			%h2 Where
+			%p
+				= @object.address
+				%br/
+				- if !@object.disclaimer.blank?
+					%b.red
+						= @object.disclaimer
+			- if !@object.description.blank?
+				%i
+					= @object.description.html_safe
+			%br/
+			%br/
+			%h2 Cars Available
+			#CarsPanel.panel-group
+				- cars.each do |cg|
+					- cls = (cg == cars.first) ? 'panel-collapse collapse in' : 'panel-collapse collapse'
+					.panel.panel-default
+						.panel-heading
+							.panel-title
+								%a{'data-toggle' => "collapse", 'data-parent' => "#CarsPanel", href: "#CarsPanel#{cg.id}"}
+									= cg.shortname
+						%div{class: cls, id: "CarsPanel#{cg.id}"}
+							.panel-body
+								%h4
+									= link_to cg.shortname, cg.link(@city)
+								%br/
+								%table.table.table-bordered
+									%tr.active
+										%th Hourly
+										%th Daily
+										%th Weekly
+										%th Monthly
+									%tr
+										%td Rs.#{cg.hourly_fare}
+										%td Rs.#{cg.daily_fare}
+										%td Rs.#{cg.weekly_fare}
+										%td Rs.#{cg.monthly_fare}
+		.left
+			#Gmap.map{style: 'height: 600px;'}
+		.fc
+:javascript
+	function initializeMap() {
+		var myLatlng = new google.maps.LatLng(#{@city.lat}, #{@city.lng});
+		var mapOptions = {
+			zoom: 10,
+			center: myLatlng,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		}
+		var map = new google.maps.Map(document.getElementById("Gmap"), mapOptions);
+		var infowindow#{@object.id} = new google.maps.InfoWindow({
+			content: "#{@object.mapcontent}"
+		});
+		var myLatlng#{@object.id} = new google.maps.LatLng(#{@object.lat}, #{@object.lng});
+		var marker#{@object.id} = new google.maps.Marker({
+			position: myLatlng#{@object.id},
+			map: map,
+			animation: google.maps.Animation.DROP,
+			title:"#{@object.shortname}",
+			icon:"#{asset_path 'map/red.png'}"
+		});
+		google.maps.event.addListener(marker#{@object.id}, 'click', function() {
+			infowindow#{@object.id}.open(map,marker#{@object.id});
+		});
+	}
+	function checkJquery() {
+		if (window.jQuery) {
+			var script = document.createElement("script");
+			script.type = "text/javascript";
+			script.src = "http://maps.googleapis.com/maps/api/js?key=#{GOOGLE_MAP_KEY}&sensor=true&callback=initializeMap";
+			document.body.appendChild(script);
+		} else {
+			window.setTimeout(checkJquery, 1000);
+		}
+	}
+	checkJquery();

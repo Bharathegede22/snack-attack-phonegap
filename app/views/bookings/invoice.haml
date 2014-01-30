@@ -101,7 +101,7 @@
 								tmp += r.amount if !r.through.include?('early_return')
 							end
 						= tmp
-				- total -= tmp
+				- total += tmp
 				%tr.bg-c
 					%td
 						%b Outstanding

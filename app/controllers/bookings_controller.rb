@@ -1,6 +1,6 @@
 class BookingsController < ApplicationController
 	
-	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :invoice, :payment, :payments, :reschedule, :show]
+	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show]
 	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule]
 	before_filter :check_search, :only => [:docreate, :license, :login, :checkout]
 	before_filter :check_inventory, :only => [:checkout, :docreate, :dopayment, :license, :login, :payment]
@@ -75,6 +75,10 @@ class BookingsController < ApplicationController
 		redirect_to "/bookings/payment"
 	end
 	
+	def failed
+		render 'complete', layout: 'plain'
+	end
+	
 	def generate
 		@booking
 	end
@@ -140,17 +144,19 @@ class BookingsController < ApplicationController
 		@payment = Payment.do_create(params)
 		if @payment
 			@booking = @payment.booking
+			session[:booking_id] = @booking.encoded_id
 			if @payment.status == 1
 		    flash[:notice] = "Thanks for the payment. Please continue."
+		  	redirect_to "/bookings/complete"
 		  elsif @payment.status == 3
 		    flash[:error] = "Your transaction is subject to manual approval by the payment gateway. We will keep you updated about the same through email."
+		  	redirect_to "/bookings/complete"
 		  else
 		    flash[:error] = "Your transaction has failed. Please do a fresh transaction."
+		  	redirect_to "/bookings/failed"
 		  end
-		  session[:booking_id] = @booking.encoded_id
-		  redirect_to "/bookings/complete"
 		else
-			exception
+			redirect_to '/' and return
 		end
 	end
 	
