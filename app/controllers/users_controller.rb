@@ -54,7 +54,7 @@ class UsersController < ApplicationController
 	def update
 		notice = ''
 		error = ''
-		if current_user.update(signup_params)
+		if current_user.update(signup_params.merge({'profile' => 1}))
 			notice = 'Profile changes are saved! '
 		else
 			error = 'Please fix the following error! '

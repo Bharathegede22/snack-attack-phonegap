@@ -11,6 +11,7 @@ class User < ActiveRecord::Base
          :omniauthable, :omniauth_providers => [:facebook, :google_oauth2]
 	
 	attr_writer :signup
+	attr_writer :profile
 	attr_writer :license_check
 	
 	validates :email, presence: true
@@ -19,9 +20,9 @@ class User < ActiveRecord::Base
   validates :phone, uniqueness: true, if: Proc.new {|u| u.signup?}
   validates :license, presence: true, if: Proc.new {|u| u.license_check?}
   validates :license, uniqueness: true, if: Proc.new {|u| u.license_check? && !u.license.blank?}
-  validates :phone, numericality: {only_integer: true}, if: Proc.new {|u| !u.phone.blank?}
+  validates :phone, numericality: {only_integer: true}, if: Proc.new {|u| u.profile? && !u.phone.blank?}
   validates :pincode, numericality: {only_integer: true}, if: Proc.new {|u| !u.pincode.blank?}
-  validates :phone, length: {is: 10, message: 'only indian mobile numbers without +91/091' }, if: Proc.new {|u| !u.phone.blank?}
+  validates :phone, length: {is: 10, message: 'only indian mobile numbers without +91/091' }, if: Proc.new {|u| u.profile? && !u.phone.blank?}
   validates :pincode, length: {is: 6, message: 'should be of 6 digits'}, if: Proc.new {|u| !u.pincode.blank?}
   validate :check_dob
   
@@ -71,6 +72,10 @@ class User < ActiveRecord::Base
 		return Image.find(:first, :conditions => ["imageable_id = ? AND imageable_type = 'License'", self.id])
 	end
 	
+	def profile?
+    @profile || @signup
+  end
+  
 	def self.find_for_oauth(auth, signed_in=nil)
   	is_new = 0
   	case auth.provider
