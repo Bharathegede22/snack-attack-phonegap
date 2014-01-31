@@ -83,16 +83,6 @@
 				- else
 					- if @booking.total_payments > 0
 						%a.btn.btn-default{href: "/bookings/#{@booking.encoded_id}/invoice", target: '_blank', role: "button"} Invoice
-		%br/
-		.m-t20
-		.panel-group#Accordion
-			.panel.panel-default
-				.panel-heading.f-b.size-16
-					%a{'data-toggle' => "collapse", 'data-parent' => "#Accordion", href: "#History"}
-						Booking History
-				#History.panel-collapse.collapse
-					.panel-body.size-12
-						= @booking.notes.html_safe
 	.col-md-4
 		- @total = 0
 		- tmp = 0

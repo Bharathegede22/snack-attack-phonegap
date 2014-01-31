@@ -37,7 +37,7 @@ class User < ActiveRecord::Base
 	end
 	
 	def check_license
-		return (!self.license.blank? || self.license_pic)
+		return self.license_pic
 	end
 	
   def check_dob

@@ -36,26 +36,27 @@
 			.p-20
 				%h1 Search Self-Drive Cars in Bangalore
 				%br/
-				.fl
-					.f-b.size-20.droid.p-5
-						Zoom offers the following vehicles :
-					%ul
-						- Cargroup.list.each do |c|
-							%li.p-5
-								= c.shortname
-								- if !c.disclaimer.blank?
-									.red.size-10
-										= c.disclaimer.html_safe
-				.fr.t-r
-					.f-b.size-20.droid.p-5
-						@ following locations :
-					%ul
-						- Location.live.each do |l|
-							%li.p-5
-								= l.shortname
-								- if !l.disclaimer.blank?
-									.red.size-10
-										= l.disclaimer.html_safe
+				.row
+					.col-md-6
+						.f-b.size-20.droid.p-5
+							Zoom offers the following vehicles :
+						%ul
+							- Cargroup.list.each do |c|
+								%li.p-5
+									= c.shortname
+									- if !c.disclaimer.blank?
+										.red.size-10
+											= c.disclaimer.html_safe
+					.col-md-6.t-r
+						.f-b.size-20.droid.p-5
+							@ following locations :
+						%ul
+							- Location.live.each do |l|
+								%li.p-5
+									= l.shortname
+									- if !l.disclaimer.blank?
+										.red.size-10
+											= l.disclaimer.html_safe
 				.fc
 - if !@inventory.blank?
 	= javascript_tag do

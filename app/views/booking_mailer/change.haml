@@ -21,6 +21,10 @@ Please review the details of your reservation:
 				- if !cargroup.disclaimer.blank?
 					%p{style: 'color:red; margin:0; padding:0;'}
 						= cargroup.disclaimer.html_safe
+				- if !location.mobile.blank?
+					For any assistance, please call our fleet at 
+					%b #{location.mobile}
+					%br/
 		%tr
 			%td{valign: 'top'} Pick-up Location: 
 			%td{valign: 'top'}
@@ -95,9 +99,16 @@ Please review the details of your reservation:
 		\- As a friendly reminder, your reservation comes with 
 		%b
 			#{fare[:kms]}
-		free Kms. Any excess kms will be charged at 
+		free Kms**. Any excess kms will be charged at 
 		%b
-			Rs #{cargroup.excess_kms}/Km.
+			Rs #{cargroup.excess_kms}/Km**.
+		%br/
+		%i
+			** - Free kms limit and excess km charge may change and will be governed by the zoom policies at the time of vehicle dropoff. See our 
+			%a{href: 'http://www.zoomcar.in/tariff'} tariff
+			and
+			%a{href: 'http://www.zoomcar.in/fees'} fee policy
+			for more.
 	%br/
 	%br/
 %b Your Details
@@ -121,13 +132,13 @@ Please review the details of your reservation:
 			%td{valign: 'top'}
 				- license = @user.license_pic
 				- if license
-					%a{href: 'http://uploads.zoomcar.in/' + license.avatar.url(:profile), target: '_blank'}
+					%a{href: 'http://uploads.zoomcar.in' + license.avatar.url(:profile), target: '_blank'}
 						See license
 				- else
 					= "-"
 %br/
 %br/
-If you have any questions about your reservation you can contact Zoom at help@zoomcar.in.
+If you have any questions about your reservation you can contact Zoom at #{CommonHelper::CUSTOMER_CARE_EMAIL} / #{CommonHelper::CUSTOMER_CARE}.
 %br/
 %br/
 %br/  
