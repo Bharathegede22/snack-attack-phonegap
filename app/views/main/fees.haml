@@ -152,8 +152,7 @@
 			%h3 (B) Free Kms
 			%ol
 				All Zoom reservation comes with free driving kms, which are calculated based on vehicle type and reservation duration. Any kms in excess of these limits will be charged at the appropriate rates. For weekly/monthly reservations, free kms will be given on pro-rated basis using weekly/monthly limit. For daily reservation, free kms can comprise of the daily and hourly free kms.
-				%br/
-				%b Free Kms are always calculated based on your actual return time (reservation end time for live or future bookings).
+				%b Free Kms are always calculated based on the last scheduled reservation end time and actual vehicle return time (for completed bookings), whichever is bigger.
 				See the below table for the use cases
 				%br/
 				%table{:cellpadding => '0', :cellspacing => '0', :border => '0', :aling => 'left', :width => '100%'}
@@ -199,10 +198,10 @@
 								Early Return
 						%td.border-zoom
 							.p-5
-								Free Kms will be calculated based on the actual return time.
+								Free Kms will be calculated based on the last scheduled return time.
 								Should be 
 								%i
-									%u less than or equal 
+									%u equal 
 								to the last limit.
 					%tr
 						%td.border-zoom
