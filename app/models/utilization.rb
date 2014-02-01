@@ -15,21 +15,32 @@ class Utilization < ActiveRecord::Base
 	
 	def self.manage(id)
 		booking = Booking.find(id)
-		rev = booking.revenue
+		if booking.jsi.blank? && booking.status == 0
+			rev = 0
+		else
+			rev = booking.revenue
+		end
 		if rev <= 0
 			Utilization.find(:all, :conditions => ["booking_id = ?", booking.id]).each do |v|
+				v.car_id = booking.car_id
+				v.cargroup_id = booking.cargroup_id
 				v.minutes = 0
 				v.billed_minutes = 0
 				v.billed_minutes_last = 0
 				v.revenue = 0
 				v.revenue_last = 0
-				v.save
+				v.save!
 			end
 		else
 			array = []
-			m = (booking.ends.to_i - booking.starts.to_i)/60
+			if !booking.returned_at.blank?
+				ends = booking.returned_at
+			else
+				ends = booking.ends
+			end
+			m = (ends.to_i - booking.starts.to_i)/60
 			h = m/60
-			h += 1 if (booking.ends.to_i - booking.starts.to_i) > h*3600
+			h += 1 if (ends.to_i - booking.starts.to_i) > h*3600
 			start = booking.starts
 			min = 0
 			billed = 0
@@ -60,7 +71,9 @@ class Utilization < ActiveRecord::Base
 			tmp = []
 			array.each do |u|
 				a = temp[u[0].to_datetime.to_i.to_s]
-				a = Utilization.new(:booking_id => booking.id, :cargroup_id => booking.cargroup_id, :location_id => booking.location_id, :wday => u[1], :day => u[0]) if !a
+				a = Utilization.new(:booking_id => booking.id, :location_id => booking.location_id, :wday => u[1], :day => u[0]) if !a
+				a.car_id = booking.car_id
+				a.cargroup_id = booking.cargroup_id
 				a.minutes = u[2]
 				a.billed_minutes = u[3]
 				a.revenue = ((rev/(h*60.0))*u[2]).round
@@ -68,15 +81,17 @@ class Utilization < ActiveRecord::Base
 				temp.delete(u[0].to_datetime.to_i.to_s)
 			end
 			tmp.each do |u|
-				u.save
+				u.save!
 			end
 			temp.each do |k,v|
+				v.car_id = booking.car_id
+				v.cargroup_id = booking.cargroup_id
 				v.minutes = 0
 				v.billed_minutes = 0
 				v.billed_minutes_last = 0
 				v.revenue = 0
 				v.revenue_last = 0
-				v.save
+				v.save!
 			end
 		end
 	end
