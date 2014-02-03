@@ -465,19 +465,17 @@ class Booking < ActiveRecord::Base
 	
 	def revenue
 		tmp = 0
-		if !self.jsi.blank? || self.status > 0
-			self.charges.each do |a|
-				if !a.activity.include?('early_return') && a.activity != 'vehicle_damage_fee'
-					if a.refund > 0
-						tmp -= a.amount.to_i
-					else
-						tmp += a.amount.to_i
-					end
+		self.charges.each do |a|
+			if !a.activity.include?('early_return') && a.activity != 'vehicle_damage_fee'
+				if a.refund > 0
+					tmp -= a.amount.to_i
+				else
+					tmp += a.amount.to_i
 				end
 			end
-			self.confirmed_payments.each do |a|
-				tmp -= a.amount.to_i if a.through == 'credits'
-			end
+		end
+		self.confirmed_payments.each do |a|
+			tmp -= a.amount.to_i if a.through == 'credits'
 		end
 		return tmp
 	end
@@ -619,8 +617,6 @@ class Booking < ActiveRecord::Base
   protected
 	
 	def after_create_tasks
-		self.confirmation_key = self.encoded_id.upcase
-		self.save(validate: false)
 		charge = Charge.new(:booking_id => self.id, :activity => 'booking_fee')
 		charge.hours = self.days*24 + self.hours
 		charge.billed_total_hours = self.days*10
@@ -633,6 +629,8 @@ class Booking < ActiveRecord::Base
 		charge.discount = self.discount.round
 		charge.amount = (charge.estimate - charge.discount)
 		charge.save
+		self.confirmation_key = self.encoded_id.upcase
+		self.save(validate: false)
 	end
 	
 	def after_save_tasks
@@ -654,11 +652,11 @@ class Booking < ActiveRecord::Base
 				self.notes += "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : Comment Added - </b>" + self.comment + "<br/>"
 				self.comment = ''
 			end
+			self.total = self.revenue
+			self.balance = self.outstanding
 		end
 		self.last_starts = self.starts
 		self.last_ends = self.ends
-		self.total = self.revenue
-		self.balance = self.outstanding
 	end
 	
 end
