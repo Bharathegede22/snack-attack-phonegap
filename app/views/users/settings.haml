@@ -46,7 +46,7 @@
 				.row.form-group
 					%label.col-sm-2.control-label Gender
 					.col-sm-10
-						= f.select :gender, [['Male', 0], ['Female', 1]], {}, :class => 'form-control'
+						= f.select :gender, [['Male', false], ['Female', true]], {}, :class => 'form-control'
 		.panel-heading
 			%h3.panel-title Location Details
 		.panel-body

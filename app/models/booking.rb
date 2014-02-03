@@ -465,17 +465,19 @@ class Booking < ActiveRecord::Base
 	
 	def revenue
 		tmp = 0
-		self.charges.each do |a|
-			if !a.activity.include?('early_return') && a.activity != 'vehicle_damage_fee'
-				if a.refund > 0
-					tmp -= a.amount.to_i
-				else
-					tmp += a.amount.to_i
+		if !self.jsi.blank? || self.status > 0
+			self.charges.each do |a|
+				if !a.activity.include?('early_return') && a.activity != 'vehicle_damage_fee'
+					if a.refund > 0
+						tmp -= a.amount.to_i
+					else
+						tmp += a.amount.to_i
+					end
 				end
 			end
-		end
-		self.confirmed_payments.each do |a|
-			tmp -= a.amount.to_i if a.through == 'credits'
+			self.confirmed_payments.each do |a|
+				tmp -= a.amount.to_i if a.through == 'credits'
+			end
 		end
 		return tmp
 	end
@@ -601,7 +603,7 @@ class Booking < ActiveRecord::Base
 	def total_refunds
 		total = 0
 		self.confirmed_refunds.each do |r|
-			total += r.amount if !r.through?('early_return')
+			total += r.amount if !r.through.include?('early_return')
 		end		
 		return total.to_i
 	end
@@ -655,6 +657,8 @@ class Booking < ActiveRecord::Base
 		end
 		self.last_starts = self.starts
 		self.last_ends = self.ends
+		self.total = self.revenue
+		self.balance = self.outstanding
 	end
 	
 end
