@@ -24,6 +24,11 @@ class MainController < ApplicationController
 				end
 				
 				@tariff = @car.check_fare(@starts, @ends) if flash[:error].blank?
+			elsif !params[:process].blank? && params[:process] == 'checkout' && !session[:book].blank? && !session[:book][:starts].blank? && !session[:book][:ends].blank? && !session[:book][:car].blank?
+				@car = Cargroup.find_by_id(session[:book][:car])
+				@starts = Time.zone.parse(session[:book][:starts])
+				@ends = Time.zone.parse(session[:book][:ends])
+				@tariff = @car.check_fare(@starts, @ends) if flash[:error].blank?
 			end
 			render json: {html: render_to_string("/layouts/calculator/tariff.haml", layout: false)}
 		when 'reschedule'

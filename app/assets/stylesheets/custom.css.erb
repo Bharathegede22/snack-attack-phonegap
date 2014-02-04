@@ -1094,39 +1094,12 @@ a {
 	float:none;
 }
 
-.overlay {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background:url(<%= asset_path 't.png' %>);
-	z-index:20000;
-	overflow:hidden;
-	display:none;
-}
-
-* html .overlay {
-	background:url(<%= asset_path 'b.gif' %>);
-	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src=<%= asset_path 't.png' %>);
-}
-
-.calculator-wrapper {
-	position:fixed;
-	top:50%;
-	left:50%;
-	z-index:50000;
-}
-
-.calculator-wrapper .close {
-	background:url(<%= asset_path 'r.png' %>) no-repeat;
-	background-position:-260px -170px;
-	cursor:pointer;
+.calc {
 	width:30px;
 	height:30px;
-	position:absolute;
-	top:-265px;
-	right:-235px;
+	background:url(<%= asset_path 'r.png' %>);
+	background-position:-320px -80px;
+	cursor:pointer;
 }
 
 .calculator-modal {

@@ -6,7 +6,7 @@
 		.fl
 			Booking Summary
 		.fr
-			.glyphicon.glyphicon-pencil.pointer{:onclick => "showSearch();"}
+			.glyphicon.glyphicon-pencil.pointer.help{onclick: "showSearch();", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Change your booking"}
 		.fc
 	.p-10.t-c.size-16
 		%b
@@ -63,9 +63,12 @@
 					%b Discount
 				%td.p-5.t-r
 					= fare[:discount]
-	.bg-6.t-c.white.f-b.size-16.p-10
-		Total :
-		= fare[:estimate] - fare[:discount]
+	.bg-6.t-c.white.f-b.size-18
+		.p-10.fl
+			Total :
+			= fare[:estimate] - fare[:discount]
+		.calc.m-5.fr.help{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Tariff Estimator"}
+		.fc
 	- if !step.blank? && step == 4
 		.p-20
 			- if @available == 1
