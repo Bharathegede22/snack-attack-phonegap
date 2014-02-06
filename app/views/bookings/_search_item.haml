@@ -90,7 +90,7 @@
 				.fc
 		.actions
 			- fare = car.check_fare(@booking.starts, @booking.ends)
-			.tariff.r-5.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-placement' => 'left', 'data-title' => "<div class='size-12 t-l'><b class='zoom size-16'>Fare Breakup</b><br/><table width='200'><tr><td>Normal Tariff</td><td>#{fare[:estimate]}</td></tr><tr><td>Discount</td><td>#{fare[:discount]}</td></tr><tr><td>Total</td><td>#{(fare[:estimate] - fare[:discount])}</td></tr></table></div>"}
+			.tariff.r-5.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-placement' => 'left', 'data-title' => "<div class='size-12 t-l'><b class='zoom size-16'>Fare Breakup</b><br/><table width='200'><tr><td>Normal Tariff</td><td>#{fare[:estimate]}</td></tr><tr><td>Discount</td><td>#{fare[:discount]}</td></tr><tr class='f-b yellow'><td>Total</td><td>#{(fare[:estimate] - fare[:discount])}</td></tr><tr><td>Free Kms</td><td>#{fare[:kms]}</td></tr><tr><td>Excess Km Charge</td><td>Rs.#{car.excess_kms.to_i}/Km</td></tr></table></div>"}
 				= (fare[:estimate] - fare[:discount])
 			- if locs[0][1] == 1
 				.button{id: 'ButtonYes' + car.id.to_s, onclick: "doBooking(#{car.id}, #{locs[0][0].id});"}
