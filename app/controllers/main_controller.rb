@@ -139,6 +139,10 @@ class MainController < ApplicationController
 		head :moved_permanently, :location => "/users/sign_in" and return
 	end
 	
+	def map
+		render json: {html: render_to_string('/main/map.haml', :layout => false)}
+	end
+	
 	def member
 		@meta_title = "Zoom Member Agreement | Zoomcar.in"
 		@meta_description = "The Zoom Member agreement is the contract that governs the use of Zoom vehicles"

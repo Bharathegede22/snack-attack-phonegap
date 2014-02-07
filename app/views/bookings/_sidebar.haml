@@ -17,8 +17,9 @@
 				= cargroup.disclaimer.html_safe
 		.m-auto{:class => 'car' + @booking.cargroup_id.to_s}
 		Available at 
-		%b 
-			= location.shortname
+		%b.help.pointer{onclick: "showModal('#{location.shortname}', '/map?lat=#{location.lat}&lng=#{location.lng}&title=#{location.shortname}');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Click here to see map"}
+			%u
+				= location.shortname
 		- if !location.disclaimer.blank?
 			.red.size-10
 				= location.disclaimer.html_safe

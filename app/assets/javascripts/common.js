@@ -402,6 +402,10 @@ function logOut(url) {
 	getData(url, 'JsResponse', 'replace', null);
 }
 
+function clearLogin() {
+	$('#UserBar').popover('destroy');
+}
+
 function userLogin() {
 	$('#UserBar').popover({
 		title: 'Sign In',
@@ -409,9 +413,7 @@ function userLogin() {
 		placement: 'bottom'
 	});
 	$('#UserBar').popover('show');
-	$('#UserBar').bind("click", function() {
-		$('#UserBar').popover('destroy');
-	});
+	window.setTimeout(clearLogin, 3000);
 }
 
 function userLogout() {
@@ -421,9 +423,7 @@ function userLogout() {
 		placement: 'bottom'
 	});
 	$('#UserBar').popover('show');
-	$('#UserBar').bind("click", function() {
-		$('#UserBar').popover('destroy');
-	});
+	window.setTimeout(clearLogin, 3000);
 }
 
 function userActive() {
@@ -433,9 +433,7 @@ function userActive() {
 		placement: 'bottom'
 	});
 	$('#UserBar').popover('show');
-	$('#UserBar').bind("click", function() {
-		$('#UserBar').popover('destroy');
-	});
+	window.setTimeout(clearLogin, 3000);
 }
 
 function bindCountry() {

@@ -1,0 +1,24 @@
+#Gmap.map{style: 'height:400px;'}
+:javascript
+	function initializeMap() {
+		var myLatlng = new google.maps.LatLng(#{params[:lat]}, #{params[:lng]});
+		var mapOptions = {
+			zoom: 10,
+			center: myLatlng,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		}
+		var map = new google.maps.Map(document.getElementById("Gmap"), mapOptions);
+		var marker = new google.maps.Marker({
+			position: myLatlng,
+			map: map,
+			animation: google.maps.Animation.DROP,
+			title:"#{params[:title]}",
+			icon:"#{asset_path 'map/red.png'}"
+		});
+	}
+	setTimeout(function() {
+		var script = document.createElement("script");
+		script.type = "text/javascript";
+		script.src = "http://maps.googleapis.com/maps/api/js?key=#{GOOGLE_MAP_KEY}&sensor=true&callback=initializeMap";
+		document.body.appendChild(script);
+	}, 500);
