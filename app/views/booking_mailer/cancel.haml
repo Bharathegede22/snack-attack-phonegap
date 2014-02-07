@@ -28,9 +28,18 @@ You've cancelled the following reservation:
 				%a{href: "#{location.map_link}", target: "_blank"} View Map
 				= ")"
 				%br/
+				- if !location.description.blank?
+					%p{style: 'margin:0; padding:0;'}
+						%u Directions
+						%br/
+						= location.description.html_safe
 				- if !location.disclaimer.blank?
 					%p{style: 'color:red; margin:0; padding:0;'}
 						= location.disclaimer.html_safe
+				- if !location.mobile.blank?
+					For any assistance, please call our fleet at 
+					%b #{location.mobile}
+					%br/
 		%tr
 			%td{valign: 'top'} Reservation Begins: 
 			%td{valign: 'top'}
