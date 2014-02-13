@@ -126,8 +126,7 @@ a {
 .homepage {
 	font-family: 'Droid Sans', 'Arial', sans-serif;
 	position:relative;
-	height:750px;
-	margin-bottom:40px;
+	height:740px;
 }
 
 .homepage .cars {
@@ -508,6 +507,173 @@ a {
 	padding:0;
 	margin:5px auto;
 	border:0;
+}
+
+.home-map {
+	background:url(<%= asset_path 'locations.png' %>) no-repeat;
+	width:1200px;
+	height:400px;
+	margin:0 auto;
+	position:relative;
+	margin-bottom:20px;
+}
+
+.home-map h2 {
+	background:#323a45;
+	color:#ffffff;
+	text-align:center;
+	padding:5px 0;
+	width:460px;
+	margin:0 auto;
+	border-left: 2px solid #6ABD19;
+}
+
+.home-map .pins {
+	width:20px;
+	height:20px;
+	position:absolute;
+	cursor:pointer;
+}
+
+.home-map .pulse {
+	width:20px;
+	height:20px;
+	border:1px solid #666666;
+	-webkit-border-radius:20px;
+	-moz-border-radius:20px;
+	border-radius:20px;
+	background-color:#6ABD19;
+	z-index:10;
+	position:absolute;
+	left:0;
+	top:0;
+}
+
+.home-map .dot {
+	border:10px solid #333333;
+	background: transparent;
+	-webkit-border-radius: 60px;
+	-moz-border-radius: 60px;
+	border-radius: 60px;
+	height: 50px;
+	width: 50px;
+	-webkit-animation: pulse 2s ease-out;
+	-moz-animation: pulse 2s ease-out;
+	animation: pulse 2s ease-out;
+	-webkit-animation-iteration-count: infinite;
+	-moz-animation-iteration-count: infinite;
+	animation-iteration-count: infinite;
+	position: absolute;
+	top: -15px;
+	left: -15px;
+	z-index: 1;
+	opacity: 0;
+}
+
+@-moz-keyframes pulse {
+ 0% {
+	-moz-transform: scale(0);
+	opacity: 0.0;
+ }
+ 25% {
+	-moz-transform: scale(0);
+	opacity: 0.1;
+ }
+ 50% {
+	-moz-transform: scale(0.1);
+	opacity: 0.3;
+ }
+ 75% {
+	-moz-transform: scale(0.5);
+	opacity: 0.5;
+ }
+ 100% {
+	-moz-transform: scale(1);
+	opacity: 0.0;
+ }
+}
+
+@-webkit-keyframes "pulse" {
+ 0% {
+	-webkit-transform: scale(0);
+	opacity: 0.0;
+ }
+ 25% {
+	-webkit-transform: scale(0);
+	opacity: 0.1;
+ }
+ 50% {
+	-webkit-transform: scale(0.1);
+	opacity: 0.3;
+ }
+ 75% {
+	-webkit-transform: scale(0.5);
+	opacity: 0.5;
+ }
+ 100% {
+	-webkit-transform: scale(1);
+	opacity: 0.0;
+ }
+}
+
+.home-map .locs1 {
+	top:145px;
+	left:485px;
+}
+
+.home-map .locs2 {
+	bottom:55px;
+	left:520px;
+}
+
+.home-map .locs3 {
+	top:185px;
+	left:568px;
+}
+
+.home-map .locs4 {
+	top:215px;
+	left:545px;
+}
+
+.home-map .locs5 {
+	top:177px;
+	left:697px;
+}
+
+.home-map .locs6 {
+	top:270px;
+	left:585px;
+}
+
+.home-map .locs7 {
+	top:327px;
+	left:603px;
+}
+
+.home-map .locs8 {
+	top:175px;
+	left:502px;
+}
+
+.home-map .locs9 {
+	top:237px;
+	left:577px;
+}
+
+.home-map .locs10 {
+	top:85px;
+	left:535px;
+}
+
+.home-map .locs11 {
+	top:237px;
+	left:606px;
+}
+
+.home-map .locs12 {
+	top:310px;
+	left:592px;
 }
 
 .reviews {
