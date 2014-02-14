@@ -119,8 +119,8 @@
 					= render :partial => '/bookings/widget_homepage'
 - if true
 	.home-map
-		%br/
-		%h2 Find us in your neighbourhood
+		.p-10
+		%h2 Find Us In Your Neighbourhood!
 		- Location.live.each do |l|
 			- tmp = l.mapcontent.gsub("<div style='width:240px;'", "<div")
 			.help.pins{class: "locs#{l.id}", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{tmp}"}
