@@ -29,11 +29,6 @@ sub vcl_recv {
     return(pipe);
   }
   
-  if (req.request != "GET" && req.request != "HEAD") {
-    /* We only deal with GET and HEAD by default */
-    return(pass);
-  }
-
   if (req.backend.healthy) {
      set req.grace = 30s;
   } else {
@@ -101,18 +96,10 @@ sub vcl_fetch {
     return(hit_for_pass);
   }
 	
-	if (req.url ~ "^/jsi/*") {
-		if (req.url ~ "\.(png|gif|jpg|swf|css|js)$") {
-		} else if (req.url ~ "autoComplete.do$") {
-			unset beresp.http.expires;
-			set beresp.ttl = 1d;
-		}
-  } else {
-  	# Do not cache the object if the backend application does not want us to.
-		if (beresp.http.Cache-Control ~ "(no-cache|no-store|private|must-revalidate)") {
-		  return(hit_for_pass);
-		}
-  }
+	# Do not cache the object if the backend application does not want us to.
+	if (beresp.http.Cache-Control ~ "(no-cache|no-store|private|must-revalidate)") {
+	  return(hit_for_pass);
+	}
   
   set beresp.do_esi = true;
   unset beresp.http.set-cookie;
@@ -122,18 +109,14 @@ sub vcl_fetch {
 
 # Called before the response is sent back to the client
 sub vcl_deliver {
-	if (req.url ~ "^/jsi/*" && req.url ~ "\.(png|gif|jpg|swf|css|js)$") {
-		set resp.http.Cache-Control = "max-age=86400";
-	} else {
-		# Force browsers and intermediary caches to always check back with us
-		set resp.http.Cache-Control = "private, max-age=0";
-		set resp.http.Pragma = "no-cache";
+	# Force browsers and intermediary caches to always check back with us
+	set resp.http.Cache-Control = "private, max-age=0";
+	set resp.http.Pragma = "no-cache";
 
-		# Add a header to indicate a cache HIT/MISS
-		if (obj.hits > 0) {
-		  set resp.http.X-Cache = "HIT";
-		} else {
-		  set resp.http.X-Cache = "MISS";
-		}
+	# Add a header to indicate a cache HIT/MISS
+	if (obj.hits > 0) {
+	  set resp.http.X-Cache = "HIT";
+	} else {
+	  set resp.http.X-Cache = "MISS";
 	}
 }

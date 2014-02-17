@@ -122,6 +122,7 @@ class MainController < ApplicationController
 		@meta_keywords = "zoomcar, self drive car, self drive car rental, renting a car, self drive cars"
 		@canonical = "http://www.zoomcar.in"
 		@header = 'homepage'
+		#expires_in 1.months, :public => true, 'max-stale' => 0 #if Rails.env == 'production'
 	end
 	
 	def job

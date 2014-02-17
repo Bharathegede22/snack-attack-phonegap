@@ -253,7 +253,7 @@ class Cargroup < ActiveRecord::Base
 	
 	def self.list
   	Rails.cache.fetch("cargroup-list") do
-  		Cargroup.find(:all, :conditions => "status = 1", :order => "priority ASC")
+  		Cargroup.find_by_sql("SELECT * FROM cargroups WHERE status = 1 ORDER BY priority ASC")
   	end
   end
 	

@@ -10,10 +10,8 @@
 		.links
 			.broadcast
 				.fl
-					%b Zoom turns One! 
-					Enjoy all vehicles @ Rs.100/hour and Rs.1000/day from 17th Feb till 21st Feb.
-					%a{href: '/bangalore/offers'}
-						%u Offer details
+					- announcement = Announcement.active
+					= announcement.first.note.html_safe if !announcement.blank?
 				.fr
 					#UserBar.dropdown
 						%a.dropdown-toggle.p-r10{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
