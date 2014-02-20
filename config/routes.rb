@@ -25,6 +25,7 @@ Web::Application.routes.draw do
 			get 'login'
 			get 'payment'
 			get 'payu'
+			get 'timeline'
 			get 'widget'
 			
 			post 'license'

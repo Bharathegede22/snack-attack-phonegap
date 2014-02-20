@@ -1,0 +1,52 @@
+.p-10
+	.fl.f-b.size-16
+		Availability Timeline
+	.fr
+		.legend
+			.g
+			.fl.txt Available
+			.r
+			.fl.txt Not Available
+	.fc
+	.day
+		.date
+			.m-l5
+				.arrw-u
+		- (0..23).each do |x|
+			.slots
+				.p-l5
+					= x
+		.fc
+		- @inventory.each do |i|
+			- slot = i.slot - 330.minutes
+			- if slot.hour == 0 && slot.min == 0
+				.fc
+				.date
+					= slot.strftime("%d-%m-%y")
+			- if i.slot.to_i >= (@booking.starts.to_i + 330*60) && i.slot.to_i < (@booking.ends.to_i + 330*60)
+				- if slot.min == 0
+					.b
+				- if i.total >= 1
+					.g.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Availabke"}
+				- else
+					.r.sel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Not Available"}
+			- else
+				- if slot.min == 0
+					.b
+				- if i.total >= 1
+					.g.unsel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Outside Selection"}
+				- else
+					.r.unsel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Outside Selection"}
+		.fc
+		.date
+			.m-l5
+				.arrw-d
+		- (0..23).each do |x|
+			.slots
+				.p-l5
+					= x
+		.fc
+:javascript
+	$('.help').tooltip();
+	$("#Timeline#{@booking.cargroup_id}").slideDown();
+	$("#TimelineAction#{@booking.cargroup_id}").html("<div class='arrw-u'></div>");

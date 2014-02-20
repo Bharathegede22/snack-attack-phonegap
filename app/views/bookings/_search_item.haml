@@ -21,85 +21,89 @@
 		end
 	end
 .search-item
-	.p-10
-		.img
-			%div{:class => 'car' + car.id.to_s}
-		.details
-			.name
-				= car.display_name
-			.cap
-				= car.seating
-				Seater
-			.fc
-			.disclaimer
-				- if !car.disclaimer.blank?
-					= car.disclaimer.html_safe
-			.avail
-				- if locs[0][1] == 1
-					.yes{id: 'Avail' + car.id.to_s}
-						Available
-				- else
-					.no{id: 'Avail' + car.id.to_s}
-						Not Available
-				.at
-					at
-				.loc
-					.btn-group
-						%button.btn.btn-default{type: "button", id: 'LocName' + car.id.to_s}
-							= locs[0][0].shortname
-						%button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", type: "button"}
-							%span.caret
-							%span.sr-only Toggle Dropdown
-						%ul.dropdown-menu{role: "menu", id: "LocMenu" + car.id.to_s}
-							:ruby
-								avail = false
-								notavail = false
-								locs.each do |l|
-									if l[1] == 1
-										avail = true
-									else
-										notavail = true
-									end
-								end
-							- if avail
-								%li.dropdown-header{role: "presentation"} Available at
-								- locs.each do |l|
-									- if l[1] == 1
-										- if l == locs[0]
-											%li.active{:id => ("LocSel" + car.id.to_s + l[0].id.to_s)}
-												%a{href: "javascript:void(0)", onclick: "showAvailability(#{car.id}, #{l[0].id}, #{l[1]}, '#{l[0].shortname}');"}
-													= l[0].shortname
-										- else
-											%li{:id => ("LocSel" + car.id.to_s + l[0].id.to_s)}
-												%a{href: "javascript:void(0)", onclick: "showAvailability(#{car.id}, #{l[0].id}, #{l[1]}, '#{l[0].shortname}');"}
-													= l[0].shortname
-							- if avail and notavail
-								%li.divider{role: "presentation"}
-							- if notavail
-								%li.dropdown-header{role: "presentation"} Not Available at
-								- locs.each do |l|
-									- if l[1] == 0
-										- if l == locs[0]
-											%li.active{:id => ("LocSel" + car.id.to_s + l[0].id.to_s)}
-												%a{href: "javascript:void(0)", onclick: "showAvailability(#{car.id}, #{l[0].id}, #{l[1]}, '#{l[0].shortname}');"}
-													= l[0].shortname
-										- else
-											%li{:id => ("LocSel" + car.id.to_s + l[0].id.to_s)}
-												%a{href: "javascript:void(0)", onclick: "showAvailability(#{car.id}, #{l[0].id}, #{l[1]}, '#{l[0].shortname}');"}
-													= l[0].shortname
+	.default
+		.p-10
+			.img
+				%div{:class => 'car' + car.id.to_s}
+			.details
+				.name
+					= car.display_name
+				.cap
+					= car.seating
+					Seater
 				.fc
-		.actions
-			- fare = car.check_fare(@booking.starts, @booking.ends)
-			.tariff.r-5.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-placement' => 'left', 'data-title' => "<div class='size-12 t-l'><b class='zoom size-16'>Fare Breakup</b><br/><table width='200'><tr><td>Normal Tariff</td><td>#{fare[:estimate]}</td></tr><tr><td>Discount</td><td>#{fare[:discount]}</td></tr><tr class='f-b yellow'><td>Total</td><td>#{(fare[:estimate] - fare[:discount])}</td></tr><tr><td class='p-l10'>Free Kms</td><td>#{fare[:kms]}</td></tr><tr><td class='p-l10'>Excess Km Charge</td><td>Rs.#{car.excess_kms.to_i}/Km</td></tr></table></div>"}
-				= (fare[:estimate] - fare[:discount])
-			- if locs[0][1] == 1
-				.button{id: 'ButtonYes' + car.id.to_s, onclick: "doBooking(#{car.id}, #{locs[0][0].id});"}
-					Book
-				.button-dis{id: 'ButtonNo' + car.id.to_s, style: 'display:none;'}
-					Book
-			- else
-				.button{id: 'ButtonYes' + car.id.to_s, style: 'display:none;'}
-					Book
-				.button-dis{id: 'ButtonNo' + car.id.to_s}
-					Book
-		.fc
+				.disclaimer
+					- if !car.disclaimer.blank?
+						= car.disclaimer.html_safe
+				.avail
+					- if locs[0][1] == 1
+						.yes{id: 'Avail' + car.id.to_s}
+							Available
+					- else
+						.no{id: 'Avail' + car.id.to_s}
+							Not Available
+					.at
+						at
+					.loc
+						.btn-group
+							%button.btn.btn-default{type: "button", id: 'LocName' + car.id.to_s}
+								= locs[0][0].shortname
+							%button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", type: "button"}
+								%span.caret
+								%span.sr-only Toggle Dropdown
+							%ul.dropdown-menu{role: "menu", id: "LocMenu" + car.id.to_s}
+								:ruby
+									avail = false
+									notavail = false
+									locs.each do |l|
+										if l[1] == 1
+											avail = true
+										else
+											notavail = true
+										end
+									end
+								- if avail
+									%li.dropdown-header{role: "presentation"} Available at
+									- locs.each do |l|
+										- if l[1] == 1
+											- if l == locs[0]
+												%li.active{:id => ("LocSel" + car.id.to_s + l[0].id.to_s)}
+													%a{href: "javascript:void(0)", onclick: "showAvailability(#{car.id}, #{l[0].id}, #{l[1]}, '#{l[0].shortname}');"}
+														= l[0].shortname
+											- else
+												%li{:id => ("LocSel" + car.id.to_s + l[0].id.to_s)}
+													%a{href: "javascript:void(0)", onclick: "showAvailability(#{car.id}, #{l[0].id}, #{l[1]}, '#{l[0].shortname}');"}
+														= l[0].shortname
+								- if avail and notavail
+									%li.divider{role: "presentation"}
+								- if notavail
+									%li.dropdown-header{role: "presentation"} Not Available at
+									- locs.each do |l|
+										- if l[1] == 0
+											- if l == locs[0]
+												%li.active{:id => ("LocSel" + car.id.to_s + l[0].id.to_s)}
+													%a{href: "javascript:void(0)", onclick: "showAvailability(#{car.id}, #{l[0].id}, #{l[1]}, '#{l[0].shortname}');"}
+														= l[0].shortname
+											- else
+												%li{:id => ("LocSel" + car.id.to_s + l[0].id.to_s)}
+													%a{href: "javascript:void(0)", onclick: "showAvailability(#{car.id}, #{l[0].id}, #{l[1]}, '#{l[0].shortname}');"}
+														= l[0].shortname
+					.fc
+			.actions
+				- fare = car.check_fare(@booking.starts, @booking.ends)
+				.tariff.r-5.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-placement' => 'left', 'data-title' => "<div class='size-12 t-l'><b class='zoom size-16'>Fare Breakup</b><br/><table width='200'><tr><td>Normal Tariff</td><td>#{fare[:estimate]}</td></tr><tr><td>Discount</td><td>#{fare[:discount]}</td></tr><tr class='f-b yellow'><td>Total</td><td>#{(fare[:estimate] - fare[:discount])}</td></tr><tr><td class='p-l10'>Free Kms</td><td>#{fare[:kms]}</td></tr><tr><td class='p-l10'>Excess Km Charge</td><td>Rs.#{car.excess_kms.to_i}/Km</td></tr></table></div>"}
+					= (fare[:estimate] - fare[:discount])
+				- if locs[0][1] == 1
+					.button{id: 'ButtonYes' + car.id.to_s, onclick: "doBooking(#{car.id}, #{locs[0][0].id});"}
+						Book
+					.button-dis{id: 'ButtonNo' + car.id.to_s, style: 'display:none;'}
+						Book
+				- else
+					.button{id: 'ButtonYes' + car.id.to_s, style: 'display:none;'}
+						Book
+					.button-dis{id: 'ButtonNo' + car.id.to_s}
+						Book
+			.fc
+	.timeline{id: 'Timeline' + car.id.to_s}
+	.timeline-action.help{id: 'TimelineAction' + car.id.to_s, onclick: "showTimeline('#{car.id}');", 'data-toggle' => "tooltip", 'data-placement' => 'bottom', 'data-html' => 'true', 'data-title' => "Show Availability"}
+		.arrw-d

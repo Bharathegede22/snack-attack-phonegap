@@ -140,27 +140,19 @@ class Inventory < ActiveRecord::Base
 		end
 	end
 	
-	def self.get(cargroup, day)
-		date = day.to_datetime
-		Rails.cache.fetch("inventory-#{cargroup}-#{date.to_i}") do
-			h = {}
-			l = nil
-			tmp = {}
-			Inventory.find_by_sql("SELECT slot, total, location_id FROM inventories 
-				WHERE cargroup_id = #{cargroup} AND 
-				slot >= '#{date.to_s(:db)}' AND 
-				slot < '#{(date + 1.days).to_s(:db)}' 
-				ORDER BY location_id ASC, slot ASC").each do |i|
-				if l && l != i.location_id
-					h[l.to_s] = tmp
-					tmp = {}
-				end
-				l = i.location_id if l != i.location_id
-				tmp[i.slot.to_i.to_s] = i.total
-			end
-			h[l.to_s] = tmp
-			return h
+	def self.get(cargroup, location, starts, ends)
+		starts = starts.to_date.to_datetime
+		ends = ends.to_date.to_datetime
+		if ends > starts + 5.days
+			ends = starts + 6.days
+		else
+			ends = ends + 1.days
 		end
+		return Inventory.find_by_sql("SELECT slot, total FROM inventories 
+			WHERE cargroup_id = #{cargroup} AND location_id = #{location} AND 
+			slot >= '#{starts.to_s(:db)}' AND 
+			slot < '#{ends.to_s(:db)}' 
+			ORDER BY slot ASC")
 	end
 	
 	def self.release(cargroup, location, starts, ends)

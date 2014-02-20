@@ -384,6 +384,17 @@ function showAvailability(carId, locId, avail, locName) {
 	$('#LocSel' + carId + locId).addClass('active');
 }
 
+function showTimeline(carId) {
+	$('#Timeline' + carId).slideUp();
+	if($('#Timeline' + carId).html() == '') {
+		var locId = $('#LocMenu' + carId).find('li.active').attr("id").split('LocSel' + carId)[1];
+		getData("/bookings/timeline?car=" + carId + "&location=" + locId, 'Timeline' + carId, 'replace', null);
+	} else {
+		$('#Timeline' + carId).html('');
+		$('#TimelineAction' + carId).html("<div class='arrw-d'></div>");
+	}
+}
+
 function doBooking(carId, locId) {
 	window.location = "/bookings/do?car=" + carId + "&loc=" + locId;
 }

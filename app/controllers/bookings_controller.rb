@@ -2,7 +2,7 @@ class BookingsController < ApplicationController
 	
 	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show]
 	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule]
-	before_filter :check_search, :only => [:docreate, :license, :login, :checkout]
+	before_filter :check_search, :only => [:checkout, :docreate, :license, :login]
 	before_filter :check_inventory, :only => [:checkout, :docreate, :dopayment, :license, :login, :payment]
 	
 	def cancel
@@ -237,6 +237,17 @@ class BookingsController < ApplicationController
 	def show
 		flash.keep
 		render layout: 'users'
+	end
+	
+	def timeline
+		if !params[:car].blank? && !params[:location].blank? && !session[:search].blank? && !session[:search][:starts].blank? && !session[:search][:ends].blank?
+			@booking = Booking.new
+			@booking.starts = Time.zone.parse(session[:search][:starts])
+			@booking.ends = Time.zone.parse(session[:search][:ends])
+			@booking.cargroup_id = params[:car]
+			@inventory = Inventory.get(params[:car].to_i, params[:location].to_i, @booking.starts, @booking.ends)
+			render json: {html: render_to_string('timeline.haml', layout: false)}
+		end
 	end
 	
 	def widget

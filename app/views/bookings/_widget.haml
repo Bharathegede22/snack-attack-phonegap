@@ -99,4 +99,11 @@
 			initializeDatePicker();
 - else
 	:javascript
-		initializeDatePicker();
+		function checkJquery() {
+			if (window.jQuery) {
+				initializeDatePicker();
+			} else {
+				window.setTimeout(checkJquery, 1000);
+			}
+		}
+		checkJquery();
