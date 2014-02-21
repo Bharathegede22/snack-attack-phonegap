@@ -140,19 +140,34 @@ class Inventory < ActiveRecord::Base
 		end
 	end
 	
-	def self.get(cargroup, location, starts, ends)
+	def self.get(cargroup, location, starts, ends, page)
 		starts = starts.to_date.to_datetime
-		ends = ends.to_date.to_datetime
-		if ends > starts + 5.days
-			ends = starts + 6.days
+		if ends == ends.beginning_of_day
+			ends = ends.to_date.to_datetime - 1.days
+		else
+			ends = ends.to_date.to_datetime
+		end
+		if ends >= starts + 4.days
+			ends = starts + 5.days
 		else
 			ends = ends + 1.days
 		end
-		return Inventory.find_by_sql("SELECT slot, total FROM inventories 
-			WHERE cargroup_id = #{cargroup} AND location_id = #{location} AND 
-			slot >= '#{starts.to_s(:db)}' AND 
-			slot < '#{ends.to_s(:db)}' 
-			ORDER BY slot ASC")
+		if page != 0
+			intrvl = (ends.to_i - starts.to_i)/(1.days.to_i)
+			intrvl = intrvl*page
+			starts += intrvl.days
+			ends += intrvl.days
+		end
+		starts = Time.today if starts < Time.today
+		if ends > Time.today || ends <= Time.today + CommonHelper::BOOKING_WINDOW.days
+			return Inventory.find_by_sql("SELECT slot, total FROM inventories 
+				WHERE cargroup_id = #{cargroup} AND location_id = #{location} AND 
+				slot >= '#{starts.to_s(:db)}' AND 
+				slot < '#{ends.to_s(:db)}' 
+				ORDER BY slot ASC")
+		else
+			return []
+		end
 	end
 	
 	def self.release(cargroup, location, starts, ends)

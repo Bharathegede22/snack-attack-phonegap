@@ -239,6 +239,14 @@ class Cargroup < ActiveRecord::Base
 		end
   end
   
+  def locations_hash
+  	tmp = {}
+  	self.locations.each do |l|
+  		tmp[l.id.to_s] = 1
+  	end
+  	return tmp
+  end
+  
   def meta_description(city)
 		return "Hire #{self.name.downcase} for self drive in #{city.name}. All-inclusive tariff covers fuel, insurance & taxes"
 	end

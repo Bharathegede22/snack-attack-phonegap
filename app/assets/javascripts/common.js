@@ -74,6 +74,8 @@ function getData(complete_url,divId,divAction,divWait) {
       		if(divAction) {
       			if(divAction == 'append') {
       				$("#"+divId).append(data["html"]);
+      			} else if(divAction == 'prepend') {
+      				$("#"+divId).prepend(data["html"]);
       			} else {
       				$("#"+divId).html(data["html"]);
       			}
@@ -382,16 +384,30 @@ function showAvailability(carId, locId, avail, locName) {
 	$('#LocName' + carId).text(locName);
 	$('#LocMenu' + carId).find('li').removeClass('active');
 	$('#LocSel' + carId + locId).addClass('active');
+	if($('#Timeline' + carId).html() != '') {
+		showTimeline(carId, 0);
+		showTimeline(carId, 0);
+	}
 }
 
-function showTimeline(carId) {
-	$('#Timeline' + carId).slideUp();
-	if($('#Timeline' + carId).html() == '') {
-		var locId = $('#LocMenu' + carId).find('li.active').attr("id").split('LocSel' + carId)[1];
-		getData("/bookings/timeline?car=" + carId + "&location=" + locId, 'Timeline' + carId, 'replace', null);
-	} else {
-		$('#Timeline' + carId).html('');
-		$('#TimelineAction' + carId).html("<div class='arrw-d'></div>");
+function showTimeline(carId, action) {
+	var locId = $('#LocMenu' + carId).find('li.active').attr("id").split('LocSel' + carId)[1];
+	if(action == 0) {
+		$('#Timeline' + carId).slideUp();
+		if($('#Timeline' + carId).html() == '') {
+			getData("/bookings/timeline?car=" + carId + "&location=" + locId, 'Timeline' + carId, 'replace', null);
+		} else {
+			$('#Timeline' + carId).html('');
+			$('#TimelineAction' + carId).html("<div class='arrw-d'></div>");
+			$('#TimelineAction' + carId).attr("data-original-title", 'Show Availability').tooltip('fixTitle');
+		}
+		$('#TimelineAction' + carId).tooltip('hide');
+	} else if(action == 1) {
+		var num = $('#TimelineMoreNum' + carId).val();
+		getData("/bookings/timeline?car=" + carId + "&location=" + locId + "&page=" + num, 'TimelineContent' + carId, 'append', null);
+	} else if(action == -1) {
+		var num = $('#TimelineLessNum' + carId).val();
+		getData("/bookings/timeline?car=" + carId + "&location=" + locId + "&page=" + num, 'TimelineContent' + carId, 'prepend', null);
 	}
 }
 

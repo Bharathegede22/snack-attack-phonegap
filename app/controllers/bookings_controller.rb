@@ -245,8 +245,18 @@ class BookingsController < ApplicationController
 			@booking.starts = Time.zone.parse(session[:search][:starts])
 			@booking.ends = Time.zone.parse(session[:search][:ends])
 			@booking.cargroup_id = params[:car]
-			@inventory = Inventory.get(params[:car].to_i, params[:location].to_i, @booking.starts, @booking.ends)
-			render json: {html: render_to_string('timeline.haml', layout: false)}
+			@booking.location_id = params[:location]
+			if params[:page].blank?
+				@page = 0
+			else
+				@page = params[:page].to_i
+			end
+			@inventory = Inventory.get(params[:car].to_i, params[:location].to_i, @booking.starts, @booking.ends, @page)
+			if @page == 0
+				render json: {html: render_to_string('timeline.haml', layout: false)}
+			else
+				render json: {html: render_to_string('timeline_more.haml', layout: false)}
+			end
 		end
 	end
 	

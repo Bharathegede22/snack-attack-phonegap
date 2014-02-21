@@ -1,5 +1,6 @@
 :ruby
-	if location
+	loc_hash = car.locations_hash
+	if location && loc_hash[location.to_s]
 		if inventory[location.to_s] > 0
 			locs = [[org_locs.first, 1]]
 		else
@@ -17,7 +18,7 @@
 			locs << [l, 1] if inventory[l.id.to_s] > 0
 		end
 		org_locs.each do |l|
-			locs << [l, 0] if inventory[l.id.to_s] < 1
+			locs << [l, 0] if inventory[l.id.to_s] < 1 && loc_hash[l.id.to_s] == 1
 		end
 	end
 .search-item
@@ -105,5 +106,5 @@
 						Book
 			.fc
 	.timeline{id: 'Timeline' + car.id.to_s}
-	.timeline-action.help{id: 'TimelineAction' + car.id.to_s, onclick: "showTimeline('#{car.id}');", 'data-toggle' => "tooltip", 'data-placement' => 'bottom', 'data-html' => 'true', 'data-title' => "Show Availability"}
+	.timeline-action.help{id: 'TimelineAction' + car.id.to_s, onclick: "showTimeline('#{car.id}', 0);", 'data-toggle' => "tooltip", 'data-placement' => 'bottom', 'data-html' => 'true', 'data-title' => "Show Availability"}
 		.arrw-d
