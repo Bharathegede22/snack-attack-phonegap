@@ -1,43 +1,5 @@
 .static
 	%h1.zoom Zoom for Less
-	.tariff-special.bg-e
-		.p-20
-			%h2.size-30
-				%b ANNIVERSARY SPECIAL!
-			%p.size-18.black.f-b
-				Zoom is officially turning One!!
-				%br/
-				Enjoy all vehicles at Rs.100 / hour and Rs.1000 / day. 
-			%p Discounts will be refunded back to your account after the vehicle is returned.
-			%div
-				%b.black PLEASE NOTE:
-				%br/
-				This pricing will be valid for ALL ZOOM VEHICLES. 
-				%br/
-				Standard excess Km rate will remain in accordance with normal Zoom tariff policy.
-				%br/
-				%i
-					Discount will be applicable for any booking that has reservation days
-					%br/
-					falling between Feb 17 (12:00am) to Feb 21 (11:59pm).
-	%br/
-	- if Time.now.month < 3 && Time.now.day < 15
-		.tariff-special
-			.p-20
-				%h2.size-30
-					%b VALENTINES DAY OFFER FOR WOMEN!
-				%p.size-18.black.f-b
-					Women, book a vehicle for Valentines Day (14th Feb)
-					%br/
-					and receive 85% off the normal tariff!
-				%p Discounts will be refunded back to your account.
-				%div
-					%b.black PLEASE NOTE:
-					%br/
-					Multi-day reservation will only get the 85% off for 14th Feb, rest of the days will remain same.
-					%br/
-					%i Discount will be applicable only when a woman picks up and drops off the vehicle.
-		%br/
 	#Weekday.tariff-special
 		.p-20
 			%h2.size-30
