@@ -17,9 +17,9 @@
 		- if slot.min == 0
 			.b
 		- if i.total > 1
-			.g.unsel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Outside Selection"}
+			.g.unsel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Available<br/>Outside Selection"}
 		- elsif i.total == 1
-			.o.unsel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Outside Selection"}
+			.o.unsel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Only 1 Available<br/>Outside Selection"}
 		- else
-			.r.unsel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Outside Selection"}
+			.r.unsel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Not Available<br/>Outside Selection"}
 .fc
