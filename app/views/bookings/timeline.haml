@@ -23,19 +23,22 @@
 							.arrw-u.help{onclick: "showTimeline('#{@booking.cargroup_id}',-1);", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Show previous day"}
 				.fc
 			.fl
+				.slots-t 
+					.t AM
+				.slots-t
+					.t PM
+				.fc
 				- (0..23).each do |x|
 					.slots
 						.t
 							- if x == 0
-								12 am
+								12
 							- elsif x == 12
-								12 pm
+								12
 							- elsif x > 12
 								= x - 12
-								pm
 							- else
 								= x
-								am
 				.fc
 			.fc
 		%div{id: "TimelineContent#{@booking.cargroup_id}"}
@@ -51,15 +54,18 @@
 					.slots
 						.t
 							- if x == 0
-								12 am
+								12
 							- elsif x == 12
-								12 pm
+								12
 							- elsif x > 12
 								= x - 12
-								pm
 							- else
 								= x
-								am
+				.fc
+				.slots-t 
+					.t AM
+				.slots-t
+					.t PM
 				.fc
 			.fc
 .hide
