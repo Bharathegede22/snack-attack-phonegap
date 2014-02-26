@@ -141,22 +141,23 @@ class Inventory < ActiveRecord::Base
 	end
 	
 	def self.get(cargroup, location, starts, ends, page)
+		cg = Cargroup.find(cargroup)
 		starts = starts.to_date.to_datetime
 		if ends == ends.beginning_of_day
 			ends = ends.to_date.to_datetime - 1.days
 		else
 			ends = ends.to_date.to_datetime
 		end
-		if ends >= starts + 4.days
-			ends = starts + 5.days
+		ends = ends + 1.days
+		if page > 0
+			starts = ends + (page-1).days
+			ends += page.days
+		elsif page < 0
+			ends = starts + (page+1).days
+			starts = starts + page.days
 		else
-			ends = ends + 1.days
-		end
-		if page != 0
-			intrvl = (ends.to_i - starts.to_i)/(1.days.to_i)
-			intrvl = intrvl*page
-			starts += intrvl.days
-			ends += intrvl.days
+			starts -= (cg.wait_period.minutes + 15.minutes)
+			ends += (cg.wait_period.minutes + 15.minutes)
 		end
 		starts = Time.today if starts < Time.today
 		if ends > Time.today || ends <= Time.today + CommonHelper::BOOKING_WINDOW.days

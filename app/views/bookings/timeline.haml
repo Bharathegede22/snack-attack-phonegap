@@ -1,8 +1,11 @@
+:ruby
+	@cargroup = @booking.cargroup
+	@location = @booking.location
 .p-10
 	.fl.f-b
-		= @booking.cargroup.shortname
-		@ 
-		= @booking.location.shortname
+		= @cargroup.shortname
+		at 
+		= @location.shortname
 	.fr
 		.legend
 			.g

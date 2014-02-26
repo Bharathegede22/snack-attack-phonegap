@@ -1,25 +1,62 @@
+:ruby
+	data = {}
+	@inventory.each do |i|
+		data[(i.slot - 330.minutes).to_i.to_s] = i.total
+	end
+	slot_s = nil
+	slot_e = nil
 - @inventory.each do |i|
-	- slot = i.slot - 330.minutes
-	- if slot.hour == 0 && slot.min == 0
-		.fc
-		.date
-			= slot.strftime("%d-%m-%y")
-	- if i.slot.to_i >= (@booking.starts.to_i + 330*60) && i.slot.to_i < (@booking.ends.to_i + 330*60)
-		- if slot.min == 0
-			.b
-		- if i.total > 1
-			.g.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Available"}
-		- elsif i.total == 1
-			.o.sel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Only 1 Available"}
+	:ruby
+		slot = i.slot - 330.minutes
+		total = i.total
+		if @page == 0
+			if slot < @booking.starts && slot >= @booking.starts - (@cargroup.wait_period.minutes + 15.minutes)
+				if !slot_s
+					if total < 1
+						total = 0
+						slot_s = @cargroup.wait_period - (@booking.starts.to_i - slot.to_i)/60
+					end
+				else
+					total = 0
+				end
+			elsif slot < @booking.ends && slot > @booking.ends - @cargroup.wait_period.minutes
+				tmp = (slot.to_i + @cargroup.wait_period.minutes.to_i)
+				if !slot_e
+					if data[tmp.to_s] < 1
+						total = 0
+						slot_e = @cargroup.wait_period - (@booking.ends.to_i - slot.to_i)/60
+					end
+				else
+					total = 0
+				end
+			elsif slot == @booking.ends
+				tmp = (slot.to_i + @cargroup.wait_period.minutes.to_i)
+				slot_e = @cargroup.wait_period if !slot_e && data[tmp.to_s] < 1
+			end
+			total = 0 if slot_s && slot >= @booking.starts && slot <= (@booking.starts + slot_s.minutes)
+			total = 0 if slot_e && slot >= @booking.ends && slot < (@booking.ends + slot_e.minutes)
+		end
+	- if @page != 0 || (slot.to_date.to_datetime.to_i >= @booking.starts.to_date.to_datetime.to_i && slot.to_date.to_datetime.to_i <= @booking.ends.to_date.to_datetime.to_i)
+		- if slot.hour == 0 && slot.min == 0
+			.fc
+			.date
+				= slot.strftime("%d-%m-%y")
+		- if i.slot.to_i >= (@booking.starts.to_i + 330*60) && i.slot.to_i < (@booking.ends.to_i + 330*60)
+			- if slot.min == 0
+				.b
+			- if total > 1
+				.g.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Available"}
+			- elsif total == 1
+				.o.sel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Only 1 Available"}
+			- else
+				.r.sel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Not Available"}
 		- else
-			.r.sel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Not Available"}
-	- else
-		- if slot.min == 0
-			.b
-		- if i.total > 1
-			.g.unsel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Available<br/>Outside Selection"}
-		- elsif i.total == 1
-			.o.unsel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Only 1 Available<br/>Outside Selection"}
-		- else
-			.r.unsel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Not Available<br/>Outside Selection"}
+			- if slot.min == 0
+				.b
+			- if total > 1
+				.g.unsel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Available<br/>Outside Selection"}
+			- elsif total == 1
+				.o.unsel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Only 1 Available<br/>Outside Selection"}
+			- else
+				.r.unsel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Not Available<br/>Outside Selection"}
 .fc
