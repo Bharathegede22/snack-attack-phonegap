@@ -50,7 +50,7 @@ class Payment < ActiveRecord::Base
 	end
 	
 	def self.check_status
-		Payment.find(:all, :conditions => ["status = 0 AND created_at >= ? AND created_at < ?", Time.now - 1.hours, Time.now - 30.minutes]).each do |p|
+		Payment.find(:all, :conditions => ["status = 0 AND created_at >= ? AND created_at < ?", Time.now - 1.hours, Time.now - 15.minutes]).each do |p|
 			Payu.check_status(p.encoded_id)
 		end
 	end

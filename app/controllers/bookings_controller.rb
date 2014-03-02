@@ -257,6 +257,8 @@ class BookingsController < ApplicationController
 			else
 				render json: {html: render_to_string('timeline_more.haml', layout: false)}
 			end
+		else
+			render_404
 		end
 	end
 	
