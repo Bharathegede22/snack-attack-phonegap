@@ -466,7 +466,7 @@ class Booking < ActiveRecord::Base
 	def revenue
 		tmp = 0
 		self.charges.each do |a|
-			if !a.activity.include?('early_return') && a.activity != 'vehicle_damage_fee'
+			if !a.activity.include?('early_return') && !['vehicle_damage_fee', 'fuel_refund', 'andhra_permit_refund'].include?(a.activity)
 				if a.refund > 0
 					tmp -= a.amount.to_i
 				else

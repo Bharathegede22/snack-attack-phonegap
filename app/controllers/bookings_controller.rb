@@ -1,6 +1,6 @@
 class BookingsController < ApplicationController
 	
-	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show]
+	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks]
 	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule]
 	before_filter :check_search, :only => [:checkout, :docreate, :license, :login]
 	before_filter :check_inventory, :only => [:checkout, :docreate, :dopayment, :license, :login, :payment]
@@ -147,10 +147,18 @@ class BookingsController < ApplicationController
 			session[:booking_id] = @booking.encoded_id
 			if @payment.status == 1
 		    flash[:notice] = "Thanks for the payment. Please continue."
-		  	redirect_to "/bookings/complete"
+		    if @booking.confirmed_payments.length == 1
+		  		redirect_to "/bookings/complete"
+		  	else
+		  		redirect_to "/bookings/thanks"
+		  	end
 		  elsif @payment.status == 3
 		    flash[:error] = "Your transaction is subject to manual approval by the payment gateway. We will keep you updated about the same through email."
-		  	redirect_to "/bookings/complete"
+		  	if @booking.confirmed_payments.length == 0
+		  		redirect_to "/bookings/complete"
+		  	else
+		  		redirect_to "/bookings/thanks"
+		  	end
 		  else
 		    flash[:error] = "Your transaction has failed. Please do a fresh transaction."
 		  	redirect_to "/bookings/failed"
@@ -237,6 +245,10 @@ class BookingsController < ApplicationController
 	def show
 		flash.keep
 		render layout: 'users'
+	end
+	
+	def thanks
+		render 'complete', layout: 'plain'
 	end
 	
 	def timeline
