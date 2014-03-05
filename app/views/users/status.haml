@@ -4,9 +4,9 @@
 		%b.caret
 	%ul.dropdown-menu.pull-right
 		%li
-			%a{:href => "#{@sslhost}/bookings?ref=header"} My Bookings
+			%a{:href => "#{@sslhost}/bookings"} My Bookings
 		%li
-			%a{:href => "#{@sslhost}/users/settings?ref=header"}
+			%a{:href => "#{@sslhost}/users/settings"}
 				Account Settings
 		%li
 			%a{:href => "javascript:void(0)", :onclick => "logOut('#{destroy_user_session_path}');"}

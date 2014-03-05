@@ -3,6 +3,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
 	def create
 		if request.xhr?
 			build_resource(sign_up_params)
+			resource.ref_initial = session[:ref_initial]
+			resource.ref_immediate = session[:ref_immediate]
 			if resource.save
 			  yield resource if block_given?
 			  if resource.active_for_authentication?

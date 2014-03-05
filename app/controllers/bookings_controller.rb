@@ -62,6 +62,8 @@ class BookingsController < ApplicationController
 		@booking.user_name = current_user.name
 		@booking.user_email = current_user.email
 		@booking.user_mobile = current_user.phone
+		@booking.ref_initial = session[:ref_initial]
+		@booking.ref_immediate = session[:ref_immediate]
 		@booking.through_signup = true
 		@booking.save!
 		session[:booking_id] = @booking.encoded_id

@@ -76,7 +76,7 @@ class User < ActiveRecord::Base
     @profile || @signup
   end
   
-	def self.find_for_oauth(auth, signed_in=nil)
+	def self.find_for_oauth(auth, signed_in=nil, ref_initial=nil, ref_immediate=nil)
   	is_new = 0
   	case auth.provider
   	when 'facebook'
@@ -84,7 +84,7 @@ class User < ActiveRecord::Base
   		user = User.where(:email => auth.info.email).first
   		unless user
   			is_new = 1
-	  		user = User.create(email:auth.info.email)
+	  		user = User.create!(email: auth.info.email, ref_initial: ref_initial, ref_immediate: ref_immediate, password: Devise.friendly_token.first(12))
 	  	end
   		img = user.image
   		if user.name.blank? || user.city.blank? || user.dob.blank? || !img || user.encrypted_password.blank?

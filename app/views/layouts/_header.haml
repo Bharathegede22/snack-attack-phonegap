@@ -42,7 +42,7 @@
 						%b.caret
 					%ul.dropdown-menu
 						%li
-							%a{href: "/tariff?ref=header"}
+							%a{href: "/tariff"}
 								Tariffs Details
 						%li
 							%a{href: "javascript:void(0)", onclick: "showModal('Tariff Calculator', '/calculator/tariff');"}
@@ -57,19 +57,19 @@
 						%b.caret
 					%ul.dropdown-menu
 						%li
-							%a{href: "/howtozoom?ref=header"}
+							%a{href: "/howtozoom"}
 								This is How You Zoom
 						%li
-							%a{href: "/safety?ref=header"}
+							%a{href: "/safety"}
 								Zoom in Safety
 						%li
-							%a{href: "/outstation?ref=header"}
+							%a{href: "/outstation"}
 								Going Outstation?
 						%li
-							%a{href: "/reva?ref=header"}
+							%a{href: "/reva"}
 								Zoom's Electric!
 						%li
-							%a{href: "/faq?ref=header"}
+							%a{href: "/faq"}
 								FAQs
 				%li.dropdown
 					- cls = (!@header.blank? && @header == 'policy') ? 'dropdown-toggle active' : 'dropdown-toggle'
@@ -78,16 +78,16 @@
 						%b.caret
 					%ul.dropdown-menu
 						%li
-							%a{href: "/fees?ref=header"}
+							%a{href: "/fees"}
 								Fee Policy
 						%li
-							%a{href: "/eligibility?ref=header"}
+							%a{href: "/eligibility"}
 								Eligibility
 						%li
-							%a{href: "/member?ref=header"}
+							%a{href: "/member"}
 								Member Agreement
 						%li
-							%a{href: "/privacy?ref=header"}
+							%a{href: "/privacy"}
 								Privacy Policy
 				%li
 					- cls = (!@header.blank? && @header == 'offers') ? 'active' : ''
