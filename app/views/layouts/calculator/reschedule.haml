@@ -22,11 +22,11 @@
 						- cargroups.each do |c|
 							- if (@car.blank? && c == cargroups.first) || (!@car.blank? && c.id == @car.id)
 								%li.active{:id => ("ReCara" + c.id.to_s), :role => "presentation"}
-									%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.shortname}','ReCars');"}
+									%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.shortname}','ReCars','recal');"}
 										= c.shortname
 							- else
 								%li{:id => ("ReCars" + c.id.to_s), :role => "presentation"}
-									%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.shortname}','ReCars');"}
+									%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.shortname}','ReCars','recal');"}
 										= c.shortname
 					.hide
 						- if @car.blank?
@@ -38,46 +38,46 @@
 				.p-t20.t-r
 					%b Original Pickup Time *
 			.col-md-6
-				#StartDate.box
+				#OrgStartDate.box.datetimebox
 					.cal
 					.txt
 						- if @starts.blank?
-							%input#StartDateVal.datetime.validate-presence{name: 'starts', type: "text", value: "", readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
+							%input#OrgStartDateVal.datetime.validate-presence.starts-recal{name: 'starts', type: "text", value: "", readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
 						- else
-							%input#StartDateVal.datetime.validate-presence{name: 'starts', type: "text", value: @starts.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
+							%input#OrgStartDateVal.datetime.validate-presence.starts-recal{name: 'starts', type: "text", value: @starts.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
 					.arrw
 					.fc
-				#StartDateValError.error
+				#OrgStartDateValError.error
 		.row
 			.col-md-5
 				.p-t20.t-r
 					%b Original Dropoff Time *
 			.col-md-6
-				#EndDate.box
+				#OrgEndDate.box.datetimebox
 					.cal
 					.txt
 						- if @ends.blank?
-							%input#EndDateVal.datetime.validate-presence{name: 'ends', type: "text", value: "", readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
+							%input#OrgEndDateVal.datetime.validate-presence.ends-recal{name: 'ends', type: "text", value: "", readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
 						- else
-							%input#EndDateVal.datetime.validate-presence{name: 'ends', type: "text", value: @ends.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
+							%input#OrgEndDateVal.datetime.validate-presence.ends-recal{name: 'ends', type: "text", value: @ends.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
 					.arrw
 					.fc
-				#EndDateValError.error
+				#OrgEndDateValError.error
 		.row
 			.col-md-5
 				.p-t20.t-r
 					%b New Dropoff Time *
 			.col-md-6
-				#EndDate.box
+				#NewEndDate.box.datetimebox
 					.cal
 					.txt
 						- if @newends.blank?
-							%input#EndDateVal.datetime.validate-presence{name: 'newends', type: "text", value: "", readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
+							%input#NewEndDateVal.datetime.validate-presence.newends-recal{name: 'newends', type: "text", value: "", readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
 						- else
-							%input#EndDateVal.datetime.validate-presence{name: 'newends', type: "text", value: @newends.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
+							%input#NewEndDateVal.datetime.validate-presence.newends-recal{name: 'newends', type: "text", value: @newends.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
 					.arrw
 					.fc
-				#EndDateValError.error
+				#NewEndDateValError.error
 		.row
 			.col-md-5
 				.p-t20.t-r
@@ -87,7 +87,7 @@
 					.unpointer
 						.loc
 						.txt
-							%input#KmsVal{name: 'kms', type: "text", value: @kms, 'dummy-title' => "Enter Kms"}
+							%input#KmsVal{name: 'kms', type: "text", value: @kms, 'dummy-title' => "Enter Kms", :onclick => "pushEvent('Rescheduler', 'Mileage');"}
 						.fc
 		.t-c
 			#ReschSubmit
@@ -177,8 +177,8 @@
 	when you reschedule your booking as per current tariff and policies.
 - if @calcar || @calstart || @calend
 	:javascript
-		initializeDatePicker();
-		_gaq.push(['_trackEvent', 'Rescheduler', 'Submit']);
+		initializeDatePicker('recal');
+		pushEvent('Rescheduler', 'Submit');
 - else
 	:javascript
-		initializeDatePicker();
+		initializeDatePicker('recal');

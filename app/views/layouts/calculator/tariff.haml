@@ -22,11 +22,11 @@
 						- cargroups.each do |c|
 							- if (@car.blank? && c == cargroups.first) || (!@car.blank? && c.id == @car.id)
 								%li.active{:id => ("CalCars" + c.id.to_s), :role => "presentation"}
-									%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.name}','CalCars');"}
+									%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.name}','CalCars','cal');"}
 										= c.shortname
 							- else
 								%li{:id => ("CalCars" + c.id.to_s), :role => "presentation"}
-									%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.name}','CalCars');"}
+									%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.name}','CalCars','cal');"}
 										= c.shortname
 					.hide
 						- if @car.blank?
@@ -38,13 +38,13 @@
 				.p-t20.t-r
 					%b Pickup Date & Time *
 			.col-md-6
-				#CalStartDate.box
+				#CalStartDate.box.datetimebox
 					.cal
 					.txt
 						- if @starts.blank?
-							%input#CalStartDateVal.datetime.validate-presence{name: 'starts', type: "text", value: "", readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
+							%input#CalStartDateVal.datetime.validate-presence.starts-cal{name: 'starts', type: "text", value: "", readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
 						- else
-							%input#CalStartDateVal.datetime.validate-presence{name: 'starts', type: "text", value: @starts.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
+							%input#CalStartDateVal.datetime.validate-presence.starts-cal{name: 'starts', type: "text", value: @starts.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
 					.arrw
 					.fc
 				#CalStartDateValError.error
@@ -53,13 +53,13 @@
 				.p-t20.t-r
 					%b Dropoff Date & Time *
 			.col-md-6
-				#CalEndDate.box
+				#CalEndDate.box.datetimebox
 					.cal
 					.txt
 						- if @ends.blank?
-							%input#CalEndDateVal.datetime.validate-presence{name: 'ends', type: "text", value: "", readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
+							%input#CalEndDateVal.datetime.validate-presence.ends-cal{name: 'ends', type: "text", value: "", readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
 						- else
-							%input#CalEndDateVal.datetime.validate-presence{name: 'ends', type: "text", value: @ends.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
+							%input#CalEndDateVal.datetime.validate-presence.ends-cal{name: 'ends', type: "text", value: @ends.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
 					.arrw
 					.fc
 				#CalEndDateValError.error
@@ -72,7 +72,7 @@
 					.unpointer
 						.loc
 						.txt
-							%input#KmsVal{name: 'kms', type: "text", value: @kms, 'dummy-title' => "Enter Kms"}
+							%input#KmsVal{name: 'kms', type: "text", value: @kms, 'dummy-title' => "Enter Kms", :onclick => "pushEvent('Calculator', 'Mileage');"}
 						.fc
 		.t-c
 			#TariffSubmit

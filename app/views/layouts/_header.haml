@@ -8,11 +8,8 @@
 		%a.logo{:href => '/'}
 		%a.logo-rtt{:href => 'http://www.rtt.co.in', :target => '_blank', :rel => 'nofollow'}
 		.links
-			.broadcast
-				.fl
-					- announcement = Announcement.active
-					= announcement.first.note.html_safe if !announcement.blank?
-				.fr
+			.fr
+				.broadcast.fr
 					#UserBar.dropdown
 						%a.dropdown-toggle.p-r10{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
 							Sign Up / Sign In
@@ -28,11 +25,11 @@
 								%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/forgot');"}
 									Forgot Password
 				.fc
-			.support
-				#{CommonHelper::CUSTOMER_CARE}
+				.support
+					#{CommonHelper::CUSTOMER_CARE}
 			%ul.nav.navbar-nav.fr
 				- if @header.blank? || @header != 'homepage'
-					- cls = (!@header.blank? && @header == 'search') ? 'active' : ''
+					- cls = (!@header.blank? && (@header == 'search' || @header == 'booking')) ? 'active' : ''
 					%li
 						%a{class: cls, href: "javascript:void(0)", onclick: "showSearch();"} Book Cars
 				%li.dropdown

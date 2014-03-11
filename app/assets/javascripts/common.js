@@ -41,18 +41,32 @@ function carouselPause() {
 	});
 }
 
-function changeCar(id,name,dom) {
+function changeCar(id,name,dom,action) {
 	$('#'+dom+'Val').val(id);
 	$('#'+dom+'Html').html(name);
 	$('#'+dom+'Menu').find('li').removeClass('active');
 	$('#'+dom+id).addClass('active');
+	if(action == 'home') {
+		pushEvent('Homepage Search', 'Car', name);
+	} else if(action == 'nav') {
+		pushEvent('Navigation Search', 'Car', name);
+	} else if(action == 'cal') {
+		pushEvent('Calculator', 'Car', name);
+	} else if(action == 'recal') {
+		pushEvent('Rescheduler', 'Car', name);
+	}
 }
 
-function changeLocation(id,name) {
+function changeLocation(id,name,action) {
 	$('#LocationVal').val(id);
 	$('#LocationHtml').html(name);
 	$('#LocationsMenu').find('li').removeClass('active');
 	$('#Location'+id).addClass('active');
+	if(action == 'home') {
+		pushEvent('Homepage Search', 'Location', name);
+	} else if(action == 'nav') {
+		pushEvent('Navigation Search', 'Location', name);
+	}
 }
 
 function checkJail() {
@@ -171,38 +185,61 @@ function initializeDatePicker() {
 		minView: 2, 
 		autoclose: true
 	});
-	$("#StartDate").click(function() {
-		$('#StartDateValError').hide();
-		$('#StartDateVal').removeClass('field_with_errors');
-		$('#StartDateVal').datetimepicker('show');
-	});
-	$("#EndDate").click(function() {
-		$('#EndDateValError').hide();
-		$('#EndDateVal').removeClass('field_with_errors');
-		if($('#StartDateVal').val() != $('#StartDateVal').attr('dummy-title')) {
-			$('#EndDateVal').datetimepicker('show');
-		} else {
-			$('#EndDateValError').html('please select start date first');
-			$('#EndDateValError').show();
+	$(".datetimebox").click(function() {
+		var id = $(this).attr("id");
+		$('#' + id + 'ValError').hide();
+		$('#' + id + 'Val').removeClass('field_with_errors');
+		$('#' + id + 'Val').datetimepicker('show');
+		if(id.search('Start') != -1) {
+			if($('#' + id + 'Val').hasClass('starts-home')) {
+				pushEvent('Homepage Search', 'Starts');
+			} else if($('#' + id + 'Val').hasClass('starts-nav')) {
+				pushEvent('Navigation Search', 'Starts');
+			} else if($('#' + id + 'Val').hasClass('starts-cal')) {
+				pushEvent('Calculator', 'Starts');
+			} else if($('#' + id + 'Val').hasClass('starts-recal')) {
+				pushEvent('Rescheduler', 'Org Starts');
+			}
+		} else if(id.search('End') != -1) {
+			var pid = id.replace('End','Start');
+			if($('#' + pid + 'Val').val() != $('#' + pid + 'Val').attr('dummy-title')) {
+				$('#' + id + 'Val').datetimepicker('show');
+				if($('#' + id + 'Val').hasClass('ends-home')) {
+					pushEvent('Homepage Search', 'Ends');
+				} else if($('#' + id + 'Val').hasClass('ends-nav')) {
+					pushEvent('Navigation Search', 'Ends');
+				} else if($('#' + id + 'Val').hasClass('ends-cal')) {
+					pushEvent('Calculator', 'Ends');
+				} else if($('#' + id + 'Val').hasClass('ends-recal')) {
+					pushEvent('Rescheduler', 'Org Ends');
+				} else if($('#' + id + 'Val').hasClass('newends-recal')) {
+					pushEvent('Rescheduler', 'New Ends');
+				}
+			} else {
+				alert(id);
+				$('#' + id + 'ValError').html('please select start date first');
+				$('#' + id + 'ValError').show();
+			}
 		}
 	});
-	$('#StartDateVal').datetimepicker().on('hide', function(ev) {
+	$('.datetime').datetimepicker().on('hide', function(ev) {
 		if(ev.date.valueOf() < jQuery.now().valueOf()) {
-			$('#StartDateVal').val($('#StartDateVal').attr('dummy-title'));
+			$('#' + ev.currentTarget.id).val($('#' + ev.currentTarget.id).attr('dummy-title'));
 		}
 	});
-	$('#EndDateVal').datetimepicker().on('hide', function(ev) {
-		if(ev.date.valueOf() < jQuery.now().valueOf()) {
-			$('#EndDateVal').val($('#EndDateVal').attr('dummy-title'));
+	$('.datetime').datetimepicker().on('changeDate', function(ev) {
+		var id = ev.currentTarget.id;
+		if(id.search('Start') != -1) {
+			var d = ev.date;
+			d = new Date(d.getTime() - 270*60000);
+			var nid = id.replace('Start','End');
+			$('#' + nid).datetimepicker('setStartDate', d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes());
+			$('#' + nid).removeClass('field_with_errors');
+			$('#' + nid + 'Error').hide();
+			$('#' + nid).datetimepicker('show');
+			$('.ends-home').datetimepicker().on('changeDate', function(ev) {pushEvent('Homepage Search', 'Ends');});
+			$('.ends-nav').datetimepicker().on('changeDate', function(ev) {pushEvent('Navigation Search', 'Ends');});
 		}
-	});
-	$('#StartDateVal').datetimepicker().on('changeDate', function(ev) {
-		var d = ev.date;
-		d = new Date(d.getTime() - 270*60000);
-    $('#EndDateVal').datetimepicker('setStartDate', d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes());
-    $('#EndDateVal').removeClass('field_with_errors');
-    $('#EndDateValError').hide();
-    $('#EndDateVal').datetimepicker('show');
 	});
 }
 
@@ -264,6 +301,10 @@ function postData(complete_url,divId,divAction,divWait,dataStr) {
 	return false;
 }
 
+function pushEvent(category, action, label) {
+	_gaq.push(['_trackEvent', category, action, label]);
+}
+
 function showAvailability(carId, locId, avail, locName) {
 	$('#Avail' + carId).removeClass('yes no');
 	if(avail == 1) {
@@ -312,7 +353,7 @@ function showSearch() {
 	$('#SHWait').show();
 	$('#SHContent').html('');
 	$('#SH').show();
-	$('#NavBuffer').css('height', 90);
+	$('#NavBuffer').removeClass('nav-buffer').addClass('nav-buffer-big');
 	getData('/bookings/widget', 'SHContent', 'replace' ,'SHWait');
 }
 

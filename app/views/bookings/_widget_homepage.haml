@@ -10,24 +10,24 @@
 	end
 .vertical-widget
 	%form{:id => "SearchForm", :onsubmit => "return SubmitForm(this,'/search/homepage','SearchFormDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
-		#StartDate.box
+		#StartDate.box.datetimebox
 			.cal
 			.txt
 				- if @booking.starts.blank?
-					%input#StartDateVal.datetime.validate-presence{name: 'starts', type: "text", value: "Pickup Date & Time*", readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
+					%input#StartDateVal.datetime.validate-presence.starts-home{name: 'starts', type: "text", value: "Pickup Date & Time*", readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
 				- else
-					%input#StartDateVal.datetime.validate-presence{name: 'starts', type: "text", value: @booking.starts.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
+					%input#StartDateVal.datetime.validate-presence.starts-home{name: 'starts', type: "text", value: @booking.starts.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
 			.arrw
 			.fc
 		#StartDateValError.error
 			= errortxt(@booking.errors[:starts].uniq.join(', '))
-		#EndDate.box
+		#EndDate.box.datetimebox
 			.cal
 			.txt
 				- if @booking.ends.blank?
-					%input#EndDateVal.datetime.validate-presence{name: 'ends', type: "text", value: "Dropoff Date & Time*", readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
+					%input#EndDateVal.datetime.validate-presence.ends-home{name: 'ends', type: "text", value: "Dropoff Date & Time*", readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
 				- else
-					%input#EndDateVal.datetime.validate-presence{name: 'ends', type: "text", value: @booking.ends.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
+					%input#EndDateVal.datetime.validate-presence.ends-home{name: 'ends', type: "text", value: @booking.ends.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
 			.arrw
 			.fc
 		#EndDateValError.error
@@ -44,16 +44,16 @@
 				.fc
 			%ul#LocationsMenu.dropdown-menu{:role => "menu", 'aria-labelledby' => 'Locations'}
 				%li{:id => ("Location"), :role => "presentation"}
-					%a{:href => "javascript:void(0)", :onclick => "changeLocation('','All Locations');"}
+					%a{:href => "javascript:void(0)", :onclick => "changeLocation('','All Locations','home');"}
 						All Locations
 				- Location.live.each do |l|
 					- if l.id == @booking.location_id
 						%li.active{:id => ("Location" + l.id.to_s), :role => "presentation"}
-							%a{:href => "javascript:void(0)", :onclick => "changeLocation(#{l.id},'#{l.shortname}');"}
+							%a{:href => "javascript:void(0)", :onclick => "changeLocation(#{l.id},'#{l.shortname}','home');"}
 								= l.shortname
 					- else
 						%li{:id => ("Location" + l.id.to_s), :role => "presentation"}
-							%a{:href => "javascript:void(0)", :onclick => "changeLocation(#{l.id},'#{l.shortname}');"}
+							%a{:href => "javascript:void(0)", :onclick => "changeLocation(#{l.id},'#{l.shortname}','home');"}
 								= l.shortname
 		.dropdown
 			#Cars.dropdown-toggle.box{'data-toggle' => "dropdown"}
@@ -67,16 +67,16 @@
 				.fc
 			%ul#CarsMenu.dropdown-menu{:role => "menu", 'aria-labelledby' => 'Cars'}
 				%li{:id => ("Cars"), :role => "presentation"}
-					%a{:href => "javascript:void(0)", :onclick => "changeCar('','All Cars','Cars');"}
+					%a{:href => "javascript:void(0)", :onclick => "changeCar('','All Cars','Cars','home');"}
 						All Cars
 				- Cargroup.list.each do |c|
 					- if c.id == @booking.cargroup_id
 						%li.active{:id => ("Cars" + c.id.to_s), :role => "presentation"}
-							%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.shortname}','Cars');"}
+							%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.shortname}','Cars','home');"}
 								= c.shortname
 					- else
 						%li{:id => ("Cars" + c.id.to_s), :role => "presentation"}
-							%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.shortname}','Cars');"}
+							%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.shortname}','Cars','home');"}
 								= c.shortname
 		.hide
 			%input#LocationVal{name: 'loc', type: "text", value: @booking.location_id, readonly: 'true'}

@@ -17,6 +17,7 @@ class BookingsController < ApplicationController
 	
 	def checkout
 		generic_meta
+		@header = 'booking'
 	end
 	
 	def complete
@@ -121,11 +122,13 @@ class BookingsController < ApplicationController
 			end
 		end
 		generic_meta
+		@header = 'booking'
 	end
 	
 	def login
 		redirect_to "/bookings/do" and return if user_signed_in? && current_user.check_details
 		generic_meta
+		@header = 'booking'
 	end
 	
 	def payment
