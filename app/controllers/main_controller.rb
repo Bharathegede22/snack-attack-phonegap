@@ -79,7 +79,7 @@ class MainController < ApplicationController
 	
 	def eligibility
 		@meta_title = "Is Zoom For Me? | Eligibility Policy | Zoomcar.in"
-		@meta_description = "The eligibility policy for using Zoom's cars.  Members must be 23 years with valid driving license.  Payment is by credit or debit card only"
+		@meta_description = "The eligibility policy for using Zoom's cars.  Members must be #{CommonHelper::MIN_AGE} years with valid driving license.  Payment is by credit or debit card only"
 		@meta_keywords = "zoomcar eligibility policy"
 		@canonical = "http://www.zoomcar.in/eligibility"
 		@header = 'policy'

@@ -20,6 +20,41 @@ jQuery.fn.jail = function() {
   return this;
 }
 
+function autoResize(id,count) {
+	$("#Wait").hide();
+	$("#IframeBox").fadeIn();
+}
+
+function bindCountry() {
+	$('.bind-country').bind("change", function() {
+		if($(this).val() == 'IN') {
+			$('.bind-to-country').show();
+		} else {
+			$('.bind-to-country').hide();
+		}
+	});
+}
+
+function carouselPause() {
+	$('.carousel-indicators').find('li').bind("click", function() {
+		$('.carousel').carousel('pause');
+	});
+}
+
+function changeCar(id,name,dom) {
+	$('#'+dom+'Val').val(id);
+	$('#'+dom+'Html').html(name);
+	$('#'+dom+'Menu').find('li').removeClass('active');
+	$('#'+dom+id).addClass('active');
+}
+
+function changeLocation(id,name) {
+	$('#LocationVal').val(id);
+	$('#LocationHtml').html(name);
+	$('#LocationsMenu').find('li').removeClass('active');
+	$('#Location'+id).addClass('active');
+}
+
 function checkJail() {
 	$('.lazy').each(function() {
 		var cacheSrc = $(this).attr("data-background");
@@ -30,25 +65,31 @@ function checkJail() {
 	});
 }
 
-function autoResize(id,count) {
-	$("#Wait").hide();
-	$("#IframeBox").fadeIn();
+function checkout() {
+	window.location = "/bookings/docreate";
 }
 
-function showModal(title,url) {
-	$('#ModalContentWait').show();
-	$('#ModalContent').html('');
-	$('#ModalLabel').text(title);
-	$('#Modal').modal('show');
-	getData(url, 'ModalContent', 'replace' ,'ModalContentWait');
+function checkUser() {
+	if($('#UserBar').length) {
+		getData("/users/status", 'UserBar', 'replace', null);
+	}
 }
 
-function showSearch() {
-	$('#SHWait').show();
-	$('#SHContent').html('');
-	$('#SH').show();
-	$('#NavBuffer').css('height', 90);
-	getData('/bookings/widget', 'SHContent', 'replace' ,'SHWait');
+function clearLogin() {
+	$('#UserBar').popover('destroy');
+}
+
+function deltaX() {
+	(function(d,w,s,l,i){
+		w[l]=w[l]||[];w[l].push({xb:i,'start':new Date().getTime()});
+		var x = d.createElement(s);x.async = true;
+		x.src = ('https:' == d.location.protocol ? 'https://d1adj61x0fgvmc.cloudfront.net/' : 'http://s.adx.io/')+i+'/uni.js';
+		var s = d.getElementsByTagName(s)[0];s.parentNode.insertBefore(x, s);
+	})(document, window, 'script', 'universal_variable', '35BDU410');
+}
+
+function doBooking(carId, locId) {
+	window.location = "/bookings/do?car=" + carId + "&loc=" + locId;
 }
 
 function getData(complete_url,divId,divAction,divWait) {
@@ -105,6 +146,70 @@ function getData(complete_url,divId,divAction,divWait) {
 	return false;
 }
 
+function hideCalculator() {
+	$('#Overlay').toggle('explode');
+}
+
+function initializeDatePicker() {
+	var d = new Date(jQuery.now());
+	var nd = new Date(); nd.setDate(nd.getDate() + 60);
+	var mint = d.getMinutes();
+ 	mint = (parseInt((mint/15))*15) + 15;
+  $(".datetime").datetimepicker({
+		format: "dd/mm/yyyy hh:ii",
+		startDate: d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate() + " " + d.getHours() + ":" + mint,
+		endDate: nd.getFullYear() + "-" + (nd.getMonth()+1) + "-" + nd.getDate() + " 00:00",
+		startView: 2,
+		autoclose: true,
+		minuteStep: 15,
+		todayHighlight: true
+	});
+	$(".dob").datetimepicker({
+		format: "dd/mm/yyyy",
+		endDate: d.getDate() + "/" + (d.getMonth()+1) + "/" + (d.getFullYear() - 21),
+		startView: 4,
+		minView: 2, 
+		autoclose: true
+	});
+	$("#StartDate").click(function() {
+		$('#StartDateValError').hide();
+		$('#StartDateVal').removeClass('field_with_errors');
+		$('#StartDateVal').datetimepicker('show');
+	});
+	$("#EndDate").click(function() {
+		$('#EndDateValError').hide();
+		$('#EndDateVal').removeClass('field_with_errors');
+		if($('#StartDateVal').val() != $('#StartDateVal').attr('dummy-title')) {
+			$('#EndDateVal').datetimepicker('show');
+		} else {
+			$('#EndDateValError').html('please select start date first');
+			$('#EndDateValError').show();
+		}
+	});
+	$('#StartDateVal').datetimepicker().on('hide', function(ev) {
+		if(ev.date.valueOf() < jQuery.now().valueOf()) {
+			$('#StartDateVal').val($('#StartDateVal').attr('dummy-title'));
+		}
+	});
+	$('#EndDateVal').datetimepicker().on('hide', function(ev) {
+		if(ev.date.valueOf() < jQuery.now().valueOf()) {
+			$('#EndDateVal').val($('#EndDateVal').attr('dummy-title'));
+		}
+	});
+	$('#StartDateVal').datetimepicker().on('changeDate', function(ev) {
+		var d = ev.date;
+		d = new Date(d.getTime() - 270*60000);
+    $('#EndDateVal').datetimepicker('setStartDate', d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes());
+    $('#EndDateVal').removeClass('field_with_errors');
+    $('#EndDateValError').hide();
+    $('#EndDateVal').datetimepicker('show');
+	});
+}
+
+function logOut(url) {
+	getData(url, 'JsResponse', 'replace', null);
+}
+
 function postData(complete_url,divId,divAction,divWait,dataStr) {
 	checkajax = $("#AjaxActive").val();
   if(checkajax == 1){
@@ -159,29 +264,96 @@ function postData(complete_url,divId,divAction,divWait,dataStr) {
 	return false;
 }
 
-function ValidateEmail(email){
-  var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  if (! email.match(re)) {
-    return false;
-  }
-  return true;
-}
-
-function ValidateNumeric(numValue){
-	if (!numValue.toString().match(/^[-]?\d*\.?\d*$/)){
-		return false;
-	}
-	return true;
-}
-
-function ValidateDate(inputText) {
-	var dateformat = /^(0?[1-9]|[12][0-9]|3[01])[\/](0?[1-9]|1[012])[\/]\d{4}$/;
-	if(inputText.value.match(dateformat)) {  
-		return true;
+function showAvailability(carId, locId, avail, locName) {
+	$('#Avail' + carId).removeClass('yes no');
+	if(avail == 1) {
+		$('#Avail' + carId).text("Available");
+		$('#Avail' + carId).addClass('yes');
+		$("#ButtonYes" + carId).attr("onClick", "doBooking(" + carId + ", " + locId + ");");
+		$("#ButtonYes" + carId).show();
+		$("#ButtonNo" + carId).hide();
 	} else {
-		return false;
+		$('#Avail' + carId).text("Not Available");
+		$('#Avail' + carId).addClass('no');
+		$("#ButtonYes" + carId).attr("onClick", "");
+		$("#ButtonYes" + carId).hide();
+		$("#ButtonNo" + carId).show();
 	}
-}  
+	$('#LocName' + carId).text(locName);
+	$('#LocMenu' + carId).find('li').removeClass('active');
+	$('#LocSel' + carId + locId).addClass('active');
+	if($('#Timeline' + carId).html() != '') {
+		showTimeline(carId, 0);
+		showTimeline(carId, 0);
+	}
+}
+
+function showCalculator(action) {
+	if (action == 'tariff') {
+		_gaq.push(['_trackEvent', 'Calculator', 'Open']);
+	} else {
+		_gaq.push(['_trackEvent', 'Rescheduler', 'Open']);
+	}
+	$('#CalculatorContentWait').show();
+	$('#CalculatorContent').html('');
+	showModal();
+	getData("/showcal/" + action, 'CalculatorContent', 'replace' ,'CalculatorContentWait');
+}
+
+function showModal(title,url) {
+	$('#ModalContentWait').show();
+	$('#ModalContent').html('');
+	$('#ModalLabel').text(title);
+	$('#Modal').modal('show');
+	getData(url, 'ModalContent', 'replace' ,'ModalContentWait');
+}
+
+function showSearch() {
+	$('#SHWait').show();
+	$('#SHContent').html('');
+	$('#SH').show();
+	$('#NavBuffer').css('height', 90);
+	getData('/bookings/widget', 'SHContent', 'replace' ,'SHWait');
+}
+
+function showTimeline(carId, action) {
+	var locId = $('#LocMenu' + carId).find('li.active').attr("id").split('LocSel' + carId)[1];
+	if(action == 0) {
+		$('#Timeline' + carId).slideUp();
+		if($('#Timeline' + carId).html() == '') {
+			getData("/bookings/timeline?car=" + carId + "&location=" + locId, 'Timeline' + carId, 'replace', null);
+		} else {
+			$('#Timeline' + carId).html('');
+			$('#TimelineAction' + carId).html("<div class='arrw-d'></div>");
+			$('#TimelineAction' + carId).attr("data-original-title", 'Show Availability').tooltip('fixTitle');
+		}
+		$('#TimelineAction' + carId).tooltip('hide');
+	} else if(action == 1) {
+		var num = $('#TimelineMoreNum' + carId).val();
+		getData("/bookings/timeline?car=" + carId + "&location=" + locId + "&page=" + num, 'TimelineContent' + carId, 'append', null);
+	} else if(action == -1) {
+		var num = $('#TimelineLessNum' + carId).val();
+		getData("/bookings/timeline?car=" + carId + "&location=" + locId + "&page=" + num, 'TimelineContent' + carId, 'prepend', null);
+	}
+}
+
+function socialPlugins() {
+	(function(d, s, id) {
+		var js, fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) return;
+		js = d.createElement(s); js.id = id;
+		js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=196733960374479";
+		fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));
+
+	(function() {
+		var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+		po.src = 'https://apis.google.com/js/plusone.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+	})();
+
+	(function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs"));
+}
 
 function SubmitForm(frm,url,divId){
 	var frmId = frm.id;
@@ -280,157 +452,14 @@ function SubmitForm(frm,url,divId){
   return false;
 } 
 
-function initializeDatePicker() {
-	var d = new Date(jQuery.now());
-	var nd = new Date(); nd.setDate(nd.getDate() + 60);
-	var mint = d.getMinutes();
- 	mint = (parseInt((mint/15))*15) + 15;
-  $(".datetime").datetimepicker({
-		format: "dd/mm/yyyy hh:ii",
-		startDate: d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate() + " " + d.getHours() + ":" + mint,
-		endDate: nd.getFullYear() + "-" + (nd.getMonth()+1) + "-" + nd.getDate() + " 00:00",
-		startView: 2,
-		autoclose: true,
-		minuteStep: 15,
-		todayHighlight: true
+function userActive() {
+	$('#UserBar').popover({
+		title: 'Signup',
+		content: "Your account is activated, please continue.",
+		placement: 'bottom'
 	});
-	$(".dob").datetimepicker({
-		format: "dd/mm/yyyy",
-		endDate: d.getDate() + "/" + (d.getMonth()+1) + "/" + (d.getFullYear() - 22),
-		startView: 4,
-		minView: 2, 
-		autoclose: true
-	});
-	$("#StartDate").click(function() {
-		$('#StartDateValError').hide();
-		$('#StartDateVal').removeClass('field_with_errors');
-		$('#StartDateVal').datetimepicker('show');
-	});
-	$("#EndDate").click(function() {
-		$('#EndDateValError').hide();
-		$('#EndDateVal').removeClass('field_with_errors');
-		if($('#StartDateVal').val() != $('#StartDateVal').attr('dummy-title')) {
-			$('#EndDateVal').datetimepicker('show');
-		} else {
-			$('#EndDateValError').html('please select start date first');
-			$('#EndDateValError').show();
-		}
-	});
-	$('#StartDateVal').datetimepicker().on('hide', function(ev) {
-		if(ev.date.valueOf() < jQuery.now().valueOf()) {
-			$('#StartDateVal').val($('#StartDateVal').attr('dummy-title'));
-		}
-	});
-	$('#EndDateVal').datetimepicker().on('hide', function(ev) {
-		if(ev.date.valueOf() < jQuery.now().valueOf()) {
-			$('#EndDateVal').val($('#EndDateVal').attr('dummy-title'));
-		}
-	});
-	$('#StartDateVal').datetimepicker().on('changeDate', function(ev) {
-		var d = ev.date;
-		d = new Date(d.getTime() - 270*60000);
-    $('#EndDateVal').datetimepicker('setStartDate', d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes());
-    $('#EndDateVal').removeClass('field_with_errors');
-    $('#EndDateValError').hide();
-    $('#EndDateVal').datetimepicker('show');
-	});
-}
-
-function showCalculator(action) {
-	if (action == 'tariff') {
-		_gaq.push(['_trackEvent', 'Calculator', 'Open']);
-	} else {
-		_gaq.push(['_trackEvent', 'Rescheduler', 'Open']);
-	}
-	$('#CalculatorContentWait').show();
-	$('#CalculatorContent').html('');
-	showModal();
-	getData("/showcal/" + action, 'CalculatorContent', 'replace' ,'CalculatorContentWait');
-}
-
-function hideCalculator() {
-	$('#Overlay').toggle('explode');
-}
-
-function changeCar(id,name,dom) {
-	$('#'+dom+'Val').val(id);
-	$('#'+dom+'Html').html(name);
-	$('#'+dom+'Menu').find('li').removeClass('active');
-	$('#'+dom+id).addClass('active');
-}
-
-function changeLocation(id,name) {
-	$('#LocationVal').val(id);
-	$('#LocationHtml').html(name);
-	$('#LocationsMenu').find('li').removeClass('active');
-	$('#Location'+id).addClass('active');
-}
-
-function showAvailability(carId, locId, avail, locName) {
-	$('#Avail' + carId).removeClass('yes no');
-	if(avail == 1) {
-		$('#Avail' + carId).text("Available");
-		$('#Avail' + carId).addClass('yes');
-		$("#ButtonYes" + carId).attr("onClick", "doBooking(" + carId + ", " + locId + ");");
-		$("#ButtonYes" + carId).show();
-		$("#ButtonNo" + carId).hide();
-	} else {
-		$('#Avail' + carId).text("Not Available");
-		$('#Avail' + carId).addClass('no');
-		$("#ButtonYes" + carId).attr("onClick", "");
-		$("#ButtonYes" + carId).hide();
-		$("#ButtonNo" + carId).show();
-	}
-	$('#LocName' + carId).text(locName);
-	$('#LocMenu' + carId).find('li').removeClass('active');
-	$('#LocSel' + carId + locId).addClass('active');
-	if($('#Timeline' + carId).html() != '') {
-		showTimeline(carId, 0);
-		showTimeline(carId, 0);
-	}
-}
-
-function showTimeline(carId, action) {
-	var locId = $('#LocMenu' + carId).find('li.active').attr("id").split('LocSel' + carId)[1];
-	if(action == 0) {
-		$('#Timeline' + carId).slideUp();
-		if($('#Timeline' + carId).html() == '') {
-			getData("/bookings/timeline?car=" + carId + "&location=" + locId, 'Timeline' + carId, 'replace', null);
-		} else {
-			$('#Timeline' + carId).html('');
-			$('#TimelineAction' + carId).html("<div class='arrw-d'></div>");
-			$('#TimelineAction' + carId).attr("data-original-title", 'Show Availability').tooltip('fixTitle');
-		}
-		$('#TimelineAction' + carId).tooltip('hide');
-	} else if(action == 1) {
-		var num = $('#TimelineMoreNum' + carId).val();
-		getData("/bookings/timeline?car=" + carId + "&location=" + locId + "&page=" + num, 'TimelineContent' + carId, 'append', null);
-	} else if(action == -1) {
-		var num = $('#TimelineLessNum' + carId).val();
-		getData("/bookings/timeline?car=" + carId + "&location=" + locId + "&page=" + num, 'TimelineContent' + carId, 'prepend', null);
-	}
-}
-
-function doBooking(carId, locId) {
-	window.location = "/bookings/do?car=" + carId + "&loc=" + locId;
-}
-
-function checkout() {
-	window.location = "/bookings/docreate";
-}
-
-function checkUser() {
-	if($('#UserBar').length) {
-		getData("/users/status", 'UserBar', 'replace', null);
-	}
-}
-
-function logOut(url) {
-	getData(url, 'JsResponse', 'replace', null);
-}
-
-function clearLogin() {
-	$('#UserBar').popover('destroy');
+	$('#UserBar').popover('show');
+	window.setTimeout(clearLogin, 3000);
 }
 
 function userLogin() {
@@ -453,57 +482,28 @@ function userLogout() {
 	window.setTimeout(clearLogin, 3000);
 }
 
-function userActive() {
-	$('#UserBar').popover({
-		title: 'Signup',
-		content: "Your account is activated, please continue.",
-		placement: 'bottom'
-	});
-	$('#UserBar').popover('show');
-	window.setTimeout(clearLogin, 3000);
+function ValidateDate(inputText) {
+	var dateformat = /^(0?[1-9]|[12][0-9]|3[01])[\/](0?[1-9]|1[012])[\/]\d{4}$/;
+	if(inputText.value.match(dateformat)) {  
+		return true;
+	} else {
+		return false;
+	}
+}  
+
+function ValidateEmail(email){
+  var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  if (! email.match(re)) {
+    return false;
+  }
+  return true;
 }
 
-function bindCountry() {
-	$('.bind-country').bind("change", function() {
-		if($(this).val() == 'IN') {
-			$('.bind-to-country').show();
-		} else {
-			$('.bind-to-country').hide();
-		}
-	});
-}
-
-function carouselPause() {
-	$('.carousel-indicators').find('li').bind("click", function() {
-		$('.carousel').carousel('pause');
-	});
-}
-
-function socialPlugins() {
-	(function(d, s, id) {
-		var js, fjs = d.getElementsByTagName(s)[0];
-		if (d.getElementById(id)) return;
-		js = d.createElement(s); js.id = id;
-		js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=196733960374479";
-		fjs.parentNode.insertBefore(js, fjs);
-	}(document, 'script', 'facebook-jssdk'));
-
-	(function() {
-		var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-		po.src = 'https://apis.google.com/js/plusone.js';
-		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-	})();
-
-	(function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs"));
-}
-
-function deltaX() {
-	(function(d,w,s,l,i){
-		w[l]=w[l]||[];w[l].push({xb:i,'start':new Date().getTime()});
-		var x = d.createElement(s);x.async = true;
-		x.src = ('https:' == d.location.protocol ? 'https://d1adj61x0fgvmc.cloudfront.net/' : 'http://s.adx.io/')+i+'/uni.js';
-		var s = d.getElementsByTagName(s)[0];s.parentNode.insertBefore(x, s);
-	})(document, window, 'script', 'universal_variable', '35BDU410');
+function ValidateNumeric(numValue){
+	if (!numValue.toString().match(/^[-]?\d*\.?\d*$/)){
+		return false;
+	}
+	return true;
 }
 
 deltaX();

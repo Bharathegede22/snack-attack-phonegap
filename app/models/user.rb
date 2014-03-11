@@ -41,7 +41,7 @@ class User < ActiveRecord::Base
 	end
 	
   def check_dob
-  	errors.add(:dob, "can't be less than 23 years") if !self.dob.blank? && (self.dob.to_datetime > (Time.zone.now - 23.years))
+  	errors.add(:dob, "can't be less than #{CommonHelper::MIN_AGE} years") if !self.dob.blank? && (self.dob.to_datetime > (Time.zone.now - CommonHelper::MIN_AGE.years))
   end
   
   def fleet?
