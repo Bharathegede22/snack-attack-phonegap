@@ -37,11 +37,10 @@
 					%td
 						.p-5.f-b
 							= link_to j.title, j.link, :target => '_blank'
-						%br/
 					%td{:align => 'right'}
 						.p-5
 							= CommonHelper::HIRE_TYPE[j.hire_type][0] + ", Bangalore"
-						%br/
+				- department = j.department
 		%br/
 		%br/
 		%br/
