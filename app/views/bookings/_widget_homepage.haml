@@ -88,7 +88,9 @@
 - if request.post?
 	- if @booking && @booking.valid?
 		:javascript
+			pushEvent('Homepage Search', 'Submit');
 			window.location = "http://#{HOSTNAME}/search";
 	- else
 		:javascript
+			pushEvent('Homepage Search', 'Submit');
 			initializeDatePicker();

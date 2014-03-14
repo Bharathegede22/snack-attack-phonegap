@@ -305,7 +305,7 @@ function pushEvent(category, action, label) {
 	_gaq.push(['_trackEvent', category, action, label]);
 }
 
-function showAvailability(carId, locId, avail, locName) {
+function showAvailability(carId, locId, avail, locName, carName) {
 	$('#Avail' + carId).removeClass('yes no');
 	if(avail == 1) {
 		$('#Avail' + carId).text("Available");
@@ -327,6 +327,7 @@ function showAvailability(carId, locId, avail, locName) {
 		showTimeline(carId, 0);
 		showTimeline(carId, 0);
 	}
+	pushEvent('Search', carName, 'Location');
 }
 
 function showCalculator(action) {
@@ -357,7 +358,7 @@ function showSearch() {
 	getData('/bookings/widget', 'SHContent', 'replace' ,'SHWait');
 }
 
-function showTimeline(carId, action) {
+function showTimeline(carId, action, carName) {
 	var locId = $('#LocMenu' + carId).find('li.active').attr("id").split('LocSel' + carId)[1];
 	if(action == 0) {
 		$('#Timeline' + carId).slideUp();

@@ -109,7 +109,9 @@
 					script.src = "http://maps.googleapis.com/maps/api/js?key=#{GOOGLE_MAP_KEY}&sensor=true&callback=initializeMap";
 					document.body.appendChild(script);
 					$("#Sidebar").slideDown();
-					$('.carousel').carousel();
+					$(".help-event").on('shown.bs.tooltip', function () {
+						pushEvent('Search', $(this).attr('data-event'), 'Fare');
+					})
 				} else {
 					window.setTimeout(checkJquery, 1000);
 				}
