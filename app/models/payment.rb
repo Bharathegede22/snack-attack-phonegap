@@ -5,6 +5,8 @@ class Payment < ActiveRecord::Base
 	validates :booking_id, :through, :amount, presence: true
 	#validates :through, uniqueness: {scope: [:booking_id, :key]}
 	
+	default_scope where('(status < 5)')
+	
 	after_save :after_save_tasks
 	
 	def change_status(params)
