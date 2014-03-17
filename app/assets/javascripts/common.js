@@ -363,8 +363,14 @@ function showTimeline(carId, action, carName) {
 	if(action == 0) {
 		$('#Timeline' + carId).slideUp();
 		if($('#Timeline' + carId).html() == '') {
+			if(carName) {
+				pushEvent('Search', carName, 'Timeline Open');
+			}
 			getData("/bookings/timeline?car=" + carId + "&location=" + locId, 'Timeline' + carId, 'replace', null);
 		} else {
+			if(carName) {
+				pushEvent('Search', carName, 'Timeline Close');
+			}
 			$('#Timeline' + carId).html('');
 			$('#TimelineAction' + carId).html("<div class='arrw-d'></div>");
 			$('#TimelineAction' + carId).attr("data-original-title", 'Show Availability').tooltip('fixTitle');

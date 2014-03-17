@@ -17,7 +17,7 @@
 			%a.btn.btn-default{href: "/bookings/" + @booking.encoded_id} Proceed to Zoomcar
 	:javascript
 		window.onload = function() {
-			var auto = setTimeout(function(){ submitform(); }, 1000);
+			var auto = setTimeout(function(){ submitform(); }, 3000);
 			function submitform() {
 				clearTimeout(auto);
 				window.location = "http://#{HOSTNAME}/bookings/#{@booking.encoded_id}";
