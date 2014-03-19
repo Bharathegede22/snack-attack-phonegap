@@ -18,6 +18,7 @@ Web::Application.routes.draw do
 		collection do
 			get 'checkout'
 			get 'complete'
+			get 'details'
 			get 'do'
 			get 'docreate'
 			get 'failed'

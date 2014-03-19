@@ -17,7 +17,7 @@
 			%a.btn.btn-default{href: "/bookings/" + @booking.encoded_id} Proceed to Zoomcar
 	:javascript
 		window.onload = function() {
-			var auto = setTimeout(function(){ submitform(); }, 3000);
+			var auto = setTimeout(function(){ submitform(); }, 1000);
 			function submitform() {
 				clearTimeout(auto);
 				window.location = "http://#{HOSTNAME}/bookings/#{@booking.encoded_id}";
@@ -44,16 +44,16 @@
 		var google_conversion_label = "WzjPCOmI-wcQh-n14AM";
 		var google_conversion_value = 0;
 		var google_remarketing_only = false;
-		
-		var fb_param = {};
-		fb_param.pixel_id = '6012062102930';
-		fb_param.value = '0.00';
-		fb_param.currency = 'USD';
+
+		var fb_param = {};
+		fb_param.pixel_id = '6012188478130';
+		fb_param.value = '0.00';
+		fb_param.currency = 'USD';
 		(function(){
-			var fpw = document.createElement('script');
-			fpw.async = true;
-			fpw.src = '//connect.facebook.net/en_US/fp.js';
-			var ref = document.getElementsByTagName('script')[0];
-			ref.parentNode.insertBefore(fpw, ref);
-		})();
+			var fpw = document.createElement('script');
+			fpw.async = true;
+			fpw.src = '//connect.facebook.net/en_US/fp.js';
+			var ref = document.getElementsByTagName('script')[0];
+			ref.parentNode.insertBefore(fpw, ref);
+		})();
 	%script{type: "text/javascript", src: "//www.googleadservices.com/pagead/conversion.js"}
