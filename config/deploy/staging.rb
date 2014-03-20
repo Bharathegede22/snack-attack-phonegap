@@ -52,6 +52,7 @@ namespace :generic do
 	  run "ln -s #{shared_path}/database.yml #{release_path}/config/varnishd.yml"
 	  run "rm #{release_path}/public/robots.txt"
 	  run "ln -s #{shared_path}/robots.txt #{release_path}/public/robots.txt"
+	  run "chmod 777 #{release_path}/public/sitemap.xml"
 	end
 	
 	desc "Zero-downtime restart of Unicorn"
