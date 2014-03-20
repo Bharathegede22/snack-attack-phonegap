@@ -7,7 +7,7 @@ class Attraction < ActiveRecord::Base
 	end
 	
 	def h1(city=nil)
-		return "Rent Self Drive Cars from #{self.city.name} To " + self.name
+		return "Self Drive Car From #{self.city.name} to #{self.name} "
 	end
 	
 	def link(city=nil)
@@ -15,7 +15,7 @@ class Attraction < ActiveRecord::Base
 	end
 	
 	def meta_description(city=nil)
-		return "Self-drive car hire from #{self.city.name} to #{self.name}. All-inclusive tariff covers fuel, insurance & taxes"
+    return "Rent a car on self drive from #{self.city.name} to #{self.name} by Zoomcar. "
 	end
 	
 	def meta_keywords(city=nil)
@@ -23,7 +23,7 @@ class Attraction < ActiveRecord::Base
 	end
 	
 	def meta_title(city=nil)
-		return "Self Drive Car Rental from #{self.city.name} To " + self.name + " | Zoomcar.in"
+    return "Self Drive Cars On Rent From #{self.city.name} To #{self.name} | Zoomcar"
 	end
 	
 end

@@ -19,12 +19,13 @@ class City < ActiveRecord::Base
 		end
 	end
 	
-	def meta_description(action=nil)
-		return case action
-		when 'inside' then "Self drive car hire for exploring #{self.name}. All-inclusive tariff covers fuel, insurance & taxes"
-		when 'outside' then "Self drive car hire for exploring around #{self.name}. All-inclusive tariff covers fuel, insurance & taxes"
-		else "Self drive cars in #{self.name}. All-inclusive tariff covers fuel, insurance & taxes"
-		end
+	def meta_description(action=nil) 
+    return case action
+    when 'inside' then "Find Self Drive Car Hire Locations In #{self.name} | Zoomcar"
+    when 'outside' then "Self drive car hire for exploring around #{self.name}. All-inclusive tariff covers fuel, insurance & taxes"
+    
+    else "Zoomcar Pick up points of your favourite cars on self drive rental in #{self.name}. Explore and beyond #{self.name} on your own drive"
+    end
 	end
 	
 	def meta_keywords(action=nil)
@@ -39,7 +40,7 @@ class City < ActiveRecord::Base
 		return case action
 		when 'inside' then "Self Drive Car Rental, Explore #{self.name} | Zoomcar.in"
 		when 'outside' then "Self Drive Car Rental, Explore Beyond #{self.name} | Zoomcar.in"
-		else "Self Drive Car Rental, Explore #{self.name} & Beyond | Zoomcar.in"
+		else "Find Self Drive Car Hire Locations In #{self.name} | Zoomcar"
 		end
 	end
 	
