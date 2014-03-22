@@ -7,7 +7,7 @@ class Location < ActiveRecord::Base
 	end
 	
 	def h1(city=nil)
-		return "Self Drive Cars In #{self.name}, #{self.city.name}"
+		return "Self Drive Cars In #{self.name}"
 	end
 	
 	def link(city=nil)
@@ -36,7 +36,7 @@ class Location < ActiveRecord::Base
 	end
 	
 	def meta_description(city=nil)
-		return "Self drive car hire in #{self.name.downcase}, #{self.city.name}. All-inclusive tariff covers fuel, insurance & taxes"
+		return "Rent a car on self drive in #{self.city.downcase}. Pick up the car at #{self.name.downcase}"
 	end
 	
 	def meta_keywords(city=nil)
@@ -44,7 +44,8 @@ class Location < ActiveRecord::Base
 	end
 	
 	def meta_title(city=nil)
-		return "Self Drive Car Rental In #{self.name}, #{self.city.name} | Zoomcar.in"
+		return "Self Drive Car Rent at #{self.name}, #{self.city.name} | Zoomcar.in"
+		return "Self Drive Cars On Rent At #{self.name}, #{self.city.name} | Zoomcar"
 	end
 	
 	def shortname

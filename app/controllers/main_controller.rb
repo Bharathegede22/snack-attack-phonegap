@@ -1,8 +1,8 @@
 class MainController < ApplicationController
 	
 	def about
-		@meta_title = "The Zoom Team | www.zoomcar.in"
-		@meta_description = "A global team with knowledge and experience in self driven car rental services"
+		@meta_title = "About ZoomCar Team | Online Self Drive Car In Bangalore"
+		@meta_description = "Read about ZoomCar's self drive car team. Highly qualified professionals with knowledge and experience in self driven car rental services"
 		@meta_keywords = "zoomcar team"
 		@canonical = "http://www.zoomcar.in/about"
 	end
@@ -78,25 +78,26 @@ class MainController < ApplicationController
 	end
 	
 	def eligibility
-		@meta_title = "Is Zoom For Me? | Eligibility Policy | Zoomcar.in"
-		@meta_description = "The eligibility policy for using Zoom's cars.  Members must be #{CommonHelper::MIN_AGE} years with valid driving license.  Payment is by credit or debit card only"
+
+		@meta_title = "Is Zoom Car For Me? Eligibility Policy | Zoomcar.in"
+		@meta_description = "Read the eligibility policy from ZoomCar. Members must be #{CommonHelper::MIN_AGE} years with driving license and member should be able to pay by credit or debit card"
 		@meta_keywords = "zoomcar eligibility policy"
 		@canonical = "http://www.zoomcar.in/eligibility"
 		@header = 'policy'
 	end
 	
 	def faq
-		@meta_title = "Zoom Frequently Asked Questions (FAQs) | Zoomcar.in"
-		@meta_description = "Have questions about Zoom?  They might already be answered here!"
+		@meta_title = "ZoomCar Frequently Asked Questions (FAQs) | Zoomcar.in"
+		@meta_description = "Read answers about ZoomCar to the most frequently asked questions on our FAQ page"
 		@meta_keywords = "zoomcar faqs"
 		@canonical = "http://www.zoomcar.in/faq"
 		@header = 'help'
 	end
 	
 	def fees
-		@meta_title = "Zoom Fee Policy | Zoomcar.in"
-		@meta_description = "Zoom fee policy for returning vehicle late, returning vehicle to wrong location, traffic and parking violations, key not returned at end of reservation, accident or other incident, & Zoom rule violations"
-		@meta_keywords = "zoomcar fees policy"
+		@meta_title = "ZoomCar Fees Policy | Zoomcar.in"
+		@meta_description = "Read ZoomCar fees policy for any returning vehicle late, returning vehicle to wrong location, traffic and parking violations, key not returned at end of reservation, accident & Zoom rule violations" 
+    @meta_keywords = "zoomcar fees policy"
 		@canonical = "http://www.zoomcar.in/fees"
 		@header = 'policy'
 	end
@@ -109,16 +110,16 @@ class MainController < ApplicationController
 	end
 	
 	def howtozoom
-		@meta_title = "8 Steps To Be A Better Zoom Member | Zoomcar.in"
-		@meta_description = "Help us build the Zoom community by following these 8 easy steps"
+		@meta_title = "Self Drive Cars Rental In Bangalore | Join Online, Book A Car & Drive | Zoomcar.in"
+		@meta_description = "Read how to be a better ZoomCar Member"
 		@meta_keywords = "zoomcar member"
 		@canonical = "http://www.zoomcar.in/howtozoom"
 		@header = 'help'
 	end
 	
 	def index
-		@meta_title = "Self Drive Car Rental In Bangalore | Find Cars And Book Online | Zoomcar.in"
-		@meta_description = "Self-drive car hire in Bangalore. Enjoy the Freedom of Four Wheels by renting a car by the hour or by the day.  All-inclusive tariff covers fuel, insurance & taxes"
+		@meta_title = "Self Drive Cars Rental In Bangalore | Join Online, Book A Car & Drive | Zoomcar.in"
+		@meta_description = "Book a self-driven car online. Self driving car rental made easy like never before, simply join us for renting a car by the hour or day. Includes fuel, insurance & taxes"
 		@meta_keywords = "zoomcar, self drive car, self drive car rental, renting a car, self drive cars"
 		@canonical = "http://www.zoomcar.in"
 		@header = 'homepage'
@@ -145,9 +146,9 @@ class MainController < ApplicationController
 	end
 	
 	def member
-		@meta_title = "Zoom Member Agreement | Zoomcar.in"
-		@meta_description = "The Zoom Member agreement is the contract that governs the use of Zoom vehicles"
-		@meta_keywords = "zoomcar Member agreement"
+		@meta_title = "ZoomCar Member Agreement | Zoomcar.in"
+		@meta_description = "Read ZoomCar Member agreement is a contract and governs the relationships, rights, and obligations between ZoomCar India Private Limited and the Member"
+		@meta_keywords = "zoomcar Member agreemen"
 		@canonical = "http://www.zoomcar.in/member"
 		@header = 'policy'
 	end
@@ -161,25 +162,25 @@ class MainController < ApplicationController
 	end
 	
 	def outstation
-		@meta_title = "Zooming Outstation | Zoomcar.in"
-		@meta_description = "Zoom guidelines for a safe outstation experience"
-		@meta_keywords = "zoomcar, zoom, safety"
+		@meta_title = "Outstation Car Rental | Rent Self-Drive Car For Outstation Trips"
+		@meta_description = "Zoomcar provides local car hire for outstation trips outside Karnataka state.  Book outstation car for Goa, Kerala, Tamil Nadu and Andhra Pradesh at budget prices"
+		@meta_keywords = "Outstation car rental, outstation car hire, self drive car for outstation"
 		@canonical = "http://www.zoomcar.in/outstation"
 		@header = 'help'
 	end
 	
 	def privacy
-		@meta_title = "Privacy Policy | Zoomcar.in"
-		@meta_description = "Privacy policy for using zoom"
-		@meta_keywords = "zoomcar, zoom, safety"
+		@meta_title = "ZoomCar Privacy Policy | Zoomcar.in"
+		@meta_description = "Read ZoomCar website usage privacy policy and terms and conditions"
+		@meta_keywords = "zoomcar privacy policy"
 		@canonical = "http://www.zoomcar.in/privacy"
 		@header = 'policy'
 	end
 	
 	def reva
-		@meta_title = "Mahindra Reva E2O | www.zoomcar.in"
-		@meta_description = "Zoom in India's only electric car"
-		@meta_keywords = "zoomcar mahindra reva e2o"
+		@meta_title = "Electric Car Hire | Hire Reva For Self-Drive In Bangalore"
+		@meta_description = "Zoomcar now offers eco friendly electric car for hire in Bangalore. Now rent Mahindra Reva E20 India's only fully electric car by the hour or by the day."
+		@meta_keywords = "electric car hire, hire Reva in Bangalore"
 		@canonical = "http://www.zoomcar.in/reva"
 		@header = 'help'
 	end
@@ -193,8 +194,8 @@ class MainController < ApplicationController
 	end
 	
 	def tariff
-		@meta_title = "Zoom Car Hire Tariffs In Bangalore | Zoomcar.in"
-		@meta_description = "Zoom offers the simplest, easiest car-hire tariff in Bangalore.  See prices and what is included.  Check frequently for special offers and discounts on renting a car in Bangalore!"
+		@meta_title = "ZoomCar Hire Tariffs In Bangalore | Zoomcar.in"
+		@meta_description = "ZoomCar offers the simplest, easiest car-hire tariff in Bangalore. Find out what all is included"
 		@meta_keywords = "zoomcar hire tariffs"
 		@canonical = "http://www.zoomcar.in/tariff"
 		@cargroup = Cargroup.list
