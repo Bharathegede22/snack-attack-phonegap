@@ -53,6 +53,7 @@ Web::Application.routes.draw do
 	resources :users do
 		collection do
 			get 'forgot'
+			get 'license'
 			get 'password'
 			get 'settings'
 			get 'social'
@@ -60,6 +61,7 @@ Web::Application.routes.draw do
 			get 'signup'
 			get 'status'
 			
+			post 'license'
 			post 'signup'
 			post 'update'
 		end

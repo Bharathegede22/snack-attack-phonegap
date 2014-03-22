@@ -1,9 +1,36 @@
 class UsersController < ApplicationController
 	
-	before_filter :authenticate_user!, :only => [:social, :settings, :update]
+	before_filter :authenticate_user!, :only => [:license, :social, :settings, :update]
 	
 	def forgot
 		render json: {html: render_to_string('/devise/passwords/new.haml', :layout => false)}
+	end
+	
+	def license
+		if request.post?
+			if !params[:image].blank?
+				@image = current_user.license_pic
+				if @image
+					@image.update(image_params)
+				else
+					@image = Image.new(image_params)
+					@image.imageable_id = current_user.id
+					@image.imageable_type = 'License'
+					@image.save
+				end
+				if @image.valid?
+					flash[:notice] = 'Thanks for uploading your driving license image.'
+				else
+					if @image.errors[:avatar_content_type].length > 0
+						flash[:error] = 'Please attach a valid license image. Only allow formats are jpg, jpeg, gif and png.'
+					else
+						flash[:error] = 'Please attach a valid license image. Maximum allowed file size is 2 MB.'
+					end
+				end
+			else
+				flash[:error] = 'Please attach a license image'
+			end
+		end
 	end
 	
 	def signin
@@ -52,34 +79,11 @@ class UsersController < ApplicationController
 	end
 	
 	def update
-		notice = ''
-		error = ''
 		if current_user.update(signup_params.merge({'profile' => 1}))
-			notice = 'Profile changes are saved! '
-		else
-			error = 'Please fix the following error! '
-		end
-		if !params[:image].blank?
-			@image = current_user.license_pic
-			if @image
-				@image.update(image_params)
-			else
-				@image = Image.new(image_params)
-				@image.imageable_id = current_user.id
-				@image.imageable_type = 'License'
-				@image.save
-			end
-			if @image.valid?
-				notice << 'Thanks for uploading your license image.'
-			else
-				error << 'License image was not uploaded. Please fix the erros!'
-			end
-		end
-		flash[:notice] = notice if !notice.blank?
-		flash[:error] = error if !error.blank?
-		if error.blank?
+			flash[:notice] = 'Profile changes are saved! '
 			redirect_to "/users/settings"
 		else
+			flash[:error] = 'Please fix the following error! '
 			render 'settings'
 		end
 	end

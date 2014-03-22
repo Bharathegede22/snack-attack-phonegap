@@ -86,11 +86,5 @@
 					.fc
 				%td.p-5.t-r
 					Rs.#{cargroup.excess_kms.to_i} / Km
-		- if !step.blank? && step == 4
-			.p-10
-				- if @available == 1
-					.button{onclick: "checkout();"} Checkout
-				- else
-					.button-dis Checkout
 %br/
 %br/

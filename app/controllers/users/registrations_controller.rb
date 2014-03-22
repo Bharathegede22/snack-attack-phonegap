@@ -10,11 +10,17 @@ class Users::RegistrationsController < Devise::RegistrationsController
 			  if resource.active_for_authentication?
 			    #set_flash_message :notice, :signed_up if is_flashing_format?
 			    sign_up(resource_name, resource)
-			    flash[:notice] = "<b>Thanks for signing up</b>. Please provide the following details."
-			    session[:normal_signup] = 1 if session[:book].blank?
-					respond_to do |format|
-		    		format.json {render json: {html: render_to_string('/users/signup.haml', layout: false)}}
-		    	end
+			    if !session[:book].blank?
+			    	respond_to do |format|
+				  		format.json {render json: {html: render_to_string('/users/wait.haml', layout: false)}}
+				  	end
+				  else
+						flash[:notice] = "<b>Thanks for signing up</b>. Please provide the following details."
+						session[:normal_signup] = 1
+						respond_to do |format|
+							format.json {render json: {html: render_to_string('/users/signup.haml', layout: false)}}
+						end
+					end
 			  else
 			    set_flash_message :notice, :"signed_up_but_#{resource.inactive_message}" if is_flashing_format?
 			    expire_data_after_sign_in!
