@@ -31,6 +31,7 @@ gem 'fql'
 gem 'countries'
 gem 'aws-sdk'
 gem "rest_client"
+gem 'sprockets-image_compressor'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.

@@ -36,7 +36,7 @@ class Location < ActiveRecord::Base
 	end
 	
 	def meta_description(city=nil)
-		return "Rent a car on self drive in #{self.city.downcase}. Pick up the car at #{self.name.downcase}"
+		return "Rent a car on self drive in #{self.city.name.downcase}. Pick up the car at #{self.name.downcase}"
 	end
 	
 	def meta_keywords(city=nil)

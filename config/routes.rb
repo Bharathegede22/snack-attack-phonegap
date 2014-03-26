@@ -14,6 +14,12 @@ Web::Application.routes.draw do
 	get '/search' => "bookings#search"
 	post '/search/:id' => "bookings#search"
 	
+	resources :abtest do
+		collection do
+			get 'homepage'
+		end
+	end
+	
 	resources :bookings do
 		collection do
 			get 'checkout'

@@ -137,7 +137,7 @@ a {
 	z-index:2;
 }
 
-.homepage .cars .h1 {
+.homepage .cars .h1, .homepage .cars .h1-n {
 	position:absolute;
 	top:50px;
 	left:50%;
@@ -164,6 +164,32 @@ a {
 	float:left;
 	clear:left;
 	border-left:2px solid #6ABD19;
+}
+
+.homepage .cars .h1-n {
+	top:30px;
+	text-align:center;
+}
+
+.homepage .cars .h1-n h1 {
+	background:#323a45;
+	padding:5px 10px 7px 10px;
+	font-size:30px;
+	margin:0 0 0 -210px;
+	font-weight:bold;
+	color:#ffffff;
+	border-left:2px solid #6ABD19;
+	width:418px;
+}
+
+.homepage .cars .h1-n p {
+	background:#323a45;
+	padding:5px 10px 7px 10px;
+	margin:5px 0 0 -320px;
+	color:#ffffff;
+	font-size:20px;
+	border-left:2px solid #6ABD19;
+	width:640px;
 }
 
 .homepage .cars .slider {
@@ -369,7 +395,19 @@ a {
 	padding:5px 15px;
 }
 
-.search-header .box, .vertical-widget .box {
+.homepage .widget-n {
+	width:660px;
+	position:absolute;
+	left:150px;
+	top:130px;
+	z-index:5;
+}
+
+.homepage .widget-n .bg {
+	background:url(<%= asset_path 'bg-solid-medium.png' %>) #eee;
+}
+
+.search-header .box, .vertical-widget .box, .widget-n .box {
 	background:#ffffff;
 	color:#999999;
 	font-size:20px;
@@ -380,7 +418,11 @@ a {
 	cursor:pointer;
 }
 
-.search-header .loc, .search-header .cal, .search-header .car, .vertical-widget .loc, .vertical-widget .cal, .vertical-widget .car {
+.widget-n .box {
+	margin:0;
+}
+
+.search-header .loc, .search-header .cal, .search-header .car, .vertical-widget .loc, .vertical-widget .cal, .vertical-widget .car, .widget-n .cal {
 	background:url(<%= asset_path 'r.png' %>) no-repeat;
 	width:20px;
 	height:30px;
@@ -392,7 +434,7 @@ a {
 	background-position:-210px -80px;
 }
 
-.search-header .cal, .vertical-widget .cal {
+.search-header .cal, .vertical-widget .cal, .widget-n .cal {
 	background-position:-230px -80px;
 }
 
@@ -400,7 +442,7 @@ a {
 	background-position:-250px -80px;
 }
 
-.search-header .txt, .vertical-widget .txt {
+.search-header .txt, .vertical-widget .txt, .widget-n .txt {
 	color:#323a45;
 	font-size:14px;
 	float:left;
@@ -412,7 +454,7 @@ a {
 	padding-left:28px;
 }
 
-.search-header .txt input, .vertical-widget .txt input {
+.search-header .txt input, .vertical-widget .txt input, .widget-n .txt input {
 	padding:0;
 	margin:0;
 	width:150px;
@@ -430,7 +472,7 @@ a {
 	cursor:auto;
 }
 
-.search-header .arrw, .vertical-widget .arrw {
+.search-header .arrw, .vertical-widget .arrw, .widget-n .arrw {
 	background:url(<%= asset_path 'r.png' %>) no-repeat;
 	background-position:-270px -80px;
 	width:20px;
@@ -444,6 +486,22 @@ a {
 	width:240px;
 	margin:10px 0;
 	padding:5px 0;
+}
+
+.widget-n .button {
+	font-size:18px;
+	width:140px;
+	padding:5px 0;
+}
+
+.widget-n .button input {
+	background:none;
+	width:140px;
+	margin:0;
+	padding:0;
+	border:0;
+	color:#ffffff;
+	font-weight:bold;
 }
 
 .homepage .wrapper {

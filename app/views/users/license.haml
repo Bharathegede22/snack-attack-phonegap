@@ -19,7 +19,7 @@
 					.col-sm-10
 						.col-sm-8
 							%input{type: "file", name: "image[avatar]", accept: "image/*"}
-							- if !@image.valid?
+							- if @image && !@image.valid?
 								.error
 									- if @image.errors[:avatar_content_type].length > 0
 										= errortxt('is invalid, allow formats are jpg, jpeg, gif and png.')
