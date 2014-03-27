@@ -70,6 +70,18 @@
 			= fare[:estimate] - fare[:discount]
 		.calc.m-5.fr.help{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Tariff Estimator"}
 		.fc
+	.p-10.bg-e#promo{style:"padding-bottom:0px"}
+		%table{width:'100%'}
+			%tr
+				%td.p-5
+					%b Promo Code (optional)
+			%tr
+				%td.p-5
+					%input#promo_code_text.pull-left{type: "text", style:"width:70%; height:30px; border:1px solid #6ABD19;"}
+					%a.btn.clearfix{href:"javascript:applyPromoCode();"}
+						Go
+						%span.glyphicon.glyphicon-arrow-right
+
 	.p-10.size-12
 		%table{width: '100%'}
 			%tr
