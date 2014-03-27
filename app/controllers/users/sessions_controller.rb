@@ -34,8 +34,14 @@ class Users::SessionsController < Devise::SessionsController
     scope = Devise::Mapping.find_scope!(resource_or_scope)
     resource ||= resource_or_scope
     sign_in(scope, resource) unless warden.user(scope) == resource
-    respond_to do |format|
-			format.json {render json: {html: render_to_string('/users/signin.haml', :layout => false)}}
+    if !session[:book].blank?
+    	respond_to do |format|
+	  		format.json {render json: {html: render_to_string('/users/wait.haml', layout: false)}}
+	  	end
+	  else
+		  respond_to do |format|
+				format.json {render json: {html: render_to_string('/users/signin.haml', :layout => false)}}
+			end
 		end
   end
  

@@ -9,6 +9,9 @@
 			%a{:href => "#{@sslhost}/users/settings"}
 				Account Settings
 		%li
+			%a{:href => "#{@sslhost}/users/license"}
+				License Details
+		%li
 			%a{:href => "javascript:void(0)", :onclick => "logOut('#{destroy_user_session_path}');"}
 				Logout
 - else

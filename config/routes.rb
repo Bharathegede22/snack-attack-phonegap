@@ -14,6 +14,13 @@ Web::Application.routes.draw do
 	get '/search' => "bookings#search"
 	post '/search/:id' => "bookings#search"
 	
+	resources :abtest do
+		collection do
+			get 'homepage'
+			get 'homepagealt'
+		end
+	end
+	
 	resources :bookings do
 		collection do
 			get 'checkout'
@@ -54,6 +61,7 @@ Web::Application.routes.draw do
 	resources :users do
 		collection do
 			get 'forgot'
+			get 'license'
 			get 'password'
 			get 'settings'
 			get 'social'
@@ -61,6 +69,7 @@ Web::Application.routes.draw do
 			get 'signup'
 			get 'status'
 			
+			post 'license'
 			post 'signup'
 			post 'update'
 		end

@@ -17,3 +17,6 @@ AWS_SES_KEY = configurations['aws_ses_key']
 
 VARNISH_HOST = configurations['varnish_host']
 VARNISH_PORT = configurations['varnish_port']
+
+EXOTEL_SID = configurations['exotel_sid']
+EXOTEL_TOKEN = configurations['exotel_token']

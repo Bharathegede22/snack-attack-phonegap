@@ -1,3 +1,4 @@
+- car = Cargroup.find(5)
 .static
 	%table{:cellspacing => '10', :cellpadding => '10', :width => '960'}
 		%tr
@@ -11,31 +12,45 @@
 				%br/
 				.bg-e.r-10
 					%table.size-20.grey{:width => '100%'}
-						%tr
-							%td.p-20
+						%tr.f-b
+							%td.p-10
 								&nbsp;
-							%td.p-20
-								%b Tariff
-							%td.f-b.p-20
+							%td.p-10.p-t20
+								Tariff
+							%td.p-10.p-t20
 								Free Usage
 								%span.red *
 						%tr
-							%td.f-b.p-20
+							%td.f-b.p-10.p-l20
 								Hourly
-							%td.p-20
-								Rs.199
-							%td.p-20
-								40 Km
-						%tr.p-20
-							%td.f-b.p-20
+							%td.p-10
+								Rs.#{car.hourly_fare}
+							%td.p-10
+								#{car.hourly_km_limit} Km
+						%tr
+							%td.f-b.p-10.p-l20
 								Daily
-							%td.p-20
-								Rs.1999
-							%td.p-20
-								200 Km
+							%td.p-10
+								Rs.#{car.daily_fare}
+							%td.p-10
+								#{car.daily_km_limit} Km
+						%tr
+							%td.f-b.p-10.p-l20
+								Weekly
+							%td.p-10
+								Rs.#{car.weekly_fare}
+							%td.p-10
+								#{car.weekly_km_limit} Km
+						%tr
+							%td.f-b.p-10.p-l20
+								Monthly
+							%td.p-10
+								Rs.#{car.monthly_fare}
+							%td.p-10
+								#{car.monthly_km_limit} Km
 				.m-10.size-14.red
 					* - Excess Kms will be charged at 
-					%b Rs.6 / Km
+					%b Rs.#{car.excess_kms} / Km
 				.m-10.size-14.t-c.zoom
 					Zoom's Reva comes with a charging cord that can be plugged into a regular 15 Amp socket
 	%h2 Reva Trivia

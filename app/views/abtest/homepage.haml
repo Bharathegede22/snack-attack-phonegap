@@ -115,7 +115,7 @@
 				.title.r-tl-5.r-tr-5
 					Book a Car
 				#SearchFormDiv.form
-					= render :partial => '/bookings/widget_homepage'
+					= render :partial => '/bookings/widget_homepage_ab'
 - if true
 	.home-map
 		.p-10
@@ -213,7 +213,7 @@
 :javascript
 	function checkJquery() {
 		if (window.jQuery) {
-			pushEvent('AB Test', 'Homepage 4 Fields');
+			pushEvent('AB Test', 'Homepage 2 Fields');
 		} else {
 			window.setTimeout(checkJquery, 1000);
 		}

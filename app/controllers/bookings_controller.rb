@@ -28,31 +28,31 @@ class BookingsController < ApplicationController
 		if !params[:car].blank? && !params[:loc].blank? && !session[:search].blank? && !session[:search][:starts].blank? && !session[:search][:ends].blank?
 			session[:book] = {:starts => session[:search][:starts], :ends => session[:search][:ends], :loc => params[:loc], :car => params[:car]}
 			if user_signed_in?
-				if current_user.check_details
-					if current_user.check_license
-						session[:book][:steps] = 2
-					else
-						session[:book][:steps] = 3
-					end
-				else
+				#if current_user.check_details
+				#	if current_user.check_license
+				#		session[:book][:steps] = 2
+				#	else
+				#		session[:book][:steps] = 3
+				#	end
+				#else
 					session[:book][:steps] = 4
-				end
+				#end
 			else
-				session[:book][:steps] = 4
+				session[:book][:steps] = 2
 			end
 		elsif session[:book].blank?
 			redirect_to "/" and return
 		end
 		if user_signed_in?
-			if current_user.check_details
-				if current_user.check_license
+			#if current_user.check_details
+			#	if current_user.check_license
 					redirect_to "/bookings/checkout"
-				else
-					redirect_to "/bookings/license"
-				end
-			else
-				redirect_to "/bookings/login"
-			end
+			#	else
+			#		redirect_to "/bookings/license"
+			#	end
+			#else
+			#	redirect_to "/bookings/login"
+			#end
 		else
 			redirect_to "/bookings/login"
 		end
@@ -127,7 +127,7 @@ class BookingsController < ApplicationController
 	end
 	
 	def login
-		redirect_to "/bookings/do" and return if user_signed_in? && current_user.check_details
+		redirect_to "/bookings/do" and return if user_signed_in? # && current_user.check_details
 		generic_meta
 		@header = 'booking'
 	end
@@ -152,10 +152,16 @@ class BookingsController < ApplicationController
 			@booking = @payment.booking
 			session[:booking_id] = @booking.encoded_id
 			if @payment.status == 1
-		    flash[:notice] = "Thanks for the payment. Please continue."
-		    if @booking.confirmed_payments.length == 1
+				if @booking.confirmed_payments.length == 1
+					u = @booking.user
+					if u.check_license
+				  	flash[:notice] = "Thanks for the payment. Please continue."
+				  else
+				  	flash[:notice] = "Thanks for the payment. Please upload your license to complete the reservation."
+				  end
 		  		redirect_to "/bookings/complete"
 		  	else
+		  		flash[:notice] = "Thanks for the payment. Please continue."
 		  		redirect_to "/bookings/thanks"
 		  	end
 		  elsif @payment.status == 3
@@ -236,7 +242,9 @@ class BookingsController < ApplicationController
 			@booking.through_search = true
 			@booking.valid?
 			session[:search] = {:starts => params[:starts], :ends => params[:ends], :loc => params[:loc], :car => params[:car]}
-			if params[:id] == 'homepage'
+			if params[:id] == 'homepage_ab'
+				render json: {html: render_to_string('_widget_homepage_ab.haml', layout: false)}
+			elsif params[:id] == 'homepage'
 				render json: {html: render_to_string('_widget_homepage.haml', layout: false)}
 			else
 				render json: {html: render_to_string('_widget.haml', layout: false)}

@@ -1,0 +1,68 @@
+.static
+	%h1
+		Zoom's Office
+	.attraction
+		.right
+			%h2 
+				Directions
+			%p
+				%b 
+					%u If coming from Old Madras Road side:
+				%br/
+				\- Come straight down 80 feet road.
+				%br/
+				\- Pass Columbia Asia Hospital on the right.
+				%br/
+				\- Turn left on New Thippasandra Main Road.
+				%br/
+				\- Take first right on to 1st Cross.
+				%br/
+				\- Take first left onto 2nd Main.
+				%br/
+				\- Take first right onto 2nd Cross.
+				%br/
+				\- Zoom's office is immediately on the right side (signboard in front).
+				%br/
+			%p
+				%b
+					%u If coming from Old Airport Road side:
+				%br/
+				\- Come straight up 80 feet road.
+				%br/
+				\- Pass Empire Hotel on the left.
+				%br/
+				\- Take next right onto 4th Main Road.
+				%br/
+				\- Take second left onto 2nd Cross.
+				%br/
+				\- Go to end of block and Zoom's office is on the left (signboard in front).
+		.left
+			#Gmap.map
+		.fc
+:javascript
+	function initializeMap() {
+		var myLatlng = new google.maps.LatLng('12.971955851845342', '77.64807955361903');
+		var mapOptions = {
+			zoom: 13,
+			center: myLatlng,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		}
+		var map = new google.maps.Map(document.getElementById("Gmap"), mapOptions);
+		var marker = new google.maps.Marker({
+			position: myLatlng,
+			map: map,
+			animation: google.maps.Animation.DROP,
+			title:"Zoom's Office"
+		});
+	}
+	function checkJquery() {
+		if (window.jQuery) {
+			var script = document.createElement("script");
+			script.type = "text/javascript";
+			script.src = "http://maps.googleapis.com/maps/api/js?key=AIzaSyBSmgKl7zFKESa4cNYeQUXUAkwGOqaXK9k&sensor=true&callback=initializeMap";
+			document.body.appendChild(script);
+		} else {
+			window.setTimeout(checkJquery, 1000);
+		}
+	}
+	checkJquery();

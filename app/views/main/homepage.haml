@@ -1,13 +1,11 @@
 - @cargroup = Cargroup.list
 .homepage
 	.cars
-		.h1
+		.h1-n
 			%h1
 				Self Drive Cars In Bangalore
 			%p
-				By the Hour, Day, Week or Month
-			%p
-				Zoom in the City and Outstation
+				Zoom in the City and Outstation - By the Hour, Day, Week or Month
 		.slider
 			#CarSlider.carousel.slide{'data-ride' => "carousel", 'data-interval' => '7000', 'data-pause' => 'click'}
 				%ol.carousel-indicators
@@ -110,12 +108,10 @@
 					Free Parking
 			.fc
 	.wrapper
-		.widget
-			.bg.r-5.bs-3
-				.title.r-tl-5.r-tr-5
-					Book a Car
+		.widget-n
+			.bg.r-5.bs-3.p-10
 				#SearchFormDiv.form
-					= render :partial => '/bookings/widget_homepage'
+					= render :partial => '/bookings/widget_homepage_new'
 - if true
 	.home-map
 		.p-10
@@ -210,12 +206,3 @@
 		%a.cnbc{:href => "http://www.moneycontrol.com/news/business/self-drive-your-way-to-gloryzoomcar-_901654.html", :rel => "nofollow", :target => "_blank", :title => "CNBC", :onclick => "_gaq.push(['_trackEvent', 'Homepage', 'Press', 'CNBC']);"}
 		%a.teambhp{:href => "http://www.team-bhp.com/news/zoom-pay-drive-new-self-drive-option-bangalore", :rel => "nofollow", :target => "_blank", :title => "Team BHP", :onclick => "_gaq.push(['_trackEvent', 'Homepage', 'Press', 'TeamBHP']);"}
 		.fc
-:javascript
-	function checkJquery() {
-		if (window.jQuery) {
-			pushEvent('AB Test', 'Homepage 4 Fields');
-		} else {
-			window.setTimeout(checkJquery, 1000);
-		}
-	}
-	checkJquery();
