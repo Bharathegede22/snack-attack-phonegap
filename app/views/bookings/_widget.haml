@@ -87,9 +87,9 @@
 			%input#CarsVal{name: 'car', type: "text", value: @booking.cargroup_id, readonly: 'true'}
 		#SearchSubmit.fl.button
 			= submit_tag "", :class => 'inpt'
-		#SearchWait.p-5.hide
-			.wait
 		.fc
+		#SearchWait.p-5{style: "display:none;"}
+			.wait
 - if request.post?
 	- if @booking && @booking.valid?
 		:javascript

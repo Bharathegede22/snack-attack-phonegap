@@ -60,6 +60,7 @@ class Inventory < ActiveRecord::Base
 	end
 	
 	def self.check_plain(start_time, end_time, cargroup, location, timezone_padding=false, start_padding=false, end_padding=false)
+		Inventory.connection.clear_query_cache
 		if true
 			if cargroup
 				cars = [Cargroup.find(cargroup)]

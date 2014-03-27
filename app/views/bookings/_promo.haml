@@ -1,5 +1,24 @@
-.p-10.bg-e{}
-	%table{width:'100%'}
-		%tr
-			%td.p-5.bg-e{style:"border: 1px solid #6ABD19;"}
-				Promo code has been applied. Discount will be returned at the end of the booking in the form of credits
+- render_flash
+- if session[:promo_code].blank?
+	#PromoDiv
+		.p-b5
+			%b Promo Code (Optional)
+		.p-b5
+			%form.form-inline{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+				.form-group
+					%input#DetailsName.validate-presence.form-control{name: 'promo', type: "text", value: @promo}
+				.form-group
+					#PromoSubmit
+						%button.btn.btn-default{type:"submit"} Apply
+			#PromoWait{style: "display:none;"}
+				.wait
+		#DetailsNameError.error
+- else
+	.p-b5
+		%b Promo Code (Optional)
+	.p-b5
+		Promo code 
+		%b #{session[:promo_code]}
+		has been applied.
+	.p-b5
+		%i Discount will be manually evaluated and refunded back to your card.

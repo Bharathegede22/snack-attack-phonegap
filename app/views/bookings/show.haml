@@ -143,7 +143,7 @@
 				%tr.active
 					%td{:colspan => '2'}
 						%h4.f-b Refunds Issued
-				- @booking.confirmed_refunds.each do |r|
+				- refunds.each do |r|
 					- if !r.through.include?('early_return')
 						%tr
 							%td
@@ -155,6 +155,12 @@
 						Total
 					%td.t-r
 						= tmp
+			- if !@booking.promo.blank?
+				%tr.bg-e
+					%td{:colspan => '2'}
+						.fl.f-b Promo Code
+						.fr #{@booking.promo}
+						.fc
 			- if @total > 0
 				%tr.danger.size-16
 					%td

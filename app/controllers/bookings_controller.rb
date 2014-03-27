@@ -66,11 +66,12 @@ class BookingsController < ApplicationController
 		@booking.ref_initial = session[:ref_initial]
 		@booking.ref_immediate = session[:ref_immediate]
 		@booking.through_signup = true
-		@booking.promo = session[:promo_code] if session[:promo_code]
+		@booking.promo = session[:promo_code] if !session[:promo_code].blank?
 		@booking.save!
 		session[:booking_id] = @booking.encoded_id
 		session[:search] = nil
 		session[:book] = nil
+		session[:promo_code] = nil
 		redirect_to "/bookings/payment"
 	end
 	
@@ -180,8 +181,14 @@ class BookingsController < ApplicationController
 		end
 	end
   
-  def promo 
-    session[:promo_code] = params[:promo_code] if params[:promo_code]
+  def promo
+  	if !params[:promo].blank?
+  		if CommonHelper::DISCOUNT_CODES.include?(params[:promo])
+  			session[:promo_code] = params[:promo]
+  		else
+  			flash[:error] = "No active offer is found for <b>#{params[:promo]}</b>."
+    	end
+    end
     render json: {html: render_to_string('_promo.haml', layout: false)}
   end
 	

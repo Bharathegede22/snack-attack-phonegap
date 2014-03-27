@@ -79,7 +79,7 @@
 				.t-c
 					#DetailsSubmit.p-5
 						= submit_tag "Submit", :class => 'btn btn-default btn-lg'
-					#DetailsWait.p-5.hide
+					#DetailsWait.p-5{style: "display:none;"}
 						.wait
 			- if session[:normal_signup] == 1
 				- session[:normal_signup] = nil

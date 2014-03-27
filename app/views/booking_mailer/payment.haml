@@ -70,6 +70,13 @@ Please review the details of your reservation:
 					and
 					%a{href: 'http://www.zoomcar.in/fees'} fee policy
 					for more.
+		- if !@booking.promo.blank?
+			%tr
+				%td
+					%b Promo Code : 
+				%td
+					%b
+						= @booking.promo
 %br/
 %br/
 %div{style: "margin:0px; padding:0px;"}
