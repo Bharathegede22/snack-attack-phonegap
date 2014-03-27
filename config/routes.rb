@@ -17,6 +17,7 @@ Web::Application.routes.draw do
 	resources :abtest do
 		collection do
 			get 'homepage'
+			get 'homepagealt'
 		end
 	end
 	

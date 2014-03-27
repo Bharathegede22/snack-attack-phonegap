@@ -236,7 +236,9 @@ class BookingsController < ApplicationController
 			@booking.through_search = true
 			@booking.valid?
 			session[:search] = {:starts => params[:starts], :ends => params[:ends], :loc => params[:loc], :car => params[:car]}
-			if params[:id] == 'homepage'
+			if params[:id] == 'homepage_ab'
+				render json: {html: render_to_string('_widget_homepage_ab.haml', layout: false)}
+			elsif params[:id] == 'homepage'
 				render json: {html: render_to_string('_widget_homepage.haml', layout: false)}
 			else
 				render json: {html: render_to_string('_widget.haml', layout: false)}
