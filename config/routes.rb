@@ -39,6 +39,7 @@ Web::Application.routes.draw do
 			
 			post 'license'
 			post 'payu'
+			post 'promo'
 		end
 		member do
 			get 'cancel'

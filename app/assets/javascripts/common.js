@@ -25,6 +25,27 @@ function autoResize(id,count) {
 	$("#IframeBox").fadeIn();
 }
 
+function applyPromoCode() {
+	response = null;
+	$(document).ready(function(){
+		var code = jQuery.trim($("#promo_code_text").val());
+		
+		if (code != "") {
+		  $.ajax({
+		    type:"POST", 
+		    url: "/bookings/promo",
+		    data: {promo_code:code},
+				dataType: "json"
+		  })
+		  .done(function(json){
+		    $("#promo").empty().append(json.html);
+		  })
+		} else {
+			window.alert("Please input a promo code");
+		}
+	});
+}
+
 function bindCountry() {
 	$('.bind-country').bind("change", function() {
 		if($(this).val() == 'IN') {

@@ -66,6 +66,7 @@ class BookingsController < ApplicationController
 		@booking.ref_initial = session[:ref_initial]
 		@booking.ref_immediate = session[:ref_immediate]
 		@booking.through_signup = true
+		@booking.promo = session[:promo_code] if session[:promo_code]
 		@booking.save!
 		session[:booking_id] = @booking.encoded_id
 		session[:search] = nil
@@ -178,6 +179,11 @@ class BookingsController < ApplicationController
 			redirect_to '/' and return
 		end
 	end
+  
+  def promo 
+    session[:promo_code] = params[:promo_code] if params[:promo_code]
+    render json: {html: render_to_string('_promo.haml', layout: false)}
+  end
 	
 	def reschedule
 		@confirm = !params[:confirm].blank?
