@@ -1,0 +1,65 @@
+.wrapper.bg-f
+	.p-20
+		%h1 Feedback Form
+		= form_for :review, :url=>"/bookings/create_feedback" do |f|
+			- render_flash
+			- if @review.errors.any?
+				#error_explanation.alert.alert-danger
+					%h3= "#{pluralize(@review.errors.count, "error")} prohibited this order from being saved:"
+					%ul
+						- @review.errors.full_messages.each do |msg|
+							%li= msg
+			.panel.panel-default
+				.panel.panel-heading
+					%h3.panel-title Booking Details
+				.panel-body
+					.form-horizontal
+						.row.form-group
+							%label.col-sm-2.control-label Booking Id
+							.col-sm-10
+								%p.form-control-static
+									= CommonHelper.encode("booking", @booking.id) if @booking
+						.row.form-group
+							%label.col-sm-2.control-label Booking Started At
+							.col-sm-10
+								%p.form-control-static
+									= @booking.starts.strftime("%a %d, %B %y") if @booking
+						.row.form-group
+							%label.col-sm-2.control-label Booking Id
+							.col-sm-10
+								%p.form-control-static
+									= @booking.ends.strftime("%a %d, %B %y") if @booking
+				.panel-heading
+					%h3.panel-title Feedback
+				.panel-body
+					.form-horizontal
+						.row.form-group
+							%label.col-sm-2.control-label Technology*
+							.col-sm-10
+								%p.form-contol-static
+									= f.select(:rating_tech, CommonHelper::RATINGS, {:include_blank =>"Please select a rating"} ,{:class=> "form-control"})
+						.row.form-group
+							%label.col-sm-2.control-label Condition*
+							.col-sm-10
+								%p.form-contol-static
+									= f.select(:rating_condition, CommonHelper::RATINGS, {:include_blank =>"Please select a rating"} ,{:class=> "form-control"})
+						.row.form-group
+							%label.col-sm-2.control-label Location*
+							.col-sm-10
+								%p.form-contol-static
+									= f.select(:rating_location, CommonHelper::RATINGS, {:include_blank =>"Please select a rating"} ,{:class=> "form-control"})
+						.row.form-group
+							%label.col-sm-2.control-label Friendly*
+							.col-sm-10
+								= f.select(:rating_friendly, CommonHelper::RATINGS,{:include_blank =>"Please select a rating"} ,{:class=> "form-control"})
+						.row.form-group
+							%label.col-sm-2.control-label Comments	
+							.col-sm-10
+								= f.text_area(:comment, :class=>"col-sm-10 form-control")
+							.col-sm-10.col-sm-offset-2
+								%p.red.m-t10 Fields marked with * are compulsory
+						.row
+							.col-sm-3.col-sm-offset-2
+								= f.submit "Save Feedback",:class=>"btn btn-default btn-lg"
+							.col-sm-4
+								= link_to("Cancel", bookings_path, :class=>'btn btn-link')
