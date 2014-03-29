@@ -101,6 +101,7 @@
 			}
 			function checkJquery() {
 				if (window.jQuery) {
+					pushEvent('AB Test', 'Search Page');
 					if($(window).width() > 1024) {
 						$("#Sidebar").width((($(window).width()-960)/2)+255);
 					}

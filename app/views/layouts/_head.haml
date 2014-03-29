@@ -17,6 +17,13 @@
 	= stylesheet_link_tag "application", :media => "screen"
 	%link{href: asset_path('favicon.png'), rel: "shortcut icon", type: "image/png"}/
 	%link{href: "https://fonts.googleapis.com/css?family=Droid+Sans", rel: "stylesheet"}/
+	- if params[:controller] == 'main' && params[:action] == 'index'
+		:javascript
+			_udn = 'zoomcar.in';
+		:javascript
+			function utmx_section(){}function utmx(){}(function(){var k='68920521-0',d=document,l=d.location,c=d.cookie; if(l.search.indexOf('utm_expid='+k)>0)return; function f(n){if(c){var i=c.indexOf(n+'=');if(i>-1){var j=c.indexOf(';',i);return escape(c.substring(i+n.length+1,j<0?c.length:j))}}}var x=f('__utmx'),xx=f('__utmxx'),h=l.hash;d.write('<sc'+'ript src="'+'http'+(l.protocol=='https:'?'s://ssl':'://www')+'.google-analytics.com/ga_exp.js?'+'utmxkey='+k+'&utmx='+(x?x:'')+'&utmxx='+(xx?xx:'')+'&utmxtime='+new Date().valueOf()+(h?'&utmxhash='+escape(h.substr(1)):'')+'" type="text/javascript" charset="utf-8"><\/sc'+'ript>')})();
+		:javascript
+			utmx('url','A/B');
 	- js = javascript_include_tag 'application'
 	- js = js.split('src="').last
 	- js = js.split('"').first
@@ -41,20 +48,3 @@
 			ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
 			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 		})();
-	- if params[:controller] == 'main' && params[:action] == 'index'
-		:javascript
-			function utmx_section(){}function utmx(){}(function(){
-				var k='68920521-0',d=document,l=d.location,c=d.cookie;
-				if(l.search.indexOf('utm_expid='+k)>0)return;
-				function f(n){
-					if(c){
-						var i=c.indexOf(n+'=');
-						if(i>-1){
-							var j=c.indexOf(';',i);
-							return escape(c.substring(i+n.length+1,j<0?c.length:j))
-						}
-					}
-				}
-				var x=f('__utmx'),xx=f('__utmxx'),h=l.hash;
-				d.write('<sc'+'ript src="'+'http'+(l.protocol=='https:'?'s://ssl':'://www')+'.google-analytics.com/ga_exp.js?'+'utmxkey='+k+'&utmx='+(x?x:'')+'&utmxx='+(xx?xx:'')+'&utmxtime='+new Date().valueOf()+(h?'&utmxhash='+escape(h.substr(1)):'')+'" type="text/javascript" charset="utf-8"><\/sc'+'ript>')})();
-			utmx('url','A/B');
