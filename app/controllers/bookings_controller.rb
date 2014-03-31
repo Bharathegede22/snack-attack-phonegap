@@ -2,7 +2,7 @@ class BookingsController < ApplicationController
 	
 	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :new_feedback, :show_feedback]
 	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule, :new_feedback, :show_feedback ]
-	before_filter :check_feedback_exists, :only => [:new_feedback]
+	before_filter :check_feedback_new_and_status_complete, :only => [:new_feedback]
 	before_filter :check_search, :only => [:checkout, :docreate, :license, :login]
 	before_filter :check_inventory, :only => [:checkout, :docreate, :dopayment, :license, :login, :payment]
 	
@@ -37,7 +37,7 @@ class BookingsController < ApplicationController
 		
 		if @review.save
 			# Redirect to show the feedback, pass the encoded id
-			redirect_to show_feedback_booking_url(CommonHelper.encode("booking", @booking.id))
+			redirect_to show_feedback_booking_url(@booking.encoded_id)
 			session[:feedback_booking_id] = nil
 		else
 			render action:"new_feedback"
@@ -299,7 +299,7 @@ class BookingsController < ApplicationController
 		# @booking = Booking.where("id = ?", params[:booking_id]).first
 		@review = Review.where("booking_id = ?", @booking.id).first
 		if @review.nil?
-			redirect_to new_feedback_booking_path(CommonHelper.encode('booking', @booking.id))
+			redirect_to new_feedback_booking_path(@booking.encoded_id)
 		end
 	end
 	
@@ -386,10 +386,16 @@ class BookingsController < ApplicationController
 		end
 	end
 	
-	def check_feedback_exists
+	def check_feedback_new_and_status_complete
+		# Checks to see if feedback for this booking has been given before, 
+		# and if the booking status is complete
+		if !@booking.status_complete?
+			flash[:error] = "Feedback can only be given after a booking has been completed"
+			redirect_to bookings_path 
+		end
 		@review = Review.where("booking_id = ?", @booking.id).first
 		if @review
-			redirect_to show_feedback_booking_path(CommonHelper.encode("booking", @booking.id))
+			redirect_to show_feedback_booking_path(@booking.encoded_id)
 		end
 	end
 	

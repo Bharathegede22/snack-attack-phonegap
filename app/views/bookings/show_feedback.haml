@@ -15,7 +15,7 @@
 						%label.col-sm-2.control-label Booking Id
 						.col-sm-10
 							%p.form-control-static
-								= CommonHelper.encode("booking", @booking.id) if @booking
+								= @booking.encoded_id if @booking
 					.row.form-group
 						%label.col-sm-2.control-label Booking Started At
 						.col-sm-10
