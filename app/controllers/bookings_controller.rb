@@ -37,6 +37,7 @@ class BookingsController < ApplicationController
 		
 		if @review.save
 			# Redirect to show the feedback, pass the encoded id
+			flash[:notice] = "Thank you for giving us your valuable feedback"
 			redirect_to show_feedback_booking_url(@booking.encoded_id)
 			session[:feedback_booking_id] = nil
 		else

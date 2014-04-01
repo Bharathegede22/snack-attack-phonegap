@@ -112,7 +112,7 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def status_complete?
-		if ends < Time.zone.now && status < 8
+		if ends < Time.zone.now && status < 8 && status > 0
 			return true
 		else 
 			return false
