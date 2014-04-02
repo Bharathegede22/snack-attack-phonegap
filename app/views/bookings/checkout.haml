@@ -4,7 +4,7 @@
 		- render_flash
 		.main-content.fl.bg-w.bs-9
 			.p-20
-				- if current_user.check_details
+				- if current_user && current_user.check_details
 					.alert.alert-info
 						%b Please check the details before proceeding further
 					.p-b10

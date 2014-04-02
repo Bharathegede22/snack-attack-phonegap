@@ -13,6 +13,7 @@
 				%ol.carousel-indicators
 					- count = 0
 					- @cargroup.each do |cargroup|
+						- next if cargroup.id == 4
 						- if cargroup == @cargroup.first
 							%li.active{'data-target' => "#CarSlider", 'data-slide-to' => "#{count}"}
 								= cargroup.shortname
@@ -22,6 +23,7 @@
 						- count += 1
 				.carousel-inner
 					- @cargroup.each do |cargroup|
+						- next if cargroup.id == 4
 						:ruby
 							if cargroup == @cargroup.first
 								style = "background:url(#{asset_path 'cars/' + cargroup.id.to_s + '.jpg'}) no-repeat center top;"

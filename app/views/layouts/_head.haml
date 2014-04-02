@@ -17,7 +17,7 @@
 	= stylesheet_link_tag "application", :media => "screen"
 	%link{href: asset_path('favicon.png'), rel: "shortcut icon", type: "image/png"}/
 	%link{href: "https://fonts.googleapis.com/css?family=Droid+Sans", rel: "stylesheet"}/
-	- if params[:controller] == 'main' && params[:action] == 'index'
+	- if HOSTNAME.include?('zoom') && params[:controller] == 'main' && params[:action] == 'index'
 		:javascript
 			_udn = 'zoomcar.in';
 		:javascript
