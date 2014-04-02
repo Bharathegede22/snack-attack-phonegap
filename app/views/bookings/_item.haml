@@ -12,8 +12,6 @@
 			%th Ends
 			%th Status
 			%th
-			- if bookings.first.status_complete?
-				%th
 		- bookings.each do |b|
 			%tr
 				%td
@@ -26,7 +24,7 @@
 				%td.t-r
 					%a.btn.btn-xs.btn-default{href: "/bookings/#{b.encoded_id}", target: '_blank', role: "button", :title => 'Payment History'}
 						%span.glyphicon.glyphicon-list
-				- if b.status_complete?
+				- if false #b.status_complete?
 					%td.t-r
 						%a.btn.btn-xs.btn-default{href: "/bookings/#{b.encoded_id}/new_feedback", target: '_blank', role: "button", :title => 'Give feedback for this booking'}
 							%span.glyphicon.glyphicon-edit
