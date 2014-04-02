@@ -1,0 +1,59 @@
+:ruby
+	ratings = {}
+	CommonHelper::RATINGS.each do |r|
+		ratings[r.last] = r.first
+	end
+.wrapper.bg-f
+	.p-20
+		%h1 Feedback Given
+		- render_flash
+		.panel.panel-default
+			.panel.panel-heading
+				%h3.panel-title Booking Details
+			.panel-body
+				.form-horizontal
+					.row.form-group
+						%label.col-sm-2.control-label Booking Id
+						.col-sm-10
+							%p.form-control-static
+								= @booking.encoded_id if @booking
+					.row.form-group
+						%label.col-sm-2.control-label Booking Started At
+						.col-sm-10
+							%p.form-control-static
+								= @booking.starts.strftime("%a %d, %B %y") if @booking
+					.row.form-group
+						%label.col-sm-2.control-label Booking Id
+						.col-sm-10
+							%p.form-control-static
+								= @booking.ends.strftime("%a %d, %B %y") if @booking
+		.panel.panel-default
+			.panel.panel-heading
+				%h3.panel-title Feedback Details
+			.panel-body
+				.form-horizontal
+					.row.form-group
+						%label.col-sm-2.control-label Technical
+						.col-sm-10
+							%p.form-control-static
+								= ratings[@review.rating_tech.to_i]
+					.row.form-group
+						%label.col-sm-2.control-label Location
+						.col-sm-10
+							%p.form-control-static
+								= ratings[@review.rating_location.to_i]
+					.row.form-group
+						%label.col-sm-2.control-label Friendly
+						.col-sm-10
+							%p.form-control-static
+								= ratings[@review.rating_friendly.to_i]				
+					.row.form-group
+						%label.col-sm-2.control-label Condition
+						.col-sm-10
+							%p.form-control-static
+								= ratings[@review.rating_condition.to_i]
+					.row.form-group
+						%label.col-sm-2.control-label Comments
+						.col-sm-10
+							%p.form-control-static
+								= @review.comment					
