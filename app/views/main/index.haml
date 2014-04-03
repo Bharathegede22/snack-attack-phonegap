@@ -16,10 +16,10 @@
 						- next if cargroup.id == 4
 						- if cargroup == @cargroup.first
 							%li.active{'data-target' => "#CarSlider", 'data-slide-to' => "#{count}"}
-								= cargroup.shortname
+								= cargroup.shortname.gsub(' LX','')
 						- else
 							%li{'data-target' => "#CarSlider", 'data-slide-to' => "#{count}"}
-								= cargroup.shortname
+								= cargroup.shortname.gsub(' LX','')
 						- count += 1
 				.carousel-inner
 					- @cargroup.each do |cargroup|
