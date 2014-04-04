@@ -37,7 +37,6 @@ Web::Application.routes.draw do
 			get 'thanks'
 			get 'widget'
 			
-			post 'create_feedback'
 			post 'license'
 			post 'payu'
 			post 'promo'
@@ -48,9 +47,10 @@ Web::Application.routes.draw do
 			get 'invoice'
 			get 'payments'
 			get 'reschedule'
-			get 'new_feedback'
-			get 'show_feedback'
 			
+			get 'feedback'
+			post 'feedback'
+
 			post 'cancel'
 			post 'reschedule'
 		end
