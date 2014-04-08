@@ -78,7 +78,6 @@ class MainController < ApplicationController
 	end
 	
 	def eligibility
-
 		@meta_title = "Is Zoom Car For Me? Eligibility Policy | Zoomcar.in"
 		@meta_description = "Read the eligibility policy from ZoomCar. Members must be #{CommonHelper::MIN_AGE} years with driving license and member should be able to pay by credit or debit card"
 		@meta_keywords = "zoomcar eligibility policy"
@@ -100,6 +99,13 @@ class MainController < ApplicationController
     @meta_keywords = "zoomcar fees policy"
 		@canonical = "http://www.zoomcar.in/fees"
 		@header = 'policy'
+	end
+	
+	def handover
+		@meta_title = "Things to know before you Zoom off | www.zoomcar.in"
+		@meta_description = "Zoom Handover"
+		@meta_keywords = "zoomcar handover"
+		@canonical = "http://www.zoomcar.in/handover"
 	end
 	
 	def holidays
