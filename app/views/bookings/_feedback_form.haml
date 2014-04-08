@@ -1,0 +1,82 @@
+.p-20#FeedbackDiv
+	%h1 Feedback Form
+	= form_for :review, html: {:onsubmit => "return SubmitForm(this,'/bookings/#{@booking.encoded_id}/feedback','FeedbackDiv');", :id=>"FeedbackForm", :action => "javascript:void(0)", "data-ajax" => "false" } do |f|
+		- render_flash
+		- if @review.errors.any?
+			#error_explanation.alert.alert-danger
+				%h3= "#{pluralize(@review.errors.count, "error")} prohibited this order from being saved:"
+				%ul
+					- @review.errors.full_messages.each do |msg|
+						%li= msg
+		.panel.panel-default
+			.panel.panel-heading
+				%h3.panel-title Booking Details
+			.panel-body
+				.form-horizontal
+					.row.form-group
+						%label.col-sm-2.control-label Booking Id
+						.col-sm-10
+							%p.form-control-static
+								= @booking.encoded_id if @booking
+					.row.form-group
+						%label.col-sm-2.control-label Booking Started At
+						.col-sm-10
+							%p.form-control-static
+								= @booking.starts.strftime("%a %d, %B %y") if @booking
+					.row.form-group
+						%label.col-sm-2.control-label Booking Id
+						.col-sm-10
+							%p.form-control-static
+								= @booking.ends.strftime("%a %d, %B %y") if @booking
+			.panel-heading
+				%h3.panel-title Feedback
+			.panel-body
+				.form-horizontal
+					.row.form-group
+						%label.col-sm-2.control-label Technology*
+						.col-sm-10
+							%p.form-contol-static
+								= f.select(:rating_tech, CommonHelper::RATINGS, {:include_blank =>"Please select a rating"} ,{ id:"FeedbackRatingTech", class:"form-control validate-presence", data:{"dummy-title" => "Please select a rating"}})
+								#FeedbackRatingTechError.error
+									= errortxt(@review.errors[:rating_tech].uniq.join(', '))
+					.row.form-group
+						%label.col-sm-2.control-label Condition*
+						.col-sm-10
+							%p.form-contol-static
+								= f.select(:rating_condition, CommonHelper::RATINGS, {:include_blank =>"Please select a rating"} ,{id: "FeedbackRatingCondition", class: "form-control validate-presence", data:{"dummy-title"=>"Please select a rating"}})
+								#FeedbackRatingConditionError.error
+									= errortxt(@review.errors[:rating_condition].uniq.join(', '))
+					.row.form-group
+						%label.col-sm-2.control-label Location*
+						.col-sm-10
+							%p.form-contol-static
+								= f.select(:rating_location, CommonHelper::RATINGS, {:include_blank =>"Please select a rating"} ,{id:"FeedbackRatingLocation", class:"form-control validate-presence", data:{"dummy-title"=>"Please select a rating"}})
+								#FeedbackRatingLocationError.error
+									= errortxt(@review.errors[:rating_location].uniq.join(', '))
+					.row.form-group
+						%label.col-sm-2.control-label Friendly*
+						.col-sm-10
+							= f.select(:rating_friendly, CommonHelper::RATINGS,{:include_blank =>"Please select a rating"} ,{id:"FeedbackRatingFriendly", class:"form-control validate-presence", data:{"dummy-title"=>"Please select a rating"}})
+							#FeedbackRatingFriendlyError.error
+								= errortxt(@review.errors[:rating_friendly].uniq.join(', '))
+					.row.form-group
+						%label.col-sm-2.control-label Comments	
+						.col-sm-10
+							= f.text_area(:comment, :class=>"col-sm-10 form-control")
+						.col-sm-10.col-sm-offset-2
+							%p.red.m-t10 Fields marked with * are compulsory
+					.row
+						.col-sm-3.col-sm-offset-2
+							= f.submit "Save Feedback",:class=>"btn btn-default btn-lg"
+						.col-sm-4
+							= link_to("Cancel", bookings_path, :class=>'btn btn-link')
+	#FeedbackWait.p-5{style: "display:none;"}
+		.wait
+	
+- if @review.persisted?
+	:javascript
+		var auto = setTimeout(function(){ submitRedirect(); }, 1000);
+		function submitRedirect() {
+			clearTimeout(auto);
+			window.location = "/bookings/#{@booking.encoded_id}/feedback";
+		}

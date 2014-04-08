@@ -1,8 +1,7 @@
 class BookingsController < ApplicationController
 	
-	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :new_feedback, :show_feedback]
-	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule, :new_feedback, :show_feedback ]
-	before_filter :check_feedback_new_and_status_complete, :only => [:new_feedback]
+	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
+	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule, :feedback ]
 	before_filter :check_search, :only => [:checkout, :docreate, :license, :login]
 	before_filter :check_inventory, :only => [:checkout, :docreate, :dopayment, :license, :login, :payment]
 	
@@ -24,27 +23,6 @@ class BookingsController < ApplicationController
 	
 	def complete
 		render layout: 'plain'
-	end
-	
-	def create_feedback
-		
-		@booking = Booking.where("id = ? ", session[:feedback_booking_id]).first if !session[:feedback_booking_id].nil?
-		@review = Review.new(feedback_params)
-		@review.booking_id = @booking.id
-		@review.user_id = @booking.user_id
-		@review.car_id = @booking.car_id
-		@review.cargroup_id = @booking.cargroup_id
-		@review.location_id = @booking.location_id
-		
-		if @review.save
-			# Redirect to show the feedback, pass the encoded id
-			flash[:notice] = "Thank you for giving us your valuable feedback"
-			redirect_to show_feedback_booking_url(@booking.encoded_id)
-			session[:feedback_booking_id] = nil
-		else
-			render action:"new_feedback"
-		end
-		
 	end
 	
 	def do
@@ -105,6 +83,32 @@ class BookingsController < ApplicationController
 	
 	def failed
 		render 'complete', layout: 'plain'
+	end
+	
+	def feedback
+		if request.xhr?
+			# Create the feedback and stuff
+			@review = Review.new(feedback_params)
+			@review.booking_id = @booking.id
+			@review.user_id = @booking.user_id
+			@review.car_id = @booking.car_id
+			@review.cargroup_id = @booking.cargroup_id
+			@review.location_id = @booking.location_id
+			if @review.save
+				flash[:notice] = "Thank you for your feedback."
+			else
+				flash[:error] = "Please fix the following errors"
+			end
+			render json: { html: render_to_string('/bookings/_feedback_form.haml', :layout => false)}
+		elsif request.get? 
+			@review = Review.where("booking_id = ?", @booking.id).first()
+			if !@review.nil?
+				render "show_feedback"
+			else
+				@review = Review.new
+				render "new_feedback"
+			end
+		end
 	end
 	
 	def generate
@@ -295,26 +299,7 @@ class BookingsController < ApplicationController
 		flash.keep
 		render layout: 'users'
 	end
-	
-	def show_feedback
 
-		# @booking = Booking.where("id = ?", params[:booking_id]).first
-		@review = Review.where("booking_id = ?", @booking.id).first
-		if @review.nil?
-			redirect_to new_feedback_booking_path(@booking.encoded_id)
-		end
-	end
-	
-	def new_feedback
-		if @review.nil?
-			@review = Review.new
-			session[:feedback_booking_id] = @booking.id
-		else
-			redirect_to show_feedback_booking(CommonHelper.encode('booking', @booking.id))
-		end
-	end
-	
-	
 	def thanks
 		render 'complete', layout: 'plain'
 	end
@@ -385,19 +370,6 @@ class BookingsController < ApplicationController
 			else
 				redirect_to "/users/sign_in" and return
 			end
-		end
-	end
-	
-	def check_feedback_new_and_status_complete
-		# Checks to see if feedback for this booking has been given before, 
-		# and if the booking status is complete
-		if !@booking.status_complete?
-			flash[:error] = "Feedback can only be given after a booking has been completed"
-			redirect_to bookings_path 
-		end
-		@review = Review.where("booking_id = ?", @booking.id).first
-		if @review
-			redirect_to show_feedback_booking_path(@booking.encoded_id)
 		end
 	end
 	
