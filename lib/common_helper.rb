@@ -6,6 +6,12 @@ module CommonHelper
 	CAR_TYPE = [['Hatchback', 1], ['SUV', 2], ['Sedan', 3], ['Coupe2D', 4]]
   DRIVE = [['Front Wheel', 1], ['Rear Wheel Drive', 2]]
   FUEL = [['Diesel', 1], ['Electric', 2]]
+  
+  RATINGS_QUESTION = ["How was your booking experience?", 
+  	"How was the car condition?", 
+  	"How was the Pick-Up location?", 
+  	"How was the fleet executive's behaviour?"
+  ]
   RATINGS = [["Terrible", 1], ["Bad", 2], ["Average", 3], ["Good", 4], ["Excellent", 5]]
   
 	FUNFACTS = [

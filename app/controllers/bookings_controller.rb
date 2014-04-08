@@ -95,20 +95,13 @@ class BookingsController < ApplicationController
 			@review.cargroup_id = @booking.cargroup_id
 			@review.location_id = @booking.location_id
 			if @review.save
-				flash[:notice] = "Thank you for your feedback."
+				flash[:notice] = "Thank you for your feedback. Please wait..."
 			else
 				flash[:error] = "Please fix the following errors"
 			end
 			render json: { html: render_to_string('/bookings/_feedback_form.haml', :layout => false)}
-		elsif request.get? 
-			@review = Review.where("booking_id = ?", @booking.id).first()
-			if !@review.nil?
-				render "show_feedback"
-			else
-				@review = Review.new
-				render "new_feedback"
-			end
 		end
+		generic_meta
 	end
 	
 	def generate

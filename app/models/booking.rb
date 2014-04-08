@@ -10,8 +10,9 @@ class Booking < ActiveRecord::Base
 	has_many	:refunds, :inverse_of => :booking, dependent: :destroy
 	has_many	:confirmed_payments, -> { where "status = 1" }, class_name: "Payment"
 	has_many	:confirmed_refunds, -> { where "status = 1" }, class_name: "Refund"
-	has_many	:reviews, :inverse_of => :booking, dependent: :destroy
 	has_many	:utilizations, -> {where "minutes > 0"}, dependent: :destroy
+	
+	has_one	:review, :inverse_of => :booking, dependent: :destroy
 	
 	attr_writer :through_search
 	attr_writer :through_signup
