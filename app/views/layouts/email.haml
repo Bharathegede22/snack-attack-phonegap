@@ -9,6 +9,35 @@
 					%div{style: "text-align:center; color:red; margin:10px; padding:0; font-weight:bold;"}
 						Support / Fleet Guys : Please ignore this email.
 				= yield
+				%div{:style => "border-radius:10px; background:#eeeeee; padding:10px; color:#666666; font-size:12px;"}
+					%table{cellpadding: '2', cellspacing: '0', border: '0', width: '100%'}
+						%tr
+							%td{align: 'center', width:'25%'}
+								= image_tag 'email/no-alcohol.png', alt: ''
+							%td{align: 'center', width:'25%'}
+								= image_tag 'email/no-smoking.png', alt: ''
+							%td{align: 'center', width:'25%'}
+								= image_tag 'email/no-pets.png', alt: ''
+							%td{align: 'center', width:'25%'}
+								= image_tag 'email/speed-limit.png', alt: ''
+						%tr{style: 'font-size:12px;'}
+							%td{align: 'center'}
+								%b.black No Alcohol / Drug
+							%td{align: 'center'}
+								%b.black No Smoking
+							%td{align: 'center'}
+								%b.black No Pets
+							%td{align: 'center'}
+								%b.black No Overspeeding
+						%tr{style: 'font-size:12px; color:#333333;'}
+							%td{align: 'center'}
+								Account Block
+							%td{align: 'center'}
+								₹ #{CommonHelper::SMOKING} Fine
+							%td{align: 'center'}
+								Account Block
+							%td{align: 'center'}
+								₹ #{CommonHelper::OVERSPEEDING} Fine
 				- if HOSTNAME != 'www.zoomcar.in'
 					%div{style: "text-align:center; color:red; margin:10px; padding:0; font-weight:bold;"}
 						this email is generated on Zoom's test server and doesn't have any relevance whatsoever

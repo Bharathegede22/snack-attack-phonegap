@@ -1,5 +1,9 @@
 module CommonHelper
 	
+	# Fees
+	SMOKING = 1000
+	OVERSPEEDING = 500
+	
 	HIRE_TYPE = [['Full Time', 0],['Part Time',1],['Internship',2]]
 	DEPARTMENT = [['Call Centre',0],['Marketing',1],['Technology',2],['Operations',3]]
 	

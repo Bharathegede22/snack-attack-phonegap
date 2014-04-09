@@ -537,16 +537,16 @@
 							Late payment of these fines will be charged an additional fee ₹500 per 30 days or fraction thereof.
 						%li
 							Members must report and turn over all traffic and parking violations/receipts to Zoom's vehicle attendants immediately following their reservation. Zoom will subsequently mail a hard copy of the violation/receipt to the Member and payment will be according to the guidance provided above.
-				%li
+				%li#Overspeeding
 					Overspeeding:
 					%p Note that Zoom tracks the speed of all vehicles through a sophisticated back end monitoring system that provides real-time overspeeding alerts.
 					%ol
 						%li
-							Member will receive a warning email along with a fine of ₹250 for reaching a speed between
+							Member will receive a warning email along with a fine of ₹#{CommonHelper::OVERSPEEDING/2} for reaching a speed between
 							%b 125 and 134 km/hr
 							during a reservation.
 						%li
-							Member will receive a warning email along with a fine of ₹500 for reaching a speed of
+							Member will receive a warning email along with a fine of ₹#{CommonHelper::OVERSPEEDING} for reaching a speed of
 							%b 135 km/h and above
 							during a reservation.
 						%li
@@ -568,7 +568,7 @@
 					%ol
 						%li
 							In the interest of the entire Zoom community, smoking is strictly forbidden in all Zoom vehicles. Members who smoke in Zoom vehicles will be fined 
-							%b Rs 600
+							%b ₹#{CommonHelper::SMOKING}
 							plus any other applicable damage costs related to the interior.
 				%li
 					Lost Tablet Fee:
