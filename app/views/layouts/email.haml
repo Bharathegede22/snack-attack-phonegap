@@ -9,17 +9,20 @@
 					%div{style: "text-align:center; color:red; margin:10px; padding:0; font-weight:bold;"}
 						Support / Fleet Guys : Please ignore this email.
 				= yield
+				%div{:style => "padding:10px 0; margin:0;"}
+					%a{href: "http://#{HOSTNAME}/handover"}
+						Critical information about your booking
 				%div{:style => "border-radius:10px; background:#eeeeee; padding:10px; color:#666666; font-size:12px;"}
 					%table{cellpadding: '2', cellspacing: '0', border: '0', width: '100%'}
 						%tr
 							%td{align: 'center', width:'25%'}
-								= image_tag 'email/no-alcohol.png', alt: ''
+								%img{:src => "http://#{HOSTNAME}/images/email/no-alcohol.png", :alt => '', :border => '0'}/
 							%td{align: 'center', width:'25%'}
-								= image_tag 'email/no-smoking.png', alt: ''
+								%img{:src => "http://#{HOSTNAME}/images/email/no-smoking.pn", :alt => '', :border => '0'}/
 							%td{align: 'center', width:'25%'}
-								= image_tag 'email/no-pets.png', alt: ''
+								%img{:src => "http://#{HOSTNAME}/images/email/no-pets.png", :alt => '', :border => '0'}/
 							%td{align: 'center', width:'25%'}
-								= image_tag 'email/speed-limit.png', alt: ''
+								%img{:src => "http://#{HOSTNAME}/images/email/speed-limit.png", :alt => '', :border => '0'}/
 						%tr{style: 'font-size:12px;'}
 							%td{align: 'center'}
 								%b.black No Alcohol / Drug
