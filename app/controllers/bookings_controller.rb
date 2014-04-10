@@ -82,7 +82,7 @@ class BookingsController < ApplicationController
 	end
 	
 	def failed
-		render 'complete', layout: 'plain'
+		render 'thanks', layout: 'plain'
 	end
 	
 	def feedback
@@ -294,7 +294,7 @@ class BookingsController < ApplicationController
 	end
 
 	def thanks
-		render 'complete', layout: 'plain'
+		render layout: 'plain'
 	end
 	
 	def timeline

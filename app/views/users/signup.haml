@@ -102,6 +102,20 @@
 					})(document);
 					initializeDatePicker();
 					bindCountry();
+			- if !session[:signup]
+				:javascript
+					var fb_param = {};
+					fb_param.pixel_id = '6012571790330';
+					fb_param.value = "0.00";
+					fb_param.currency = 'INR';
+					(function(){
+						var fpw = document.createElement('script');
+						fpw.async = true;
+						fpw.src = '//connect.facebook.net/en_US/fp.js';
+						var ref = document.getElementsByTagName('script')[0];
+						ref.parentNode.insertBefore(fpw, ref);
+					})();
+			- session[:signup] = 1
 		- else
 			.alert.alert-success
 				%b Thanks for providing your details.
