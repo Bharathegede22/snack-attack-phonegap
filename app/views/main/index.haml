@@ -228,12 +228,3 @@
 		%a.cnbc{:href => "http://www.moneycontrol.com/news/business/self-drive-your-way-to-gloryzoomcar-_901654.html", :rel => "nofollow", :target => "_blank", :title => "CNBC", :onclick => "_gaq.push(['_trackEvent', 'Homepage', 'Press', 'CNBC']);"}
 		%a.teambhp{:href => "http://www.team-bhp.com/news/zoom-pay-drive-new-self-drive-option-bangalore", :rel => "nofollow", :target => "_blank", :title => "Team BHP", :onclick => "_gaq.push(['_trackEvent', 'Homepage', 'Press', 'TeamBHP']);"}
 		.fc
-:javascript
-	function checkJquery() {
-		if (window.jQuery) {
-			pushEvent('AB Test', 'Homepage 4 Fields');
-		} else {
-			window.setTimeout(checkJquery, 1000);
-		}
-	}
-	checkJquery();

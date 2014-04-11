@@ -31,7 +31,7 @@ module CommonHelper
 		"Zoom is the only rental service in India to offer a luxury vehicle to hire by the hour (BMW 320d)"
 	]
 	
-	DISCOUNT_CODES = ['BUSINESS', 'MYSTERY', 'WOODSMAN', 'ROCKETPERKS', 'DEMOCRACY']
+	DISCOUNT_CODES = ['BUSINESS', 'MYSTERY', 'WOODSMAN', 'ROCKETPERKS', 'DEMOCRACY', 'ZOOMNOW']
 	CUSTOMER_CARE = "080-67684475"
 	CUSTOMER_CARE_EMAIL = "contact@zoomcar.in"
 	LIABILITY = '5,000'
