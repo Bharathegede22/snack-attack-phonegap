@@ -202,13 +202,17 @@ class BookingsController < ApplicationController
 	end
   
   def promo
-  	if !params[:promo].blank?
-  		if CommonHelper::DISCOUNT_CODES.include?(params[:promo])
-  			session[:promo_code] = params[:promo]
-  		else
-  			flash[:error] = "No active offer is found for <b>#{params[:promo]}</b>."
-    	end
-    end
+  	if !params[:clear].blank? && params[:clear].to_i == 1
+  		session[:promo_code] = nil
+  	else
+			if !params[:promo].blank?
+				if CommonHelper::DISCOUNT_CODES.include?(params[:promo])
+					session[:promo_code] = params[:promo]
+				else
+					flash[:error] = "No active offer is found for <b>#{params[:promo]}</b>."
+		  	end
+		  end
+		end
     render json: {html: render_to_string('_promo.haml', layout: false)}
   end
 	

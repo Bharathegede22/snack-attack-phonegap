@@ -1,6 +1,6 @@
 - render_flash
-- if session[:promo_code].blank?
-	#PromoDiv
+#PromoDiv
+	- if session[:promo_code].blank?
 		.p-b5
 			%b Promo Code (Optional)
 		.p-b5
@@ -13,12 +13,21 @@
 			#PromoWait{style: "display:none;"}
 				.wait
 		#DetailsNameError.error
-- else
-	.p-b5
-		%b Promo Code (Optional)
-	.p-b5
-		Promo code 
-		%b #{session[:promo_code]}
-		has been applied.
-	.p-b5
-		%i Discount will be manually evaluated and refunded back to your card.
+	- else
+		.p-b5
+			.fl
+				%b Promo Code (Optional)
+			.fr
+				%form.form-inline{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+					#PromoSubmit
+						%button.btn.btn-default.btn-xs{type:"submit"}
+							%span.glyphicon.glyphicon-remove
+					#PromoWait{style: "display:none;"}
+						.wait
+			.fc
+		.p-b5
+			Promo code 
+			%b #{session[:promo_code]}
+			has been applied.
+		.p-b5
+			%i Discount will be manually evaluated and refunded back to your card.
