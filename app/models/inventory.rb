@@ -76,7 +76,11 @@ class Inventory < ActiveRecord::Base
 			cars.each do |c|
 				tmp = {}
 				locs.each do |l|
-					tmp[l.id.to_s] = 1
+					if l.id == 8 && (Time.now + 180.minutes > start_time)
+						tmp[l.id.to_s] = 0
+					else
+						tmp[l.id.to_s] = 1
+					end
 				end
 				start_date = start_time
 				start_date += 330.minutes if timezone_padding
@@ -85,7 +89,7 @@ class Inventory < ActiveRecord::Base
 				end_date = end_time
 				end_date += 330.minutes if timezone_padding
 				end_date += c.wait_period.minutes if end_padding
-			
+				
 				Inventory.find_by_sql("SELECT slot, total, location_id FROM inventories 
 					WHERE cargroup_id = #{c.id} AND 
 					location_id IN (#{locs.collect {|l| l.id}.join(',')}) AND 
