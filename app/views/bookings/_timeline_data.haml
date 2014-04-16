@@ -8,7 +8,13 @@
 - @inventory.each do |i|
 	:ruby
 		slot = i.slot - 330.minutes
-		total = i.total
+		if @booking.location_id == 8 && ((Time.now + 180.minutes) > slot)
+			total = 0
+		elsif Time.now > slot
+			total = 0
+		else
+			total = i.total
+		end
 		if @page == 0
 			if slot < @booking.starts && slot >= @booking.starts - (@cargroup.wait_period.minutes + 15.minutes)
 				if !slot_s

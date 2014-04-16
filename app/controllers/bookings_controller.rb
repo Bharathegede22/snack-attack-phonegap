@@ -82,7 +82,7 @@ class BookingsController < ApplicationController
 	end
 	
 	def failed
-		render 'complete', layout: 'plain'
+		render 'thanks', layout: 'plain'
 	end
 	
 	def feedback
@@ -95,20 +95,13 @@ class BookingsController < ApplicationController
 			@review.cargroup_id = @booking.cargroup_id
 			@review.location_id = @booking.location_id
 			if @review.save
-				flash[:notice] = "Thank you for your feedback."
+				flash[:notice] = "Thank you for your feedback. Please wait..."
 			else
 				flash[:error] = "Please fix the following errors"
 			end
 			render json: { html: render_to_string('/bookings/_feedback_form.haml', :layout => false)}
-		elsif request.get? 
-			@review = Review.where("booking_id = ?", @booking.id).first()
-			if !@review.nil?
-				render "show_feedback"
-			else
-				@review = Review.new
-				render "new_feedback"
-			end
 		end
+		generic_meta
 	end
 	
 	def generate
@@ -209,13 +202,17 @@ class BookingsController < ApplicationController
 	end
   
   def promo
-  	if !params[:promo].blank?
-  		if CommonHelper::DISCOUNT_CODES.include?(params[:promo])
-  			session[:promo_code] = params[:promo]
-  		else
-  			flash[:error] = "No active offer is found for <b>#{params[:promo]}</b>."
-    	end
-    end
+  	if !params[:clear].blank? && params[:clear].to_i == 1
+  		session[:promo_code] = nil
+  	else
+			if !params[:promo].blank?
+				if CommonHelper::DISCOUNT_CODES.include?(params[:promo])
+					session[:promo_code] = params[:promo]
+				else
+					flash[:error] = "No active offer is found for <b>#{params[:promo]}</b>."
+		  	end
+		  end
+		end
     render json: {html: render_to_string('_promo.haml', layout: false)}
   end
 	
@@ -301,7 +298,7 @@ class BookingsController < ApplicationController
 	end
 
 	def thanks
-		render 'complete', layout: 'plain'
+		render layout: 'plain'
 	end
 	
 	def timeline

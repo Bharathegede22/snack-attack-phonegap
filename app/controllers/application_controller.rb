@@ -9,15 +9,28 @@ class ApplicationController < ActionController::Base
   def check_params
   	# Check City
   	@city = City.find_by_name(params[:city]) if !params[:city].blank?
-  	# Check Ref
+  	
+  	# Check Ref Initial
   	if cookies[:ref].blank?
-  		if !params[:ref].blank?
-  			cookies[:ref] = {:value => params[:ref], :expires => 30.days.from_now, :domain => ".#{HOSTNAME.gsub('www.','')}"}
-  		else
-  			cookies[:ref] = {:value => '-', :expires => 30.days.from_now, :domain => ".#{HOSTNAME.gsub('www.','')}"}
+  		vref = ''
+  	else
+  		vref = cookies[:ref] + ','
+  	end
+  	vref << params[:ref] + ',' if !params[:ref].blank?
+  	if vref.blank?
+  		vref ='-'
+  	else
+  		vref = vref.split(',').uniq.join(',')
+  		if vref.split(',').length > 5
+  			tmp = vref.split(',')
+  			vref = tmp[0]
+  			vref << ',' + ((tmp.reverse - [vref])[0..3].reverse).join(',')
   		end
   	end
-  	session[:ref_initial] = cookies[:ref] if session[:ref_initial].nil?
+  	cookies[:ref] = {:value => vref, :expires => 30.days.from_now, :domain => ".#{HOSTNAME.gsub('www.','')}"}
+  	session[:ref_initial] = cookies[:ref]
+  	
+  	# Check Ref Immediate
   	if !params[:ref].blank?
     	session[:ref_immediate] = params[:ref]
     else

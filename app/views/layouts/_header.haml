@@ -7,26 +7,28 @@
 	.wrapper
 		%a.logo{:href => '/'}
 		%a.logo-rtt{:href => 'http://www.rtt.co.in', :target => '_blank', :rel => 'nofollow'}
+		.info
+			.broadcast.fr
+				#UserBar.dropdown.fr
+					%a.dropdown-toggle.p-r10{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
+						Sign Up / Sign In
+						%b.caret
+					%ul.dropdown-menu.pull-right
+						%li
+							%a{href: "javascript:void(0)", onclick: "showModal('Sign Up', '/users/signup');"}
+								Sign Up
+						%li
+							%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/signin');"}
+								Sign In
+						%li
+							%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/forgot');"}
+								Forgot Password
+			%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
+				We're Hiring
+			.fc
+			.support
+				#{CommonHelper::CUSTOMER_CARE}
 		.links
-			.fr
-				.broadcast.fr
-					#UserBar.dropdown
-						%a.dropdown-toggle.p-r10{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
-							Sign Up / Sign In
-							%b.caret
-						%ul.dropdown-menu.pull-right
-							%li
-								%a{href: "javascript:void(0)", onclick: "showModal('Sign Up', '/users/signup');"}
-									Sign Up
-							%li
-								%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/signin');"}
-									Sign In
-							%li
-								%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/forgot');"}
-									Forgot Password
-				.fc
-				.support
-					#{CommonHelper::CUSTOMER_CARE}
 			%ul.nav.navbar-nav.fr
 				- if @header.blank? || @header != 'homepage'
 					- cls = (!@header.blank? && (@header == 'search' || @header == 'booking')) ? 'active' : ''

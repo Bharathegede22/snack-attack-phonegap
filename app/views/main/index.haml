@@ -119,14 +119,15 @@
 				#SearchFormDiv.form
 					= render :partial => '/bookings/widget_homepage'
 - if true
-	.home-map
-		.p-5
-		%h2 Find Us In Your Neighbourhood!
-		- Location.live.each do |l|
-			- tmp = l.mapcontent.gsub("<div style='width:240px;'", "<div")
-			.help.pins{class: "locs#{l.id}", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{tmp}"}
-				.dot
-				.pulse
+	.homepage-map-bg
+		.homepage-map
+			.p-5
+				%h2 Find Us In Your Neighbourhood!
+			- Location.live.each do |l|
+				- tmp = l.mapcontent.gsub("<div style='width:240px;'", "<div")
+				.help.pins{class: "locs#{l.id}", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{tmp}"}
+					.dot
+					.pulse
 - else
 	#Gmap.home-map
 	- @city = City.find(1)
@@ -227,12 +228,3 @@
 		%a.cnbc{:href => "http://www.moneycontrol.com/news/business/self-drive-your-way-to-gloryzoomcar-_901654.html", :rel => "nofollow", :target => "_blank", :title => "CNBC", :onclick => "_gaq.push(['_trackEvent', 'Homepage', 'Press', 'CNBC']);"}
 		%a.teambhp{:href => "http://www.team-bhp.com/news/zoom-pay-drive-new-self-drive-option-bangalore", :rel => "nofollow", :target => "_blank", :title => "Team BHP", :onclick => "_gaq.push(['_trackEvent', 'Homepage', 'Press', 'TeamBHP']);"}
 		.fc
-:javascript
-	function checkJquery() {
-		if (window.jQuery) {
-			pushEvent('AB Test', 'Homepage 4 Fields');
-		} else {
-			window.setTimeout(checkJquery, 1000);
-		}
-	}
-	checkJquery();

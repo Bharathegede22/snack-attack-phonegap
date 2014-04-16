@@ -9,6 +9,39 @@
 					%div{style: "text-align:center; color:red; margin:10px; padding:0; font-weight:bold;"}
 						Support / Fleet Guys : Please ignore this email.
 				= yield
+				%div{:style => "padding:10px 0; margin:0;"}
+					%b
+						%a{href: "http://#{HOSTNAME}/handover"}
+							Click here to see how to Zoom responsibly
+				%div{:style => "border-radius:10px; background:#eeeeee; padding:10px; color:#666666; font-size:12px;"}
+					%table{cellpadding: '2', cellspacing: '0', border: '0', width: '100%'}
+						%tr
+							%td{align: 'center', width:'25%'}
+								%img{:src => "http://#{HOSTNAME}/images/email/no-alcohol.png", :alt => '', :border => '0'}/
+							%td{align: 'center', width:'25%'}
+								%img{:src => "http://#{HOSTNAME}/images/email/no-smoking.png", :alt => '', :border => '0'}/
+							%td{align: 'center', width:'25%'}
+								%img{:src => "http://#{HOSTNAME}/images/email/no-pets.png", :alt => '', :border => '0'}/
+							%td{align: 'center', width:'25%'}
+								%img{:src => "http://#{HOSTNAME}/images/email/speed-limit.png", :alt => '', :border => '0'}/
+						%tr{style: 'font-size:12px; color:#000000;'}
+							%td{align: 'center'}
+								%b.black No Alcohol / Drug
+							%td{align: 'center'}
+								%b.black No Smoking
+							%td{align: 'center'}
+								%b.black No Pets
+							%td{align: 'center'}
+								%b.black No Overspeeding
+						%tr{style: 'font-size:12px; color:#333333;'}
+							%td{align: 'center'}
+								Account Block
+							%td{align: 'center'}
+								₹ #{CommonHelper::SMOKING} Fine
+							%td{align: 'center'}
+								Account Block
+							%td{align: 'center'}
+								₹ #{CommonHelper::OVERSPEEDING} Fine
 				- if HOSTNAME != 'www.zoomcar.in'
 					%div{style: "text-align:center; color:red; margin:10px; padding:0; font-weight:bold;"}
 						this email is generated on Zoom's test server and doesn't have any relevance whatsoever

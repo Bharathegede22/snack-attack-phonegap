@@ -9,4 +9,10 @@ class ReportMailer < ActionMailer::Base
   	mail to: "amit@zoomcar.in", subject: "[ZoomWeb] Exotel Error"
   end
   
+  def review(review)
+  	@review = review
+  	@booking = @review.booking
+  	mail to: "feedback@zoomcar.in", subject: "User Feedback"
+  end
+  
 end

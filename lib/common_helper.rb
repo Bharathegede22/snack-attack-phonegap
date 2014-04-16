@@ -1,11 +1,21 @@
 module CommonHelper
 	
+	# Fees
+	SMOKING = 1000
+	OVERSPEEDING = 500
+	
 	HIRE_TYPE = [['Full Time', 0],['Part Time',1],['Internship',2]]
 	DEPARTMENT = [['Call Centre',0],['Marketing',1],['Technology',2],['Operations',3]]
 	
 	CAR_TYPE = [['Hatchback', 1], ['SUV', 2], ['Sedan', 3], ['Coupe2D', 4]]
   DRIVE = [['Front Wheel', 1], ['Rear Wheel Drive', 2]]
   FUEL = [['Diesel', 1], ['Electric', 2]]
+  
+  RATINGS_QUESTION = ["How was your booking experience?", 
+  	"How was the car condition?", 
+  	"How was the Pick-Up location?", 
+  	"How was the fleet executive's behaviour?"
+  ]
   RATINGS = [["Terrible", 1], ["Bad", 2], ["Average", 3], ["Good", 4], ["Excellent", 5]]
   
 	FUNFACTS = [
@@ -21,7 +31,7 @@ module CommonHelper
 		"Zoom is the only rental service in India to offer a luxury vehicle to hire by the hour (BMW 320d)"
 	]
 	
-	DISCOUNT_CODES = ['BUSINESS', 'MYSTERY', 'WOODSMAN']
+	DISCOUNT_CODES = ['BUSINESS', 'MYSTERY', 'WOODSMAN', 'ROCKETPERKS', 'DEMOCRACY', 'ZOOMNOW']
 	CUSTOMER_CARE = "080-67684475"
 	CUSTOMER_CARE_EMAIL = "contact@zoomcar.in"
 	LIABILITY = '5,000'
