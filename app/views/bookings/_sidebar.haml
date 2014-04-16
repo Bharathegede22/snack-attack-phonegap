@@ -15,8 +15,10 @@
 		- if !cargroup.disclaimer.blank?
 			.red.size-10
 				= cargroup.disclaimer.html_safe
-		.m-auto{:class => 'car' + @booking.cargroup_id.to_s}
-		Available at 
+		.colored
+			.m-auto{:class => 'car' + @booking.cargroup_id.to_s}
+		Available at
+		%br/
 		%b.help.pointer{onclick: "showModal('#{location.shortname}', '/map?lat=#{location.lat}&lng=#{location.lng}&title=#{location.shortname}');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Click here to see map"}
 			%u
 				= location.shortname
@@ -58,16 +60,16 @@
 				%td.p-5
 					%b Normal Tariff
 				%td.p-5.t-r
-					= fare[:estimate]
+					₹#{fare[:estimate]}
 			%tr
 				%td.p-5
 					%b Discount
 				%td.p-5.t-r
-					= fare[:discount]
+					₹#{fare[:discount]}
 	.bg-6.t-c.white.f-b.size-18
 		.p-10.fl
 			Total :
-			= fare[:estimate] - fare[:discount]
+			₹#{fare[:estimate] - fare[:discount]}
 		.calc.m-5.fr.help{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Tariff Estimator"}
 		.fc
 	.p-10.size-12
@@ -85,6 +87,6 @@
 					.fl.p-l5.help.pointer{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "If you travel more than #{fare[:kms]} Kms during the reservation, then Kms beyond #{fare[:kms]} will be charged at this price. Click here to enter your expected Kms to estimate your final tariff."} (?)
 					.fc
 				%td.p-5.t-r
-					Rs.#{cargroup.excess_kms.to_i} / Km
+					₹#{cargroup.excess_kms.to_i} / Km
 %br/
 %br/

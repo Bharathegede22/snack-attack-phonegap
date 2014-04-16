@@ -93,8 +93,9 @@
 						.fc
 				.actions
 					- fare = car.check_fare(@booking.starts, @booking.ends)
-					.tariff.r-5.help.help-event{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-placement' => 'left', 'data-title' => "<div class='size-12 t-l'><b class='zoom size-16'>Fare Breakup</b><br/><table width='200'><tr><td>Normal Tariff</td><td>#{fare[:estimate]}</td></tr><tr><td>Discount</td><td>#{fare[:discount]}</td></tr><tr class='f-b yellow'><td>Total</td><td>#{(fare[:estimate] - fare[:discount])}</td></tr><tr><td class='p-l10'>Free Kms</td><td>#{fare[:kms]}</td></tr><tr><td class='p-l10'>Excess Km Charge</td><td>Rs.#{car.excess_kms.to_i}/Km</td></tr></table></div>", 'data-event' => "#{car.display_name}"}
-						= (fare[:estimate] - fare[:discount])
+					.tariff.r-5.help.help-event{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-placement' => 'left', 'data-title' => "<div class='size-12 t-l'><b class='zoom size-16'>Fare Breakup</b><br/><table width='200'><tr><td>Normal Tariff</td><td>₹#{fare[:estimate]}</td></tr><tr><td>Discount</td><td>₹#{fare[:discount]}</td></tr><tr class='f-b yellow'><td>Total</td><td>₹#{(fare[:estimate] - fare[:discount])}</td></tr><tr><td class='p-l10'>Free Kms</td><td>#{fare[:kms]}</td></tr><tr><td class='p-l10'>Excess Km Charge</td><td>₹#{car.excess_kms.to_i}/Km</td></tr></table></div>", 'data-event' => "#{car.display_name}"}
+						%span.size-18 ₹
+						#{(fare[:estimate] - fare[:discount])}
 					- if locs[0][1] == 1
 						.button{id: 'ButtonYes' + car.id.to_s, onclick: "doBooking(#{car.id}, #{locs[0][0].id});"}
 							Book
@@ -107,5 +108,8 @@
 							Book
 				.fc
 		.timeline{id: 'Timeline' + car.id.to_s}
-		.timeline-action.help{id: 'TimelineAction' + car.id.to_s, onclick: "showTimeline('#{car.id}', 0, '#{car.display_name}');", 'data-toggle' => "tooltip", 'data-placement' => 'bottom', 'data-html' => 'true', 'data-title' => "Show Availability"}
-			.arrw-d
+		.timeline-action{onclick: "showTimeline('#{car.id}', 0, '#{car.display_name}');"}
+			.text{id: 'TimelineText' + car.id.to_s} Show Availability
+			.arrw{id: 'TimelineAction' + car.id.to_s}
+				.arrw-d
+			.fc

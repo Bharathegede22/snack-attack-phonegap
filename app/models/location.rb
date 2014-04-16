@@ -2,6 +2,12 @@ class Location < ActiveRecord::Base
 	
 	belongs_to :city
 	
+	def address_html
+		text = "<b>Address</b><br/>"
+		text << self.address
+		return text.html_safe
+	end
+	
 	def encoded_id
 		CommonHelper.encode('location', self.id)
 	end

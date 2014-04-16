@@ -1120,7 +1120,8 @@ a {
 }
 
 .search-item .timeline-action {
-	width:30px;
+	width:100px;
+	padding-top:2px;
 	margin:0 auto;
 	background:#323a45;
 	cursor:pointer;
@@ -1137,13 +1138,26 @@ a {
 	behavior: url(<%= asset_path 'assets/PIE.htc' %>);
 }
 
+.search-item .timeline-action .text {
+	width:80px;
+	cursor:pointer;
+	float:left;
+	font-size:10px;
+	margin-right:3px;
+	text-align:right;
+}
+
+.search-item .arrw {
+	width:10px;
+	height:10px;
+	float:left;
+}
+
 .search-item .arrw-d {
 	background:url(<%= asset_path 'r.png' %>) no-repeat;
 	background-position:-250px -110px;
 	width:10px;
 	height:10px;
-	margin:0 auto;
-	cursor:pointer;
 }
 
 .search-item .arrw-u {
@@ -1151,8 +1165,6 @@ a {
 	background-position:-260px -110px;
 	width:10px;
 	height:10px;
-	margin:0 auto;
-	cursor:pointer;
 }
 
 .search-item .img {
@@ -1207,43 +1219,43 @@ a {
 	background-position:-900px 0px;
 }
 
-.search-item:hover .car1, .sidebar-fixed .car1 {
+.search-item:hover .car1, .colored .car1 {
 	background-position:0px -80px;
 }
 
-.search-item:hover .car2, .sidebar-fixed .car2 {
+.search-item:hover .car2, .colored .car2 {
 	background-position:-100px -80px;
 }
 
-.search-item:hover .car3, .sidebar-fixed .car3 {
+.search-item:hover .car3, .colored .car3 {
 	background-position:-200px -80px;
 }
 
-.search-item:hover .car4, .sidebar-fixed .car4 {
+.search-item:hover .car4, .colored .car4 {
 	background-position:-300px -80px;
 }
 
-.search-item:hover .car5, .sidebar-fixed .car5 {
+.search-item:hover .car5, .colored .car5 {
 	background-position:-400px -80px;
 }
 
-.search-item:hover .car6, .sidebar-fixed .car6 {
+.search-item:hover .car6, .colored .car6 {
 	background-position:-500px -80px;
 }
 
-.search-item:hover .car7, .sidebar-fixed .car7 {
+.search-item:hover .car7, .colored .car7 {
 	background-position:-600px -80px;
 }
 
-.search-item:hover .car8, .sidebar-fixed .car8 {
+.search-item:hover .car8, .colored .car8 {
 	background-position:-700px -80px;
 }
 
-.search-item:hover .car9, .sidebar-fixed .car9 {
+.search-item:hover .car9, .colored .car9 {
 	background-position:-800px -80px;
 }
 
-.search-item:hover .car10, .sidebar-fixed .car10 {
+.search-item:hover .car10, .colored .car10 {
 	background-position:-900px -80px;
 }
 

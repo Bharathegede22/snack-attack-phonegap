@@ -27,55 +27,56 @@
 								%input#DetailsDob.validate-presence.form-control.dob{name: 'user[dob]', type: "text", value: current_user.dob.strftime('%d/%m/%Y'), placeholder: "dd/mm/yyyy (min #{CommonHelper::MIN_AGE} years)"}
 							#DetailsDobError.error
 								= errortxt(current_user.errors[:dob].uniq.join(', '))
-					.row.form-group
-						%label.col-sm-4.control-label Gender
-						.col-sm-6
-							%select#DetailsGender.form-control{name: 'user[gender]', placeholder: 'Gender *'}
-								- [['Male', 0], ['Female', 1]].each do |t|
-									- if current_user.gender == t[1]
-										%option{value: t[1], selected: true}
-											= t[0]
-									- else
-										%option{value: t[1]}
-											= t[0]
-					.row.form-group
-						%label.col-sm-4.control-label Country
-						.col-sm-6
-							%select#DetailsCountry.form-control.bind-country{name: 'user[country]'}
-								- Country.all.each do |t|
-									- if current_user.country == t[1]
-										%option{value: t[1], selected: true}
-											= t[0]
-									- else
-										%option{value: t[1]}
-											= t[0]
-					.bind-to-country
-						.row
-							.col-sm-4
-							.col-sm-6
-								.help-block
-									Your current address for optimized experience
+					- if false
 						.row.form-group
-							%label.col-sm-4.control-label Pincode
+							%label.col-sm-4.control-label Gender
 							.col-sm-6
-								%input#DetailsPincode.form-control{name: 'user[pincode]', type: "text", value: current_user.pincode, placeholder: '6 digit current pincode'}
-								#DetailsPincodeError.error
-									= errortxt(current_user.errors[:pincode].uniq.join(', '))
-						.row.form-group
-							%label.col-sm-4.control-label State
-							.col-sm-6
-								%select#DetailsState.form-control{name: 'user[state]'}
-									- CommonHelper::STATE.each do |t|
-										- if current_user.state == t
-											%option{value: t, selected: true}
-												= t
+								%select#DetailsGender.form-control{name: 'user[gender]', placeholder: 'Gender *'}
+									- [['Male', 0], ['Female', 1]].each do |t|
+										- if current_user.gender == t[1]
+											%option{value: t[1], selected: true}
+												= t[0]
 										- else
-											%option{value: t}
-												= t
+											%option{value: t[1]}
+												= t[0]
 						.row.form-group
-							%label.col-sm-4.control-label City
+							%label.col-sm-4.control-label Country
 							.col-sm-6
-								%input#DetailsCity.form-control{name: 'user[city]', type: "text", value: current_user.city, placeholder: 'current city'}
+								%select#DetailsCountry.form-control.bind-country{name: 'user[country]'}
+									- Country.all.each do |t|
+										- if current_user.country == t[1]
+											%option{value: t[1], selected: true}
+												= t[0]
+										- else
+											%option{value: t[1]}
+												= t[0]
+						.bind-to-country
+							.row
+								.col-sm-4
+								.col-sm-6
+									.help-block
+										Your current address for optimized experience
+							.row.form-group
+								%label.col-sm-4.control-label Pincode
+								.col-sm-6
+									%input#DetailsPincode.form-control{name: 'user[pincode]', type: "text", value: current_user.pincode, placeholder: '6 digit current pincode'}
+									#DetailsPincodeError.error
+										= errortxt(current_user.errors[:pincode].uniq.join(', '))
+							.row.form-group
+								%label.col-sm-4.control-label State
+								.col-sm-6
+									%select#DetailsState.form-control{name: 'user[state]'}
+										- CommonHelper::STATE.each do |t|
+											- if current_user.state == t
+												%option{value: t, selected: true}
+													= t
+											- else
+												%option{value: t}
+													= t
+							.row.form-group
+								%label.col-sm-4.control-label City
+								.col-sm-6
+									%input#DetailsCity.form-control{name: 'user[city]', type: "text", value: current_user.city, placeholder: 'current city'}
 				.t-c
 					#DetailsSubmit.p-5
 						= submit_tag "Submit", :class => 'btn btn-default btn-lg'

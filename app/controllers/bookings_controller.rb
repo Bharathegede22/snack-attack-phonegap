@@ -1,9 +1,9 @@
 class BookingsController < ApplicationController
 	
 	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
-	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule, :feedback ]
-	before_filter :check_search, :only => [:checkout, :docreate, :license, :login]
-	before_filter :check_inventory, :only => [:checkout, :docreate, :dopayment, :license, :login, :payment]
+	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule, :feedback]
+	before_filter :check_search, :only => [:checkout, :docreate, :license, :login, :userdetails]
+	before_filter :check_inventory, :only => [:checkout, :docreate, :dopayment, :license, :login, :payment, :userdetails]
 	
 	def cancel
 		if request.post?
@@ -16,7 +16,7 @@ class BookingsController < ApplicationController
 	end
 	
 	def checkout
-		redirect_to "/bookings/do" and return if !user_signed_in?
+		redirect_to "/bookings/do" and return if !user_signed_in? || (current_user && !current_user.check_details)
 		generic_meta
 		@header = 'booking'
 	end
@@ -45,15 +45,11 @@ class BookingsController < ApplicationController
 			redirect_to "/" and return
 		end
 		if user_signed_in?
-			#if current_user.check_details
-			#	if current_user.check_license
-					redirect_to "/bookings/checkout"
-			#	else
-			#		redirect_to "/bookings/license"
-			#	end
-			#else
-			#	redirect_to "/bookings/login"
-			#end
+			if current_user.check_details
+				redirect_to "/bookings/checkout"
+			else
+				redirect_to "/bookings/userdetails"
+			end
 		else
 			redirect_to "/bookings/login"
 		end
@@ -148,7 +144,7 @@ class BookingsController < ApplicationController
 	end
 	
 	def login
-		redirect_to "/bookings/do" and return if user_signed_in? # && current_user.check_details
+		redirect_to "/bookings/do" and return if user_signed_in?
 		generic_meta
 		@header = 'booking'
 	end
@@ -206,7 +202,7 @@ class BookingsController < ApplicationController
   		session[:promo_code] = nil
   	else
 			if !params[:promo].blank?
-				if CommonHelper::DISCOUNT_CODES.include?(params[:promo])
+				if CommonHelper::DISCOUNT_CODES.include?(params[:promo].upcase)
 					session[:promo_code] = params[:promo]
 				else
 					flash[:error] = "No active offer is found for <b>#{params[:promo]}</b>."
@@ -322,6 +318,12 @@ class BookingsController < ApplicationController
 		else
 			render_404
 		end
+	end
+	
+	def userdetails
+		redirect_to "/bookings/do" and return if !user_signed_in? || (current_user && current_user.check_details)
+		generic_meta
+		@header = 'booking'
 	end
 	
 	def widget

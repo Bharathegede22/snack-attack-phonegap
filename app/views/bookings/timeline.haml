@@ -79,7 +79,6 @@
 	%input{id: "TimelineLessNum#{@booking.cargroup_id}", type: "hidden", value: "-1"}
 	%input{id: "TimelineMoreNum#{@booking.cargroup_id}", type: "hidden", value: "1"}
 :javascript
-	$('.help').tooltip();
 	$("#Timeline#{@booking.cargroup_id}").slideDown();
+	$("#TimelineText#{@booking.cargroup_id}").html("Hide Availability");
 	$("#TimelineAction#{@booking.cargroup_id}").html("<div class='arrw-u'></div>");
-	$("#TimelineAction#{@booking.cargroup_id}").attr('data-original-title', 'Hide Availability').tooltip('fixTitle');

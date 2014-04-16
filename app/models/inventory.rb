@@ -26,11 +26,13 @@ class Inventory < ActiveRecord::Base
 	end
 	
 	def self.block_plain(cargroup, location, starts, ends)
+		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
 		ActiveRecord::Base.connection.execute("UPDATE inventories SET total = (total-1) WHERE 
 			cargroup_id = #{cargroup} AND 
 			location_id = #{location} AND 
 			slot >= '#{(starts + 330.minutes).to_s(:db)}' AND 
 			slot < '#{(ends + 330.minutes).to_s(:db)}'")
+		ActiveRecord::Base.connection.execute("UNLOCK TABLES")
 	end
 	
 	def self.cache
@@ -61,88 +63,48 @@ class Inventory < ActiveRecord::Base
 	
 	def self.check_plain(start_time, end_time, cargroup, location, timezone_padding=false, start_padding=false, end_padding=false)
 		Inventory.connection.clear_query_cache
-		if true
-			if cargroup
-				cars = [Cargroup.find(cargroup)]
-			else
-				cars = Cargroup.list
-			end
-			if location
-				locs = [Location.find(location)]
-			else
-				locs = Location.live
-			end
-			check = {}
-			cars.each do |c|
-				tmp = {}
-				locs.each do |l|
-					if l.id == 8 && (Time.now + 180.minutes > start_time)
-						tmp[l.id.to_s] = 0
-					else
-						tmp[l.id.to_s] = 1
-					end
-				end
-				start_date = start_time
-				start_date += 330.minutes if timezone_padding
-				start_date -= c.wait_period.minutes if start_padding 
-			
-				end_date = end_time
-				end_date += 330.minutes if timezone_padding
-				end_date += c.wait_period.minutes if end_padding
-				
-				Inventory.find_by_sql("SELECT slot, total, location_id FROM inventories 
-					WHERE cargroup_id = #{c.id} AND 
-					location_id IN (#{locs.collect {|l| l.id}.join(',')}) AND 
-					slot >= '#{start_date.to_s(:db)}' AND 
-					slot < '#{(end_date).to_s(:db)}' AND 
-					total < 1 
-					GROUP BY location_id").each do |i|
-					tmp[i.location_id.to_s] = 0
-				end
-				check[c.id.to_s] = tmp
-			end
-			return check
+		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE, cargroups READ, locations READ")
+		if cargroup
+			cars = [Cargroup.find(cargroup)]
 		else
-			if cargroup
-				cars = [Cargroup.find(cargroup)]
-			else
-				cars = Cargroup.list
-			end
-			location = Location.find(location) if location
-			h = []
-			cars.each do |c|
-				if location
-					locs = [location]
-				else
-					locs = c.locations
-				end
-				check = {}
-				locs.each do |l|
-					check[l.id.to_s] = [1, l]
-				end
-				day = nil
-			
-				date = start_time
-				date += 330.minutes if timezone_padding
-				date -= c.wait_period.minutes if start_padding
-			
-				end_date = end_time
-				end_date += 330.minutes if timezone_padding
-				end_date += c.wait_period.minutes if end_padding
-				while date.to_i < end_date.to_i do
-					if day != date.to_date
-						day = date.to_date
-						inv = Inventory.get(c.id, day)
-					end
-					locs.each do |l|
-						check[l.id.to_s][0] = 0 if inv[l.id.to_s][date.to_i.to_s] == 0
-					end
-					date += 15.minutes
-				end
-				h << [check.to_a, c]
-			end
-			return h
+			cars = Cargroup.list
 		end
+		if location
+			locs = [Location.find(location)]
+		else
+			locs = Location.live
+		end
+		check = {}
+		cars.each do |c|
+			tmp = {}
+			locs.each do |l|
+				if l.id == 8 && (Time.now + 180.minutes > start_time)
+					tmp[l.id.to_s] = 0
+				else
+					tmp[l.id.to_s] = 1
+				end
+			end
+			start_date = start_time
+			start_date += 330.minutes if timezone_padding
+			start_date -= c.wait_period.minutes if start_padding 
+		
+			end_date = end_time
+			end_date += 330.minutes if timezone_padding
+			end_date += c.wait_period.minutes if end_padding
+			
+			Inventory.find_by_sql("SELECT slot, total, location_id FROM inventories 
+				WHERE cargroup_id = #{c.id} AND 
+				location_id IN (#{locs.collect {|l| l.id}.join(',')}) AND 
+				slot >= '#{start_date.to_s(:db)}' AND 
+				slot < '#{(end_date).to_s(:db)}' AND 
+				total < 1 
+				GROUP BY location_id").each do |i|
+				tmp[i.location_id.to_s] = 0
+			end
+			check[c.id.to_s] = tmp
+		end
+		ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+		return check
 	end
 	
 	def self.get(cargroup, location, starts, ends, page)
@@ -166,22 +128,28 @@ class Inventory < ActiveRecord::Base
 		end
 		starts = Time.today if starts < Time.today
 		if ends > Time.today || ends <= Time.today + CommonHelper::BOOKING_WINDOW.days
-			return Inventory.find_by_sql("SELECT slot, total FROM inventories 
+			Inventory.connection.clear_query_cache
+			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
+			temp = Inventory.find_by_sql("SELECT slot, total FROM inventories 
 				WHERE cargroup_id = #{cargroup} AND location_id = #{location} AND 
 				slot >= '#{starts.to_s(:db)}' AND 
 				slot < '#{ends.to_s(:db)}' 
 				ORDER BY slot ASC")
+			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
 		else
-			return []
+			temp = []
 		end
+		return temp
 	end
 	
 	def self.release(cargroup, location, starts, ends)
+		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
 		ActiveRecord::Base.connection.execute("UPDATE inventories SET total = (total+1) WHERE 
 			cargroup_id = #{cargroup} AND 
 			location_id = #{location} AND 
 			slot >= '#{(starts + 330.minutes).to_s(:db)}' AND 
 			slot < '#{(ends + 330.minutes).to_s(:db)}'")
+		ActiveRecord::Base.connection.execute("UNLOCK TABLES")
 	end
 	
 	private

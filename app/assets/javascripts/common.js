@@ -393,8 +393,8 @@ function showTimeline(carId, action, carName) {
 				pushEvent('Search', carName, 'Timeline Close');
 			}
 			$('#Timeline' + carId).html('');
+			$('#TimelineText' + carId).html("Show Availability");
 			$('#TimelineAction' + carId).html("<div class='arrw-d'></div>");
-			$('#TimelineAction' + carId).attr("data-original-title", 'Show Availability').tooltip('fixTitle');
 		}
 		$('#TimelineAction' + carId).tooltip('hide');
 	} else if(action == 1) {
