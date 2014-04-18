@@ -14,11 +14,12 @@
 				= submit_tag "Submit", :class => 'btn btn-default btn-lg'
 			#ForgotWait.p-5.hide
 				.wait
-		.p-t10
-			.row.f-b
-				.col-sm-6.t-l
-					%a{:href => "javascript:void(0)", :onclick => "getData('/users/signin', 'SignupDiv', 'replace', null);"}
+		.p-t20
+			.f-b.bg-e.p-10.r-5.border-c.solid
+				.fl
+					%a.btn.btn-primary.btn-sm{:href => "javascript:void(0)", :onclick => "getData('/users/signin', 'SignupDiv', 'replace', null);"}
 						Sign In?
-				.col-sm-6.t-r
-					%a{:href => "javascript:void(0)", :onclick => "getData('/users/signup', 'SignupDiv', 'replace', null);"}
+				.fr
+					%a.btn.btn-primary.btn-sm{:href => "javascript:void(0)", :onclick => "getData('/users/signup', 'SignupDiv', 'replace', null);"}
 						Sign Up?
+				.fc

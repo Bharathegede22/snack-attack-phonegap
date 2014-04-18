@@ -27,8 +27,7 @@
 							Available at
 							%br/
 							%b
-								%u
-									= location.shortname
+								= location.shortname
 							- if !location.disclaimer.blank?
 								.red.size-10
 									= location.disclaimer.html_safe
@@ -130,11 +129,15 @@
 							= render :partial => "promo"
 						.t-c
 							%br/
-							%button.btn.btn-default{type: "button", style: 'width:200px;'}
+							.m-auto{style: 'width:200px;'}
 								- if @available == 1
-									.button{onclick: "checkout();"} Checkout
+									%button.btn.btn-default.size-24{style: 'width:200px;', type: "button", onclick: "checkout();"}
+										Checkout
 								- else
-									.button-dis Checkout
+									.button-dis
+										.size-24 Checkout
+							- if @available != 1
+								.p-5.red Sorry, the car is not available
 				.fc
 	%br/
 :javascript
@@ -166,7 +169,7 @@
 			map: map,
 			animation: google.maps.Animation.DROP,
 			title:"#{location.name}",
-			icon:"#{asset_path 'map/blue.png'}"
+			icon:"#{asset_path 'map/red.png'}"
 		});
 		infowindow.open(map,marker);
 	}

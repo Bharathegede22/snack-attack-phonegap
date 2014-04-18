@@ -3,8 +3,8 @@ class Location < ActiveRecord::Base
 	belongs_to :city
 	
 	def address_html
-		text = "<b>Address</b><br/>"
-		text << self.address
+		text = ""
+		text << self.name
 		return text.html_safe
 	end
 	
@@ -56,9 +56,9 @@ class Location < ActiveRecord::Base
 	
 	def shortname
 		if self.status == 1
-			return self.name.split(',').last
+			return self.name.split(',').last.split('(').first.strip
 		else
-			return self.name.split(',').last + " *"
+			return self.name.split(',').last.split('(').first.strip + " *"
 		end
 	end
 	

@@ -117,9 +117,27 @@
 	:javascript
 		initializeDatePicker();
 - else
-	:javascript
-		var auto = setTimeout(function(){ submitRedirect(); }, 3000);
-		function submitRedirect() {
-			clearTimeout(auto);
-			location.reload();
-		}
+	- if current_user.support? || @booking.outstanding <= 0
+		:javascript
+			var auto = setTimeout(function(){ submitRedirect(); }, 3000);
+			function submitRedirect() {
+				clearTimeout(auto);
+				location.reload();
+			}
+	- else
+		.t-c
+			%br/
+			%br/
+			%br/
+			.wait
+			%br/
+			%br/
+			Please wait while we proceed for payment
+			%br/
+			%br/
+		:javascript
+			var auto = setTimeout(function(){ submitRedirect(); }, 3000);
+			function submitRedirect() {
+				clearTimeout(auto);
+				window.location = "/bookings/#{@booking.encoded_id}/dopayment";
+			}
