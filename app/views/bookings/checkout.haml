@@ -1,6 +1,7 @@
 - cargroup = @booking.cargroup
 - location = @booking.location
 - fare = cargroup.check_fare(@booking.starts, @booking.ends)
+- fare[:total_credits] = current_user.total_credits
 .content
 	= render :partial => "/bookings/search_steps", locals: {step: 4}
 	.wrapper
@@ -102,6 +103,7 @@
 											%b Discount
 										%td.p-5.t-r
 											₹#{fare[:discount]}
+									
 							.bg-6.t-c.white.f-b.size-18
 								.p-10.fl
 									Total :
@@ -124,6 +126,9 @@
 											.fc
 										%td.p-5.t-r
 											₹#{cargroup.excess_kms.to_i} / Km
+						%br/
+						.bg-e.p-10.border-c.solid.r-5
+							= render :partial => "credits", :locals => {:fare => fare}
 						%br/
 						.bg-e.p-10.border-c.solid.r-5
 							= render :partial => "promo"

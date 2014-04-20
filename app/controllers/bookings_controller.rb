@@ -64,7 +64,29 @@ class BookingsController < ApplicationController
 		@booking.ref_immediate = session[:ref_immediate]
 		@booking.through_signup = true
 		@booking.promo = session[:promo_code] if !session[:promo_code].blank?
+		#@booking.credit = Credit.new(status: 0,user_id: current_user.id, amount: session[:used_credits])   #to do recalculate session hijacking
 		@booking.save!
+
+		payment = Payment.new
+		payment.booking_id = @booking.id
+		payment.status = 1
+		payment.through = 'credits'
+		payment.amount = session[:used_credits]
+		payment.save!
+
+		credit = Credit.new
+		credit.user_id = current_user.id
+		credit.creditable_type = 'booking'
+		credit.amount = session[:used_credits]
+		credit.action = 'debit'
+		credit.status = 1
+		credit.creditable_id = @booking.id
+		credit.save!
+
+		current_user.update_credits
+
+		session[:used_credits] = nil
+
 		session[:booking_id] = @booking.encoded_id
 		session[:search] = nil
 		session[:book] = nil
@@ -212,6 +234,27 @@ class BookingsController < ApplicationController
     render json: {html: render_to_string('_promo.haml', layout: false)}
   end
 	
+	def credits
+	  	#if !params[:clear].blank? && params[:clear].to_i == 1
+	  	#	session[:used_credits] = nil
+	  	#else
+			if params[:fare].to_i >= current_user.total_credits.to_i
+				session[:used_credits] = current_user.total_credits.to_i
+			else
+				session[:used_credits] = params[:fare].to_i
+
+			end
+			
+			#rem_credit = current_user.total_credits.to_i - session[:used_credits]
+			flash[:notice] = "Remaining Credits: #{current_user.total_credits.to_i - session[:used_credits]}" 
+			session[:cr_netamount] = params[:fare].to_i - session[:used_credits].to_i
+		#end
+		
+
+    	render json: {html: render_to_string('_credits.haml', layout: false)}
+
+	end
+
 	def reschedule
 		@confirm = !params[:confirm].blank?
 		if request.post?

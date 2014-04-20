@@ -41,6 +41,7 @@ Web::Application.routes.draw do
 			post 'license'
 			post 'payu'
 			post 'promo'
+			post 'credits'
 		end
 		member do
 			get 'cancel'
@@ -72,7 +73,8 @@ Web::Application.routes.draw do
 			get 'signin'
 			get 'signup'
 			get 'status'
-			
+			get 'credits'
+
 			post 'license'
 			post 'signup'
 			post 'update'
