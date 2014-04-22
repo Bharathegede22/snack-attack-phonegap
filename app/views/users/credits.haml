@@ -6,10 +6,28 @@
 .panel.panel-default
 	.panel-heading
 		%h3.panel-title Credits Used
-	.panel-body
-		
-
+	- if current_user.credits.where(:status=> false).any?
+		.panel-body
+			%table.table
+				%th Date 
+				%th Source
+				%th Amount ₹
+				- current_user.credits.where(:status=> false).order(:created_at => :desc).each do |credit|
+					%tr
+						%td= credit.created_at.strftime("%d %B %Y")
+						%td= credit.creditable_type
+						%td= credit.amount
+	%br/
 	.panel-heading
 		%h3.panel-title Credits Earned
-	.panel-body
-		
+	- if current_user.credits.where(:status=> true).any?
+		.panel-body
+			%table.table
+				%th Date 
+				%th Source
+				%th Amount ₹
+				- current_user.credits.where(:status=> true).order(:created_at => :desc).each do |credit|
+					%tr
+						%td= credit.created_at.strftime("%d %B %Y")
+						%td= credit.creditable_type
+						%td= credit.amount
