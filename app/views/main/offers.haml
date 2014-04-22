@@ -97,7 +97,7 @@
 					Discount will not be applicable on any of 
 					%a{href: '/holidays'} these days
 	%br/
-	- Offer.find_each(:conditions => "status = 'Active'") do |offer|
+	- Offer.find_each(:conditions => "status = 'Active' and visibilily = 'All'") do |offer|
 		%div{id: "#{offer.promo_code}", class: "tariff-special"}
 			.p-20
 				%h2.size-30
