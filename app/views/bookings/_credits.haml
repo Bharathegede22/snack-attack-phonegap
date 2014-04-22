@@ -11,9 +11,9 @@
 						%table{width: '100%'}
 							%tr
 								%td.p-5
-									%b Available Credits
+									%b Available Credits:
 								%td.p-5.t-r
-									₹#{current_user.total_credits}
+									₹#{current_user.total_credits || 0}
 								%td	
 									- if current_user.total_credits.to_i > 0
 										%button.btn.btn-default{type:"submit"} Use Credits
