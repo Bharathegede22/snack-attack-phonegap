@@ -224,7 +224,7 @@ class BookingsController < ApplicationController
   		session[:promo_code] = nil
   	else
 			if !params[:promo].blank?
-				if CommonHelper::DISCOUNT_CODES.include?(params[:promo].upcase) || Offer.find_by(promo_code: params[:promo], status: Offer::ACTIVE).present?
+				if CommonHelper::DISCOUNT_CODES.include?(params[:promo].upcase) || Offer.find_by(promo_code: params[:promo].upcase, status: Offer::ACTIVE).present?
 					session[:promo_code] = params[:promo]
 				else
 					flash[:error] = "No active offer is found for <b>#{params[:promo]}</b>."
