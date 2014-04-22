@@ -9,8 +9,8 @@ class Offer < ActiveRecord::Base
 	# t.text :booking_condition
 	# t.text :output_condition
 	
-	STATUSES = [ACTIVE = 'Active', INACTIVE ='Inactive']
-	VISIBILITIES = [VISIBLE_ALL = 'All', VISIBLE_NONE ='None']
+	STATUSES = [ACTIVE = 1, INACTIVE =0]
+	VISIBILITIES = [VISIBLE_ALL = 1, VISIBLE_NONE = 0]
 
 	def status_enum
    		[[ACTIVE],[INACTIVE]]
