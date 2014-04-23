@@ -3,7 +3,7 @@ class User < ActiveRecord::Base
   
   has_one :image, :as => :imageable, dependent: :destroy
   has_many :bookings
-  
+  has_many :credits
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable 
   devise :database_authenticatable, :registerable, :confirmable, 
@@ -179,10 +179,54 @@ class User < ActiveRecord::Base
     @signup
   end
   
-  def support?
+ 	def support?
 		return self.role.to_i > 5
 	end
 	
+	def update_credits
+		sum = 0
+		credits.each do |cr|
+			if cr.action == 'credit'
+				sum += cr.amount 
+			elsif cr.action == 'debit'
+				sum -= cr.amount 
+			end
+		end
+		self.total_credits = sum
+		save!
+	end
+
+	def generate_otp
+		self.otp = rand(100000..999999)
+		self.otp_valid_till = Time.now + 2.hours
+		self.otp_attempts = 0 
+		save!
+	end
+
+	def otp_requested?
+		otp.to_s.length == 6 && Time.now < otp_valid_till
+	end
+
+	def reset_with_otp(ot_pass, new_pass)
+		if otp_attempts < 3
+			if otp_requested?
+				if otp == ot_pass 
+					self.password = self.password_confirmation = new_pass
+					save
+				else
+					self.errors.add(base: "Reset attempts exceeded, contact support.")
+				end
+			else
+				self.errors.add(base: "Token expired, please generate new one.")
+			end
+		else
+			self.errors.add(base: "Token expired, please generate new one.")
+		end
+	end
+
+
+
+
   private
   
   def before_validation_tasks
@@ -192,5 +236,14 @@ class User < ActiveRecord::Base
   		self.pincode = nil
   	end
   end
+
+  def valid_otp_length?
+  	otp.to_s.length == 6
+  end
+
+  def valid_otp_time?
+  	otp_valid_till && otp_valid_till > Time.now
+  end
+
   
 end

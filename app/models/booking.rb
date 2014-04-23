@@ -13,7 +13,8 @@ class Booking < ActiveRecord::Base
 	has_many	:utilizations, -> {where "minutes > 0"}, dependent: :destroy
 	
 	has_one	:review, :inverse_of => :booking, dependent: :destroy
-	
+	has_many :credit, :as => :creditable , dependent: :destroy
+
 	attr_writer :through_search
 	attr_writer :through_signup
     

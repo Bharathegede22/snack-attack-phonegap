@@ -1,0 +1,40 @@
+- render_flash
+#CreditDiv
+	- if session[:used_credits].blank?
+		.p-b5
+			%form.form-inline{:id => "CreditForm", :onsubmit => "return SubmitForm(this,'/bookings/credits','CreditDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+				.form-group
+					.p-b5
+						%input#fare.form-control{name: 'fare', type: "hidden", value: ("#{fare[:estimate] - fare[:discount]}") }
+						
+					.p-10
+						%table{width: '100%'}
+							%tr
+								%td.p-5
+									%b Available Credits:
+								%td.p-5.t-r
+									₹#{current_user.total_credits || 0}
+								%td	
+									- if current_user.total_credits.to_i > 0
+										%button.btn.btn-default{type:"submit"} Use Credits
+					
+							
+							
+			#CreditWait{style: "display:none;"}
+				.wait
+		#DetailsNameError.error
+	- else
+		.p-b5
+			.fl
+				%b Credits:
+				
+			.fc
+		.p-b5
+			Your credit
+			%b ₹#{session[:used_credits]}
+			has been used.
+		.p-b5
+			%i Remaining Amount to be Paid ₹#{session[:cr_netamount]}
+			%br
+			%br
+			*Checkout to continue.

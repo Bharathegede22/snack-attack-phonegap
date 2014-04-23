@@ -9,7 +9,7 @@
 			else
 				bk = []
 			end
-		= render :partial => 'item', :locals => {:bookings => bk}
+		= render :partial => 'item', :locals => {:bookings => bk, :show_credits_us => true}
 	.panel-heading
 		%h3.panel-title Future Bookings
 	.panel-body
@@ -19,7 +19,7 @@
 			else
 				bk = []
 			end
-		= render :partial => 'item', :locals => {:bookings => bk}
+		= render :partial => 'item', :locals => {:bookings => bk, :show_credits_us => true}
 	.panel-heading
 		%h3.panel-title Completed Bookings
 	.panel-body
@@ -29,7 +29,7 @@
 			else
 				bk = []
 			end
-		= render :partial => 'item', :locals => {:bookings => bk}
+		= render :partial => 'item', :locals => {:bookings => bk, :show_credits_us => true, :show_credits_er => true}
 	.panel-heading
 		%h3.panel-title Cancelled Bookings
 	.panel-body
@@ -39,7 +39,7 @@
 			else
 				bk = []
 			end
-		= render :partial => 'item', :locals => {:bookings => bk}
+		= render :partial => 'item', :locals => {:bookings => bk, :show_credits_us => true}
 	.panel-heading
 		%h3.panel-title Unconfirmed (Not Paid) Bookings
 	.panel-body

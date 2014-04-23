@@ -75,3 +75,12 @@
 				%b.black
 					Discount will not be applicable on any of 
 					%a{href: '/holidays'} these days
+	%br/
+	- Offer.find_each(:conditions => "status = '1' and visibility = '1'") do |offer|
+		%div{id: "#{offer.promo_code}", class: "tariff-special"}
+			.p-20
+				%h2.size-30
+					%b= offer.heading
+				%p.size-16.black.f-b
+					= offer.description.html_safe
+		%br/
