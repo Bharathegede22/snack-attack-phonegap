@@ -25,6 +25,19 @@ class BookingsController < ApplicationController
 		render layout: 'plain'
 	end
 	
+	def credits
+		if params[:fare].to_i >= current_user.total_credits.to_i
+			session[:used_credits] = current_user.total_credits.to_i
+		else
+			session[:used_credits] = params[:fare].to_i
+
+		end
+		flash[:notice] = "Remaining Credits: #{current_user.total_credits.to_i - session[:used_credits]}" 
+		session[:cr_netamount] = params[:fare].to_i - session[:used_credits].to_i
+		render json: {html: render_to_string('_credits.haml', layout: false)}
+	end
+
+
 	def do
 		if !params[:car].blank? && !params[:loc].blank? && !session[:search].blank? && !session[:search][:starts].blank? && !session[:search][:ends].blank?
 			session[:book] = {:starts => session[:search][:starts], :ends => session[:search][:ends], :loc => params[:loc], :car => params[:car]}
@@ -79,6 +92,7 @@ class BookingsController < ApplicationController
 		credit.creditable_type = 'booking'
 		credit.amount = session[:used_credits]
 		credit.action = 'debit'
+		credit.source_name = 'booking'
 		credit.status = 1
 		credit.creditable_id = @booking.id
 		credit.save!
@@ -235,24 +249,15 @@ class BookingsController < ApplicationController
   end
 	
 	def credits
-	  	#if !params[:clear].blank? && params[:clear].to_i == 1
-	  	#	session[:used_credits] = nil
-	  	#else
-			if params[:fare].to_i >= current_user.total_credits.to_i
-				session[:used_credits] = current_user.total_credits.to_i
-			else
-				session[:used_credits] = params[:fare].to_i
+		if params[:fare].to_i >= current_user.total_credits.to_i
+			session[:used_credits] = current_user.total_credits.to_i
+		else
+			session[:used_credits] = params[:fare].to_i
 
-			end
-			
-			#rem_credit = current_user.total_credits.to_i - session[:used_credits]
-			flash[:notice] = "Remaining Credits: #{current_user.total_credits.to_i - session[:used_credits]}" 
-			session[:cr_netamount] = params[:fare].to_i - session[:used_credits].to_i
-		#end
-		
-
-    	render json: {html: render_to_string('_credits.haml', layout: false)}
-
+		end
+		flash[:notice] = "Remaining Credits: #{current_user.total_credits.to_i - session[:used_credits]}" 
+		session[:cr_netamount] = params[:fare].to_i - session[:used_credits].to_i
+		render json: {html: render_to_string('_credits.haml', layout: false)}
 	end
 
 	def reschedule
