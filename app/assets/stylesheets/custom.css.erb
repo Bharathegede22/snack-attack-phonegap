@@ -139,6 +139,9 @@ a {
 
 .homepage {
 	font-family: 'Droid Sans', 'Arial', sans-serif;
+}
+
+.homepage .afold {
 	position:relative;
 	height:740px;
 }
@@ -150,7 +153,7 @@ a {
 	z-index:2;
 }
 
-.homepage .cars .h1, .homepage .cars .h1-n {
+.homepage .cars .h1, .homepage .cars-n .h1 {
 	position:absolute;
 	top:40px;
 	left:50%;
@@ -179,32 +182,6 @@ a {
 	border-left:2px solid #6ABD19;
 }
 
-.homepage .cars .h1-n {
-	top:30px;
-	text-align:center;
-}
-
-.homepage .cars .h1-n h1 {
-	background:#323a45;
-	padding:5px 10px 7px 10px;
-	font-size:30px;
-	margin:0 0 0 -210px;
-	font-weight:bold;
-	color:#ffffff;
-	border-left:2px solid #6ABD19;
-	width:418px;
-}
-
-.homepage .cars .h1-n p {
-	background:#323a45;
-	padding:5px 10px 7px 10px;
-	margin:5px 0 0 -320px;
-	color:#ffffff;
-	font-size:20px;
-	border-left:2px solid #6ABD19;
-	width:640px;
-}
-
 .homepage .cars .slider {
 	width:100%;
   height:750px;
@@ -215,7 +192,7 @@ a {
   clear: both;
 }
 
-.homepage .lazy {
+.homepage .cars .lazy {
 	width:100%;
 	height:750px;
 }
@@ -243,7 +220,7 @@ a {
 	overflow:visible;
 }
 
-.homepage .car-tariff {
+.homepage .cars .car-tariff {
 	width:960px;
 	margin:auto;
 	overflow:hidden;
@@ -254,7 +231,7 @@ a {
 	text-align:center;
 }
 
-.homepage .car-tariff .item {
+.homepage .cars .car-tariff .item {
 	background:#ffffff;
 	width:225px;
 	float:left;
@@ -276,7 +253,7 @@ a {
 	padding-bottom:10px;
 }
 
-.homepage .car-tariff .fare {
+.homepage .cars .car-tariff .fare {
 	background:#323a45;
 	margin:5px 20px;
 	padding:5px;
@@ -298,6 +275,101 @@ a {
 	font-weight:bold;
 }
 
+.homepage .afold-n {
+	position:relative;
+	height:490px;
+}
+
+.homepage .cars-n {
+	height:490px;
+	width:100%;
+	position:absolute;
+	z-index:2;
+}
+
+.homepage .cars-n .h1 {
+	top:30px;
+	text-align:center;
+}
+
+.homepage .cars-n .h1 h1 {
+	background:#323a45;
+	padding:5px 10px 7px 10px;
+	font-size:30px;
+	margin:0 0 0 -215px;
+	font-weight:bold;
+	color:#ffffff;
+	border-left:2px solid #6ABD19;
+	width:430px;
+}
+
+.homepage .cars-n .h1 p {
+	background:#323a45;
+	padding:5px 10px 7px 10px;
+	margin:5px 0 0 -320px;
+	color:#ffffff;
+	font-size:20px;
+	border-left:2px solid #6ABD19;
+	width:640px;
+}
+
+.homepage .cars-n .slider {
+	width:100%;
+  height:490px;
+  overflow-x:hidden;
+  position:absolute;
+  top:0;
+  z-index:1;
+  clear: both;
+}
+
+.homepage .cars-n .lazy {
+	width:100%;
+	height:490px;
+}
+
+.homepage .cars-n .cars-content {
+	width:720px;
+	height:490px;
+	position:relative;
+	margin:auto;
+	overflow:visible;
+}
+
+.homepage .cars-n .car-tariff {
+	width:720px;
+	margin:0 auto;
+	overflow:hidden;
+	color:#727272;
+	position:absolute;
+	top:370px;
+	left:0;
+	text-align:center;
+}
+
+.homepage .cars-n .car-tariff .item {
+	width:180px;
+	float:left;
+}
+
+.homepage .cars-n .car-tariff .fare {
+	border:1px solid #ffffff;
+	background:#323a45;
+	margin:5px 10px;
+	padding:5px;
+	color:#ffffff;
+	font-size:18px;
+	-webkit-border-radius: 15px;
+	-khtml-border-radius: 15px;
+	-moz-border-radius: 15px;
+	border-radius: 15px;
+	behavior: url(<%= asset_path 'assets/PIE.htc' %>);
+}
+
+.homepage .cars .car-tariff .last {
+	margin-right:0px;
+}
+
 .homepage .tariff-bg {
 	background:#323a45;
 	height:290px;
@@ -317,19 +389,64 @@ a {
 	width:100%;	
 }
 
-.homepage .includes {
+.homepage .tariff-bg-n {
+	border-top:2px solid #323a45;
+	height:40px;
+	position:absolute;
+	z-index:1;
+	top:450px;
+	width:100%;
+	background:#cccccc url(<%= asset_path 'bg-line.png' %>);
+	margin:0 auto;
+}
+
+.homepage .tariff-bg-n .text {
+	color:#323a45;
+	text-align:center;
+	padding:5px 0;
+	margin:0;
+	font-size:26px;
+}
+
+.homepage .tariff-n {
+	height:200px;
+	width:960px;
+	text-align:center;
+	color:#ffffff;
+	position:absolute;
+	z-index:100;
+	top:50px;
+	left:50%;
+}
+
+.homepage .tariff .includes {
 	width:960px;
 	margin:auto;
 	margin-top:10px;
 }
 
-.homepage .includes .item {
+.homepage .tariff .includes .item {
 	width:135px;
 	float:left;
 	border-left:1px solid #545e6b;
 	border-right:1px solid #000000;
 	padding:5px 0;
 	cursor:pointer;
+}
+
+.homepage .tariff-n .includes {
+	height:200px;
+	width:40px;
+	margin-left:440px;
+}
+
+.homepage .tariff-n .includes .item {
+	width:40px;
+	height:40px;
+	border-radius:40px;
+	cursor:pointer;
+	background:#323a45;
+	margin-top:5px;
 }
 
 .homepage .includes .left {
@@ -821,7 +938,7 @@ a {
 	background-position:-190px -80px;
 }
 
-.press .cnbc, .press .hindu, .press .toi, .press .forbes, .press .et, .press .go, .press .teambhp, .press .wsj {
+.press .icon-1, .press .icon-2, .press .icon-3, .press .icon-4, .press .icon-5, .press .icon-6, .press .icon-7, .press .icon-8 {
 	background:url(<%= asset_path 'press.png' %>) no-repeat;
 	height:70px;
 	width:100px;
@@ -835,31 +952,31 @@ a {
 	margin:10px 0 0 20px;
 }
 
-.press .hindu {
+.press .icon-2 {
 	background-position:-100px 0px;
 }
 
-.press .toi {
+.press .icon-3 {
 	background-position:-200px 0px;
 }
 
-.press .forbes {
+.press .icon-4 {
 	background-position:-300px 0px;
 }
 
-.press .et {
+.press .icon-5 {
 	background-position:0px -70px;
 }
 
-.press .go {
+.press .icon-6 {
 	background-position:-100px -70px;
 }
 
-.press .teambhp {
+.press .icon-7 {
 	background-position:-200px -70px;
 }
 
-.press .wsj {
+.press .icon-8 {
 	background-position:-300px -70px;
 }
 

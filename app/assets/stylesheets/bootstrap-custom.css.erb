@@ -147,7 +147,7 @@
   padding:0;
 }
 
-.homepage .cars .carousel-indicators li {
+.homepage .carousel-indicators li {
   display: inline-block;
   width:103px;
   text-align:center;
@@ -163,12 +163,25 @@
   background:#70757D url(<%= asset_path 'bg-line.png' %>);
 }
 
-.homepage .cars .carousel-indicators li:hover {
+.homepage .carousel-indicators li:hover {
 	background:#666666;
 }
 
-.homepage .cars .carousel-indicators .active {
+.homepage .carousel-indicators .active {
   background:#323a45;
+}
+
+.homepage .cars-n .carousel-indicators {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  z-index: 15;
+  width: 960px;
+  margin:0;
+  margin-left: -480px;
+  text-align: center;
+  list-style: none;
+  padding:0;
 }
 
 .reviews .left, .reviews .right {

@@ -26,4 +26,7 @@ module ApplicationHelper
     @resource ||= User.new
   end
  	
+ 	def show_currency(text)
+ 		number_with_delimiter(text, locale: 'en-IN')
+ 	end
 end
