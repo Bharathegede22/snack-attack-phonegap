@@ -24,6 +24,7 @@ Web::Application.routes.draw do
 	resources :bookings do
 		collection do
 			get 'checkout'
+			get 'checkoutab'
 			get 'complete'
 			get 'details'
 			get 'do'

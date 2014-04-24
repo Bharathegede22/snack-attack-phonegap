@@ -16,71 +16,24 @@
 				%b.black PLEASE NOTE:
 				%br/
 				A reservation beginning on Sunday will not have the first 24-hour period qualify for discount.
-	%br/
-	#Mystery.tariff-special
-		.p-20
-			%h2.size-30
-				%b "MYSTERY BOX DISCOUNTS" ON MONDAYS!
-			%p.size-16.black.f-b
-				BIG discount for a different group each Monday!
-			%p
-				Each Sunday, we will announce big discount for a lucky group.
-				%br/
-				The booking must be made online on Monday, but the reservation can be for any time Mon-Thur in the future.
-				%br/
-				To find out what the discount is each week, follow us on 
-				%a{href: "https://www.facebook.com/zoomcar.in"} Facebook
-				and
-				%a{href: "https://twitter.com/ZoomCarIndia"} Twitter
-			%p
-				%b.black HOW TO AVAIL:
-				%br/
-				Enter 
-				%b.black MYSTERY
-				as promo code at the time of checkout. Discount will be manually refunded to your card.
-			%div
-				%b.black PLEASE NOTE:
-				%br/
-				%b.black
-					Discount will not be applicable on any of 
-					%a{href: '/holidays'} these days
-				%br/
-				Any usage during Friday, Saturday & Sunday will be billed at the regular rate.
-	%br/
-	#Hebbal.tariff-special
-		.p-20
-			%h2.size-30
-				%b ATTENTION WOODSMAN ESTATE RESIDENTS!
-			%p.size-16.black.f-b
-				Book any Zoom vehicle and automatically avail either a 
-				%br/
-				10% flat discount or receive 300 kms in free driving!
-				%br/
-				Whichever benefits you more is what Zoom will give!
-			%p
-				%b.black HOW TO AVAIL:
-				%br/
-				Enter 
-				%b.black WOODSMAN
-				as promo code at the time of checkout. Discount will be manually refunded to your card.
-			%div
-				%b.black PLEASE NOTE:
-				%br/
-				You are eligible for only one of the special discounts above (whichever is more advantageous given your booking).
-				%br/
-				This promotion is available 24x7 and applies to any vehicle sited at the Woodsman Estate.
-				%br/
-				%i 10% discount will be applicable only against the standard Zoom tariff and wouldn't cover extra charges like excess km, late fee, etc.
-				%br/
-				%b.black
-					Discount will not be applicable on any of 
-					%a{href: '/holidays'} these days
-	%br/
-	- Offer.find_each(:conditions => "status = '1' and visibility = '1'") do |offer|
-		%div{id: "#{offer.promo_code}", class: "tariff-special"}
+	- Offer.active.each do |offer|
+		%br/
+		.tariff-special
 			.p-20
 				%h2.size-30
-					%b= offer.heading
-				%p.size-16.black.f-b
+					%b #{offer.heading}
+				%p.size-16.black
 					= offer.description.html_safe
-		%br/
+				%p
+					%b.black HOW TO AVAIL:
+					%br/
+					= offer.instructions.html_safe
+				%div
+					%b.black PLEASE NOTE:
+					%br/
+					%b.black
+						Discount will not be applicable on any of 
+						%a{href: '/holidays'} these days
+					- if !offer.disclaimer.blank?
+						%br/
+						= offer.disclaimer.html_safe

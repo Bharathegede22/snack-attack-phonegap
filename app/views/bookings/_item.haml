@@ -11,16 +11,17 @@
 			%th Starts
 			%th Ends
 			%th Status
-			- if (defined? show_credits_us)
-				%th 
-					Credits
-					%br/
-					Used
-			- if (defined? show_credits_er)
-				%th 
-					Credits
-					%br/
-					Earned
+			- if false
+				- if (defined? show_credits_us)
+					%th 
+						Credits
+						%br/
+						Used
+				- if (defined? show_credits_er)
+					%th 
+						Credits
+						%br/
+						Earned
 			%th
 		- bookings.each do |b|
 			%tr
@@ -31,15 +32,15 @@
 				%td #{b.starts.strftime("%d %b, %Y %I:%M %p")}
 				%td #{b.ends.strftime("%d %b, %Y %I:%M %p")}
 				%td #{b.status_text}
-				- if (defined? show_credits_us)
-					%td 
-						- b.credit.each do |cr|
-							= cr.amount if cr.action == 'debit'
-				- if (defined? show_credits_er)
-					%td 
-						- b.credit.each do |cr|
-							= cr.amount if cr.action == 'credit'
-												
+				- if false
+					- if (defined? show_credits_us)
+						%td 
+							- b.credit.each do |cr|
+								= cr.amount if cr.action == 'debit'
+					- if (defined? show_credits_er)
+						%td 
+							- b.credit.each do |cr|
+								= cr.amount if cr.action == 'credit'
 				%td.t-r
 					%a.btn.btn-xs.btn-default{href: "/bookings/#{b.encoded_id}", target: '_blank', role: "button", :title => 'Payment History'}
 						%span.glyphicon.glyphicon-list
@@ -47,4 +48,3 @@
 					%td.t-r
 						%a.btn.btn-xs.btn-default{href: "/bookings/#{b.encoded_id}/new_feedback", target: '_blank', role: "button", :title => 'Give feedback for this booking'}
 							%span.glyphicon.glyphicon-edit
-						

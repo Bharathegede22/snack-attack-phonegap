@@ -38,8 +38,8 @@
 			%input#LocationVal{name: 'loc', type: "text", value: @booking.location_id, readonly: 'true'}
 			%input#CarsVal{name: 'car', type: "text", value: @booking.cargroup_id, readonly: 'true'}
 		#SearchSubmit.button
-			= submit_tag "Search Cars", :class => 'inpt'
-		#SearchWait.p-5.hide
+			= submit_tag "Book A Car", :class => 'inpt'
+		#SearchWait.p-5.t-c{style: 'display:none;'}
 			.wait
 	.fc
 - if request.post?

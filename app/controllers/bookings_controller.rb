@@ -2,8 +2,8 @@ class BookingsController < ApplicationController
 	
 	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
 	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule, :feedback]
-	before_filter :check_search, :only => [:checkout, :docreate, :license, :login, :userdetails]
-	before_filter :check_inventory, :only => [:checkout, :docreate, :dopayment, :license, :login, :payment, :userdetails]
+	before_filter :check_search, :only => [:checkout, :checkoutab, :docreate, :license, :login, :userdetails]
+	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
 	
 	def cancel
 		if request.post?
@@ -16,6 +16,12 @@ class BookingsController < ApplicationController
 	end
 	
 	def checkout
+		redirect_to "/bookings/do" and return if !user_signed_in? || (current_user && !current_user.check_details)
+		generic_meta
+		@header = 'booking'
+	end
+	
+	def checkoutab
 		redirect_to "/bookings/do" and return if !user_signed_in? || (current_user && !current_user.check_details)
 		generic_meta
 		@header = 'booking'
@@ -36,7 +42,6 @@ class BookingsController < ApplicationController
 		session[:cr_netamount] = params[:fare].to_i - session[:used_credits].to_i
 		render json: {html: render_to_string('_credits.haml', layout: false)}
 	end
-
 
 	def do
 		if !params[:car].blank? && !params[:loc].blank? && !session[:search].blank? && !session[:search][:starts].blank? && !session[:search][:ends].blank?
@@ -77,30 +82,31 @@ class BookingsController < ApplicationController
 		@booking.ref_immediate = session[:ref_immediate]
 		@booking.through_signup = true
 		@booking.promo = session[:promo_code] if !session[:promo_code].blank?
-		#@booking.credit = Credit.new(status: 0,user_id: current_user.id, amount: session[:used_credits])   #to do recalculate session hijacking
 		@booking.save!
+		
+		if false
+			payment = Payment.new
+			payment.booking_id = @booking.id
+			payment.status = 1
+			payment.through = 'credits'
+			payment.amount = session[:used_credits]
+			payment.save!
 
-		payment = Payment.new
-		payment.booking_id = @booking.id
-		payment.status = 1
-		payment.through = 'credits'
-		payment.amount = session[:used_credits]
-		payment.save!
+			credit = Credit.new
+			credit.user_id = current_user.id
+			credit.creditable_type = 'booking'
+			credit.amount = session[:used_credits]
+			credit.action = 'debit'
+			credit.source_name = 'booking'
+			credit.status = 1
+			credit.creditable_id = @booking.id
+			credit.save!
 
-		credit = Credit.new
-		credit.user_id = current_user.id
-		credit.creditable_type = 'booking'
-		credit.amount = session[:used_credits]
-		credit.action = 'debit'
-		credit.source_name = 'booking'
-		credit.status = 1
-		credit.creditable_id = @booking.id
-		credit.save!
+			current_user.update_credits
 
-		current_user.update_credits
-
-		session[:used_credits] = nil
-
+			session[:used_credits] = nil
+		end
+		
 		session[:booking_id] = @booking.encoded_id
 		session[:search] = nil
 		session[:book] = nil
@@ -238,8 +244,8 @@ class BookingsController < ApplicationController
   		session[:promo_code] = nil
   	else
 			if !params[:promo].blank?
-				if CommonHelper::DISCOUNT_CODES.include?(params[:promo].upcase) || Offer.find_by(promo_code: params[:promo].upcase, status: Offer::ACTIVE).present?
-					session[:promo_code] = params[:promo]
+				if CommonHelper::DISCOUNT_CODES.include?(params[:promo].upcase) || Offer.find_by(promo_code: params[:promo].downcase, status: 1).present?
+					session[:promo_code] = params[:promo].upcase
 				else
 					flash[:error] = "No active offer is found for <b>#{params[:promo]}</b>."
 		  	end
@@ -248,18 +254,6 @@ class BookingsController < ApplicationController
     render json: {html: render_to_string('_promo.haml', layout: false)}
   end
 	
-	def credits
-		if params[:fare].to_i >= current_user.total_credits.to_i
-			session[:used_credits] = current_user.total_credits.to_i
-		else
-			session[:used_credits] = params[:fare].to_i
-
-		end
-		flash[:notice] = "Remaining Credits: #{current_user.total_credits.to_i - session[:used_credits]}" 
-		session[:cr_netamount] = params[:fare].to_i - session[:used_credits].to_i
-		render json: {html: render_to_string('_credits.haml', layout: false)}
-	end
-
 	def reschedule
 		@confirm = !params[:confirm].blank?
 		if request.post?
