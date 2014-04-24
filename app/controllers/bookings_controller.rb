@@ -248,18 +248,6 @@ class BookingsController < ApplicationController
     render json: {html: render_to_string('_promo.haml', layout: false)}
   end
 	
-	def credits
-		if params[:fare].to_i >= current_user.total_credits.to_i
-			session[:used_credits] = current_user.total_credits.to_i
-		else
-			session[:used_credits] = params[:fare].to_i
-
-		end
-		flash[:notice] = "Remaining Credits: #{current_user.total_credits.to_i - session[:used_credits]}" 
-		session[:cr_netamount] = params[:fare].to_i - session[:used_credits].to_i
-		render json: {html: render_to_string('_credits.haml', layout: false)}
-	end
-
 	def reschedule
 		@confirm = !params[:confirm].blank?
 		if request.post?
