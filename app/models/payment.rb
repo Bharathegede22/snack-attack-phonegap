@@ -129,9 +129,9 @@ class Payment < ActiveRecord::Base
 	protected
 	
 	def after_save_tasks
-		if self.status == 1
+		if self.status == 1 
 			b = self.booking
-			if b
+			if b && b.outstanding <= 0
 				if b.status == 0
 					if !b.car_id.blank?
 						b.status = 1

@@ -1,18 +1,18 @@
 - render_flash
 %h4
-	Credits History
+	Available Credits: ₹ #{@total_credits}
 
 
 .panel.panel-default
 	.panel-heading
 		%h3.panel-title Credits Used
-	- if current_user.credits.where(:action=>'debit').any?
+	- if @used_credits.any?
 		.panel-body
 			%table.table
 				%th Date 
 				%th Source
 				%th Amount ₹
-				- current_user.credits.where(:action=>'debit').order(:created_at => :desc).each do |credit|
+				- @used_credits.each do |credit|
 					%tr
 						%td= credit.created_at.strftime("%d %B %Y")
 						%td= credit.source_name
@@ -20,13 +20,13 @@
 	%br/
 	.panel-heading
 		%h3.panel-title Credits Earned
-	- if current_user.credits.where(:action=>'credit').any?
+	- if @earned_credits.any?
 		.panel-body
 			%table.table
 				%th Date 
 				%th Source
 				%th Amount ₹
-				- current_user.credits.where(:action=>'credit').order(:created_at => :desc).each do |credit|
+				- @earned_credits.each do |credit|
 					%tr
 						%td= credit.created_at.strftime("%d %B %Y")
 						%td= credit.source_name

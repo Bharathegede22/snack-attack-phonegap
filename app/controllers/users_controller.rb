@@ -1,7 +1,13 @@
 class UsersController < ApplicationController
 	
-	before_filter :authenticate_user!, :only => [:license, :social, :settings, :update]
+	before_filter :authenticate_user!, :only => [:license, :social, :settings, :update, :credits]
 	
+	def credits
+		@total_credits = current_user.total_credits
+	    @earned_credits = current_user.credits.where(:action=>'credit').order(:created_at => :desc)
+	    @used_credits = current_user.credits.where(:action=>'debit').order(:created_at => :desc)
+	end
+
 	def forgot
 		render json: {html: render_to_string('/devise/passwords/new.haml', :layout => false)}
 	end
