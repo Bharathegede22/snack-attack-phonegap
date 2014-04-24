@@ -1,0 +1,63 @@
+.content
+	= render :partial => "/bookings/search_steps", locals: {step: 4}
+	.wrapper
+		- render_flash
+		.main-content.fl.bg-w.bs-9
+			.p-20
+				- if current_user && current_user.check_details
+					.alert.alert-info
+						%b Please check the details before proceeding further
+					.p-b10
+						%b.droid.size-20 User Details
+					%table.table
+						%tr
+							%td
+								%b Name
+							%td
+								= current_user.name
+						%tr
+							%td
+								%b Email
+							%td
+								= current_user.email
+						%tr
+							%td
+								%b Mobile
+							%td
+								= current_user.phone
+						%tr
+							%td
+								%b Date of Birth
+							%td
+								= current_user.dob.strftime("%d/%m/%Y")
+					.bg-e.p-10.border-c.solid.r-5
+						= render :partial => "promo"
+					.t-c
+						.m-auto.p-10{style: "width:200px;"}
+							- if @available == 1
+								.button{onclick: "checkout();"} Checkout
+							- else
+								.button-dis Checkout
+				- else
+					.alert.alert-info.t-c
+						%b Please provide the following details to complete your reservation
+					.p-b10
+						= render :template => "/users/signup"
+					.t-c.f-b.f-i
+						On submitting, you will proceed to payment
+		.sidebar-fixed.fr
+			= render :partial => "/bookings/sidebar", locals: {step: 4}
+		.fc
+		%br/
+:javascript
+	var _adx = {};
+	_adx.xb  = '35BDU410';
+	_adx.xt  = 'conversion';
+	_adx.xgid  = '6AMDq23';
+	(function(d){
+		var x = d.createElement('script');
+		x.async = true;
+		x.src = ('https:' == d.location.protocol ? 'https://d1adj61x0fgvmc.cloudfront.net' : 'http://s.adx.io') + '/dxjet.js';
+		var s = d.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(x, s);
+	})(document);

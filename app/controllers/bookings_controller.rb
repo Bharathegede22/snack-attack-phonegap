@@ -2,8 +2,8 @@ class BookingsController < ApplicationController
 	
 	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
 	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule, :feedback]
-	before_filter :check_search, :only => [:checkout, :docreate, :license, :login, :userdetails]
-	before_filter :check_inventory, :only => [:checkout, :docreate, :dopayment, :license, :login, :payment, :userdetails]
+	before_filter :check_search, :only => [:checkout, :checkoutab, :docreate, :license, :login, :userdetails]
+	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
 	
 	def cancel
 		if request.post?
@@ -16,6 +16,12 @@ class BookingsController < ApplicationController
 	end
 	
 	def checkout
+		redirect_to "/bookings/do" and return if !user_signed_in? || (current_user && !current_user.check_details)
+		generic_meta
+		@header = 'booking'
+	end
+	
+	def checkoutab
 		redirect_to "/bookings/do" and return if !user_signed_in? || (current_user && !current_user.check_details)
 		generic_meta
 		@header = 'booking'
@@ -36,7 +42,6 @@ class BookingsController < ApplicationController
 		session[:cr_netamount] = params[:fare].to_i - session[:used_credits].to_i
 		render json: {html: render_to_string('_credits.haml', layout: false)}
 	end
-
 
 	def do
 		if !params[:car].blank? && !params[:loc].blank? && !session[:search].blank? && !session[:search][:starts].blank? && !session[:search][:ends].blank?
@@ -77,14 +82,15 @@ class BookingsController < ApplicationController
 		@booking.ref_immediate = session[:ref_immediate]
 		@booking.through_signup = true
 		@booking.promo = session[:promo_code] if !session[:promo_code].blank?
-		#@booking.credit = Credit.new(status: 0,user_id: current_user.id, amount: session[:used_credits])   #to do recalculate session hijacking
 		@booking.save!
 		
-		Credit.use_credits(@booking) if !session[:used_credits].blank?
+		if false
+			Credit.use_credits(@booking) if !session[:used_credits].blank?
+			session[:used_credits] = nil
+		end
 
-
-		session[:used_credits] = nil
-
+		
+		
 		session[:booking_id] = @booking.encoded_id
 		session[:search] = nil
 		session[:book] = nil
@@ -222,8 +228,8 @@ class BookingsController < ApplicationController
   		session[:promo_code] = nil
   	else
 			if !params[:promo].blank?
-				if CommonHelper::DISCOUNT_CODES.include?(params[:promo].upcase) || Offer.find_by(promo_code: params[:promo].upcase, status: Offer::ACTIVE).present?
-					session[:promo_code] = params[:promo]
+				if CommonHelper::DISCOUNT_CODES.include?(params[:promo].upcase) || Offer.find_by(promo_code: params[:promo].downcase, status: 1).present?
+					session[:promo_code] = params[:promo].upcase
 				else
 					flash[:error] = "No active offer is found for <b>#{params[:promo]}</b>."
 		  	end

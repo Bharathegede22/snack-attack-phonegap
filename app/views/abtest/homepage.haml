@@ -6,7 +6,7 @@
 				%h1
 					Self Drive Cars In Bangalore
 				%p
-					Zoom in the City and Outstation - By the Hour, Day, Week or Month
+					Zoom in the City and Outstation
 			.slider
 				#CarSlider.carousel.slide{'data-ride' => "carousel", 'data-interval' => '7000', 'data-pause' => 'click'}
 					%ol.carousel-indicators
@@ -55,27 +55,28 @@
 				Find Us In Your Neighbourhood!
 		.tariff-n
 			.includes
-				#BubbleAllIn.item.help{'data-placement' => "left", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>No Hidden Costs</b><br/>Here at Zoom, you will get what you pay for. Following items are standard in all our cars."}
+				#BubbleAllIn.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>No Hidden Costs</b><br/>Here at Zoom, you will get what you pay for. Following items are standard in all our cars."}
 					.p-10
 						.all-in
-				#BubbleFuel.item.help{'data-placement' => "left", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Fuel is Ours</b><br/>All Zoom reservations comes with unlimited fuel as part of the tariff. If you need more fuel, just fill up the tank, keep the receipt and <b><u><i>we will refund the amount!</i></u></b>."}
+				#BubbleFuel.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Fuel is Ours</b><br/>All Zoom reservations comes with unlimited fuel as part of the tariff. If you need more fuel, just fill up the tank, keep the receipt and <b><u><i>we will refund the amount!</i></u></b>."}
 					.p-10
 						.fuel
-				#BubbleInsurance.item.help{'data-placement' => "left", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>No Worries, You're All Covered</b><br/>All Zoom reservations are covered with full comprehensive insurance, as long as a Zoom member is driving the car. <b><u><i>Maximum liability</i></u> for any damage for a Zoom member <u><i>is Rs.5000</i></u></b>."}
+				#BubbleInsurance.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>No Worries, You're All Covered</b><br/>All Zoom reservations are covered with full comprehensive insurance, as long as a Zoom member is driving the car. <b><u><i>Maximum liability</i></u> for any damage for a Zoom member <u><i>is Rs.5000</i></u></b>."}
 					.p-10
 						.insurance
-				#BubbleTaxes.item.help{'data-placement' => "left", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>We Get Govt. Off Your Back</b><br/>Tariff includes all taxes, except the relevant tolls/taxes one has to pay while visiting another state."}
+				#BubbleTaxes.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>We Get Govt. Off Your Back</b><br/>Tariff includes all taxes, except the relevant tolls/taxes one has to pay while visiting another state."}
 					.p-10
 						.taxes
-				#BubbleNav.item.help{'data-placement' => "left", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Zip Zap Zoom</b><br/>All Zoom cars are fitted with a 3G enabled tablet to guide you on your journey."}
+				#BubbleNav.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Zip Zap Zoom</b><br/>All Zoom cars are fitted with a 3G enabled tablet to guide you on your journey."}
 					.p-10
 						.navigation
-				#BubbleDeposit.item.help{'data-placement' => "left", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>In You We Trust</b><br/>The start of our relationship is not with a bag of money. Just pay the rental using your credit/debit card and you are good to zoom."}
+				#BubbleDeposit.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>In You We Trust</b><br/>The start of our relationship is not with a bag of money. Just pay the rental using your credit/debit card and you are good to zoom."}
 					.p-10
 						.deposit
-				#BubbleParking.item.help{'data-placement' => "left", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Parking, On Zoom!</b><br/>Drive your own car or 2 wheeler to our vehicle site. Free parking for your vehicle at our site during your reservation, courtesy Zoom!"}
-					.p-10
-						.parking
+				- if false
+					#BubbleParking.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Parking, On Zoom!</b><br/>Drive your own car or 2 wheeler to our vehicle site. Free parking for your vehicle at our site during your reservation, courtesy Zoom!"}
+						.p-10
+							.parking
 		.wrapper
 			.widget-n
 				.bg.r-5.bs-3.p-10

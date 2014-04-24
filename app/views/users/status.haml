@@ -5,8 +5,9 @@
 	%ul.dropdown-menu.pull-right
 		%li
 			%a{:href => "#{@sslhost}/bookings"} My Bookings
-		%li
-			%a{:href => "#{@sslhost}/users/credits"} Credits History
+		- if false
+			%li
+				%a{:href => "#{@sslhost}/users/credits"} Credits History
 		%li
 			%a{:href => "#{@sslhost}/users/settings"}
 				Account Settings

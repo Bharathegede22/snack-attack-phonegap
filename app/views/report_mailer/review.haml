@@ -39,7 +39,7 @@
 			%br/
 			%b Comments
 			%br/
-			- if !@review.comment.blank?
+			- if @review.comment.blank?
 				= '-'
 			- else
 				= @review.comment
