@@ -9,7 +9,7 @@
 		end
 	end
 .vertical-widget
-	%form{:id => "SearchForm", :onsubmit => "return SubmitForm(this,'/search/homepage','SearchFormDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+	%form{:id => "SearchForm", :onsubmit => "return SubmitForm(this,'/search/homepage_ab','SearchFormDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 		#StartDate.box.datetimebox
 			.cal
 			.txt
@@ -32,52 +32,6 @@
 			.fc
 		#EndDateValError.error
 			= errortxt(@booking.errors[:ends].uniq.join(', '))
-		.dropdown
-			#Locations.dropdown-toggle.box{'data-toggle' => "dropdown"}
-				.loc
-				#LocationHtml.txt
-					- if @booking.location_id.blank?
-						Choose your location
-					- else
-						= @booking.location.shortname
-				.arrw
-				.fc
-			%ul#LocationsMenu.dropdown-menu{:role => "menu", 'aria-labelledby' => 'Locations'}
-				%li{:id => ("Location"), :role => "presentation"}
-					%a{:href => "javascript:void(0)", :onclick => "changeLocation('','All Locations','home');"}
-						All Locations
-				- Location.live.each do |l|
-					- if l.id == @booking.location_id
-						%li.active{:id => ("Location" + l.id.to_s), :role => "presentation"}
-							%a{:href => "javascript:void(0)", :onclick => "changeLocation(#{l.id},'#{l.shortname}','home');"}
-								= l.shortname
-					- else
-						%li{:id => ("Location" + l.id.to_s), :role => "presentation"}
-							%a{:href => "javascript:void(0)", :onclick => "changeLocation(#{l.id},'#{l.shortname}','home');"}
-								= l.shortname
-		.dropdown
-			#Cars.dropdown-toggle.box{'data-toggle' => "dropdown"}
-				.car
-				#CarsHtml.txt 
-					- if @booking.cargroup_id.blank?
-						Select a car
-					- else
-						= @booking.cargroup.shortname
-				.arrw
-				.fc
-			%ul#CarsMenu.dropdown-menu{:role => "menu", 'aria-labelledby' => 'Cars'}
-				%li{:id => ("Cars"), :role => "presentation"}
-					%a{:href => "javascript:void(0)", :onclick => "changeCar('','All Cars','Cars','home');"}
-						All Cars
-				- Cargroup.list.each do |c|
-					- if c.id == @booking.cargroup_id
-						%li.active{:id => ("Cars" + c.id.to_s), :role => "presentation"}
-							%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.shortname}','Cars','home');"}
-								= c.shortname
-					- else
-						%li{:id => ("Cars" + c.id.to_s), :role => "presentation"}
-							%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.shortname}','Cars','home');"}
-								= c.shortname
 		.hide
 			%input#LocationVal{name: 'loc', type: "text", value: @booking.location_id, readonly: 'true'}
 			%input#CarsVal{name: 'car', type: "text", value: @booking.cargroup_id, readonly: 'true'}
