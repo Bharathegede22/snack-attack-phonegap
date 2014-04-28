@@ -370,6 +370,7 @@ class BookingsController < ApplicationController
 			str,id = CommonHelper.decode(id.downcase)
 			if !str.blank? && str == 'booking'
 				@booking = Booking.find(id)
+				@summary = Offer.where(["promo_code = '#{@booking.promo}'"])[0].summary
 			else
 				render_404
 			end

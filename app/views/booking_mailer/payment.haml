@@ -77,6 +77,11 @@ Please review the details of your reservation:
 				%td
 					%b
 						= @booking.promo
+				- if !@summary.blank?
+					%td
+						Promo Desc.
+					%td
+						= @summary
 %br/
 %br/
 %div{style: "margin:0px; padding:0px;"}

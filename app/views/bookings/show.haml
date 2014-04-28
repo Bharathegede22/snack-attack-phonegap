@@ -65,6 +65,23 @@
 			.col-md-9
 				.p-5
 					= @booking.ends.strftime("%d %b, %Y %I:%M %p")
+		- if !@booking.promo.blank?
+			.row
+				.col-md-3
+					.p-5
+						%b Promo Code
+				.col-md-9
+					.p-5
+						= @booking.promo
+		- if !@summary.blank?
+			.row
+				.col-md-3
+					.p-5
+						%b Promo Desc.
+				.col-md-9
+					.p-5
+						= @summary
+
 		- if @booking.paid?
 			.m-t20
 				- case @booking.status?
