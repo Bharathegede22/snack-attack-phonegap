@@ -4,8 +4,8 @@ class UsersController < ApplicationController
 	
 	def credits
 		@total_credits = current_user.total_credits
-	    @earned_credits = current_user.credits.where(:action=>'credit').order(:created_at => :desc)
-	    @used_credits = current_user.credits.where(:action=>'debit').order(:created_at => :desc)
+	    @earned_credits = current_user.credits.where(:action=> true).order(:created_at => :desc)
+	    @used_credits = current_user.credits.where(:action=> false).order(:created_at => :desc)
 	end
 
 	def forgot

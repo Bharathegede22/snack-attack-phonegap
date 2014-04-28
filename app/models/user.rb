@@ -186,9 +186,9 @@ class User < ActiveRecord::Base
 	def update_credits
 		sum = 0
 		credits.each do |cr|
-			if cr.action == 'credit'
+			if cr.action == true
 				sum += cr.amount 
-			elsif cr.action == 'debit'
+			elsif cr.action == false
 				sum -= cr.amount 
 			end
 		end

@@ -19,7 +19,7 @@ class Credit < ActiveRecord::Base
 		credit.user_id = booking.user_id
 		credit.creditable_type = 'booking'
 		credit.amount =payment.amount
-		credit.action = 'debit'
+		credit.action = true
 		credit.source_name = 'booking'
 		credit.status = 1
 		credit.creditable_id = booking.id
