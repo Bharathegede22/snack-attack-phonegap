@@ -77,7 +77,7 @@ Please review the details of your reservation:
 				%td
 					%b
 						= @booking.promo
-				- if !@summary.blank?
+				- if (defined? @summary)
 					%td
 						Promo Desc.
 					%td

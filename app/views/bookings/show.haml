@@ -73,7 +73,7 @@
 				.col-md-9
 					.p-5
 						= @booking.promo
-		- if !@summary.blank?
+		- if (defined? @summary)
 			.row
 				.col-md-3
 					.p-5

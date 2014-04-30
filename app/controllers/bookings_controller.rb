@@ -84,7 +84,7 @@ class BookingsController < ApplicationController
 		@booking.promo = session[:promo_code] if !session[:promo_code].blank?
 		@booking.save!
 		
-		if false
+		if !false
 			Credit.use_credits(@booking) if !session[:used_credits].blank?
 			session[:used_credits] = nil
 		end
@@ -370,7 +370,8 @@ class BookingsController < ApplicationController
 			str,id = CommonHelper.decode(id.downcase)
 			if !str.blank? && str == 'booking'
 				@booking = Booking.find(id)
-				@summary = Offer.where(["promo_code = '#{@booking.promo}'"])[0].summary
+				offer = Offer.find_by(promo_code:  '#{@booking.promo}')
+				@summary = offer.summary if !offer.blank?
 			else
 				render_404
 			end

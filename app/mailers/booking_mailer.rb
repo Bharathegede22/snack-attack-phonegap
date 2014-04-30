@@ -26,7 +26,8 @@ class BookingMailer < ActionMailer::Base
   def payment(booking)
 		@booking = booking
 		@user = @booking.user
-		@summary = Offer.where(["promo_code = '#{@booking.promo}'"])[0].summary
+		offer = Offer.find_by(promo_code:  '#{@booking.promo}')
+		@summary = offer.summary if !offer.blank?
 		mail(:to => @user.email, :subject => "Review your Zoom reservation details.")
 	end
 	
