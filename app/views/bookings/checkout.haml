@@ -137,7 +137,7 @@
 										%td.p-5.t-r
 											₹#{cargroup.excess_kms.to_i} / Km
 						%br/
-						- if false
+						- if !false
 							.bg-e.p-10.border-c.solid.r-5
 								= render :partial => "credits", :locals => {:fare => fare}
 							%br/

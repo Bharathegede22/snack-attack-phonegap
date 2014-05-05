@@ -141,9 +141,9 @@ class Payment < ActiveRecord::Base
 	protected
 	
 	def after_save_tasks
-		if self.status == 1
+		if self.status == 1 
 			b = self.booking
-			if b
+			if b && b.outstanding <= 0
 				if b.status == 0
 					if !b.car_id.blank?
 						b.status = 1
@@ -158,6 +158,7 @@ class Payment < ActiveRecord::Base
 				b.notes += "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs." + self.amount.to_s + " - Payment Received through <u>" + self.through_text + "</u>.<br/>"
 				b.save(:validate => false)
 			end
+			Booking.recalculate(b.id)
 		end
 	end
 	

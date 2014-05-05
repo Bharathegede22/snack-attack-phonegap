@@ -36,11 +36,11 @@
 					- if (defined? show_credits_us)
 						%td 
 							- b.credit.each do |cr|
-								= cr.amount if cr.action == 'debit'
+								= cr.amount if cr.action == false
 					- if (defined? show_credits_er)
 						%td 
 							- b.credit.each do |cr|
-								= cr.amount if cr.action == 'credit'
+								= cr.amount if cr.action == true
 				%td.t-r
 					%a.btn.btn-xs.btn-default{href: "/bookings/#{b.encoded_id}", target: '_blank', role: "button", :title => 'Payment History'}
 						%span.glyphicon.glyphicon-list

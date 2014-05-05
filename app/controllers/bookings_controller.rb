@@ -84,28 +84,12 @@ class BookingsController < ApplicationController
 		@booking.promo = session[:promo_code] if !session[:promo_code].blank?
 		@booking.save!
 		
-		if false
-			payment = Payment.new
-			payment.booking_id = @booking.id
-			payment.status = 1
-			payment.through = 'credits'
-			payment.amount = session[:used_credits]
-			payment.save!
-
-			credit = Credit.new
-			credit.user_id = current_user.id
-			credit.creditable_type = 'booking'
-			credit.amount = session[:used_credits]
-			credit.action = 'debit'
-			credit.source_name = 'booking'
-			credit.status = 1
-			credit.creditable_id = @booking.id
-			credit.save!
-
-			current_user.update_credits
-
+		if !false
+			Credit.use_credits(@booking) if !session[:used_credits].blank?
 			session[:used_credits] = nil
 		end
+
+		
 		
 		session[:booking_id] = @booking.encoded_id
 		session[:search] = nil
@@ -386,6 +370,8 @@ class BookingsController < ApplicationController
 			str,id = CommonHelper.decode(id.downcase)
 			if !str.blank? && str == 'booking'
 				@booking = Booking.find(id)
+				offer = Offer.find_by(promo_code:  '#{@booking.promo}')
+				@summary = offer.summary if !offer.blank?
 			else
 				render_404
 			end

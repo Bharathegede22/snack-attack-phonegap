@@ -494,6 +494,14 @@ class Booking < ActiveRecord::Base
 		return (self.status > 0 || !self.jsi.blank?)
 	end
 	
+	def self.recalculate(id)
+		Booking.connection.clear_query_cache
+		#book = Booking.unscoped.find(id)
+		book = Booking.find(id)
+		book.update_columns(total: book.revenue, balance: book.outstanding)
+		#Utilization.manage(id)
+	end
+
 	def set_fare
 		tmp = self.cargroup.check_fare(self.starts, self.ends)
 		self.estimate = tmp[:estimate].round

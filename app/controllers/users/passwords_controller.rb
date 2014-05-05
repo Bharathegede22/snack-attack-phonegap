@@ -8,9 +8,9 @@ class Users::PasswordsController < Devise::PasswordsController
     		format.json {
 					if successfully_sent?(resource)
 						flash[:notice] = "Password reset instructions are emailed to <b>#{resource.email}</b>."
-						render json: {html: render_to_string('new.haml', layout: false)}
+						render json: {html: render_to_string('new.haml', layout: false), emailSent: 1}
 					else
-						render json: {html: render_to_string('new.haml', layout: false)}
+						render json: {html: render_to_string('new.haml', layout: false), emailSent: 0}
 					end
     		}
     	end
