@@ -24,7 +24,7 @@ role :app, "180.179.52.169"
 role :db,  "180.179.52.169", :primary => true
 
 ssh_options[:user] = "root"
-ssh_options[:keys] = "/root/.ssh/id_rsa"
+ssh_options[:keys] = "/root/.ssh/id_rsa_test"
 ssh_options[:port] = 2255
 
 set :bundle_gemfile, "Gemfile"

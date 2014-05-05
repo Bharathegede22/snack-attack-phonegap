@@ -1,7 +1,17 @@
-- cargroup = @booking.cargroup
-- location = @booking.location
-- fare = cargroup.check_fare(@booking.starts, @booking.ends)
-- fare[:total_credits] = current_user.total_credits
+:ruby
+	if @booking
+		cargroup = @booking.cargroup
+		location = @booking.location
+	else
+		cargroup = Cargroup.random
+		location = Location.random
+		@booking = Booking.new
+		@booking.starts = Time.today + 1.days
+		@booking.ends = Time.today + 2.days
+		@booking.location_id = location.id
+		@booking.cargroup_id = cargroup.id
+	end
+	fare = cargroup.check_fare(@booking.starts, @booking.ends)
 .content
 	= render :partial => "/bookings/search_steps", locals: {step: 4}
 	.wrapper
@@ -24,7 +34,7 @@
 								.red.size-10
 									= cargroup.disclaimer.html_safe
 							.colored
-								.m-auto{:class => 'car' + @booking.cargroup_id.to_s}
+								.m-auto{:class => 'car' + cargroup.id.to_s}
 							Available at
 							%br/
 							%b

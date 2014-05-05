@@ -4,7 +4,7 @@
 			- if header
 				.p-5
 					%h2 Find Us In Your Neighbourhood!
-			- Location.live.each do |l|
+			- Location.all.each do |l|
 				- tmp = l.mapcontent.gsub("<div style='width:240px;'", "<div")
 				.help.pins{class: "locs#{l.id}", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{tmp}"}
 					.dot

@@ -16,13 +16,13 @@ class BookingsController < ApplicationController
 	end
 	
 	def checkout
-		redirect_to "/bookings/do" and return if !user_signed_in? || (current_user && !current_user.check_details)
+		redirect_to "/bookings/do" and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		generic_meta
 		@header = 'booking'
 	end
 	
 	def checkoutab
-		redirect_to "/bookings/do" and return if !user_signed_in? || (current_user && !current_user.check_details)
+		redirect_to "/bookings/do" and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		generic_meta
 		@header = 'booking'
 	end
@@ -423,8 +423,6 @@ class BookingsController < ApplicationController
 					redirect_to(:back) and return
 				end
 			end
-		else
-			redirect_to "/" and return
 		end
 	end
 	
@@ -435,8 +433,6 @@ class BookingsController < ApplicationController
 			@booking.ends = Time.zone.parse(session[:book][:ends])
 			@booking.location_id = session[:book][:loc]
 			@booking.cargroup_id = session[:book][:car]
-		else
-			redirect_to "/" and return
 		end
 	end
 	

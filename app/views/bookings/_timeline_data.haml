@@ -42,7 +42,7 @@
 			total = 0 if slot_s && slot >= @booking.starts && slot <= (@booking.starts + slot_s.minutes)
 			total = 0 if slot_e && slot >= @booking.ends && slot < (@booking.ends + slot_e.minutes)
 		end
-	- if @page != 0 || (slot.to_date.to_datetime.to_i >= @booking.starts.to_date.to_datetime.to_i && slot.to_date.to_datetime.to_i <= @booking.ends.to_date.to_datetime.to_i)
+	- if @page != 0 || (slot.to_date.to_datetime.to_i >= @booking.starts.to_date.to_datetime.to_i && slot.to_date.to_datetime.to_i <= (@booking.ends-1.minutes).to_date.to_datetime.to_i)
 		- if slot.hour == 0 && slot.min == 0
 			.fc
 			.date

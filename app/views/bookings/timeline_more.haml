@@ -1,6 +1,8 @@
 - if !@inventory.blank?
 	= render :partial => 'timeline_data'
 = javascript_tag do
+	:plain
+		$("#TimelineWait#{@booking.cargroup_id}").slideUp();
 	- if @page < 0
 		:plain
 			$("#TimelineLessNum#{@booking.cargroup_id}").val("#{@page-1}");

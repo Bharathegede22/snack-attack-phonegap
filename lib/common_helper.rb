@@ -5,7 +5,7 @@ module CommonHelper
 	OVERSPEEDING = 500
 	
 	HIRE_TYPE = [['Full Time', 0],['Part Time',1],['Internship',2]]
-	DEPARTMENT = [['Call Centre',0],['Marketing',1],['Technology',2],['Operations',3]]
+	DEPARTMENT = [['Call Centre',0],['Marketing',1],['Technology',2],['Operations',3],['Analytics',4],['Others',5],['Product',6]]
 	
 	CAR_TYPE = [['Hatchback', 1], ['SUV', 2], ['Sedan', 3], ['Coupe2D', 4]]
   DRIVE = [['Front Wheel', 1], ['Rear Wheel Drive', 2]]

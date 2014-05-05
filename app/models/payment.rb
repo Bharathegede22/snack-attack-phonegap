@@ -51,10 +51,22 @@ class Payment < ActiveRecord::Base
 		end
 	end
 	
+	def self.check_mismatch
+		count = 0
+		Payment.find_by_sql("SELECT p.* FROM payments p 
+			INNER JOIN bookings b ON b.id = p.booking_id 
+			WHERE p.through = 'payu' AND p.status = 1 AND b.status = 0").each do |p|
+			p.save
+			count += 1
+		end
+		return count
+	end
+	
 	def self.check_status
 		Payment.find(:all, :conditions => ["status = 0 AND created_at >= ? AND created_at < ?", Time.now - 1.hours, Time.now - 15.minutes]).each do |p|
 			Payu.check_status(p.encoded_id)
 		end
+		Payment.check_mismatch
 	end
 	
 	def self.do_create(params)

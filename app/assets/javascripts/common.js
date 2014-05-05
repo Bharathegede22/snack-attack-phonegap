@@ -382,8 +382,8 @@ function showSearch() {
 function showTimeline(carId, action, carName) {
 	var locId = $('#LocMenu' + carId).find('li.active').attr("id").split('LocSel' + carId)[1];
 	if(action == 0) {
-		$('#Timeline' + carId).slideUp();
 		if($('#Timeline' + carId).html() == '') {
+			$('#TimelineWait' + carId).slideDown();
 			if(carName) {
 				pushEvent('Search', carName, 'Timeline Open');
 			}
@@ -392,15 +392,19 @@ function showTimeline(carId, action, carName) {
 			if(carName) {
 				pushEvent('Search', carName, 'Timeline Close');
 			}
+			$('#TimelineWait' + carId).slideUp();
+			$('#Timeline' + carId).slideUp();
 			$('#Timeline' + carId).html('');
 			$('#TimelineText' + carId).html("Show Availability");
 			$('#TimelineAction' + carId).html("<div class='arrw-d'></div>");
 		}
 		$('#TimelineAction' + carId).tooltip('hide');
 	} else if(action == 1) {
+		$('#TimelineWait' + carId).slideDown();
 		var num = $('#TimelineMoreNum' + carId).val();
 		getData("/bookings/timeline?car=" + carId + "&location=" + locId + "&page=" + num, 'TimelineContent' + carId, 'append', null);
 	} else if(action == -1) {
+		$('#TimelineWait' + carId).slideDown();
 		var num = $('#TimelineLessNum' + carId).val();
 		getData("/bookings/timeline?car=" + carId + "&location=" + locId + "&page=" + num, 'TimelineContent' + carId, 'prepend', null);
 	}

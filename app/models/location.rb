@@ -72,4 +72,8 @@ class Location < ActiveRecord::Base
 		end
 	end
 	
+	def self.random
+  	Location.where("status > 0").order("RAND()").first
+  end
+  
 end

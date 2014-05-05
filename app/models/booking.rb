@@ -469,7 +469,7 @@ class Booking < ActiveRecord::Base
 	def outstanding
 		total = self.total_charges
 		total -= self.total_payments
-		total -= self.total_refunds
+		total += self.total_refunds
 		return total.to_i
 	end
 	

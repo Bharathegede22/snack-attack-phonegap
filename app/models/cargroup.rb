@@ -280,6 +280,10 @@ class Cargroup < ActiveRecord::Base
   	end
   end
   
+  def self.random
+  	Cargroup.where("status > 0").order("RAND()").first
+  end
+  
 	def self.return_group
   	Cargroup.all
   end
