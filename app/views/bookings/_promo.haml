@@ -1,24 +1,23 @@
-- render_flash
 #PromoDiv
 	- if session[:promo_code].blank?
 		.p-b5
 			%b Promo Code (Optional)
-		.p-b5
-			%form.form-inline{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
-				.form-group
+		%form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+			.row
+				.col-md-7
 					%input#DetailsName.validate-presence.form-control{name: 'promo', type: "text", value: @promo}
-				.form-group
+				.col-md-5
 					#PromoSubmit
-						%button.btn.btn-default{type:"submit"} Apply
-			#PromoWait{style: "display:none;"}
-				.wait
+						%button.btn.btn-default{type:"submit"} Apply Promo Code
+		#PromoWait{style: "display:none;"}
+			.wait
 		#DetailsNameError.error
 	- else
 		.p-b5
 			.fl
 				%b Promo Code (Optional)
 			.fr
-				%form.form-inline{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+				%form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 					#PromoSubmit
 						%button.btn.btn-default.btn-xs{type:"submit"}
 							%span.glyphicon.glyphicon-remove
@@ -29,5 +28,9 @@
 			Promo code 
 			%b #{session[:promo_code]}
 			has been applied.
-		.p-b5
+		- offer = Offer.find_by(promo_code: "#{session[:promo_code].downcase}")
+		- if offer
+			.p-b5
+				= offer.summary.html_safe
+		.p-b5.size-12
 			%i Discount will be manually evaluated and refunded back to your card.

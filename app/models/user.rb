@@ -186,14 +186,13 @@ class User < ActiveRecord::Base
 	def update_credits
 		sum = 0
 		credits.each do |cr|
-			if cr.action == true
+			if cr.action
 				sum += cr.amount 
-			elsif cr.action == false
+			else
 				sum -= cr.amount 
 			end
 		end
-		self.total_credits = sum
-		save!
+		self.update_column(:total_credits, sum)
 	end
 
 	def generate_otp
@@ -224,9 +223,6 @@ class User < ActiveRecord::Base
 		end
 	end
 
-
-
-
   private
   
   def before_validation_tasks
@@ -245,5 +241,4 @@ class User < ActiveRecord::Base
   	otp_valid_till && otp_valid_till > Time.now
   end
 
-  
 end

@@ -63,7 +63,7 @@ class Inventory < ActiveRecord::Base
 	
 	def self.check_plain(start_time, end_time, cargroup, location, timezone_padding=false, start_padding=false, end_padding=false)
 		Inventory.connection.clear_query_cache
-		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE, cargroups READ, locations READ")
+		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE, cargroups READ, locations READ, locations AS l READ, cars AS c READ")
 		if cargroup
 			cars = [Cargroup.find(cargroup)]
 		else

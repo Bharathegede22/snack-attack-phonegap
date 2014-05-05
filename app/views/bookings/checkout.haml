@@ -11,7 +11,7 @@
 		@booking.location_id = location.id
 		@booking.cargroup_id = cargroup.id
 	end
-	fare = cargroup.check_fare(@booking.starts, @booking.ends)
+	@fare = cargroup.check_fare(@booking.starts, @booking.ends)
 .content
 	= render :partial => "/bookings/search_steps", locals: {step: 4}
 	.wrapper
@@ -88,15 +88,15 @@
 							.p-10.bg-c.t-c
 								:ruby
 									tmp = ''
-									if fare[:days] == 1
+									if @fare[:days] == 1
 										tmp << "1 day, "
-									elsif fare[:days] > 0
-										tmp << fare[:days].to_s + " days, "
+									elsif @fare[:days] > 0
+										tmp << @fare[:days].to_s + " days, "
 									end
-									if fare[:hours] == 1
+									if @fare[:hours] == 1
 										tmp << "1 hour"
-									elsif fare[:hours] > 0
-										tmp << fare[:hours].to_s + " hours"
+									elsif @fare[:hours] > 0
+										tmp << @fare[:hours].to_s + " hours"
 									end
 								Rented for
 								%b
@@ -107,17 +107,17 @@
 										%td.p-5
 											%b Normal Tariff
 										%td.p-5.t-r
-											₹#{fare[:estimate]}
+											₹#{@fare[:estimate]}
 									%tr
 										%td.p-5
 											%b Discount
 										%td.p-5.t-r
-											₹#{fare[:discount]}
+											₹#{@fare[:discount]}
 									
 							.bg-6.t-c.white.f-b.size-18
 								.p-10.fl
 									Total :
-									₹#{fare[:estimate] - fare[:discount]}
+									₹#{@fare[:estimate] - @fare[:discount]}
 								.calc.m-5.fr.help{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Tariff Estimator"}
 								.fc
 							.p-10
@@ -128,21 +128,17 @@
 											.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "All Zoom reservation comes with free driving kms, which are based on vehicle type and reservation duration."} (?)
 											.fc
 										%td.p-5.t-r
-											= fare[:kms]
+											= @fare[:kms]
 									%tr
 										%td.p-5.f-b
 											.fl Excess Kms Charge
-											.fl.p-l5.help.pointer{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "If you travel more than #{fare[:kms]} Kms during the reservation, then Kms beyond #{fare[:kms]} will be charged at this price. Click here to enter your expected Kms to estimate your final tariff."} (?)
+											.fl.p-l5.help.pointer{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "If you travel more than #{@fare[:kms]} Kms during the reservation, then Kms beyond #{@fare[:kms]} will be charged at this price. Click here to enter your expected Kms to estimate your final tariff."} (?)
 											.fc
 										%td.p-5.t-r
 											₹#{cargroup.excess_kms.to_i} / Km
 						%br/
-						- if !false
-							.bg-e.p-10.border-c.solid.r-5
-								= render :partial => "credits", :locals => {:fare => fare}
-							%br/
-						.bg-e.p-10.border-c.solid.r-5
-							= render :partial => "promo"
+						#OutstandingDiv
+							= render :partial => 'outstanding'
 						.t-c
 							%br/
 							.m-auto{style: 'width:200px;'}

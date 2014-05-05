@@ -11,7 +11,7 @@
 		@booking.location_id = location.id
 		@booking.cargroup_id = cargroup.id
 	end
-	fare = cargroup.check_fare(@booking.starts, @booking.ends)
+	@fare = cargroup.check_fare(@booking.starts, @booking.ends)
 .content
 	= render :partial => "/bookings/search_steps", locals: {step: 4}
 	.wrapper
@@ -44,8 +44,8 @@
 								%b Date of Birth
 							%td
 								= current_user.dob.strftime("%d/%m/%Y")
-					.bg-e.p-10.border-c.solid.r-5
-						= render :partial => "promo"
+					#OutstandingDiv
+						= render :partial => 'outstanding'
 					.t-c
 						.m-auto.p-10{style: "width:200px;"}
 							- if @available == 1

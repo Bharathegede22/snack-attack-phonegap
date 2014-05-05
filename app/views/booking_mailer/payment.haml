@@ -1,5 +1,10 @@
-- cargroup = @booking.cargroup
-- location = @booking.location
+:ruby
+	cargroup = @booking.cargroup
+	location = @booking.location
+	if !@booking.promo.blank?
+		offer = Offer.find_by(promo_code: "#{@booking.promo.downcase}")
+		@summary = offer.summary.html_safe if !offer.blank?
+	end		
 %br/
 Hi #{@user.name},
 %br/
@@ -77,11 +82,9 @@ Please review the details of your reservation:
 				%td
 					%b
 						= @booking.promo
-				- if (defined? @summary)
-					%td
-						Promo Desc.
-					%td
-						= @summary
+					- if (defined? @summary)
+						%br/
+						= @summary.html_safe
 %br/
 %br/
 %div{style: "margin:0px; padding:0px;"}

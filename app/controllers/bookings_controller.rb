@@ -2,7 +2,7 @@ class BookingsController < ApplicationController
 	
 	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
 	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule, :feedback]
-	before_filter :check_search, :only => [:checkout, :checkoutab, :docreate, :license, :login, :userdetails]
+	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
 	
 	def cancel
@@ -32,15 +32,14 @@ class BookingsController < ApplicationController
 	end
 	
 	def credits
-		if params[:fare].to_i >= current_user.total_credits.to_i
-			session[:used_credits] = current_user.total_credits.to_i
+		if current_user.total_credits.to_i < params[:fare].to_i
+			flash[:error] = 'Insufficient credits, please try again!'
 		else
-			session[:used_credits] = params[:fare].to_i
-
+			session[:credits] = params[:fare].to_i
+			flash[:message] = 'Credits applied, please carry on!'
 		end
-		flash[:notice] = "Remaining Credits: #{current_user.total_credits.to_i - session[:used_credits]}" 
-		session[:cr_netamount] = params[:fare].to_i - session[:used_credits].to_i
-		render json: {html: render_to_string('_credits.haml', layout: false)}
+		@fare = @booking.cargroup.check_fare(@booking.starts, @booking.ends)
+		render json: {html: render_to_string('_outstanding.haml', layout: false)}
 	end
 
 	def do
@@ -74,6 +73,12 @@ class BookingsController < ApplicationController
 	end
 	
 	def docreate
+		if !session[:credits].blank? && current_user.total_credits.to_i < session[:credits].to_i
+			session[:credits] = nil
+			flash[:error] = 'Insufficient credits, please try again!'
+			redirect_to "/bookings/checkout"
+			return
+		end
 		@booking.user_id = current_user.id
 		@booking.user_name = current_user.name
 		@booking.user_email = current_user.email
@@ -84,18 +89,26 @@ class BookingsController < ApplicationController
 		@booking.promo = session[:promo_code] if !session[:promo_code].blank?
 		@booking.save!
 		
-		if !false
-			Credit.use_credits(@booking) if !session[:used_credits].blank?
-			session[:used_credits] = nil
-		end
-
-		
+		Credit.use_credits(@booking, session[:credits]) if !session[:credits].blank?
 		
 		session[:booking_id] = @booking.encoded_id
 		session[:search] = nil
 		session[:book] = nil
 		session[:promo_code] = nil
-		redirect_to "/bookings/payment"
+		session[:credits] = nil
+		
+		if @booking.outstanding > 0
+			redirect_to "/bookings/payment"
+		else
+			u = @booking.user
+			if u.check_license
+		  	flash[:notice] = "Thanks for the payment. Please continue."
+		  	redirect_to "/bookings/#{@booking.encoded_id}"
+		  else
+		  	flash[:notice] = "Thanks for the payment. Please upload your license to complete the reservation."
+		  	redirect_to "/users/license"
+		  end
+  	end
 	end
 	
 	def dopayment
@@ -370,8 +383,6 @@ class BookingsController < ApplicationController
 			str,id = CommonHelper.decode(id.downcase)
 			if !str.blank? && str == 'booking'
 				@booking = Booking.find(id)
-				offer = Offer.find_by(promo_code:  '#{@booking.promo}')
-				@summary = offer.summary if !offer.blank?
 			else
 				render_404
 			end

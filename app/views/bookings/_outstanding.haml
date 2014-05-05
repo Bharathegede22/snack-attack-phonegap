@@ -1,0 +1,14 @@
+- if current_user.total_credits.to_i > 0
+	.bg-e.p-10.border-c.solid.r-5
+		= render :partial => "credits"
+	%br/
+.bg-e.p-10.border-c.solid.r-5
+	= render :partial => "promo"
+.p-t10
+	.bg-6.t-c.white.f-b.size-18.r-5.p-10.t-c
+		Total Outstanding :
+		- if !session[:credits].blank?
+			₹#{@fare[:estimate] - @fare[:discount] - session[:credits].to_i}
+		- else
+			₹#{@fare[:estimate] - @fare[:discount]}
+- render_flash

@@ -157,8 +157,8 @@ class Payment < ActiveRecord::Base
 				end
 				b.notes += "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs." + self.amount.to_s + " - Payment Received through <u>" + self.through_text + "</u>.<br/>"
 				b.save(:validate => false)
+				Booking.recalculate(b.id)
 			end
-			Booking.recalculate(b.id)
 		end
 	end
 	
