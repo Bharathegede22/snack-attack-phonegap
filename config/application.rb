@@ -29,7 +29,7 @@ module Web
 		    :email_prefix => "[Zoomcar Error] ", 
 		    :sender_address => %{"Zoomcar Error" <error@zoomcar.in>},
 		    :exception_recipients => %w{amit@zoomcar.in}
-			}
+		}
 		
 		config.to_prepare do
 			Devise::Mailer.layout "email"

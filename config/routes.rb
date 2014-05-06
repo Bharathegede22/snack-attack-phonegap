@@ -49,6 +49,7 @@ Web::Application.routes.draw do
 			get 'dopayment'
 			get 'invoice'
 			get 'payments'
+			get 'payment'
 			get 'reschedule'
 			
 			get 'feedback'
