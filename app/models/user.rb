@@ -68,6 +68,14 @@ class User < ActiveRecord::Base
   	end
   end
   
+  def is_blacklisted?
+    if self.status == CommonHelper::BLACKLISTED_STATUS
+      return true
+    else 
+      return false
+    end
+  end
+  
   def license_check?
     @license_check
   end

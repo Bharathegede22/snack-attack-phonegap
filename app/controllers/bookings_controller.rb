@@ -4,6 +4,7 @@ class BookingsController < ApplicationController
 	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule, :feedback]
 	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
+  before_filter :check_blacklist, :only => [:docreate]
 	
 	def cancel
 		if request.post?
@@ -411,6 +412,13 @@ class BookingsController < ApplicationController
 		end
 	end
 	
+  def check_blacklist
+    if current_user.is_blacklisted? 
+      flash[:notice] = "You have been blacklisted from using ZoomCar. Reason - #{current_user.blacklist_reason}"
+      redirect_to bookings_path
+    end
+  end
+  
 	def check_inventory
 		if @booking
 			if @booking.jsi.blank? && @booking.status == 0

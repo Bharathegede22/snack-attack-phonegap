@@ -47,6 +47,9 @@ module CommonHelper
 	BOOKING_WINDOW = 60
 	MIN_AGE = 21
 	
+  BLACKLISTED_STATUS = 1
+  
+  
 	ENCODING_ARRAY = ["7", "c", "i", "j", "o", "k", "z", "l", "q", "r", "m", "8", "h", "u", "g", "w", "3", "1", "y", "p", "5", "s", "0", "d", "a", "e", "v", "t", "2", "4", "f", "b", "x", "6", "n", "9"]
   
   STATE = [
