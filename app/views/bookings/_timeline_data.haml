@@ -5,10 +5,11 @@
 	end
 	slot_s = nil
 	slot_e = nil
+	loc = @booking.location
 - @inventory.each do |i|
 	:ruby
 		slot = i.slot - 330.minutes
-		if @booking.location_id == 8 && ((Time.now + 180.minutes) > slot)
+		if !loc.block_time.blank? && (Time.now + loc.block_time.minutes > slot)
 			total = 0
 		elsif Time.now > slot
 			total = 0

@@ -78,7 +78,7 @@ class Inventory < ActiveRecord::Base
 		cars.each do |c|
 			tmp = {}
 			locs.each do |l|
-				if l.id == 8 && (Time.now + 180.minutes > start_time)
+				if !l.block_time.blank? && (Time.now + l.block_time.minutes > start_time)
 					tmp[l.id.to_s] = 0
 				else
 					tmp[l.id.to_s] = 1

@@ -1,4 +1,4 @@
-- if current_user.total_credits.to_i > 0
+- if current_user && current_user.total_credits.to_i > 0
 	.bg-e.p-10.border-c.solid.r-5
 		= render :partial => "credits"
 	%br/
