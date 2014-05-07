@@ -413,10 +413,7 @@ class BookingsController < ApplicationController
 	end
 	
   def check_blacklist
-    if current_user.is_blacklisted? 
-      flash[:notice] = "You have been blacklisted from using ZoomCar. Reason - #{current_user.blacklist_reason}"
-      redirect_to bookings_path
-    end
+    redirect_to "/bookings/checkout" if current_user && current_user.is_blacklisted? 
   end
   
 	def check_inventory
@@ -448,7 +445,5 @@ class BookingsController < ApplicationController
 	def feedback_params
 		params.require(:review).permit(:comment, :rating_tech, :rating_friendly, :rating_condition, :rating_location)
 	end
-	
-
 	
 end
