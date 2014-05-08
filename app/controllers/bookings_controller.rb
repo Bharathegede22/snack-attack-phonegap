@@ -3,6 +3,7 @@ class BookingsController < ApplicationController
 	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
 	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule, :feedback]
 	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :license, :login, :userdetails]
+	before_filter :check_search_access, :only => [:credits, :docreate, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
   before_filter :check_blacklist, :only => [:docreate]
 	
@@ -436,6 +437,10 @@ class BookingsController < ApplicationController
 			@booking.location_id = session[:book][:loc]
 			@booking.cargroup_id = session[:book][:car]
 		end
+	end
+	
+	def check_search_access
+		redirect_to '/' and return if !@booking
 	end
 	
 	def image_params

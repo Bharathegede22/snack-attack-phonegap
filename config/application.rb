@@ -28,7 +28,7 @@ module Web
     	:email => {
 		    :email_prefix => "[Zoomcar Error] ", 
 		    :sender_address => %{"Zoomcar Error" <error@zoomcar.in>},
-		    :exception_recipients => %w{amit@zoomcar.in}
+		    :exception_recipients => %w{error@zoomcar.in}
 		}
 		
 		config.to_prepare do
