@@ -101,6 +101,7 @@
 						%a.btn.btn-default{href: "/bookings/#{@booking.encoded_id}/invoice", target: '_blank', role: "button"} Invoice
 					- if @booking.status_complete?
 						%a.btn.btn-default{href: "/bookings/#{@booking.encoded_id}/feedback", target: '_blank', role: "button"} Feedback
+		= render :partial => '/bookings/socialshare'
 	.col-md-4
 		- @total = 0
 		- tmp = 0
