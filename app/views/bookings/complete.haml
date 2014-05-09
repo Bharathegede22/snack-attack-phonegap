@@ -1,4 +1,9 @@
 = render :partial => '/bookings/pg/thanks'
+.hide
+	%iframe{src: "http://trootrac.in/p.ashx?o=10364&p=1&t=#{@booking.confirmation_key}", height:"1", width:"1", frameborder:"0"}
+:ruby
+	cargroup = @booking.cargroup
+	location = @booking.location
 - if @booking.confirmed_payments.length == 1
 	:javascript
 		var _adx = {};
@@ -32,4 +37,25 @@
 			var ref = document.getElementsByTagName('script')[0];
 			ref.parentNode.insertBefore(fpw, ref);
 		})();
+		
+		_gaq.push(['_addTrans',
+			"#{@booking.confirmation_key}", 
+			"", 
+			"#{@booking.total}", 
+			"0.0", 
+			"0.0", 
+			"Bangalore", 
+			"Karnataka", 
+			"India"
+		]);
+
+		_gaq.push(['_addItem',
+			"#{@booking.confirmation_key}", 
+			"#{cargroup.encoded_id}", 
+			"#{cargroup.name}", 
+			"#{location.name}", 
+			"#{@booking.total}", 
+			"1"
+		]);
+		_gaq.push(['_trackTrans']);
 	%script{type: "text/javascript", src: "//www.googleadservices.com/pagead/conversion.js"}

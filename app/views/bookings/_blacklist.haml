@@ -1,0 +1,14 @@
+- if current_user && current_user.is_blacklisted?
+	.m-t10.alert.alert-danger
+		.size-14.black
+			Your account has been 
+			%b blocked
+			from using Zoom.
+			%br/
+			- if !current_user.note.blank?
+				%b Reason : 
+				#{current_user.note}
+				%br/
+			Contact 
+			%b support@zoomcar.in
+			for more information.

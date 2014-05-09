@@ -3,6 +3,7 @@ class BookingsController < ApplicationController
 	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
 	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule, :feedback]
 	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :license, :login, :userdetails]
+	before_filter :check_search_access, :only => [:credits, :docreate, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
   before_filter :check_blacklist, :only => [:docreate]
 	
@@ -413,10 +414,7 @@ class BookingsController < ApplicationController
 	end
 	
   def check_blacklist
-    if current_user.is_blacklisted? 
-      flash[:notice] = "You have been blacklisted from using ZoomCar. Reason - #{current_user.blacklist_reason}"
-      redirect_to bookings_path
-    end
+    redirect_to "/bookings/checkout" if current_user && current_user.is_blacklisted? 
   end
   
 	def check_inventory
@@ -441,6 +439,10 @@ class BookingsController < ApplicationController
 		end
 	end
 	
+	def check_search_access
+		redirect_to '/' and return if !@booking
+	end
+	
 	def image_params
 		params.require(:image).permit(:avatar)
 	end
@@ -448,7 +450,5 @@ class BookingsController < ApplicationController
 	def feedback_params
 		params.require(:review).permit(:comment, :rating_tech, :rating_friendly, :rating_condition, :rating_location)
 	end
-	
-
 	
 end

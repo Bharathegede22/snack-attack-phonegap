@@ -688,7 +688,7 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def after_save_tasks
-		Utilization.manage(self.id) if !self.jsi.blank? || self.status > 0
+		#Utilization.manage(self.id) if !self.jsi.blank? || self.status > 0
 		Exotel.send_message(self.user_mobile, "Zoom booking (#{self.confirmation_key}) for #{self.cargroup.display_name} at #{self.starts.strftime('%I:%M %p, %d %b')} is confirmed. Zoom Support : 08067684475.", self.id) if self.status_changed? && (self.status == 1 || self.status == 6)
 	end
 	

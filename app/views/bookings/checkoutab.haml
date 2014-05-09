@@ -48,10 +48,11 @@
 						= render :partial => 'outstanding'
 					.t-c
 						.m-auto.p-10{style: "width:200px;"}
-							- if @available == 1
+							- if @available == 1 && current_user && !current_user.is_blacklisted?
 								.button{onclick: "checkout();"} Checkout
 							- else
 								.button-dis Checkout
+						= render :partial => "/bookings/blacklist"
 				- else
 					.alert.alert-info.t-c
 						%b Please provide the following details to complete your reservation
