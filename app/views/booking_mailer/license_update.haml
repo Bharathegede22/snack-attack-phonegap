@@ -35,3 +35,13 @@ Please review and Verify.
 						See license
 				- else
 					= "-"
+.panel-heading
+		%h3.panel-title Future Bookings
+	.panel-body
+		:ruby
+			if user_signed_in?
+				bk = current_user.get_bookings('future')
+			else
+				bk = []
+			end
+		= render :partial => 'item', :locals => {:bookings => bk}
