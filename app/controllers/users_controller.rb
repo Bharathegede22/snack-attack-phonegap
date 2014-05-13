@@ -25,6 +25,7 @@ class UsersController < ApplicationController
 					@image.save
 				end
 				if @image.valid?
+					BookingMailer.license_update(current_user).deliver
 					flash[:notice] = 'Thanks for uploading your driving license image.'
 				else
 					if @image.errors[:avatar_content_type].length > 0

@@ -1,0 +1,24 @@
+.m-t20
+  %span{"style" =>"position:relative;top:-3px;"}
+    .fb-share-button{"data-href" => "www.zoomcar.in", "data-type" => "button"}
+  %a.twitter-share-button{"data-count" => "none", "data-lang" => "en", "data-related" => "anywhereTheJavascriptAPI", "data-url" => "www.zoomcar.in", "data-via" => "zoom", :href => "https://twitter.com/share"} Tweet
+  .g-plus{"data-action" => "share", "data-annotation" =>"none"}
+#fb-root
+:javascript
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=700874329954206&version=v2.0";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+
+  !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/platform.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+   

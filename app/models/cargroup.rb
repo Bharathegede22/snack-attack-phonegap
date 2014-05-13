@@ -289,7 +289,7 @@ class Cargroup < ActiveRecord::Base
   end
 	
 	def shortname
-		return self.display_name.gsub('Mahindra ','')
+		self.display_name.gsub('Mahindra ','') rescue ""
 	end
 	
 end

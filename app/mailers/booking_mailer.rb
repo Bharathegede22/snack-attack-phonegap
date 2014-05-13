@@ -23,6 +23,11 @@ class BookingMailer < ActionMailer::Base
 		mail(:to => 'support@zoomcar.in', :subject => "Booking extension failed because of no inventory.")
 	end
 	
+	def license_update(user)
+		@user = user
+		mail(:to => 'support@zoomcar.in', :subject => "License Update for: #{@user.email} ")
+	end
+
   def payment(booking)
 		@booking = booking
 		@user = @booking.user

@@ -192,6 +192,7 @@ class Booking < ActiveRecord::Base
 			self.status = 10
 			self.save(validate: false)
 			BookingMailer.cancel(self.id, charge).deliver
+			#sendsms(charge) ------ Send message for reschedule
 		end
 		return total
 	end
@@ -283,11 +284,46 @@ class Booking < ActiveRecord::Base
 			self.save(validate: false)
 			if charge
 				BookingMailer.change(self.id, charge).deliver
+				#sendsms(charge) ------ Send message for reschedule
 			else
 				BookingMailer.change(self.id, nil).deliver
+				#sendsms(nil) ------Send message for reschedule when charge is nil
 			end
 		end
 		return [str, fare]
+	end
+
+	def sendsms (charge)
+		cargroup = self.cargroup
+		location = self.location
+		outstanding = self.outstanding
+		str1 = ""
+		str2 = ""
+
+
+		if charge 
+			if charge.amount==1
+				str1 = "#{charge.amount} "+ "is refunded back to the reservation"
+			else
+				str1 = "#{charge.amount} "+ "is added as charges to the reservation"
+			end
+		else
+			str = "No change in your reservation charges"
+		end
+
+		if outstanding >0
+			if self.starts < Time.now
+				str2 = "Rs#{outstanding} "+"is outstanding amount when you drop the vehicle back to Zoom"
+			else
+				str2 ="Make Payement know"
+			end
+		elsif outstanding <0
+			str2 = "Rs#{0-outstanding} "+"will refunded back to your account"
+		end
+
+		message = "Zoom booking has changed (#{self.confirmation_key}) for #{self.cargroup.display_name} So #{str1} and #{str2}. Zoom Support : 08067684475."
+		Exotel.send_message(self.user_mobile,message,self.id)	
+		#puts message
 	end
 	
 	def encoded_id
@@ -652,7 +688,7 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def after_save_tasks
-		Utilization.manage(self.id) if !self.jsi.blank? || self.status > 0
+		#Utilization.manage(self.id) if !self.jsi.blank? || self.status > 0
 		Exotel.send_message(self.user_mobile, "Zoom booking (#{self.confirmation_key}) for #{self.cargroup.display_name} at #{self.starts.strftime('%I:%M %p, %d %b')} is confirmed. Zoom Support : 08067684475.", self.id) if self.status_changed? && (self.status == 1 || self.status == 6)
 	end
 	
