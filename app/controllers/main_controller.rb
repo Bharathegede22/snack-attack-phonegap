@@ -101,11 +101,18 @@ class MainController < ApplicationController
 		@header = 'policy'
 	end
 	
+	def get_locations_map
+		@city = City.find_by_id(params[:id]) if !params[:id].blank?
+		@zoom = params[:zoom] if !params[:zoom].blank?
+		render json: {html: render_to_string("locations_map", layout: false)}
+	end
+	
 	def handover
 		@meta_title = "Things to know before you Zoom off | www.zoomcar.in"
 		@meta_description = "Zoom Handover"
 		@meta_keywords = "zoomcar handover"
 		@canonical = "http://www.zoomcar.in/handover"
+		@header = 'help'
 	end
 	
 	def holidays

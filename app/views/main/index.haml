@@ -1,12 +1,10 @@
 - @cargroup = Cargroup.list
 .homepage
-	.afold
-		.cars
+	.afold-n
+		.cars-n
 			.h1
 				%h1
 					Self Drive Cars In Bangalore
-				%p
-					By the Hour, Day, Week or Month
 				%p
 					Zoom in the City and Outstation
 			.slider
@@ -37,88 +35,53 @@
 								end
 							.item{:class => cls}
 								.lazy{:style => style, 'data-background' => databg}
-									.bg-overlay
-									.fg-overlay
-										.cars-content
-											.car-tariff
-												.item.r-5
-													.head Hourly Trip
-													.exp Upto 24 Hours
-													.fare
-														%b ₹#{cargroup.hourly_fare} / hour
-													.kms
-														#{cargroup.hourly_km_limit} Kms / hour. Max #{cargroup.daily_km_limit} Kms
-													.offer
-														Mon-Thurs #{CommonHelper::WEEKDAY_DISCOUNT}% Discount
-												.item.r-5
-													.head Daily Trip
-													.exp Beyond 24 Hours
-													.fare
-														%b ₹#{cargroup.daily_fare} / day
-													.kms
-														#{cargroup.daily_km_limit} Kms / day
-													.offer
-														Mon-Thurs #{CommonHelper::WEEKDAY_DISCOUNT}% Discount
-												.item.r-5
-													.head Weekly Trip
-													.exp Beyond 7 Days
-													.fare
-														%b ₹#{cargroup.weekly_fare} / week
-													.kms
-														#{cargroup.weekly_km_limit} Kms / week
-													.offer
-														Best Price
-												.item.r-5.last
-													.head Monthly Trip
-													.exp Beyond 28 Days
-													.fare
-														%b ₹#{cargroup.monthly_fare} / month
-													.kms
-														#{cargroup.monthly_km_limit} Kms / month
-													.offer
-														Best Price
-												.fc
-		.tariff-bg
-		.tariff
-			.size-16.white.f-i.p-t10
-				our tariff includes
+									.cars-content
+										.car-tariff
+											.item.r-5
+												.fare
+													%b ₹#{show_currency(cargroup.hourly_fare)}/hour
+											.item.r-5
+												.fare
+													%b ₹#{show_currency(cargroup.daily_fare)}/day
+											.item.r-5
+												.fare
+													%b ₹#{show_currency(cargroup.weekly_fare)}/week
+											.item.r-5.last
+												.fare
+													%b ₹#{show_currency(cargroup.monthly_fare)}/month
+											.fc
+		.tariff-bg-n
+			%h2.text.droid.size-20
+				Find Us In Your Neighbourhood!
+		.tariff-n.tariff-includes
 			.includes
-				#BubbleAllIn.item.left.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>No Hidden Costs</b><br/>Here at Zoom, you will get what you pay for. Following items are standard in all our cars."}
-					.all-in
-					.text 
-						No Hidden Costs
-				#BubbleFuel.item.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Fuel is Ours</b><br/>All Zoom reservations comes with unlimited fuel as part of the tariff. If you need more fuel, just fill up the tank, keep the receipt and <b><u><i>we will refund the amount!</i></u></b>."}
-					.fuel
-					.text
-						Fuel
-				#BubbleInsurance.item.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>No Worries, You're All Covered</b><br/>All Zoom reservations are covered with full comprehensive insurance, as long as a Zoom member is driving the car. <b><u><i>Maximum liability</i></u> for any damage for a Zoom member <u><i>is Rs.5000</i></u></b>."}
-					.insurance
-					.text 
-						Insurance
-				#BubbleTaxes.item.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>We Get Govt. Off Your Back</b><br/>Tariff includes all taxes, except the relevant tolls/taxes one has to pay while visiting another state."}
-					.taxes
-					.text 
-						Taxes
-				#BubbleNav.item.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Zip Zap Zoom</b><br/>All Zoom cars are fitted with a 3G enabled tablet to guide you on your journey."}
-					.navigation
-					.text
-						Navigation
-				#BubbleDeposit.item.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>In You We Trust</b><br/>The start of our relationship is not with a bag of money. Just pay the rental using your credit/debit card and you are good to zoom."}
-					.deposit
-					.text
-						No Deposit
-				#BubbleParking.item.right.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Parking, On Zoom!</b><br/>Drive your own car or 2 wheeler to our vehicle site. Free parking for your vehicle at our site during your reservation, courtesy Zoom!"}
-					.parking
-					.text
-						Free Parking
-				.fc
+				#BubbleAllIn.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>No Hidden Costs</b><br/>Here at Zoom, you will get what you pay for. Following items are standard in all our cars."}
+					.p-10
+						.all-in
+				#BubbleFuel.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Fuel is Ours</b><br/>All Zoom reservations comes with unlimited fuel as part of the tariff. If you need more fuel, just fill up the tank, keep the receipt and <b><u><i>we will refund the amount!</i></u></b>."}
+					.p-10
+						.fuel
+				#BubbleInsurance.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>No Worries, You're All Covered</b><br/>All Zoom reservations are covered with full comprehensive insurance, as long as a Zoom member is driving the car. <b><u><i>Maximum liability</i></u> for any damage for a Zoom member <u><i>is Rs.5000</i></u></b>."}
+					.p-10
+						.insurance
+				#BubbleTaxes.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>We Get Govt. Off Your Back</b><br/>Tariff includes all taxes, except the relevant tolls/taxes one has to pay while visiting another state."}
+					.p-10
+						.taxes
+				#BubbleNav.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Zip Zap Zoom</b><br/>All Zoom cars are fitted with a 3G enabled tablet to guide you on your journey."}
+					.p-10
+						.navigation
+				#BubbleDeposit.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>In You We Trust</b><br/>The start of our relationship is not with a bag of money. Just pay the rental using your credit/debit card and you are good to zoom."}
+					.p-10
+						.deposit
+				- if false
+					#BubbleParking.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Parking, On Zoom!</b><br/>Drive your own car or 2 wheeler to our vehicle site. Free parking for your vehicle at our site during your reservation, courtesy Zoom!"}
+						.p-10
+							.parking
 		.wrapper
-			.widget
-				.bg.r-5.bs-3
-					.title.r-tl-5.r-tr-5
-						Book a Car
+			.widget-hor
+				.bg.r-5.bs-3.p-10
 					#SearchFormDiv.form
-						= render :partial => '/bookings/widget_homepage'
-= render :partial => '/main/locations', :locals => {header: true}
-= render :partial => 'reviews'
-= render :partial => 'press'
+						= render :partial => '/bookings/widget_homepage_horizontal'
+= render :partial => '/main/locations', :locals => {header: false}
+= render :partial => '/main/reviews'
+= render :partial => '/main/press'

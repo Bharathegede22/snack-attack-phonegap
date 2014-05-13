@@ -8,14 +8,14 @@ class BookingMailer < ActionMailer::Base
 		@booking = Booking.find(booking)
 		@charge = charge
 		@user = @booking.user
-		mail(:to => @user.email, :subject => "You've cancelled a Zoom reservation.")
+		mail(:to => @user.email, :subject => "Your Zoom Reservation : #{@booking.confirmation_key}")
 	end
 	
 	def change(booking, charge)
 		@booking = Booking.find(booking)
 		@charge = charge
 		@user = @booking.user
-		mail(:to => @user.email, :subject => "Your Zoom reservation details have been changed.")
+		mail(:to => @user.email, :subject => "Your Zoom Reservation : #{@booking.confirmation_key}")
 	end
 	
 	def change_failed(booking)
@@ -26,7 +26,7 @@ class BookingMailer < ActionMailer::Base
   def payment(booking)
 		@booking = booking
 		@user = @booking.user
-		mail(:to => @user.email, :subject => "Review your Zoom reservation details.")
+		mail(:to => @user.email, :subject => "Your Zoom Reservation : #{@booking.confirmation_key}")
 	end
 	
 end

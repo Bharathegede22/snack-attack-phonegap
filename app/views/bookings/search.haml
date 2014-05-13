@@ -80,23 +80,24 @@
 					mapTypeId: google.maps.MapTypeId.ROADMAP
 				}
 				var map = new google.maps.Map(document.getElementById("Gmap"), mapOptions);
-		- Location.find(:all, :conditions => "lat IS NOT NULL AND lng IS NOT NULL").each do |l|
-			:plain
-				var infowindow#{l.id} = new google.maps.InfoWindow({
-					content: "#{l.mapcontent}",
-					maxWidth: 300
-				});
-				var myLatlng#{l.id} = new google.maps.LatLng(#{l.lat}, #{l.lng});
-				var marker#{l.id} = new google.maps.Marker({
-					position: myLatlng#{l.id},
-					map: map,
-					animation: google.maps.Animation.DROP,
-					title:"#{l.shortname}",
-					icon:"#{asset_path 'map/red.png'}"
-				});
-				google.maps.event.addListener(marker#{l.id}, 'click', function() {
-					infowindow#{l.id}.open(map,marker#{l.id});
-				});
+		- Location.live.each do |l|
+			- if !l.lat.blank? && !l.lng.blank?
+				:plain
+					var infowindow#{l.id} = new google.maps.InfoWindow({
+						content: "#{l.mapcontent}",
+						maxWidth: 300
+					});
+					var myLatlng#{l.id} = new google.maps.LatLng(#{l.lat}, #{l.lng});
+					var marker#{l.id} = new google.maps.Marker({
+						position: myLatlng#{l.id},
+						map: map,
+						animation: google.maps.Animation.DROP,
+						title:"#{l.shortname}",
+						icon:"#{asset_path 'map/red.png'}"
+					});
+					google.maps.event.addListener(marker#{l.id}, 'click', function() {
+						infowindow#{l.id}.open(map,marker#{l.id});
+					});
 		:plain
 			}
 			function checkJquery() {

@@ -1,55 +1,191 @@
 :ruby
 	cars = @object.live
-.static
-	%h1
-		= @object.h1
-	.attraction
-		.right
-			%h2 Where
-			%p
-				= @object.address
-				%br/
-				- if !@object.disclaimer.blank?
-					%b.red
-						= @object.disclaimer
-			- if !@object.description.blank?
-				%i
-					= @object.description.html_safe
+	width = 100/(cars.length+1)
+.landing
+	:ruby
+		if @object.name.downcase.include?('airport')
+			style = "background:url(#{asset_path 'locations/airport.jpg'}) no-repeat center top;"
+		else
+			style = "background:url(#{asset_path 'locations/highway.jpg'}) no-repeat center top;"
+		end
+	.atf{:style => style}
+		.wrapper
+			%h1
+				%span
+					= @object.h1
+			%h2
+				%span
+					= @object.h2.html_safe
 			%br/
+			.p-10
+				.widget-hor
+					.bg.r-5.bs-3.p-10
+						#SearchFormDiv.form
+							= render :partial => '/bookings/widget_homepage_horizontal'
+		#myTabs.tabs
+			%ul.nav.nav-tabs
+				%li.active
+					%a{href:"#How", 'data-toggle' => "tab"}
+						- if @object.name.downcase.include?('airport')
+							How?
+						- else
+							Where?
+				%li
+					%a{href:"#Cars", 'data-toggle' => "tab"} Cars Available	
+				%li
+					%a#LocTab{href:"#Locations", 'data-toggle' => "tab"} Other Locations
+.tab-content
+	#How.tab-pane.fade.in.active
+		.wrapper
 			%br/
-			%h2 Cars Available
-			#CarsPanel.panel-group
-				- cars.each do |cg|
-					- cls = (cg == cars.first) ? 'panel-collapse collapse in' : 'panel-collapse collapse'
-					.panel.panel-default
-						.panel-heading
-							.panel-title
-								%a{'data-toggle' => "collapse", 'data-parent' => "#CarsPanel", href: "#CarsPanel#{cg.id}"}
-									= cg.shortname
-						%div{class: cls, id: "CarsPanel#{cg.id}"}
-							.panel-body
-								%h4
-									= link_to cg.shortname, cg.link(@city)
+			- if @object.name.downcase.include?('airport')
+				.attraction
+					.left
+						.p-5.t-c.size-20
+							%b For Pickup
+						.p-5
+							.f-b.zoom Book a car
+							Book your car in advance of your journey.
+						.p-5
+							.f-b.zoom Save a contact
+							Zoom will email you our helpful fleet executive's number.
+						.p-5
+							.f-b.zoom Make a call
+							Call when your plane lands and your Zoom ride will be brought to you! It takes about 10 minutes for the executive to reach the Airport.
+						.p-5
+							.f-b.zoom Meet a beauty
+							Your glistening car will meet you outside the Arrival entrance next to the only Subway outlet; it will be in the outer lane. Look out for the giant “Zoom” on the side of the car!
+						.p-5
+							.f-b.zoom Start a journey
+							Get driven to our location, exchange smiles, grab keys, zoom off.
+					.right
+						.p-5.t-c.size-20
+							%b For Dropoff
+						.p-5
+							.f-b.zoom Drop the car
+							When ready simply return the car to our location adjacent to the McDonald's 
+							%i (next to Sadahalli Gate).
+						.p-5
+							.f-b.zoom Get a ride
+							A helpful executive will drive you to the Departure terminal.
+						.p-5
+							.f-b.zoom Thats it
+							You are all set! See you again soon in Bangalore.
+					.fc
+			- else
+				.attraction
+					.left
+						.p-l10
+							%h2.size-20 Zoom Site
+							%p
+								= @object.address
 								%br/
-								%table.table.table-bordered
-									%tr.active
-										%th Hourly
-										%th Daily
-										%th Weekly
-										%th Monthly
-									%tr
-										%td Rs.#{cg.hourly_fare}
-										%td Rs.#{cg.daily_fare}
-										%td Rs.#{cg.weekly_fare}
-										%td Rs.#{cg.monthly_fare}
-		.left
-			#Gmap.map{style: 'height: 600px;'}
-		.fc
+								- if !@object.disclaimer.blank?
+									%b.red
+										= @object.disclaimer
+							- if !@object.description.blank?
+								%i
+									= @object.description.html_safe
+					.right
+						%br/
+						#Gmap.map{style: 'height: 400px;'}
+					.fc
+		%br/
+		%br/
+	#Cars.tab-pane.fade
+		%br/
+		.wrapper
+			%br/
+			%table.t-c{width: '100%'}
+				%tr
+					%td{width: "#{width}%"} &nbsp;
+					- cars.each do |cg|
+						%td{width: "#{width}%"}
+							= image_tag("cars/#{cg.id}small.jpg", :alt => cg.display_name)
+							%br/
+							%b.zoom.size-18
+								= cg.shortname
+			%table.table.t-c
+				%tr.table-hover
+					%td.t-r{width: "#{width}%"}
+						%b.zoom HOURLY
+					- cars.each do |cg|
+						%td{width: "#{width}%"}
+							₹#{show_currency(cg.hourly_fare)}
+				%tr
+					%td.t-r
+						%b.zoom DAILY
+					- cars.each do |cg|
+						%td ₹#{show_currency(cg.daily_fare)}
+				%tr
+					%td.t-r
+						%b.zoom WEEKLY
+					- cars.each do |cg|
+						%td ₹#{show_currency(cg.weekly_fare)}
+				%tr
+					%td.t-r
+						%b.zoom MONTHLY
+					- cars.each do |cg|
+						%td ₹#{show_currency(cg.monthly_fare)}
+			.bg-e.r-5.p-5
+				.f-b.zoom-b.t-c.f-i.size-16.p-5
+					our tariff includes
+				%br/
+				.landing.tariff-includes.size-12.droid
+					.includes
+						%table.t-c.m-auto
+							%tr
+								%td{width: '140'}
+									#BubbleAllIn.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>No Hidden Costs</b><br/>Here at Zoom, you will get what you pay for. Following items are standard in all our cars."}
+										.p-10
+											.all-in
+									.p-5
+										No Hidden Costs
+								%td{width: '140'}
+									#BubbleFuel.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Fuel is Ours</b><br/>All Zoom reservations comes with unlimited fuel as part of the tariff. If you need more fuel, just fill up the tank, keep the receipt and <b><u><i>we will refund the amount!</i></u></b>."}
+										.p-10
+											.fuel
+									.p-5
+										Fuel
+								%td{width: '140'}
+									#BubbleInsurance.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>No Worries, You're All Covered</b><br/>All Zoom reservations are covered with full comprehensive insurance, as long as a Zoom member is driving the car. <b><u><i>Maximum liability</i></u> for any damage for a Zoom member <u><i>is Rs.5000</i></u></b>."}
+										.p-10
+											.insurance
+									.p-5
+										Insurance
+								%td{width: '140'}
+									#BubbleTaxes.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>We Get Govt. Off Your Back</b><br/>Tariff includes all taxes, except the relevant tolls/taxes one has to pay while visiting another state."}
+										.p-10
+											.taxes
+									.p-5
+										Taxes
+								%td{width: '140'}
+									#BubbleNav.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Zip Zap Zoom</b><br/>All Zoom cars are fitted with a 3G enabled tablet to guide you on your journey."}
+										.p-10
+											.navigation
+									.p-5
+										Navigation
+								%td{width: '140'}
+									#BubbleDeposit.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>In You We Trust</b><br/>The start of our relationship is not with a bag of money. Just pay the rental using your credit/debit card and you are good to zoom."}
+										.p-10
+											.deposit
+									.p-5
+										No Deposit
+			%br/
+			%br/
+	#Locations.tab-pane.fade
+		%br/
+		#GmapLocationsWait
+			%br/
+			%br/
+			.wait
+		#GmapLocations.m-auto{style: 'width: 960px; height: 600px;'}
+		%br/
 :javascript
 	function initializeMap() {
-		var myLatlng = new google.maps.LatLng(#{@city.lat}, #{@city.lng});
+		var myLatlng = new google.maps.LatLng(#{@object.lat}, #{@object.lng});
 		var mapOptions = {
-			zoom: 10,
+			zoom: 12,
 			center: myLatlng,
 			mapTypeId: google.maps.MapTypeId.ROADMAP
 		}
@@ -75,6 +211,9 @@
 			script.type = "text/javascript";
 			script.src = "http://maps.googleapis.com/maps/api/js?key=#{GOOGLE_MAP_KEY}&sensor=true&callback=initializeMap";
 			document.body.appendChild(script);
+			$('#myTabs a[href="#Locations"]').on('shown.bs.tab', function(e) {
+				populateLocations('#{@city.id}', 11, 'GmapLocations');
+			});
 		} else {
 			window.setTimeout(checkJquery, 1000);
 		}

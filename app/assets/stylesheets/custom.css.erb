@@ -455,7 +455,7 @@ a {
 	border-right:none;
 }
 
-.homepage .all-in, .homepage .fuel, .homepage .insurance, .homepage .taxes, .homepage .navigation, .homepage .deposit, .homepage .parking {
+.tariff-includes .all-in, .tariff-includes .fuel, .tariff-includes .insurance, .tariff-includes .taxes, .tariff-includes .navigation, .tariff-includes .deposit, .tariff-includes .parking {
 	background:url(<%= asset_path 'bubbles.png' %>) no-repeat;
 	width:20px;
 	height:20px;
@@ -463,31 +463,31 @@ a {
 	opacity:0.8;
 }
 
-.homepage .all-in {
+.tariff-includes .all-in {
 	background-position:0px 0px;
 }
 
-.homepage .fuel {
+.tariff-includes .fuel {
 	background-position:-20px 0px;
 }
 
-.homepage .insurance {
+.tariff-includes .insurance {
 	background-position:-40px 0px;
 }
 
-.homepage .taxes {
+.tariff-includes .taxes {
 	background-position:-60px 0px;
 }
 
-.homepage .navigation {
+.tariff-includes .navigation {
 	background-position:-80px 0px;
 }
 
-.homepage .deposit {
+.tariff-includes .deposit {
 	background-position:-100px 0px;
 }
 
-.homepage .parking {
+.tariff-includes .parking {
 	background-position:-120px 0px;
 }
 
@@ -521,7 +521,7 @@ a {
 	padding:5px 15px;
 }
 
-.homepage .widget-n {
+.homepage .widget-hor {
 	width:730px;
 	position:absolute;
 	left:115px;
@@ -529,11 +529,11 @@ a {
 	z-index:5;
 }
 
-.homepage .widget-n .bg {
+.widget-hor .bg {
 	background:url(<%= asset_path 'bg-solid-medium.png' %>) #eee;
 }
 
-.search-header .box, .vertical-widget .box, .widget-n .box {
+.search-header .box, .vertical-widget .box, .widget-hor .box {
 	background:#ffffff;
 	color:#999999;
 	font-size:20px;
@@ -544,11 +544,11 @@ a {
 	cursor:pointer;
 }
 
-.widget-n .box {
+.widget-hor .box {
 	margin:0;
 }
 
-.search-header .loc, .search-header .cal, .search-header .car, .vertical-widget .loc, .vertical-widget .cal, .vertical-widget .car, .widget-n .cal {
+.search-header .loc, .search-header .cal, .search-header .car, .vertical-widget .loc, .vertical-widget .cal, .vertical-widget .car, .widget-hor .cal {
 	background:url(<%= asset_path 'r.png' %>) no-repeat;
 	width:20px;
 	height:30px;
@@ -560,7 +560,7 @@ a {
 	background-position:-210px -80px;
 }
 
-.search-header .cal, .vertical-widget .cal, .widget-n .cal {
+.search-header .cal, .vertical-widget .cal, .widget-hor .cal {
 	background-position:-230px -80px;
 }
 
@@ -568,7 +568,7 @@ a {
 	background-position:-250px -80px;
 }
 
-.search-header .txt, .vertical-widget .txt, .widget-n .txt {
+.search-header .txt, .vertical-widget .txt, .widget-hor .txt {
 	color:#323a45;
 	font-size:14px;
 	float:left;
@@ -580,7 +580,7 @@ a {
 	padding-left:28px;
 }
 
-.search-header .txt input, .vertical-widget .txt input, .widget-n .txt input {
+.search-header .txt input, .vertical-widget .txt input, .widget-hor .txt input {
 	padding:0;
 	margin:0;
 	width:150px;
@@ -598,7 +598,7 @@ a {
 	cursor:auto;
 }
 
-.search-header .arrw, .vertical-widget .arrw, .widget-n .arrw {
+.search-header .arrw, .vertical-widget .arrw, .widget-hor .arrw {
 	background:url(<%= asset_path 'r.png' %>) no-repeat;
 	background-position:-270px -80px;
 	width:20px;
@@ -614,13 +614,13 @@ a {
 	padding:5px 0;
 }
 
-.widget-n .button {
+.widget-hor .button {
 	font-size:18px;
 	width:210px;
 	padding:5px 0;
 }
 
-.widget-n .button input {
+.widget-hor .button input {
 	background:none;
 	width:210px;
 	margin:0;
@@ -924,6 +924,12 @@ a {
 	display:block;
 	top:443px;
 	left:460px;
+}
+
+.homepage-map .locs21 {
+	display:block;
+	top:400px;
+	left:680px;
 }
 
 .reviews {
@@ -1577,7 +1583,7 @@ a {
 }
 
 .attraction .map {
-	width:470px;
+	width:100%;
 	height:470px;
 }
 
@@ -1844,3 +1850,84 @@ a {
 	width:20px;
 	display:block;
 }
+
+.landing {
+	color:#666;
+	text-align:justify;
+	font-size:14px;
+	line-height:20px;
+	margin-top:-10px;
+}
+
+.landing .atf {
+	height:450px;
+	position:relative;
+}
+
+.landing h1 {
+	text-align:center;
+	padding-top:30px;
+	font-size: 30px;
+	font-weight: bold;
+	color: #fff;
+}
+
+.landing h2 {
+	text-align:center;
+	padding-top:10px;
+	font-size: 16px;
+	font-weight: normal;
+	color: #fff;
+}
+
+.landing span {
+	padding:5px 10px;
+	background: #323a45;
+	border-left: 2px solid #6abd19;
+}
+
+.landing .widget-hor {
+	width:730px;
+	margin:0 auto;
+}
+
+.landing .tabs {
+	position:absolute;
+	bottom:0px;
+	width:100%;
+}
+
+.landing .tabs ul {
+	margin:0 auto;
+	width:960px;
+}
+
+.landing .tabs ul li {
+	width:320px;
+	text-align:center;
+	font-weight:bold;
+	font-size:20px;
+	border-bottom:1px solid #cccccc;
+}
+
+.landing .tabs ul li.active {
+	border-bottom:1px solid #ffffff;
+}
+
+.landing .tabs ul li a {
+	background:#eeeeee;
+}
+
+.landing .tabs ul li.active a {
+	background:#ffffff;
+}
+
+.landing .includes .item {
+	width:40px;
+	height:40px;
+	border-radius:40px;
+	cursor:pointer;
+	background:#323a45;
+	margin:5px auto;
+}
+

@@ -268,6 +268,12 @@ function logOut(url) {
 	getData(url, 'JsResponse', 'replace', null);
 }
 
+function populateLocations(cityId, zoom, divId) {
+	$("#"+divId+'Wait').show();
+	$("#"+divId).html('');
+	getData('/get_locations_map/' + cityId + '?zoom=' + zoom, divId, 'replace', divId + 'Wait');
+}
+
 function postData(complete_url,divId,divAction,divWait,dataStr) {
 	checkajax = $("#AjaxActive").val();
   if(checkajax == 1){

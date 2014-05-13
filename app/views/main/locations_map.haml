@@ -1,0 +1,36 @@
+#GmapCustom{style: "height:100%; width:100%"}
+- if @city
+	= javascript_tag do
+		:plain
+			function initializeMap() {
+				var myLatlng = new google.maps.LatLng(#{@city.lat}, #{@city.lng});
+				var mapOptions = {
+					zoom: #{@zoom},
+					center: myLatlng,
+					mapTypeId: google.maps.MapTypeId.ROADMAP
+				}
+				var map = new google.maps.Map(document.getElementById("GmapCustom"), mapOptions);
+		- Location.live(@city.id).each do |l|
+			- if !l.lat.blank? && !l.lng.blank?
+				:plain
+					var infowindow#{l.id} = new google.maps.InfoWindow({
+						content: "#{l.mapcontent}",
+						maxWidth: 300
+					});
+					var myLatlng#{l.id} = new google.maps.LatLng(#{l.lat}, #{l.lng});
+					var marker#{l.id} = new google.maps.Marker({
+						position: myLatlng#{l.id},
+						map: map,
+						animation: google.maps.Animation.DROP,
+						title:"#{l.shortname}",
+						icon:"#{asset_path 'map/red.png'}"
+					});
+					google.maps.event.addListener(marker#{l.id}, 'click', function() {
+						infowindow#{l.id}.open(map,marker#{l.id});
+					});
+		:plain
+			}
+			var script = document.createElement("script");
+			script.type = "text/javascript";
+			script.src = "http://maps.googleapis.com/maps/api/js?key=#{GOOGLE_MAP_KEY}&sensor=true&callback=initializeMap";
+			document.body.appendChild(script);
