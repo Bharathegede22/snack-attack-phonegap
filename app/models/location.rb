@@ -13,11 +13,11 @@ class Location < ActiveRecord::Base
 	end
 	
 	def h1(city=nil)
-		return "Self Drive Cars At #{self.name}"
+		return "Self Drive Cars at #{self.name}"
 	end
 	
 	def h2(city=nil)
-		return "Zoom from the <b>#{self.name}</b> or our <b>#{Location.live.length - 1}</b> other locations"
+		return "Zoom from <b>#{self.name}</b> or our <b>#{Location.live.length - 1}</b> other locations in #{self.city.name}"
 	end
 	
 	def link(city=nil)
