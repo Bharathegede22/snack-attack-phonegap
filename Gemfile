@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 gem 'rails', '4.0.0'
 gem 'mysql2'
 gem 'devise'
+#gem 'devise-async'
 gem 'omniauth'
 gem 'omniauth-facebook'
 gem 'omniauth-google-oauth2'
@@ -27,12 +28,13 @@ gem 'rack-cache'
 gem 'lacquer'
 gem 'dalli'
 gem 'sidekiq'
+gem 'sinatra', '>= 1.3.0', :require => nil
 gem 'fql'
 gem 'countries'
 gem 'aws-sdk'
 gem "rest_client"
 gem 'sprockets-image_compressor'
-gem 'newrelic_rpm'
+gem 'newrelic_rpm', group: :production
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.

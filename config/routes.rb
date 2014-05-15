@@ -1,6 +1,7 @@
 Web::Application.routes.draw do
 	
 	root to: "main#index"
+	require 'sidekiq/web'
 	
 	devise_for :users, 
 		:controllers => {
@@ -19,6 +20,14 @@ Web::Application.routes.draw do
 			get 'homepage'
 			get 'homepagealt'
 		end
+	end
+
+	if Rails.env == 'production'
+		authenticate :user, lambda { |u| u.admin? } do
+			mount Sidekiq::Web => '/sidekiq'
+		end
+	else
+	  	mount Sidekiq::Web => '/sidekiq'
 	end
 	
 	resources :bookings do

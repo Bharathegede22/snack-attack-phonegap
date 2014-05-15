@@ -135,7 +135,7 @@ class Booking < ActiveRecord::Base
 				if check == 1
 					str, fare = ['Extending', get_adjusted_fare('extend')]
 				else
-					BookingMailer.change_failed(self).deliver
+					BookingMailer.delay.change_failed(self)
 					str, fare = ['NA', nil]
 				end
 			elsif self.ends < self.last_ends
@@ -191,7 +191,7 @@ class Booking < ActiveRecord::Base
 			end
 			self.status = 10
 			self.save(validate: false)
-			BookingMailer.cancel(self.id, charge).deliver
+			BookingMailer.delay.cancel(self.id, charge)
 			#sendsms(charge) ------ Send message for reschedule
 		end
 		return total
@@ -217,7 +217,7 @@ class Booking < ActiveRecord::Base
 					str, fare = ['Extending', get_fare('extend')]
 					self.extended = true
 				else
-					BookingMailer.change_failed(self).deliver
+					BookingMailer.delay.change_failed(self)
 					str, fare = ['NA', nil]
 				end
 			elsif self.ends < self.last_ends
@@ -283,10 +283,10 @@ class Booking < ActiveRecord::Base
 			end
 			self.save(validate: false)
 			if charge
-				BookingMailer.change(self.id, charge).deliver
+				BookingMailer.delay.change(self.id, charge)
 				#sendsms(charge) ------ Send message for reschedule
 			else
-				BookingMailer.change(self.id, nil).deliver
+				BookingMailer.delay.change(self.id, nil)
 				#sendsms(nil) ------Send message for reschedule when charge is nil
 			end
 		end
@@ -322,7 +322,7 @@ class Booking < ActiveRecord::Base
 		end
 
 		message = "Zoom booking has changed (#{self.confirmation_key}) for #{self.cargroup.display_name} So #{str1} and #{str2}. Zoom Support : 08067684475."
-		Exotel.send_message(self.user_mobile,message,self.id)	
+		SmsSender.perform_async(self.user_mobile,message,self.id)	
 		#puts message
 	end
 	
@@ -689,7 +689,7 @@ class Booking < ActiveRecord::Base
 	
 	def after_save_tasks
 		#Utilization.manage(self.id) if !self.jsi.blank? || self.status > 0
-		Exotel.send_message(self.user_mobile, "Zoom booking (#{self.confirmation_key}) for #{self.cargroup.display_name} at #{self.starts.strftime('%I:%M %p, %d %b')} is confirmed. Zoom Support : 08067684475.", self.id) if self.status_changed? && (self.status == 1 || self.status == 6)
+		SmsSender.perform_async(self.user_mobile, "Zoom booking (#{self.confirmation_key}) for #{self.cargroup.display_name} at #{self.starts.strftime('%I:%M %p, %d %b')} is confirmed. Zoom Support : 08067684475.", self.id) if self.status_changed? && (self.status == 1 || self.status == 6)
 	end
 	
 	def before_save_tasks
