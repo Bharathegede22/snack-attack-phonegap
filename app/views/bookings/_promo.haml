@@ -1,4 +1,5 @@
 #PromoDiv
+	- render_flash
 	- if session[:promo_code].blank?
 		.p-b5
 			%b Promo Code (Optional)
@@ -28,9 +29,12 @@
 			Promo code 
 			%b #{session[:promo_code]}
 			has been applied.
-		- offer = Offer.find_by(promo_code: "#{session[:promo_code].downcase}")
-		- if offer
+		- offer = Offer.get("#{session[:promo_code].downcase}")
+		- if offer[:promo]
 			.p-b5
-				= offer.summary.html_safe
+				= offer[:summary].html_safe
+		- else
+			.p-b5
+				= offer[:summary].html_safe
 		.p-b5.size-12
 			%i Discount will be manually evaluated and refunded back to your card.

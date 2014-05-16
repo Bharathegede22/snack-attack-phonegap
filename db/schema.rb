@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140514073641) do
+ActiveRecord::Schema.define(version: 20140515125411) do
 
   create_table "announcements", force: true do |t|
     t.string  "note"
@@ -94,6 +94,7 @@ ActiveRecord::Schema.define(version: 20140514073641) do
     t.string   "ref_immediate"
     t.string   "promo"
     t.integer  "credit_status",                                       default: 0
+    t.integer  "offer_id"
   end
 
   add_index "bookings", ["car_id"], name: "index_bookings_on_car_id", using: :btree
@@ -264,6 +265,18 @@ ActiveRecord::Schema.define(version: 20140514073641) do
     t.string "lng"
   end
 
+  create_table "coupon_codes", force: true do |t|
+    t.string   "code"
+    t.boolean  "used",       default: false
+    t.integer  "booking_id"
+    t.integer  "offer_id",                   null: false
+    t.datetime "used_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "coupon_codes", ["code"], name: "index_coupon_codes_on_code", using: :btree
+
   create_table "credits", force: true do |t|
     t.integer  "user_id"
     t.string   "creditable_type"
@@ -311,6 +324,13 @@ ActiveRecord::Schema.define(version: 20140514073641) do
   end
 
   add_index "holidays", ["repeat"], name: "index_holidays_on_repeat", using: :btree
+
+  create_table "hubs", force: true do |t|
+    t.string   "name"
+    t.integer  "city_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "images", force: true do |t|
     t.integer  "imageable_id"
@@ -360,6 +380,8 @@ ActiveRecord::Schema.define(version: 20140514073641) do
     t.integer "status",      limit: 1,   default: 1
     t.string  "disclaimer"
     t.integer "block_time",  limit: 2
+    t.integer "zone_id"
+    t.integer "hub_id"
   end
 
   create_table "models", force: true do |t|
@@ -381,6 +403,7 @@ ActiveRecord::Schema.define(version: 20140514073641) do
     t.datetime "updated_at"
     t.string   "summary"
     t.text     "instructions"
+    t.datetime "valid_till"
   end
 
   create_table "payments", force: true do |t|
@@ -557,5 +580,12 @@ ActiveRecord::Schema.define(version: 20140514073641) do
   end
 
   add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
+
+  create_table "zones", force: true do |t|
+    t.string   "name"
+    t.integer  "city_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end
