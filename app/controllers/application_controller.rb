@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   #protect_from_forgery with: :exception
   
   before_filter :check_params
+  #skip_before_filter :clear_promocode 
   
   def check_params
   	# Check City
@@ -36,6 +37,10 @@ class ApplicationController < ActionController::Base
     else
     	session[:ref_immediate] = '-' if session[:ref_immediate].blank?
     end
+  end
+
+  def clear_promocode
+    session[:promo_code] =nil
   end
   
   def generic_meta

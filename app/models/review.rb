@@ -14,7 +14,7 @@ class Review < ActiveRecord::Base
 	protected
 	
 	def after_create_tasks
-		ReportMailer.review(self).deliver
+		ReportMailer.delay.review(self)
 	end
 	
 end

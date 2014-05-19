@@ -4,6 +4,10 @@
 	if !@booking.promo.blank?
 		offer = Offer.find_by(promo_code: "#{@booking.promo.downcase}")
 		@summary = offer.summary.html_safe if !offer.blank?
+		@promo = @booking.promo
+	else
+		@promo = CouponCode.find_by(offer_id: @booking.offer_id).code
+		@summary = Offer.find_by(id: @booking.offer_id)
 	end		
 %br/
 Hi #{@user.name},
@@ -75,7 +79,7 @@ Please review the details of your reservation:
 					and
 					%a{href: 'http://www.zoomcar.in/fees'} fee policy
 					for more.
-		- if !@booking.promo.blank?
+		- if !@booking.offer_id.blank?
 			%tr
 				%td
 					%b Promo Code : 

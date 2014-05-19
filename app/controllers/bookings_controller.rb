@@ -81,6 +81,14 @@ class BookingsController < ApplicationController
 			redirect_to "/bookings/checkout"
 			return
 		end
+		
+		out = (Offer.get(session[:promo_code]))
+			if !out[:offer].blank?
+				promo = out[:offer]
+			end
+			if !out[:coupon].blank?
+				coupon = out[:coupon]
+			end
 		@booking.user_id = current_user.id
 		@booking.user_name = current_user.name
 		@booking.user_email = current_user.email
@@ -88,9 +96,20 @@ class BookingsController < ApplicationController
 		@booking.ref_initial = session[:ref_initial]
 		@booking.ref_immediate = session[:ref_immediate]
 		@booking.through_signup = true
-		@booking.promo = session[:promo_code] if !session[:promo_code].blank?
+		@booking.promo = session[:promo_code]
+		if !promo.blank?
+			@booking.offer_id = promo.id
+		end
+		if !coupon.blank?
+			@booking.offer_id = coupon.offer_id
+		end
 		@booking.save!
-		
+		if !coupon.blank?
+			coupon.used = 1
+			coupon.used_at = Time.now	
+			coupon.booking_id = @booking.id
+			coupon.save!
+		end	
 		Credit.use_credits(@booking, session[:credits]) if !session[:credits].blank?
 		
 		session[:booking_id] = @booking.encoded_id
@@ -106,11 +125,11 @@ class BookingsController < ApplicationController
 			if u.check_license
 		  	flash[:notice] = "Thanks for the payment. Please continue."
 		  	redirect_to "/bookings/#{@booking.encoded_id}"
-		  else
+		  	else
 		  	flash[:notice] = "Thanks for the payment. Please upload your license to complete the reservation."
 		  	redirect_to "/users/license"
-		  end
-  	end
+		 	end
+  		end
 	end
 	
 	def dopayment
@@ -238,20 +257,25 @@ class BookingsController < ApplicationController
 		end
 	end
   
-  def promo
-  	if !params[:clear].blank? && params[:clear].to_i == 1
-  		session[:promo_code] = nil
-  	else
-			if !params[:promo].blank?
-				if CommonHelper::DISCOUNT_CODES.include?(params[:promo].upcase) || Offer.find_by(promo_code: params[:promo].downcase, status: 1).present?
-					session[:promo_code] = params[:promo].upcase
-				else
-					flash[:error] = "No active offer is found for <b>#{params[:promo]}</b>."
-		  	end
-		  end
+	  def promo
+	  	if !params[:clear].blank? && params[:clear].to_i == 1
+	  		session[:promo_code] = nil
+	  	else
+				if !params[:promo].blank?
+					if CommonHelper::DISCOUNT_CODES.include?(params[:promo].upcase) || (Offer.get(params[:promo])[:offer])
+						session[:promo_code] = params[:promo].upcase
+					elsif !(Offer.get(params[:promo]))[:coupon].blank? && !Offer.get(params[:promo])[:coupon].used
+						session[:promo_code] = params[:promo].upcase
+					elsif !(Offer.get(params[:promo]))[:coupon].blank? && Offer.get(params[:promo])[:coupon].used
+						flash[:error] = "This coupon <b>#{params[:promo]}</b> has already been used."
+					else
+						flash[:error] = "No active offer is found for <b>#{params[:promo]}</b>."
+					end
+			  
+			    end
 		end
-    render json: {html: render_to_string('_promo.haml', layout: false)}
-  end
+	    render json: {html: render_to_string('_promo.haml', layout: false)}
+	  end
 	
 	def reschedule
 		@confirm = !params[:confirm].blank?

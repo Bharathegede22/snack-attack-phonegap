@@ -10,7 +10,7 @@ module Exotel
         Sms.create!(booking_id: bookingid, message: body, phone: number, api_key: apiid)
       rescue Exception => e
         Sms.create(booking_id: bookingid, message: body, phone: number, api_key: apiid)
-        ReportMailer.exotel(e, number, bookingid).deliver
+        ReportMailer.delay.exotel(e, number, bookingid)
       end
     end
   end
