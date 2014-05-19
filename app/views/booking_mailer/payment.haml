@@ -1,14 +1,7 @@
 :ruby
 	cargroup = @booking.cargroup
 	location = @booking.location
-	if !@booking.promo.blank?
-		offer = Offer.find_by(promo_code: "#{@booking.promo.downcase}")
-		@summary = offer.summary.html_safe if !offer.blank?
-		@promo = @booking.promo
-	else
-		@promo = CouponCode.find_by(offer_id: @booking.offer_id).code
-		@summary = Offer.find_by(id: @booking.offer_id)
-	end		
+	offer = @booking.offer
 %br/
 Hi #{@user.name},
 %br/
@@ -79,16 +72,15 @@ Please review the details of your reservation:
 					and
 					%a{href: 'http://www.zoomcar.in/fees'} fee policy
 					for more.
-		- if !@booking.offer_id.blank?
+		- if offer
 			%tr
 				%td
 					%b Promo Code : 
 				%td
 					%b
 						= @booking.promo
-					- if (defined? @summary)
-						%br/
-						= @summary.html_safe
+					%br/
+					= offer.summary.html_safe
 %br/
 %br/
 %div{style: "margin:0px; padding:0px;"}

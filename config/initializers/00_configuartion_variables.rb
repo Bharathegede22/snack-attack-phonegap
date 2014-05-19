@@ -20,3 +20,7 @@ VARNISH_PORT = configurations['varnish_port']
 
 EXOTEL_SID = configurations['exotel_sid']
 EXOTEL_TOKEN = configurations['exotel_token']
+
+SIDEKIQ_CLIENT = configurations['sidekiq_client']
+SIDEKIQ_SERVER = configurations['sidekiq_server']
+SIDEKIQ_NAMESPACE = configurations['sidekiq_namespace']

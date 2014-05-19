@@ -1,25 +1,33 @@
 class Offer < ActiveRecord::Base
 	
+	has_many :bookings
+	has_many :coupon_codes
+	
 	def self.get(code)
+		code = code.downcase.strip
 		offer = nil
 		coupon = nil
-		summary = nil
+		text = ''
+		
 		# Promo
-		offer = Offer.find_by(:promo_code =>code)
-	
-
+		offer = Offer.find_by(:promo_code => code)
+		
 		# Coupon
 		if offer.blank?
-			coupon = CouponCode.find_by(:code =>code)
-			if !coupon.blank?
-			#used = coupon.used
-			summary = (Offer.find_by(:id=>coupon.offer_id)).summary
+			coupon = CouponCode.find_by(:code => code)
+			offer = coupon.offer if !coupon.blank?
+		end
+		
+		if offer
+			if offer.valid_till.blank? || offer.valid_till > Time.now
+				text = "Coupon code <b>#{code.upcase}</b> has already been used." if coupon && coupon.used
+			elsif !offer.valid_till.blank? && offer.valid_till < Time.now
+				text = "Offer has expired."
 			end
 		else
-			summary = offer.summary
+			text = "No active offer was found for <b>#{code.upcase}</b>."
 		end
-
-		return {offer: offer, coupon: coupon, summary: summary}
+		return {offer: offer, coupon: coupon, error: text}
 	end
 	
 	def self.active
