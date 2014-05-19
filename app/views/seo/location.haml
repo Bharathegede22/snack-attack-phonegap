@@ -181,41 +181,54 @@
 			.wait
 		#GmapLocations.m-auto{style: 'width: 960px; height: 600px;'}
 		%br/
-:javascript
-	function initializeMap() {
-		var myLatlng = new google.maps.LatLng(#{@object.lat}, #{@object.lng});
-		var mapOptions = {
-			zoom: 12,
-			center: myLatlng,
-			mapTypeId: google.maps.MapTypeId.ROADMAP
+- if @object.name.downcase.include?('airport')
+	:javascript
+		function checkJquery() {
+			if (window.jQuery) {
+				$('#myTabs a[href="#Locations"]').on('shown.bs.tab', function(e) {
+					populateLocations('#{@city.id}', 11, 'GmapLocations');
+				});
+			} else {
+				window.setTimeout(checkJquery, 1000);
+			}
 		}
-		var map = new google.maps.Map(document.getElementById("Gmap"), mapOptions);
-		var infowindow#{@object.id} = new google.maps.InfoWindow({
-			content: "#{@object.mapcontent}"
-		});
-		var myLatlng#{@object.id} = new google.maps.LatLng(#{@object.lat}, #{@object.lng});
-		var marker#{@object.id} = new google.maps.Marker({
-			position: myLatlng#{@object.id},
-			map: map,
-			animation: google.maps.Animation.DROP,
-			title:"#{@object.shortname}",
-			icon:"#{asset_path 'map/red.png'}"
-		});
-		google.maps.event.addListener(marker#{@object.id}, 'click', function() {
-			infowindow#{@object.id}.open(map,marker#{@object.id});
-		});
-	}
-	function checkJquery() {
-		if (window.jQuery) {
-			var script = document.createElement("script");
-			script.type = "text/javascript";
-			script.src = "http://maps.googleapis.com/maps/api/js?key=#{GOOGLE_MAP_KEY}&sensor=true&callback=initializeMap";
-			document.body.appendChild(script);
-			$('#myTabs a[href="#Locations"]').on('shown.bs.tab', function(e) {
-				populateLocations('#{@city.id}', 11, 'GmapLocations');
+		checkJquery();
+- else
+	:javascript
+		function initializeMap() {
+			var myLatlng = new google.maps.LatLng(#{@object.lat}, #{@object.lng});
+			var mapOptions = {
+				zoom: 12,
+				center: myLatlng,
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			}
+			var map = new google.maps.Map(document.getElementById("Gmap"), mapOptions);
+			var infowindow#{@object.id} = new google.maps.InfoWindow({
+				content: "#{@object.mapcontent}"
 			});
-		} else {
-			window.setTimeout(checkJquery, 1000);
+			var myLatlng#{@object.id} = new google.maps.LatLng(#{@object.lat}, #{@object.lng});
+			var marker#{@object.id} = new google.maps.Marker({
+				position: myLatlng#{@object.id},
+				map: map,
+				animation: google.maps.Animation.DROP,
+				title:"#{@object.shortname}",
+				icon:"#{asset_path 'map/red.png'}"
+			});
+			google.maps.event.addListener(marker#{@object.id}, 'click', function() {
+				infowindow#{@object.id}.open(map,marker#{@object.id});
+			});
 		}
-	}
-	checkJquery();
+		function checkJquery() {
+			if (window.jQuery) {
+				var script = document.createElement("script");
+				script.type = "text/javascript";
+				script.src = "http://maps.googleapis.com/maps/api/js?key=#{GOOGLE_MAP_KEY}&sensor=true&callback=initializeMap";
+				document.body.appendChild(script);
+				$('#myTabs a[href="#Locations"]').on('shown.bs.tab', function(e) {
+					populateLocations('#{@city.id}', 11, 'GmapLocations');
+				});
+			} else {
+				window.setTimeout(checkJquery, 1000);
+			}
+		}
+		checkJquery();

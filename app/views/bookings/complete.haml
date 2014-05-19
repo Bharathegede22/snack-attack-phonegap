@@ -1,6 +1,8 @@
 = render :partial => '/bookings/pg/thanks'
-.hide
-	%iframe{src: "http://trootrac.in/p.ashx?o=10364&p=1&t=#{@booking.confirmation_key}", height:"1", width:"1", frameborder:"0"}
+- if !session[:ref_immediate].blank?
+	- if session[:ref_immediate].downcase.include?('af_tt_')
+		.hide
+			%iframe{src: "http://trootrac.in/p.ashx?o=10364&p=1&t=#{@booking.confirmation_key}", height:"1", width:"1", frameborder:"0"}
 :ruby
 	cargroup = @booking.cargroup
 	location = @booking.location

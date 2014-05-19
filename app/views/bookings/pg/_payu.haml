@@ -36,7 +36,7 @@ Please dont refresh this page or use back button
 				= text_field_tag :furl, ("http://" + HOSTNAME + "/bookings/payu")
 				= text_field_tag :hash, Digest::SHA512.hexdigest(hash)
 				= text_field_tag :pg, 'CC'
-				= text_field_tag :drop_category, 'NB,CASH,EMI,COD'
+				= text_field_tag :drop_category, 'CASH,EMI,COD'
 				= text_field_tag :api_version , '1'
 			= submit_tag "Proceed To Payment Gateway", :class => 'btn btn-default'
 		:javascript
