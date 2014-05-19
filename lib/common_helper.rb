@@ -18,27 +18,6 @@ module CommonHelper
   ]
   RATINGS = [["Terrible", 1], ["Bad", 2], ["Average", 3], ["Good", 4], ["Excellent", 5]]
   
-	FUNFACTS = [
-		"For every Zoom vehicle added to the road, we will take off 15-17 vehicles", 
-		"Over the life of a Zoom vehicle, we will help save 150 tons of CO2 from entering Bangalore's air", 
-		"The first car rental company was started in the United States in 1918", 
-		"The first electric vehicle was actually introduced in New York City in 1897!", 
-		"At 62 kms, the Outer Ring Rd is the longest road within Bangalore's city limits", 
-		"There are over 20 1st Main Rds in Bangalore!", 
-		"Bangalore has over 35 lakh vehicles", 
-		"When completed, the Namma Metro will extend 114 kms and will have over 100 stations",
-		"Zoom is the only rental service in India to offer a plug in electric vehicle for self-drive (Reva E2O)",
-		"Zoom is the only rental service in India to offer a luxury vehicle to hire by the hour (BMW 320d)"
-	]
-	
-	DISCOUNT_CODES = ['BUSINESS', 'MYSTERY', 'WOODSMAN', 'ROCKETPERKS', 'DEMOCRACY', 'ZOOMNOW', 
-		'BIGTOSS1984', 'BIGWEEKDAY1984', 'VERVE14', 
-		'VERVE-BMW1', 'VERVE-BMW2', 'VERVE-BMW3', 'VERVE-BMW4', 'VERVE-BMW5', 
-		'VERVE-CITY1', 'VERVE-CITY2', 'VERVE-CITY3', 'VERVE-CITY4', 'VERVE-CITY5', 
-		'VERVE-SCORPIO1', 'VERVE-SCORPIO2', 'VERVE-SCORPIO3', 'VERVE-SCORPIO4', 'VERVE-SCORPIO5', 
-		'VERVE-FIGO1', 'VERVE-FIGO2', 'VERVE-FIGO3', 'VERVE-FIGO4', 'VERVE-FIGO5', 'VERVE-FIGO6', 'VERVE-FIGO7', 'VERVE-FIGO8', 'VERVE-FIGO9', 'VERVE-FIGO10', 
-		'VERVE-VENTO1', 'VERVE-VENTO2', 'VERVE-VENTO3', 'VERVE-VENTO4', 'VERVE-VENTO5', 'VERVE-VENTO6', 'VERVE-VENTO7', 'VERVE-VENTO8', 'VERVE-VENTO9', 'VERVE-VENTO10']
-	
 	CUSTOMER_CARE = "080-67684475"
 	CUSTOMER_CARE_EMAIL = "contact@zoomcar.in"
 	LIABILITY = '5,000'

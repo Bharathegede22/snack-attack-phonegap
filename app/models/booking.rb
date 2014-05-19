@@ -115,14 +115,6 @@ class Booking < ActiveRecord::Base
 		return payment
 	end
 	
-	def status_complete?
-		if ends < Time.zone.now && status < 8 && status > 0
-			return true
-		else 
-			return false
-		end
-	end
-	
 	def check_reschedule
 		str, fare = ['', nil]
 		if !self.returned_at.blank?
@@ -295,39 +287,6 @@ class Booking < ActiveRecord::Base
 		return [str, fare]
 	end
 
-	def sendsms (charge)
-		cargroup = self.cargroup
-		location = self.location
-		outstanding = self.outstanding
-		str1 = ""
-		str2 = ""
-
-
-		if charge 
-			if charge.amount==1
-				str1 = "#{charge.amount} "+ "is refunded back to the reservation"
-			else
-				str1 = "#{charge.amount} "+ "is added as charges to the reservation"
-			end
-		else
-			str = "No change in your reservation charges"
-		end
-
-		if outstanding >0
-			if self.starts < Time.now
-				str2 = "Rs#{outstanding} "+"is outstanding amount when you drop the vehicle back to Zoom"
-			else
-				str2 ="Make Payement know"
-			end
-		elsif outstanding <0
-			str2 = "Rs#{0-outstanding} "+"will refunded back to your account"
-		end
-
-		message = "Zoom booking has changed (#{self.confirmation_key}) for #{self.cargroup.display_name} So #{str1} and #{str2}. Zoom Support : 08067684475."
-		SmsSender.perform_async(self.user_mobile,message,self.id)	
-		#puts message
-	end
-	
 	def encoded_id
 		CommonHelper.encode('booking', self.id)
 	end
@@ -553,6 +512,39 @@ class Booking < ActiveRecord::Base
 		self.total = self.estimate - self.discount
 	end
 	
+	def sendsms (charge)
+		cargroup = self.cargroup
+		location = self.location
+		outstanding = self.outstanding
+		str1 = ""
+		str2 = ""
+
+
+		if charge 
+			if charge.amount==1
+				str1 = "#{charge.amount} "+ "is refunded back to the reservation"
+			else
+				str1 = "#{charge.amount} "+ "is added as charges to the reservation"
+			end
+		else
+			str = "No change in your reservation charges"
+		end
+
+		if outstanding >0
+			if self.starts < Time.now
+				str2 = "Rs#{outstanding} "+"is outstanding amount when you drop the vehicle back to Zoom"
+			else
+				str2 ="Make Payement know"
+			end
+		elsif outstanding <0
+			str2 = "Rs#{0-outstanding} "+"will refunded back to your account"
+		end
+
+		message = "Zoom booking has changed (#{self.confirmation_key}) for #{self.cargroup.display_name} So #{str1} and #{str2}. Zoom Support : 08067684475."
+		SmsSender.perform_async(self.user_mobile,message,self.id)	
+		#puts message
+	end
+	
 	def setup
 		self.actual_starts = self.starts
 		self.actual_ends = self.ends
@@ -566,6 +558,14 @@ class Booking < ActiveRecord::Base
 			self.hourly_fare = cargroup.hourly_fare
 			self.hourly_km_limit = cargroup.hourly_km_limit
 			self.daily_km_limit = cargroup.daily_km_limit
+		end
+	end
+	
+	def status_complete?
+		if ends < Time.zone.now && status < 8 && status > 0
+			return true
+		else 
+			return false
 		end
 	end
 	

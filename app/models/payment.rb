@@ -23,6 +23,7 @@ class Payment < ActiveRecord::Base
 						self.mode = case params['mode'].downcase
 						when 'cc' then 0
 						when 'dc' then 1
+						when 'nb' then 2
 						end
 					end
 					self.key = params['mihpayid'] if !params['mihpayid'].blank?
@@ -63,7 +64,7 @@ class Payment < ActiveRecord::Base
 	end
 	
 	def self.check_status
-		Payment.find(:all, :conditions => ["status = 0 AND created_at >= ? AND created_at < ?", Time.now - 1.hours, Time.now - 15.minutes]).each do |p|
+		Payment.find(:all, :conditions => ["status != 1 AND created_at >= ? AND created_at < ?", Time.now - 1.hours, Time.now - 15.minutes]).each do |p|
 			Payu.check_status(p.encoded_id)
 		end
 		Payment.check_mismatch
