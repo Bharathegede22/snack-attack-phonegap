@@ -10,7 +10,7 @@ class ReportMailer < ActionMailer::Base
   end
   
   def review(review)
-  	@review = review
+  	@review = Review.find_by_id review
   	@booking = @review.booking
   	mail to: "feedback@zoomcar.in", subject: "User Feedback"
   end

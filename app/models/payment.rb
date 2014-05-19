@@ -153,7 +153,7 @@ class Payment < ActiveRecord::Base
 						Inventory.block_plain(b.cargroup_id, b.location_id, b.starts, b.ends)
 						b.status = 6
 					end
-					BookingMailer.delay.payment(b)
+					BookingMailer.delay.payment(b.id)
 				end
 				b.notes += "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs." + self.amount.to_s + " - Payment Received through <u>" + self.through_text + "</u>.<br/>"
 				b.save(:validate => false)
