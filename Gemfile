@@ -40,3 +40,22 @@ group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
   gem 'sdoc', require: false
 end
+
+group :development, :test do
+  gem "rspec"
+  gem 'rspec-rails'
+  gem 'rb-readline'
+  gem 'guard'
+  gem 'guard-rspec', require: false
+  gem 'guard-cucumber'
+  gem "factory_girl", "~> 4.4.0"
+  gem "factory_girl_rails", "~> 4.4.0"
+  gem "shoulda-matchers"  
+  gem 'timecop'
+  gem 'simplecov', :require => false
+  gem 'simplecov-rcov', :require => false
+  gem 'rake'
+  gem 'cucumber-rails', :require => false
+  gem 'database_cleaner'
+  gem 'coveralls', :require => false  
+end

@@ -135,7 +135,7 @@ class Booking < ActiveRecord::Base
 				if check == 1
 					str, fare = ['Extending', get_adjusted_fare('extend')]
 				else
-					BookingMailer.delay.change_failed(self)
+					BookingMailer.delay.change_failed(self.id)
 					str, fare = ['NA', nil]
 				end
 			elsif self.ends < self.last_ends
@@ -191,7 +191,7 @@ class Booking < ActiveRecord::Base
 			end
 			self.status = 10
 			self.save(validate: false)
-			BookingMailer.delay.cancel(self.id, charge)
+			BookingMailer.cancel(self.id, charge.id).deliver
 			#sendsms(charge) ------ Send message for reschedule
 		end
 		return total
@@ -217,7 +217,7 @@ class Booking < ActiveRecord::Base
 					str, fare = ['Extending', get_fare('extend')]
 					self.extended = true
 				else
-					BookingMailer.delay.change_failed(self)
+					BookingMailer.delay.change_failed(self.id)
 					str, fare = ['NA', nil]
 				end
 			elsif self.ends < self.last_ends
@@ -283,7 +283,7 @@ class Booking < ActiveRecord::Base
 			end
 			self.save(validate: false)
 			if charge
-				BookingMailer.delay.change(self.id, charge)
+				BookingMailer.delay.change(self.id, charge.id)
 				#sendsms(charge) ------ Send message for reschedule
 			else
 				BookingMailer.delay.change(self.id, nil)
