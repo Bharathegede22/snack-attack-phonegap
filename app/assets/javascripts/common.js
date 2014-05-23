@@ -104,6 +104,10 @@ function checkout() {
 	window.location = "/bookings/docreate";
 }
 
+function checkoutnotify() {
+	window.location = "/bookings/docreatenotify";
+}
+
 function checkUser() {
 	if($('#UserBar').length) {
 		getData("/users/status", 'UserBar', 'replace', null);
@@ -125,6 +129,10 @@ function deltaX() {
 
 function doBooking(carId, locId) {
 	window.location = "/bookings/do?car=" + carId + "&loc=" + locId;
+}
+
+function doBookingNotify(carId, locId) {
+	window.location = "/bookings/donotify?car=" + carId + "&loc=" + locId;
 }
 
 function getData(complete_url,divId,divAction,divWait) {
@@ -339,13 +347,14 @@ function showAvailability(carId, locId, avail, locName, carName) {
 		$('#Avail' + carId).addClass('yes');
 		$("#ButtonYes" + carId).attr("onClick", "doBooking(" + carId + ", " + locId + ");");
 		$("#ButtonYes" + carId).show();
-		$("#ButtonNo" + carId).hide();
+		$("#ButtonNotify" + carId).hide();
 	} else {
 		$('#Avail' + carId).text("Not Available");
 		$('#Avail' + carId).addClass('no');
 		$("#ButtonYes" + carId).attr("onClick", "");
 		$("#ButtonYes" + carId).hide();
-		$("#ButtonNo" + carId).show();
+		$("#ButtonNotify" + carId).attr("onClick", "doBookingNotify(" + carId + ", " + locId + ");");
+		$("#ButtonNotify" + carId).show();
 	}
 	$('#LocName' + carId).text(locName);
 	$('#LocMenu' + carId).find('li').removeClass('active');

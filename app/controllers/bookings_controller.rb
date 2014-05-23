@@ -1,12 +1,14 @@
 class BookingsController < ApplicationController
+
 	
 	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
 	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule, :feedback]
-	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :license, :login, :userdetails]
-	before_filter :check_search_access, :only => [:credits, :docreate, :license, :login, :userdetails]
+	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :notify, :userdetails]
+	before_filter :check_search_access, :only => [:credits, :docreate, :docreatenotify, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
   before_filter :check_blacklist, :only => [:docreate]
 	
+
 	def cancel
 		if request.post?
 			fare = @booking.do_cancellation
@@ -22,7 +24,9 @@ class BookingsController < ApplicationController
 		generic_meta
 		@header = 'booking'
 	end
-	
+
+
+
 	def checkoutab
 		redirect_to "/bookings/do" and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		generic_meta
@@ -129,6 +133,42 @@ class BookingsController < ApplicationController
 		end
 	end
 	
+	def docreatenotify
+
+		
+		@booking.user_id = current_user.id
+		@booking.user_name = current_user.name
+		@booking.user_email = current_user.email
+		@booking.user_mobile = current_user.phone
+		@booking.ref_initial = session[:ref_initial]
+		@booking.ref_immediate = session[:ref_immediate]
+		@booking.through_signup = true
+		@booking.status = 11
+		@booking.save!
+		session[:notify] = nil
+		session[:search] = nil
+		session[:book] = nil
+		flash[:notice] = "We will Notify you once the Vehicle is available"
+		redirect_to :back
+
+	end
+
+	def donotify
+		if !params[:car].blank? && !params[:loc].blank? && !session[:search].blank? && !session[:search][:starts].blank? && !session[:search][:ends].blank?
+			session[:book] = {:starts => session[:search][:starts], :ends => session[:search][:ends], :loc => params[:loc], :car => params[:car]}
+			
+		elsif session[:book].blank?
+			redirect_to "/" and return
+		end
+
+		if user_signed_in?
+			redirect_to "/bookings/notify"
+		else
+			session[:notify] = true
+			redirect_to "/bookings/login"
+		end
+	end
+
 	def dopayment
 		session[:booking_id] = @booking.encoded_id
 		redirect_to "/bookings/payment"
@@ -201,6 +241,7 @@ class BookingsController < ApplicationController
 	end
 	
 	def login
+		#redirect_to "/bookings/notify" and return if user_signed_in? && session[:notify] == true
 		redirect_to "/bookings/do" and return if user_signed_in?
 		generic_meta
 		@header = 'booking'
