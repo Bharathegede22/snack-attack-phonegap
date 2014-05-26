@@ -104,10 +104,6 @@ function checkout() {
 	window.location = "/bookings/docreate";
 }
 
-function checkoutnotify() {
-	window.location = "/bookings/docreatenotify";
-}
-
 function checkUser() {
 	if($('#UserBar').length) {
 		getData("/users/status", 'UserBar', 'replace', null);
@@ -132,7 +128,7 @@ function doBooking(carId, locId) {
 }
 
 function doBookingNotify(carId, locId) {
-	window.location = "/bookings/donotify?car=" + carId + "&loc=" + locId;
+	window.location = "/bookings/do?car=" + carId + "&loc=" + locId + "&notify=true";
 }
 
 function getData(complete_url,divId,divAction,divWait) {
