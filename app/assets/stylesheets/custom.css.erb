@@ -1932,3 +1932,28 @@ a {
 	margin:5px auto;
 }
 
+#tariff-header a {
+	font-weight: bold;
+	color: #323a45;
+	text-decoration: none;
+}
+#tariff-header a:hover {
+	background: #EAEBEC;
+}
+#tariff-header a.active {
+	background: #323a45;
+	color: #fff;
+}
+#tariff-body {
+	border: 1px solid #CCC;
+	border-top: 0;
+}
+
+.tick {
+	background: url(<%= asset_path 'tick.png' %>) 2px 8px no-repeat;
+	padding-left: 28px;
+}
+.cross {
+	background: url(<%= asset_path 'cross.png' %>) 2px 8px no-repeat;
+	padding-left: 28px;
+}

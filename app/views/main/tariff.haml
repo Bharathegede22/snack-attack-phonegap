@@ -3,67 +3,145 @@
 	.m-t10.size-20.t-c
 		%i Zoom offers the simplest, easiest to understand car-hire tariff in India
 	%br/
+
+	#tariff-header.solid.border-c
+		- @cargroup.each_with_index do |cargroup, index|
+			- if index == 0
+				%a.block.fl.p-15.active{:href => "#car#{cargroup.id}", 'data-toggle' => "tab"}
+					#{cargroup.display_name}
+			- else
+				%a.block.fl.p-15{:href => "#car#{cargroup.id}", 'data-toggle' => "tab"}
+					#{cargroup.display_name}
+		.fc
+		
+	#tariff-body.p-20.t-c.tab-content
+		- @cargroup.each_with_index do |cargroup, index|
+			- if index == 0
+				.tab-pane.fade.in.active{:id => "car#{cargroup.id}"}
+					.inline-block
+						= image_tag("cars/#{cargroup.id}small.jpg", :alt => cargroup.display_name)
+					.inline-block.bg-zoomb.white.t-c.p-15.r-5.m-5.size-13
+						%div
+							Hourly Trip
+						.r-10.bg-w.zoom-b.p-t5.p-b5.p-l10.p-r10.m-t10
+							₹ #{cargroup.hourly_fare}
+							/ #{cargroup.hourly_km_limit} Kms
+					.inline-block.bg-zoomb.white.t-c.p-15.r-5.m-5.size-13
+						%div
+							Daily Trip
+						.r-10.bg-w.zoom-b.p-t5.p-b5.p-l10.p-r10.m-t10
+							₹ #{cargroup.daily_fare}
+							/ #{cargroup.daily_km_limit} Kms
+					.inline-block.bg-zoomb.white.t-c.p-15.r-5.m-5.size-13
+						%div
+							Weekly Trip
+						.r-10.bg-w.zoom-b.p-t5.p-b5.p-l10.p-r10.m-t10
+							₹ #{cargroup.weekly_fare}
+							/ #{cargroup.weekly_km_limit} Kms
+					.inline-block.bg-zoomb.white.t-c.p-15.r-5.m-5.size-13
+						%div
+							Monthly Trip
+						.r-10.bg-w.zoom-b.p-t5.p-b5.p-l10.p-r10.m-t10
+							₹ #{cargroup.monthly_fare}
+							/ #{cargroup.monthly_km_limit} Kms
+					.inline-block.bg-zoomb.white.t-c.p-15.r-5.m-5.size-13
+						%div
+							Beyond Free Usage
+						.r-10.bg-w.zoom-b.p-t5.p-b5.p-l10.p-r10.m-t10
+							₹ #{cargroup.excess_kms}/Km
+			- else
+				.tab-pane.fade{:id => "car#{cargroup.id}"}
+					.inline-block
+						= image_tag("cars/#{cargroup.id}small.jpg", :alt => cargroup.display_name)
+					.inline-block.bg-zoomb.white.t-c.p-15.r-5.m-5.size-13
+						%div
+							Hourly Trip
+						.r-10.bg-w.zoom-b.p-t5.p-b5.p-l10.p-r10.m-t10
+							₹ #{cargroup.hourly_fare}
+					.inline-block.bg-zoomb.white.t-c.p-15.r-5.m-5.size-13
+						%div
+							Daily Trip
+						.r-10.bg-w.zoom-b.p-t5.p-b5.p-l10.p-r10.m-t10
+							₹ #{cargroup.daily_fare}
+					.inline-block.bg-zoomb.white.t-c.p-15.r-5.m-5.size-13
+						%div
+							Weekly Trip
+						.r-10.bg-w.zoom-b.p-t5.p-b5.p-l10.p-r10.m-t10
+							₹ #{cargroup.weekly_fare}
+					.inline-block.bg-zoomb.white.t-c.p-15.r-5.m-5.size-13
+						%div
+							Monthly Trip
+						.r-10.bg-w.zoom-b.p-t5.p-b5.p-l10.p-r10.m-t10
+							₹ #{cargroup.monthly_fare}
+					.inline-block.bg-zoomb.white.t-c.p-15.r-5.m-5.size-13
+						%div
+							Beyond Free Usage
+						.r-10.bg-w.zoom-b.p-t5.p-b5.p-l10.p-r10.m-t10
+							₹ #{cargroup.excess_kms}/Km
+
+	%br/
+
+	.row
+		.col-md-6
+			.border-c.solid
+				.header.bg-zoomb.white.p-10.f-b
+					Included in Zoom Tariff
+				.p-10.border-b-c.tick
+					The Km cap associated with an hourly, daily, weekly, or monthly booking
+				.p-10.border-b-c.tick
+					Fuel *
+				.p-10.border-b-c.tick
+					Unlimited, full-wrap insurance
+				.p-10.border-b-c.tick
+					Taxes
+				.p-10.border-b-c.tick
+					Roadside assistance, towing, and impounding caused by vehicle failure
+				.p-10.border-b-c.tick
+					Routine maintenance & cleaning
+				.p-10.border-b-c.tick
+					Navigation technology
+				.p-10.tick
+					24-hour customer support
+				
+		.col-md-6
+			.border-c.solid
+				.header.bg-zoomb.white.p-10.f-b
+					Excluded from Zoom Tariff
+				.p-10.border-b-c.cross
+					More than the requisite Km cap associated with an hourly, daily, weekly, or monthly booking
+				.p-10.border-b-c.cross
+					Tolls and road taxes (in-state & out-state) **
+				.p-10.border-b-c.cross
+					₹5,000 damage deductible
+				.p-10.border-b-c.cross
+					Traffic & parking violations
+				.p-10.border-b-c.cross
+					Roadside assistance, towing, and impounding caused by member failure
+				.p-10.border-b-c.cross
+					Filth requiring extra cleaning
+				.p-10.border-b-c.cross
+					Penalty fee for violating Zoom rules
+				.p-10.cross
+					Car washing during member reservation
+	
+	%br/
+
+	%p
+		* If you refuel the vehicle during your reservation, you will be reimbursed the full amount you pay (Fuel Receipt required).
+	%p
+		** Permit costs to enter Andhra Pradesh will be reimbursed by Zoom.
+
+	%p
+		Please book more time than you think you will need for your journey. Zoom is fully committed to reliably providing vehicles when our members have them reserved, so please do return your vehicle on-time. If you return a vehicle late and it causes an inconvenience to another member, you will be charged a penalty to compensate them.
+
+	%p
+		But we don't want you to pay more than you should for time you aren't Zooming! If you return a vehicle 1 hour or more before your reservation ends, you will get a driving credit for ½ of the unused time. If you have a vehicle only with a daily tariff component, you are eligible for a credit equivalent to ½ of the daily tariff in the event you return the car a day or more early (e.g. a 3 day hire that is returned 1 full day early will result in a driving credit equal to ½ of the standard daily tariff for that respective vehicle).
+	%br/
+	%br/
+
 	.t-c
 		%table.table.table-bordered
-			%tr.success
-				%th.t-c{width: '220'}
-					Car
-				%th.t-c{width: '140'}
-					Hourly
-					%sup 1
-				%th.t-c{width: '140'}
-					Daily
-					%sup 2
-				%th.t-c{width: '140'}
-					Weekly
-					%sup 3
-				%th.t-c{width: '140'}
-					Monthly
-					%sup 4
-				%th
-					Beyond Free Usage
-					%sup **
 			%tbody
-				- @cargroup.each do |cargroup|
-					%tr
-						%td
-							= image_tag("cars/#{cargroup.id}small.jpg", :alt => cargroup.display_name)
-							%br/
-							%p.f-b{:style => "text-align: center;"}
-								#{cargroup.display_name}
-								- if cargroup.id == 5
-									\#
-						%td
-							%br/
-							%b
-								₹ #{cargroup.hourly_fare}
-							%br/
-							%br/
-							#{cargroup.hourly_km_limit} Kms
-							%br/
-							(Max #{cargroup.daily_km_limit})
-						%td
-							%br/
-							%b ₹ #{cargroup.daily_fare}
-							%br/
-							%br/
-							#{cargroup.daily_km_limit} Kms
-						%td
-							%br/
-							%b ₹ #{cargroup.weekly_fare}
-							%br/
-							%br/
-							#{cargroup.weekly_km_limit} Kms
-						%td
-							%br/
-							%b ₹ #{cargroup.monthly_fare}
-							%br/
-							%br/
-							#{cargroup.monthly_km_limit} Kms
-						%td
-							%br/
-							%br/
-							₹ #{cargroup.excess_kms}/Km
 				%tr.active
 					%td.t-l{:colspan => '6'}
 						%span.red
@@ -94,82 +172,7 @@
 							= "** - "
 						All Zoom reservation comes with free driving kms, which are based on vehicle type and reservation duration. Any kms in excess of these limits will be charged at the rates shown here. For weekly/monthly reservations, free kms will be given on pro-rated basis using weekly/monthly limit. For daily reservation, free kms can comprise of the daily and hourly free kms.  
 	%br/
-	%table.m-auto{:cellpadding => '0', :cellspacing => '0', :border => '0', :width => '650'}
-		%thead.bg-zoom.white
-			%tr
-				%th{:style => "border-right:1px solid #fff;", width: '50%'}
-					.p-5 Included in Zoom Tariff
-				%th{:style => "border-left:1px solid #fff;border-right:1px solid #fff;"}
-					.p-5 Excluded from Zoom Tariff
-		%tbody
-			%tr
-				%td.border-zoom 
-					.p-5 ✓ The Km cap associated with an hourly, daily, weekly, or monthly booking
-				%td.border-zoom 
-					.p-5 ✗ More than the requisite Km cap associated with an hourly, daily, weekly, or monthly booking
-			%tr
-				%td.border-zoom
-					.p-5 
-						✓ Fuel
-						%span{:style => "font-size:26px;"} ***
-				%td.border-zoom
-					.p-5 
-						✗ Tolls and road taxes (in-state & out-state)
-						%span{:style => "font-size:26px;"} ****
-			%tr
-				%td.border-zoom 
-					.p-5 ✓ Unlimited, full-wrap insurance
-				%td.border-zoom 
-					.p-5 ✗ ₹#{CommonHelper::LIABILITY} damage deductible
-			%tr
-				%td.border-zoom 
-					.p-5 ✓ Taxes
-				%td.border-zoom 
-					.p-5 ✗ Traffic & parking violations
-			%tr
-				%td.border-zoom
-					.p-5 
-						✓ Roadside assistance, towing, and impounding caused by
-						%b vehicle
-						failure
-				%td.border-zoom
-					.p-5 
-						✗ Roadside assistance, towing, and impounding caused by
-						%b member
-						failure
-			%tr
-				%td.border-zoom 
-					.p-5 ✓ Routine maintenance & cleaning
-				%td.border-zoom 
-					.p-5 ✗ Filth requiring extra cleaning
-			%tr
-				%td.border-zoom 
-					.p-5 ✓ Navigation technology
-				%td.border-zoom 
-					.p-5 ✗ Penalty fee for violating Zoom rules
-			%tr
-				%td.border-zoom 
-					.p-5 ✓ 24-hour customer support
-				%td.border-zoom 
-					.p-5 ✗ Car washing during member reservation
-			%tr
-				%td{:colspan => "2"}
-					.p-10
-						%span{:style => "font-size:26px;"} ***
-						If you refuel the vehicle during your reservation, you will be reimbursed the full amount you pay (Fuel Receipt required).
-			%tr
-				%td{:colspan => "2"}
-					.p-10
-						%span{:style => "font-size:26px;"} ****
-						Permit costs to enter
-						%b Andhra Pradesh
-						will be reimbursed by Zoom.
-	%div{:style => "margin: 20px auto; width: 650px;"}
-		%p{:style => "font-size:16px;"}
-			Please book more time than you think you will need for your journey.  Zoom is fully committed to reliably providing vehicles when our members have them reserved, so please do return your vehicle on-time. If you return a vehicle late and it causes an inconvenience to another member, you will be charged a penalty to compensate them.
-		%br/
-		%p{:style => "font-size:16px;"}
-			But we don't want you to pay more than you should for time you aren't Zooming! If you return a vehicle 1 hour or more before your reservation ends, you will get a driving credit for ½ of the unused time.  If you have a vehicle only with a daily tariff component, you are eligible for a credit equivalent to ½ of the daily tariff in the event you return the car a day or more early (e.g. a 3 day hire that is returned 1 full day early will result in a driving credit equal to ½ of the standard daily tariff for that respective vehicle).
+
 .mod-calculator-box
 	.mod-calculator.r-tl-10.r-tr-10.ts-0{:onclick => "showModal('Tariff Calculator', '/calculator/tariff'); return false;"}
 		Tariff Calculator

@@ -597,3 +597,13 @@ $('.help').tooltip();
 checkJail();
 initializeDatePicker();
 checkUser();
+
+/* Tariff Details */
+$(function () {
+	$('#tariff-header a').click(function (e) {
+  		e.preventDefault();
+  		$(this).siblings().removeClass('active');
+  		$(this).addClass('active');
+  		$(this).tab('show');
+	})
+});
