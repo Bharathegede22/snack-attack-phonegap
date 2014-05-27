@@ -132,7 +132,7 @@ class BookingsController < ApplicationController
 
 
 		if @booking.status == 11	
-			flash[:notice] = "We will Notify you once the Vehicle is available create"
+			flash[:notice] = "We will Notify you once the Vehicle is available."
 			session[:book][:notify] = nil
 			redirect_to :back
 		else
