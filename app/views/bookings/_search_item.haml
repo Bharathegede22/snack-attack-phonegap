@@ -25,6 +25,7 @@
 	locs.each do |x|
 		count += 1 if x[1] == 1
 	end
+
 - if !locs.blank?
 	.search-item
 		.default
@@ -103,13 +104,23 @@
 					- if locs[0][1] == 1
 						.button{id: 'ButtonYes' + car.id.to_s, onclick: "doBooking(#{car.id}, #{locs[0][0].id});"}
 							Book
+					
 						.button-dis{id: 'ButtonNo' + car.id.to_s, style: 'display:none;'}
 							Book
+						/	
+							.btn-notify{id: 'ButtonNotify' + car.id.to_s, style: 'display:none;'}
+							Notify Me
 					- else
+						
 						.button{id: 'ButtonYes' + car.id.to_s, style: 'display:none;'}
 							Book
 						.button-dis{id: 'ButtonNo' + car.id.to_s}
 							Book
+						/	
+							.button{id: 'ButtonYes' + car.id.to_s, style: 'display:none;'}
+								Book
+							.btn-notify{id: 'ButtonNotify' + car.id.to_s, onclick: "doBookingNotify(#{car.id}, #{locs[0][0].id});"}
+								Notify Me
 				.fc
 		.timeline
 			%div{id: 'Timeline' + car.id.to_s}

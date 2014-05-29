@@ -839,7 +839,7 @@
 	text-transform: uppercase;
 }
 
-.button, .button-dis, .btn-default, .btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active {
+.button, .button-dis, .btn-default, .btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, .btn-notify {
 	cursor:pointer;
 	color: #fff !important;
 	-webkit-font-smoothing: antialiased;
@@ -854,7 +854,7 @@
 	border:none;
 }
 
-.button, .button-dis {
+.button, .button-dis, .btn-notify {
 	font-size: 18px;
 	padding:5px 0;
   text-align:center;
@@ -866,7 +866,10 @@
 	cursor:default;
 }
 
-.button:hover, .btn-default:hover {
+.btn-notify {
+	background:#F5A623;
+}
+.button:hover, .btn-default:hover, .btn-notify {
 	text-shadow: 1px 1px 1px #000;
 }
 

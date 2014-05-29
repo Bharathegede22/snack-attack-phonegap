@@ -1,12 +1,14 @@
 class BookingsController < ApplicationController
+
 	
 	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
 	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule, :feedback]
-	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :license, :login, :userdetails]
-	before_filter :check_search_access, :only => [:credits, :docreate, :license, :login, :userdetails]
+	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :notify, :userdetails]
+	before_filter :check_search_access, :only => [:credits, :docreate, :docreatenotify, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
   before_filter :check_blacklist, :only => [:docreate]
 	
+
 	def cancel
 		if request.post?
 			fare = @booking.do_cancellation
@@ -22,7 +24,9 @@ class BookingsController < ApplicationController
 		generic_meta
 		@header = 'booking'
 	end
-	
+
+
+
 	def checkoutab
 		redirect_to "/bookings/do" and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		generic_meta
@@ -47,6 +51,9 @@ class BookingsController < ApplicationController
 	def do
 		if !params[:car].blank? && !params[:loc].blank? && !session[:search].blank? && !session[:search][:starts].blank? && !session[:search][:ends].blank?
 			session[:book] = {:starts => session[:search][:starts], :ends => session[:search][:ends], :loc => params[:loc], :car => params[:car]}
+			if params[:notify].present?
+				session[:book][:notify] = true
+			end
 			if user_signed_in?
 				#if current_user.check_details
 				#	if current_user.check_license
@@ -64,7 +71,9 @@ class BookingsController < ApplicationController
 			redirect_to "/" and return
 		end
 		if user_signed_in?
-			if current_user.check_details
+			if session[:book][:notify].present?
+				redirect_to "/bookings/notify"
+			elsif current_user.check_details
 				redirect_to "/bookings/checkout"
 			else
 				redirect_to "/bookings/userdetails"
@@ -98,6 +107,8 @@ class BookingsController < ApplicationController
 			@booking.offer_id = promo[:offer].id
 		end
 		
+		@booking.status = 11 if session[:book][:notify].present?
+
 		@booking.save!
 		
 		if promo && promo[:coupon]
@@ -109,26 +120,45 @@ class BookingsController < ApplicationController
 		
 		Credit.use_credits(@booking, session[:credits]) if !session[:credits].blank?
 		
-		session[:booking_id] = @booking.encoded_id
-		session[:search] = nil
-		session[:book] = nil
-		session[:promo_code] = nil
-		session[:credits] = nil
 		
-		if @booking.outstanding > 0
-			redirect_to "/bookings/payment"
+
+		# session[:booking_id] = @booking.encoded_id
+		# session[:search] = nil
+		# session[:book][:notify] = nil
+		# session[:book] = nil
+		# session[:promo_code] = nil
+		# session[:credits] = nil
+		
+
+
+		if @booking.status == 11	
+			flash[:notice] = "We will Notify you once the Vehicle is available."
+			session[:book][:notify] = nil
+			redirect_to :back
 		else
-			u = @booking.user
-			if u.check_license
-		  	flash[:notice] = "Thanks for the payment. Please continue."
-		  	redirect_to "/bookings/#{@booking.encoded_id}"
-		  	else
-		  	flash[:notice] = "Thanks for the payment. Please upload your license to complete the reservation."
-		  	redirect_to "/users/license"
-		 	end
+
+			session[:booking_id] = @booking.encoded_id
+			session[:search] = nil
+			session[:book][:notify] = nil
+			session[:book] = nil
+			session[:promo_code] = nil
+			session[:credits] = nil
+			
+			if @booking.outstanding > 0
+				redirect_to "/bookings/payment"
+			else
+				u = @booking.user
+				if u.check_license
+			  	flash[:notice] = "Thanks for the payment. Please continue."
+			  	redirect_to "/bookings/#{@booking.encoded_id}"
+			  	else
+			  	flash[:notice] = "Thanks for the payment. Please upload your license to complete the reservation."
+			  	redirect_to "/users/license"
+			 	end
+			end
 		end
 	end
-	
+
 	def dopayment
 		session[:booking_id] = @booking.encoded_id
 		redirect_to "/bookings/payment"
@@ -204,6 +234,7 @@ class BookingsController < ApplicationController
 		redirect_to "/bookings/do" and return if user_signed_in?
 		generic_meta
 		@header = 'booking'
+		
 	end
 	
 	def payment
@@ -434,7 +465,7 @@ class BookingsController < ApplicationController
 		if @booking
 			if @booking.jsi.blank? && @booking.status == 0
 				@available = Inventory.check(@booking.starts, @booking.ends, @booking.cargroup_id, @booking.location_id)
-				if @available == 0
+				if @available == 0 && !session[:book][:notify].present?
 					flash[:error] = "Sorry, but the car is no longer available"
 					redirect_to(:back) and return
 				end
