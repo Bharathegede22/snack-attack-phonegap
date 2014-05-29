@@ -598,9 +598,9 @@ checkJail();
 initializeDatePicker();
 checkUser();
 
-/* Tariff Details */
+/* Tariff Details& FAQ Tabs */
 $(function () {
-	$('#tariff-header a').click(function (e) {
+	$('#tariff-header a, #faq-tabs a').click(function (e) {
   		e.preventDefault();
   		$(this).siblings().removeClass('active');
   		$(this).addClass('active');
