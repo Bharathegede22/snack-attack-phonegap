@@ -18,66 +18,82 @@
 		- @cargroup.each_with_index do |cargroup, index|
 			- if index == 0
 				.tab-pane.fade.in.active{:id => "car#{cargroup.id}"}
-					.inline-block
+					.inline-block.car-image
 						= image_tag("cars/#{cargroup.id}small.jpg", :alt => cargroup.display_name)
 					.inline-block.bg-zoomb.white.t-c.p-15.r-5.m-5.size-13
 						%div
 							Hourly Trip
 						.r-10.bg-w.zoom-b.p-t5.p-b5.p-l10.p-r10.m-t10
 							₹ #{cargroup.hourly_fare}
-							/ #{cargroup.hourly_km_limit} Kms
+						.white.size-11.m-t10
+							#{cargroup.hourly_km_limit} Kms
 					.inline-block.bg-zoomb.white.t-c.p-15.r-5.m-5.size-13
 						%div
 							Daily Trip
 						.r-10.bg-w.zoom-b.p-t5.p-b5.p-l10.p-r10.m-t10
 							₹ #{cargroup.daily_fare}
-							/ #{cargroup.daily_km_limit} Kms
+						.white.size-11.m-t10
+							#{cargroup.daily_km_limit} Kms
 					.inline-block.bg-zoomb.white.t-c.p-15.r-5.m-5.size-13
 						%div
 							Weekly Trip
 						.r-10.bg-w.zoom-b.p-t5.p-b5.p-l10.p-r10.m-t10
 							₹ #{cargroup.weekly_fare}
-							/ #{cargroup.weekly_km_limit} Kms
+						.white.size-11.m-t10
+							#{cargroup.weekly_km_limit} Kms
 					.inline-block.bg-zoomb.white.t-c.p-15.r-5.m-5.size-13
 						%div
 							Monthly Trip
 						.r-10.bg-w.zoom-b.p-t5.p-b5.p-l10.p-r10.m-t10
 							₹ #{cargroup.monthly_fare}
-							/ #{cargroup.monthly_km_limit} Kms
+						.white.size-11.m-t10
+							#{cargroup.monthly_km_limit} Kms
 					.inline-block.bg-zoomb.white.t-c.p-15.r-5.m-5.size-13
 						%div
 							Beyond Free Usage
 						.r-10.bg-w.zoom-b.p-t5.p-b5.p-l10.p-r10.m-t10
 							₹ #{cargroup.excess_kms}/Km
+						.white.size-11.m-t10
+							&nbsp;
 			- else
 				.tab-pane.fade{:id => "car#{cargroup.id}"}
-					.inline-block
+					.inline-block.car-image
 						= image_tag("cars/#{cargroup.id}small.jpg", :alt => cargroup.display_name)
 					.inline-block.bg-zoomb.white.t-c.p-15.r-5.m-5.size-13
 						%div
 							Hourly Trip
 						.r-10.bg-w.zoom-b.p-t5.p-b5.p-l10.p-r10.m-t10
 							₹ #{cargroup.hourly_fare}
+						.white.size-11.m-t10
+							#{cargroup.hourly_km_limit} Kms
 					.inline-block.bg-zoomb.white.t-c.p-15.r-5.m-5.size-13
 						%div
 							Daily Trip
 						.r-10.bg-w.zoom-b.p-t5.p-b5.p-l10.p-r10.m-t10
 							₹ #{cargroup.daily_fare}
+						.white.size-11.m-t10
+							#{cargroup.daily_km_limit} Kms
 					.inline-block.bg-zoomb.white.t-c.p-15.r-5.m-5.size-13
 						%div
 							Weekly Trip
 						.r-10.bg-w.zoom-b.p-t5.p-b5.p-l10.p-r10.m-t10
 							₹ #{cargroup.weekly_fare}
+						.white.size-11.m-t10
+							#{cargroup.weekly_km_limit} Kms
 					.inline-block.bg-zoomb.white.t-c.p-15.r-5.m-5.size-13
 						%div
 							Monthly Trip
 						.r-10.bg-w.zoom-b.p-t5.p-b5.p-l10.p-r10.m-t10
 							₹ #{cargroup.monthly_fare}
+						.white.size-11.m-t10
+							#{cargroup.monthly_km_limit} Kms
 					.inline-block.bg-zoomb.white.t-c.p-15.r-5.m-5.size-13
 						%div
 							Beyond Free Usage
 						.r-10.bg-w.zoom-b.p-t5.p-b5.p-l10.p-r10.m-t10
 							₹ #{cargroup.excess_kms}/Km
+						.white.size-11.m-t10
+							&nbsp;
 
 	%br/
 
@@ -139,39 +155,39 @@
 	%br/
 	%br/
 
-	.t-c
-		%table.table.table-bordered
-			%tbody
-				%tr.active
-					%td.t-l{:colspan => '6'}
-						%span.red
-							%b
-								= "# - "
-							Mahindra Reva has a maximum range of
-							%b 100 Km
-							on a full charge.
-						%br/
-						%b 
-							= "1 - "
-						Upto 24 hours. 1 - 10 Hours are charged, while 11 - 24 Hours are free.
-						%br/
-						%b 
-							= "2 - "
-						Beyond 24 hours. Full days are charged based on this fare, partial hours are charged based on hourly fare.
-						%br/
-						%b 
-							= "3 - "
-						Beyond 7 Days. Any subsequent partial days/hours are charged on pro-rated base of this fare only.
-						%br/
-						%b 
-							= "4 - "
-						Beyond 28 Days. Any subsequent partial days/hours are charged on pro-rated base of this fare only.
-						%br/
-						%br/
-						%b
-							= "** - "
-						All Zoom reservation comes with free driving kms, which are based on vehicle type and reservation duration. Any kms in excess of these limits will be charged at the rates shown here. For weekly/monthly reservations, free kms will be given on pro-rated basis using weekly/monthly limit. For daily reservation, free kms can comprise of the daily and hourly free kms.  
-	%br/
+	/ .t-c
+	/ 	%table.table.table-bordered
+	/ 		%tbody
+	/ 			%tr.active
+	/ 				%td.t-l{:colspan => '6'}
+	/ 					%span.red
+	/ 						%b
+	/ 							= "# - "
+	/ 						Mahindra Reva has a maximum range of
+	/ 						%b 100 Km
+	/ 						on a full charge.
+	/ 					%br/
+	/ 					%b 
+	/ 						= "1 - "
+	/ 					Upto 24 hours. 1 - 10 Hours are charged, while 11 - 24 Hours are free.
+	/ 					%br/
+	/ 					%b 
+	/ 						= "2 - "
+	/ 					Beyond 24 hours. Full days are charged based on this fare, partial hours are charged based on hourly fare.
+	/ 					%br/
+	/ 					%b 
+	/ 						= "3 - "
+	/ 					Beyond 7 Days. Any subsequent partial days/hours are charged on pro-rated base of this fare only.
+	/ 					%br/
+	/ 					%b 
+	/ 						= "4 - "
+	/ 					Beyond 28 Days. Any subsequent partial days/hours are charged on pro-rated base of this fare only.
+	/ 					%br/
+	/ 					%br/
+	/ 					%b
+	/ 						= "** - "
+	/ 					All Zoom reservation comes with free driving kms, which are based on vehicle type and reservation duration. Any kms in excess of these limits will be charged at the rates shown here. For weekly/monthly reservations, free kms will be given on pro-rated basis using weekly/monthly limit. For daily reservation, free kms can comprise of the daily and hourly free kms.  
+	/ %br/
 
 .mod-calculator-box
 	.mod-calculator.r-tl-10.r-tr-10.ts-0{:onclick => "showModal('Tariff Calculator', '/calculator/tariff'); return false;"}
