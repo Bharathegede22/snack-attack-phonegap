@@ -18,7 +18,7 @@ module CommonHelper
   ]
   RATINGS = [["Terrible", 1], ["Bad", 2], ["Average", 3], ["Good", 4], ["Excellent", 5]]
   
-	CUSTOMER_CARE = "080-67684475"
+	CUSTOMER_CARE = "080-33013371"
 	CUSTOMER_CARE_EMAIL = "contact@zoomcar.in"
 	LIABILITY = '5,000'
 	ALLOTMENT = 90
