@@ -343,6 +343,7 @@ function showAvailability(carId, locId, avail, locName, carName) {
 		$('#Avail' + carId).addClass('yes');
 		$("#ButtonYes" + carId).attr("onClick", "doBooking(" + carId + ", " + locId + ");");
 		$("#ButtonYes" + carId).show();
+		$("#ButtonNo" + carId).hide();
 		$("#ButtonNotify" + carId).hide();
 	} else {
 		$('#Avail' + carId).text("Not Available");
@@ -351,6 +352,7 @@ function showAvailability(carId, locId, avail, locName, carName) {
 		$("#ButtonYes" + carId).hide();
 		$("#ButtonNotify" + carId).attr("onClick", "doBookingNotify(" + carId + ", " + locId + ");");
 		$("#ButtonNotify" + carId).show();
+		$("#ButtonNo" + carId).show();
 	}
 	$('#LocName' + carId).text(locName);
 	$('#LocMenu' + carId).find('li').removeClass('active');
