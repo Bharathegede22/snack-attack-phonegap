@@ -540,7 +540,7 @@ class Booking < ActiveRecord::Base
 			str2 = "Rs#{0-outstanding} "+"will refunded back to your account"
 		end
 
-		message = "Zoom booking has changed (#{self.confirmation_key}) for #{self.cargroup.display_name} So #{str1} and #{str2}. Zoom Support : 08067684475."
+		message = "Zoom booking has changed (#{self.confirmation_key}) for #{self.cargroup.display_name} So #{str1} and #{str2}. Zoom Support : #{CommonHelper::CUSTOMER_CARE}."
 		SmsSender.perform_async(self.user_mobile,message,self.id)	
 		#puts message
 	end
@@ -691,7 +691,7 @@ class Booking < ActiveRecord::Base
 	
 	def after_save_tasks
 		#Utilization.manage(self.id) if !self.jsi.blank? || self.status > 0
-		SmsSender.perform_async(self.user_mobile, "Zoom booking (#{self.confirmation_key}) for #{self.cargroup.display_name} at #{self.starts.strftime('%I:%M %p, %d %b')} is confirmed. Zoom Support : 08067684475.", self.id) if self.status_changed? && (self.status == 1 || self.status == 6)
+		SmsSender.perform_async(self.user_mobile, "Zoom booking (#{self.confirmation_key}) for #{self.cargroup.display_name} at #{self.starts.strftime('%I:%M %p, %d %b')} is confirmed. Zoom Support : #{CommonHelper::CUSTOMER_CARE}.", self.id) if self.status_changed? && (self.status == 1 || self.status == 6)
 	end
 	
 	def before_save_tasks
