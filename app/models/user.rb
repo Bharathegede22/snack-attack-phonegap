@@ -148,8 +148,10 @@ class User < ActiveRecord::Base
 	  	end
 		when 'google_oauth2'
 			access_token = auth["credentials"]["token"]
-			data = access_token.info
-		  raw  = access_token.extra.raw_info
+			# data = access_token.info
+		 #  raw  = access_token.extra.raw_info
+			data = auth.info
+		  raw  = auth.extra.raw_info
 		  user = User.where(:email => data["email"]).first
 		  unless user
   			is_new = 1
