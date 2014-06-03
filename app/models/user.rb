@@ -155,13 +155,23 @@ class User < ActiveRecord::Base
 		  user = User.where(:email => data["email"]).first
 		  unless user
   			is_new = 1
-	  		user = User.create(email:data["email"])
-	  	end
-		  if user.name.blank? || user.dob.blank?
+	  		user = User.create(email: data["email"], ref_initial: ref_initial, ref_immediate: ref_immediate, password: Devise.friendly_token.first(12))
+	  	  end
+		  if user.name.blank? || user.dob.blank? || user.encrypted_password.blank?
 		    user.name = data["name"] if user.name.blank?
 		    user.dob = raw["birthday"] if user.dob.blank?
+		    user.password = Devise.friendly_token.first(12) if user.encrypted_password.blank?
+			if raw["gender"].blank?
+  				if raw["gender"].downcase == 'male'
+  					user.gender = 0
+  				else
+  					user.gender = 1
+  				end
+  		    end
 		    user.save!
 		  end
+		  
+
 		  if !user.image
   			io = nil
 		  	begin
