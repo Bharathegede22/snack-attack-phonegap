@@ -143,177 +143,51 @@ a {
 
 .homepage .afold {
 	position:relative;
-	height:740px;
+	height:490px;
 }
 
 .homepage .cars {
-	height:750px;
+	height:490px;
 	width:100%;
 	position:absolute;
 	z-index:2;
 }
 
-.homepage .cars .h1, .homepage .cars-n .h1 {
+.homepage .cars .h1 {
 	position:absolute;
-	top:40px;
 	left:50%;
 	z-index:2;
+	top:15px;
+	text-align:center;
 }
 
-.homepage .cars .h1 h1 {
-	background:#323a45;
-	padding:5px 10px 7px 10px;
-	font-size:30px;
-	float:left;
+.homepage .cars .h1 h1, .homepage .cars .h1 p {
 	margin:0 0 0 -480px;
-	font-weight:bold;
-	color:#ffffff;
-	border-left:2px solid #6ABD19;
-}
-
-.homepage .cars .h1 p {
-	background:#323a45;
-	padding:5px 10px 7px 10px;
-	margin:5px 0 0 -480px;
-	color:#ffffff;
-	font-size:20px;
-	float:left;
-	clear:left;
-	border-left:2px solid #6ABD19;
-}
-
-.homepage .cars .slider {
-	width:100%;
-  height:750px;
-  overflow-x:hidden;
-  position:absolute;
-  top:0;
-  z-index:1;
-  clear: both;
-}
-
-.homepage .cars .lazy {
-	width:100%;
-	height:750px;
-}
-
-.homepage .bg-overlay {
-	/* background: url(<%= asset_path 'bg-dot.png' %>) repeat; */
-	width:100%;
-	height:450px;
-	position:absolute;
-	z-index:1;
-}
-
-.homepage .fg-overlay {
-	width:100%;
-	height:750px;
-	position:absolute;
-	z-index:2;
-}
-
-.homepage .cars .cars-content {
 	width:960px;
-	height:750px;
-	position:relative;
-	margin:auto;
-	overflow:visible;
+	padding:0;
 }
 
-.homepage .cars .car-tariff {
-	width:960px;
-	margin:auto;
-	overflow:hidden;
-	color:#727272;
-	position:absolute;
-	top:560px;
-	left:0;
-	text-align:center;
-}
-
-.homepage .cars .car-tariff .item {
-	background:#ffffff;
-	width:225px;
-	float:left;
-	margin-right:20px;
-}
-
-.homepage .car-tariff .last {
-	margin-right:0px;
-}
-
-.homepage .car-tariff .head {
-	font-weight:bold;
-	font-size:20px;
-	padding:10px 0;
-	color:#323a45
-}
-
-.homepage .car-tariff .exp {
-	padding-bottom:10px;
-}
-
-.homepage .cars .car-tariff .fare {
-	background:#323a45;
-	margin:5px 20px;
-	padding:5px;
-	color:#ffffff;
-	font-size:18px;
-	-webkit-border-radius: 15px;
-	-khtml-border-radius: 15px;
-	-moz-border-radius: 15px;
-	border-radius: 15px;
-	behavior: url(<%= asset_path 'assets/PIE.htc' %>);
-}
-
-.homepage .car-tariff .kms {
-	padding-bottom:5px;
-}
-
-.homepage .car-tariff .offer {
-	padding-bottom:15px;
-	font-weight:bold;
-}
-
-.homepage .afold-n {
-	position:relative;
-	height:490px;
-}
-
-.homepage .cars-n {
-	height:490px;
-	width:100%;
-	position:absolute;
-	z-index:2;
-}
-
-.homepage .cars-n .h1 {
-	top:20px;
-	text-align:center;
-}
-
-.homepage .cars-n .h1 h1 {
+.homepage .cars .h1 h1 span {
 	background:#323a45;
 	padding:5px 10px 7px 10px;
 	font-size:30px;
-	margin:0 0 0 -215px;
 	font-weight:bold;
 	color:#ffffff;
 	border-left:2px solid #6ABD19;
-	width:430px;
+	margin:0 auto;
 }
 
-.homepage .cars-n .h1 p {
+.homepage .cars .h1 p span {
 	background:#323a45;
 	padding:5px 10px 7px 10px;
 	margin:5px 0 0 -150px;
 	color:#ffffff;
 	font-size:16px;
 	border-left:2px solid #6ABD19;
-	width:300px;
+	margin:0 auto;
 }
 
-.homepage .cars-n .slider {
+.homepage .cars .slider {
 	width:100%;
   height:490px;
   overflow-x:hidden;
@@ -323,39 +197,52 @@ a {
   clear: both;
 }
 
-.homepage .cars-n .lazy {
+.homepage .cars .lazy {
 	width:100%;
 	height:490px;
 }
 
-.homepage .cars-n .cars-content {
-	width:720px;
+.homepage .cars .cars-content {
+	width:730px;
 	height:490px;
 	position:relative;
 	margin:auto;
 	overflow:visible;
 }
 
-.homepage .cars-n .car-tariff {
-	width:720px;
-	margin:0 auto;
-	overflow:hidden;
-	color:#727272;
+.homepage .cars .car-tariff {
 	position:absolute;
-	top:370px;
+	bottom:80px;
 	left:0;
+	width:100%;
+}
+
+.homepage .cars .car-bg {
+	background:url(<%= asset_path 'bg-disable.png' %>);
+}
+
+.homepage .cars .car-tariff .car-name {
+	padding:3px 15px 0 10px;
+	font-size:24px;
+	color:#ffffff;
+	font-weight:bold;
+}
+
+.homepage .cars .car-tariff .car-help {
+	font-size:18px;
+	color:#ffffff;
+	padding:3px 15px 0 0;
+}
+
+.homepage .cars .car-tariff .item {
+	width:160px;
 	text-align:center;
 }
 
-.homepage .cars-n .car-tariff .item {
-	width:180px;
-	float:left;
-}
-
-.homepage .cars-n .car-tariff .fare {
+.homepage .cars .car-tariff .fare {
 	border:1px solid #ffffff;
 	background:#323a45;
-	margin:5px 10px;
+	margin:5px 10px 5px 0;
 	padding:5px;
 	color:#ffffff;
 	font-size:18px;
@@ -366,45 +253,7 @@ a {
 	behavior: url(<%= asset_path 'assets/PIE.htc' %>);
 }
 
-.homepage .cars .car-tariff .last {
-	margin-right:0px;
-}
-
 .homepage .tariff-bg {
-	background:#323a45;
-	height:290px;
-	position:absolute;
-	z-index:1;
-	top:450px;
-	width:100%;	
-}
-
-.homepage .tariff {
-	height:100px;
-	text-align:center;
-	color:#ffffff;
-	position:absolute;
-	z-index:3;
-	top:450px;
-	width:100%;	
-}
-
-.homepage .tariff .includes {
-	width:960px;
-	margin:auto;
-	margin-top:10px;
-}
-
-.homepage .tariff .includes .item {
-	width:135px;
-	float:left;
-	border-left:1px solid #545e6b;
-	border-right:1px solid #000000;
-	padding:5px 0;
-	cursor:pointer;
-}
-
-.homepage .tariff-bg-n {
 	border-top:1px solid #323a45;
 	height:40px;
 	position:absolute;
@@ -415,7 +264,7 @@ a {
 	margin:0 auto;
 }
 
-.homepage .tariff-bg-n .text {
+.homepage .tariff-bg .text {
 	color:#323a45;
 	text-align:center;
 	padding:5px 0;
@@ -423,20 +272,20 @@ a {
 	font-size:26px;
 }
 
-.homepage .tariff-n {
+.homepage .tariff {
 	position:absolute;
 	z-index:2;
 	top:110px;
 	left:50%;
 }
 
-.homepage .tariff-n .includes {
+.homepage .tariff .includes {
 	height:200px;
 	width:40px;
 	margin-left:440px;
 }
 
-.homepage .tariff-n .includes .item {
+.homepage .tariff .includes .item {
 	width:40px;
 	height:40px;
 	border-radius:40px;
