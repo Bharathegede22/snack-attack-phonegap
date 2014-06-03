@@ -1,19 +1,19 @@
 .static
 	%h1 Zoom Standard Tariffs
 	.m-t10.size-20.t-c
-		%i Zoom offers the simplest, easiest to understand car-hire tariff in India
+		%i Zoom offers the simplest, easiest to understand car-rental tariff in India
 	%br/
 
-	#tariff-header.solid.border-c
+	#tariff-header.tariff-header
 		- @cargroup.each_with_index do |cargroup, index|
 			- if index == 0
-				%a.block.fl.p-15.active{:href => "#car#{cargroup.id}", 'data-toggle' => "tab"}
+				%a.block.active{:href => "#car#{cargroup.id}", 'data-toggle' => "tab"}
 					#{cargroup.display_name}
 			- else
-				%a.block.fl.p-15{:href => "#car#{cargroup.id}", 'data-toggle' => "tab"}
+				%a.block{:href => "#car#{cargroup.id}", 'data-toggle' => "tab"}
 					#{cargroup.display_name}
 		.fc
-	#tariff-body.p-10.t-c.tab-content.t-c
+	#tariff-body.p-10.t-c.tab-content.solid.border-c
 		- @cargroup.each_with_index do |cargroup, index|
 			:ruby
 				if index == 0
@@ -22,69 +22,81 @@
 					cls = 'tab-pane fade'
 				end
 			%div{:class => cls, :id => "car#{cargroup.id}"}
-				.inline-block.car-image{style: 'width:110px;'}
-					= image_tag("cars/#{cargroup.id}small.jpg", :alt => cargroup.display_name)
-				.inline-block.bg-zoomb.white.p-10.r-5.m-5{style: 'width:150px;'}
-					.p-b10
-						Hourly Trip
-					.r-10.bg-w.zoom-b.p-5
-						.fl
-							₹ #{((1.0 - CommonHelper::WEEKDAY_DISCOUNT/100.0)*cargroup.hourly_fare).to_i}
-						.fr
-							₹ #{cargroup.hourly_fare}
-						.fc
-					.p-5.size-10
-						.fl
-							(mon - thu)
-						.fr
-							(fri - sun)
-						.fc
-					.white
-						#{cargroup.hourly_km_limit} Kms
-				.inline-block.bg-zoomb.white.p-10.r-5.m-5{style: 'width:150px;'}
-					.p-b10
-						Daily Trip
-					.r-10.bg-w.zoom-b.p-5
-						.fl
-							₹ #{((1.0 - CommonHelper::WEEKDAY_DISCOUNT/100.0)*cargroup.daily_fare).to_i}
-						.fr
-							₹ #{cargroup.daily_fare}
-						.fc
-					.p-5.size-10
-						.fl
-							(mon - thu)
-						.fr
-							(fri - sun)
-						.fc
-					.white
-						#{cargroup.daily_km_limit} Kms
-				.inline-block.bg-zoomb.white.t-c.p-10.r-5.m-5{style: 'width:150px;'}
-					.p-b10
-						Weekly Trip
-					.r-10.bg-w.zoom-b.p-5
-						₹ #{cargroup.weekly_fare}
-					.p-5.size-10
-						&nbsp;
-					.white
-						#{cargroup.weekly_km_limit} Kms
-				.inline-block.bg-zoomb.white.t-c.p-10.r-5.m-5{style: 'width:150px;'}
-					.p-b10
-						Monthly Trip
-					.r-10.bg-w.zoom-b.p-5
-						₹ #{cargroup.monthly_fare}
-					.p-5.size-10
-						&nbsp;
-					.white
-						#{cargroup.monthly_km_limit} Kms
-				.inline-block.bg-zoomb.white.t-c.p-10.r-5.m-5{style: 'width:150px;'}
-					.p-b10
-						Beyond Free Usage
-					.r-10.bg-w.zoom-b.p-5
-						₹ #{cargroup.excess_kms}/Km
-					.p-5.size-10
-						&nbsp;
-					.white
-						&nbsp;
+				.row.white
+					.inline-block{style: 'width:150px;'}
+						= image_tag("cars/#{cargroup.id}small.jpg", :alt => cargroup.display_name)
+						%br/
+						%br/
+					.inline-block.bg-zoomb.p-10.r-5.m-10{style: 'width:170px;'}
+						.p-b10
+							Hourly Trip
+						.r-10.bg-w.zoom-b.p-5
+							.fl
+								₹ #{show_currency(((1.0 - CommonHelper::WEEKDAY_DISCOUNT/100.0)*cargroup.hourly_fare).to_i)}
+							.fr
+								₹ #{show_currency(cargroup.hourly_fare)}
+							.fc
+						.p-5.size-10
+							.fl
+								(Mon - Thu)
+							.fr
+								(Fri - Sun)
+							.fc
+						.white
+							%i.size-10 includes
+							#{show_currency(cargroup.hourly_km_limit)} Kms
+							%span.size-10 #
+					.inline-block.bg-zoomb.p-10.r-5.m-10{style: 'width:170px;'}
+						.p-b10
+							Daily Trip 
+							%span.size-10 (> 10 Hours)
+						.r-10.bg-w.zoom-b.p-5
+							.fl
+								₹ #{show_currency(((1.0 - CommonHelper::WEEKDAY_DISCOUNT/100.0)*cargroup.daily_fare).to_i)}
+							.fr
+								₹ #{show_currency(cargroup.daily_fare)}
+							.fc
+						.p-5.size-10
+							.fl
+								(Mon - Thu)
+							.fr
+								(Fri - Sun)
+							.fc
+						.white
+							%i.size-10 includes
+							#{show_currency(cargroup.daily_km_limit)} Kms
+							%span.size-10 #
+					.inline-block.bg-zoomb.p-10.r-5.m-10{style: 'width:170px;'}
+						.p-b10
+							Weekly Trip
+							%span.size-10 (> 6 Days)
+						.r-10.bg-w.zoom-b.p-5
+							₹ #{show_currency(cargroup.weekly_fare)}
+						.p-5.size-10
+							&nbsp;
+						.white
+							%i.size-10 includes
+							#{show_currency(cargroup.weekly_km_limit)} Kms
+							%span.size-10 #
+					.inline-block.bg-zoomb.p-10.r-5.m-10{style: 'width:170px;'}
+						.p-b10
+							Monthly Trip
+							%span.size-10 (> 4 Weeks)
+						.r-10.bg-w.zoom-b.p-5
+							₹ #{show_currency(cargroup.monthly_fare)}
+						.p-5.size-10
+							&nbsp;
+						.white
+							%i.size-10 includes
+							#{show_currency(cargroup.monthly_km_limit)} Kms
+							%span.size-10 #
+				.row.zoomb
+					.inline-block{style: 'width:150px;'}
+					.inline-block.border-zoomb.solid.p-5.r-5.m-5{style: 'width:750px;'}
+						%b
+							= '#'
+							₹ #{cargroup.excess_kms}/Km
+						will be charged beyond free usage
 	%br/
 	.row
 		.col-md-6
@@ -96,7 +108,7 @@
 				.p-10.border-b-c.tick
 					Fuel *
 				.p-10.border-b-c.tick
-					Unlimited, full-wrap insurance
+					Full insurance
 				.p-10.border-b-c.tick
 					Taxes
 				.p-10.border-b-c.tick
@@ -104,9 +116,11 @@
 				.p-10.border-b-c.tick
 					Routine maintenance & cleaning
 				.p-10.border-b-c.tick
-					Navigation technology
-				.p-10.tick
+					GPS technology
+				.p-10.border-b-c.tick
 					24-hour customer support
+				.p-10.tick
+					Child seat on request
 		.col-md-6
 			.border-c.solid
 				.header.bg-zoomb.white.p-10.f-b
@@ -116,7 +130,7 @@
 				.p-10.border-b-c.cross
 					Tolls and road taxes (in-state & out-state) **
 				.p-10.border-b-c.cross
-					₹5,000 damage deductible
+					₹5,000 damage charge
 				.p-10.border-b-c.cross
 					Traffic & parking violations
 				.p-10.border-b-c.cross
@@ -139,7 +153,7 @@
 		Please book more time than you think you will need for your journey. Zoom is fully committed to reliably providing vehicles when our members have them reserved, so please do return your vehicle on-time. If you return a vehicle late and it causes an inconvenience to another member, you will be charged a penalty to compensate them.
 
 	%p
-		But we don't want you to pay more than you should for time you aren't Zooming! If you return a vehicle 1 hour or more before your reservation ends, you will get a driving credit for ½ of the unused time. If you have a vehicle only with a daily tariff component, you are eligible for a credit equivalent to ½ of the daily tariff in the event you return the car a day or more early (e.g. a 3 day hire that is returned 1 full day early will result in a driving credit equal to ½ of the standard daily tariff for that respective vehicle).
+		But we don't want you to pay more than you should for time you aren't Zooming! If you return a vehicle 1 hour or more before your reservation ends, you will get a driving credit for ½ of the unused time. If you have a vehicle only with a daily tariff component, you are eligible for a credit equivalent to ½ of the daily tariff in the event you return the car a day or more early (e.g. a 3 day rental that is returned 1 full day early will result in a driving credit equal to ½ of the standard daily tariff for that respective vehicle).
 	%br/
 	%br/
 
