@@ -49,15 +49,21 @@
 					%li{:id => ("Location"), :role => "presentation"}
 						%a{:href => "javascript:void(0)", :onclick => "changeLocation('','All Locations','nav');"}
 							All Locations
-					- Location.live.each do |l|
-						- if l.id == @booking.location_id
-							%li.active{:id => ("Location" + l.id.to_s), :role => "presentation"}
-								%a{:href => "javascript:void(0)", :onclick => "changeLocation(#{l.id},'#{l.shortname}','nav');"}
-									= l.shortname
-						- else
-							%li{:id => ("Location" + l.id.to_s), :role => "presentation"}
-								%a{:href => "javascript:void(0)", :onclick => "changeLocation(#{l.id},'#{l.shortname}','nav');"}
-									= l.shortname
+					-Zone.where(:city_id=>current_city_id).each do |z|
+						%li.dropdown-submenu
+							%a{:href=>"#"} 
+								=z.name
+								%ul.dropdown-menu
+									- Location.live.each do |l|
+										- if l.zone_id == z.id
+											- if l.id == @booking.location_id
+												%li.active{:id => ("Location" + l.id.to_s), :role => "presentation"}
+													%a{:href => "javascript:void(0)", :onclick => "changeLocation(#{l.id},'#{l.shortname}','nav');"}
+														= l.shortname
+											- else
+												%li{:id => ("Location" + l.id.to_s), :role => "presentation"}
+													%a{:href => "javascript:void(0)", :onclick => "changeLocation(#{l.id},'#{l.shortname}','nav');"}
+														= l.shortname
 		.item
 			.dropdown
 				#Cars.dropdown-toggle.box{'data-toggle' => "dropdown"}
