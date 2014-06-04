@@ -52,7 +52,7 @@ class BookingsController < ApplicationController
 		if !params[:car].blank? && !params[:loc].blank? && !session[:search].blank? && !session[:search][:starts].blank? && !session[:search][:ends].blank?
 			session[:book] = {:starts => session[:search][:starts], :ends => session[:search][:ends], :loc => params[:loc], :car => params[:car]}
 			if params[:notify].present?
-				session[:book][:notify] = true
+				session[:notify] = true
 			end
 			if user_signed_in?
 				#if current_user.check_details
@@ -71,7 +71,7 @@ class BookingsController < ApplicationController
 			redirect_to "/" and return
 		end
 		if user_signed_in?
-			if session[:book][:notify].present?
+			if session[:notify].present?
 				redirect_to "/bookings/notify"
 			elsif current_user.check_details
 				redirect_to "/bookings/checkout"
@@ -107,7 +107,7 @@ class BookingsController < ApplicationController
 			@booking.offer_id = promo[:offer].id
 		end
 		
-		@booking.status = 11 if session[:book][:notify].present?
+		@booking.status = 11 if session[:notify].present?
 
 		@booking.save!
 		
@@ -133,13 +133,13 @@ class BookingsController < ApplicationController
 
 		if @booking.status == 11	
 			flash[:notice] = "We will Notify you once the Vehicle is available."
-			session[:book][:notify] = nil
+			session[:notify] = nil
 			redirect_to :back
 		else
 
 			session[:booking_id] = @booking.encoded_id
 			session[:search] = nil
-			session[:book][:notify] = nil
+			session[:notify] = nil
 			session[:book] = nil
 			session[:promo_code] = nil
 			session[:credits] = nil
@@ -465,7 +465,7 @@ class BookingsController < ApplicationController
 		if @booking
 			if @booking.jsi.blank? && @booking.status == 0
 				@available = Inventory.check(@booking.starts, @booking.ends, @booking.cargroup_id, @booking.location_id)
-				if @available == 0 && !session[:book][:notify].present?
+				if @available == 0 && !session[:notify].present?
 					flash[:error] = "Sorry, but the car is no longer available"
 					redirect_to(:back) and return
 				end
