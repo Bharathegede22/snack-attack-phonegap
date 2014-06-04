@@ -49,7 +49,7 @@
 					%li{:id => ("Location"), :role => "presentation"}
 						%a{:href => "javascript:void(0)", :onclick => "changeLocation('','All Locations','nav');"}
 							All Locations
-					-Zone.where(:city_id=>current_city_id).each do |z|
+					-Zone.where(:city_id=>1).each do |z|
 						%li.dropdown-submenu
 							%a{:href=>"#"} 
 								=z.name
