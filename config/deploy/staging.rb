@@ -11,7 +11,7 @@ set :domain_name, "test.zoomcartest.com"
 default_run_options[:pty] = true
 set :scm, :git
 set :repository, "git@bitbucket.org:zoomcar/web.git"
-set :branch, "staging"
+set :branch, "master"
 set :deploy_via, :remote_cache
 ssh_options[:forward_agent] = true
 
@@ -24,7 +24,7 @@ role :app, "180.179.52.169"
 role :db,  "180.179.52.169", :primary => true
 
 ssh_options[:user] = "root"
-ssh_options[:keys] = "/root/.ssh/id_rsa_test"
+ssh_options[:keys] = "~/.ssh/id_rsa_test"
 ssh_options[:port] = 2255
 
 set :bundle_gemfile, "Gemfile"

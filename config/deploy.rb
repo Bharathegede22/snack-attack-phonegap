@@ -6,7 +6,7 @@ set :application, "web"
 set :keep_releases, 5
 
 ssh_options[:user] = "root"
-ssh_options[:keys] = "/root/.ssh/id_rsa"
+ssh_options[:keys] = "~/.ssh/id_rsa"
 ssh_options[:port] = 2255
 
 set :scm, :git
