@@ -159,9 +159,9 @@ class User < ActiveRecord::Base
 	  	  end
 		  if user.name.blank? || user.dob.blank? || user.encrypted_password.blank?
 		    user.name = data["name"] if user.name.blank?
-		    user.dob = raw["birthday"] if user.dob.blank?
+		    user.dob = Date.parse(raw["birthday"]) if user.dob.blank? && !raw["birthday"].blank?
 		    user.password = Devise.friendly_token.first(12) if user.encrypted_password.blank?
-			if raw["gender"].blank?
+			if !raw["gender"].blank?
   				if raw["gender"].downcase == 'male'
   					user.gender = 0
   				else
@@ -172,18 +172,18 @@ class User < ActiveRecord::Base
 		  end
 		  
 
-		  if !user.image
-  			io = nil
-		  	begin
-					io = open(data["image"])
-					if io
-						def io.original_filename; base_uri.path.split('/').last; end
-						io.original_filename.blank? ? nil : io
-					end
-				rescue
-				end
-	  		img = Image.create(:imageable_id => user.id, :imageable_type => 'User') if io
-	  	end
+		 #  if !user.image
+  	# 		io = nil
+		 #  	begin
+			# 		io = open(data["image"])
+			# 		if io
+			# 			def io.original_filename; base_uri.path.split('/').last; end
+			# 			io.original_filename.blank? ? nil : io
+			# 		end
+			# rescue
+			# end
+	  # 		img = Image.create(:imageable_id => user.id, :imageable_type => 'User') if io
+	  # 	end
 		end
 		return [is_new, user]
 	end
