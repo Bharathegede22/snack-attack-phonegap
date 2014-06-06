@@ -241,7 +241,7 @@ function initializeDatePicker() {
 					pushEvent('Rescheduler', 'New Ends');
 				}
 			} else {
-				alert(id);
+				// alert(id);
 				$('#' + id + 'ValError').html('please select start date first');
 				$('#' + id + 'ValError').show();
 			}
