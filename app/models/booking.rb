@@ -17,6 +17,7 @@ class Booking < ActiveRecord::Base
 	has_one :coupon_code
 	has_one	:review, :inverse_of => :booking, dependent: :destroy
 	has_one :debug, :as => :debugable, dependent: :destroy
+	has_paper_trail
 	attr_writer :through_search
 	attr_writer :through_signup
     

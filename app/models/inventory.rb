@@ -27,6 +27,7 @@ class Inventory < ActiveRecord::Base
 	
 	def self.block_plain(cargroup, location, starts, ends)
 		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
+		Rails.logger.warn "Inventory_block_cg_#{cargroup}_loc_#{location}: starts #{(starts + 330.minutes).to_s(:db)}, ends #{(ends + 330.minutes).to_s(:db)}"
 		ActiveRecord::Base.connection.execute("UPDATE inventories SET total = (total-1) WHERE 
 			cargroup_id = #{cargroup} AND 
 			location_id = #{location} AND 
@@ -144,6 +145,7 @@ class Inventory < ActiveRecord::Base
 	
 	def self.release(cargroup, location, starts, ends)
 		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
+		Rails.logger.warn "Inventory_release_cg_#{cargroup}_loc_#{location}: starts #{(starts + 330.minutes).to_s(:db)}, ends #{(ends + 330.minutes).to_s(:db)}"
 		ActiveRecord::Base.connection.execute("UPDATE inventories SET total = (total+1) WHERE 
 			cargroup_id = #{cargroup} AND 
 			location_id = #{location} AND 
