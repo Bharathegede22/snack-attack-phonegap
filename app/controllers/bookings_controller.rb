@@ -7,7 +7,6 @@ class BookingsController < ApplicationController
 	before_filter :check_search_access, :only => [:credits, :docreate, :docreatenotify, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
   before_filter :check_blacklist, :only => [:docreate]
-	
 
 	def cancel
 		if request.post?
@@ -106,7 +105,6 @@ class BookingsController < ApplicationController
 		end
 		
 		@booking.status = 11 if session[:notify].present?
-
 		@booking.save!
 		
 		if promo && promo[:coupon]
@@ -118,8 +116,6 @@ class BookingsController < ApplicationController
 		
 		Credit.use_credits(@booking, session[:credits]) if !session[:credits].blank?
 		
-		
-
 		# session[:booking_id] = @booking.encoded_id
 		# session[:search] = nil
 		# session[:book][:notify] = nil
@@ -127,14 +123,11 @@ class BookingsController < ApplicationController
 		# session[:promo_code] = nil
 		# session[:credits] = nil
 		
-
-
 		if @booking.status == 11	
 			flash[:notice] = "We will Notify you once the Vehicle is available."
 			session[:notify] = nil
 			redirect_to :back
 		else
-
 			session[:booking_id] = @booking.encoded_id
 			session[:search] = nil
 			session[:notify] = nil
@@ -163,7 +156,7 @@ class BookingsController < ApplicationController
 	end
 	
 	def failed
-		render 'thanks', layout: 'plain'
+		render 'show', layout: 'users'
 	end
 	
 	def feedback

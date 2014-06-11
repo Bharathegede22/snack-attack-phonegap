@@ -3,11 +3,12 @@
 	.login.t-c
 		%table.m-auto
 			%tr
-				%td
+				%td.p-5
 					%a.facebook{:href => "#{user_omniauth_authorize_path(:facebook)}"}
-				%td
-					- if true
-						%a.gplus{:href => "#{user_omniauth_authorize_path(:google_oauth2)}"}
+						.txt Sign in with Facebook
+				%td.p-5
+					%a.gplus{:href => "#{user_omniauth_authorize_path(:google_oauth2)}"}
+						.txt Sign in with Google+
 		%br/
 		OR
 		%br/

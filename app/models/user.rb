@@ -148,42 +148,26 @@ class User < ActiveRecord::Base
 	  	end
 		when 'google_oauth2'
 			access_token = auth["credentials"]["token"]
-			# data = access_token.info
-		 #  raw  = access_token.extra.raw_info
 			data = auth.info
 		  raw  = auth.extra.raw_info
 		  user = User.where(:email => data["email"]).first
 		  unless user
   			is_new = 1
 	  		user = User.create(email: data["email"], ref_initial: ref_initial, ref_immediate: ref_immediate, password: Devise.friendly_token.first(12))
-	  	  end
+  	  end
 		  if user.name.blank? || user.dob.blank? || user.encrypted_password.blank?
 		    user.name = data["name"] if user.name.blank?
 		    user.dob = Date.parse(raw["birthday"]) if user.dob.blank? && !raw["birthday"].blank?
 		    user.password = Devise.friendly_token.first(12) if user.encrypted_password.blank?
-			if !raw["gender"].blank?
-  				if raw["gender"].downcase == 'male'
-  					user.gender = 0
-  				else
-  					user.gender = 1
-  				end
-  		    end
-		    user.save!
-		  end
-		  
-
-		 #  if !user.image
-  	# 		io = nil
-		 #  	begin
-			# 		io = open(data["image"])
-			# 		if io
-			# 			def io.original_filename; base_uri.path.split('/').last; end
-			# 			io.original_filename.blank? ? nil : io
-			# 		end
-			# rescue
-			# end
-	  # 		img = Image.create(:imageable_id => user.id, :imageable_type => 'User') if io
-	  # 	end
+				if !raw["gender"].blank?
+					if raw["gender"].downcase == 'male'
+						user.gender = 0
+					else
+						user.gender = 1
+					end
+		    end
+			  user.save!
+			end
 		end
 		return [is_new, user]
 	end
