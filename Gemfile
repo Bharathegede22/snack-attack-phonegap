@@ -35,7 +35,7 @@ gem 'aws-sdk'
 gem "rest_client"
 gem 'sprockets-image_compressor'
 gem 'newrelic_rpm', group: :production
-
+gem 'paper_trail', '~> 3.0.1'
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
   gem 'sdoc', require: false

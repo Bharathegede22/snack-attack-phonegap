@@ -140,7 +140,7 @@
 						.t-c
 							%br/
 							.m-auto{style: 'width:200px;'}
-								- if !(@available == 1) && current_user && !current_user. is_blacklisted? && session[:book][:notify].present?
+								- if !(@available == 1) && current_user && !current_user. is_blacklisted? && session[:notify].present?
 									
 									%button.btn-notify.btn-default.size-24{id: 'ButtonCheckoutNotify', style: 'width:200px;', type: "button", onclick: "checkout();"}
 										Notify Me

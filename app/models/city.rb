@@ -1,7 +1,7 @@
 class City < ActiveRecord::Base
 	
 	has_many :attractions
-	
+	has_many :locations
 	def h1(action=nil)
 		return case action
 		when 'inside' then "Rent Self Drive Cars, Explore #{self.name}"
