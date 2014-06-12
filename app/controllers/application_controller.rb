@@ -9,7 +9,6 @@ class ApplicationController < ActionController::Base
   def check_params
   	# Check City
   	@city = City.find_by_name(params[:city]) if !params[:city].blank?
-  	
   	# Check Ref Initial
   	if cookies[:ref].blank?
   		vref = ''

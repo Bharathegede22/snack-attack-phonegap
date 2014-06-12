@@ -1,6 +1,8 @@
 class Cargroup < ActiveRecord::Base
 	
 	has_many :bookings
+	belongs_to :brand
+	belongs_to :model
 	
   def cargroupObj
   	return Cargroup.where("status = 1").order("priority ASC")
@@ -265,7 +267,13 @@ class Cargroup < ActiveRecord::Base
   	end
   end
 	
-	def self.live(city_id=1)
+	def self.city_list(city)
+  		Rails.cache.fetch("cargroup-#{city.name}-list") do
+  			city.locations.collect(&:live).flatten.uniq
+  		end
+  	end
+
+  def self.live(city_id=1)
 		Cargroup.find_by_sql("SELECT cg.*, l.name AS l_name, l.id AS l_id, COUNT(DISTINCT c.id) AS total FROM cargroups cg 
 			INNER JOIN cars c ON c.cargroup_id = cg.id 
 			INNER JOIN locations l ON l.id = c.location_id 

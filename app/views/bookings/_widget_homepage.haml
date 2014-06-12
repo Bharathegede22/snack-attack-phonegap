@@ -43,7 +43,7 @@
 	- if @booking && @booking.valid?
 		:javascript
 			pushEvent('Homepage Search', 'Submit');
-			window.location = "http://#{HOSTNAME}/search";
+			window.location = "http://#{HOSTNAME}/#{@city.name}/search";
 	- else
 		:javascript
 			pushEvent('Homepage Search', 'Submit');
