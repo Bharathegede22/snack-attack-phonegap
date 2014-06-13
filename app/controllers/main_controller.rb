@@ -1,7 +1,7 @@
 class MainController < ApplicationController
 	
 	def about
-		@meta_title = "About ZoomCar Team | Online Self Drive Car In Bangalore"
+		@meta_title = "About ZoomCar Team | Online Self Drive Car In #{@city.name}"
 		@meta_description = "Read about ZoomCar's self drive car team. Highly qualified professionals with knowledge and experience in self driven car rental services"
 		@meta_keywords = "zoomcar team"
 		@canonical = "http://www.zoomcar.in/about"
@@ -123,7 +123,7 @@ class MainController < ApplicationController
 	end
 	
 	def homepage
-		@meta_title = "Self Drive Cars Rental In Bangalore | Join Online, Book A Car & Drive | Zoomcar.in"
+		@meta_title = "Self Drive Cars Rental In #{@city.name} | Join Online, Book A Car & Drive | Zoomcar.in"
 		@meta_description = "Book a self-driven car online. Self driving car rental made easy like never before, simply join us for renting a car by the hour or day. Includes fuel, insurance & taxes"
 		@meta_keywords = "zoomcar, self drive car, self drive car rental, renting a car, self drive cars"
 		@canonical = "http://www.zoomcar.in"
@@ -133,7 +133,7 @@ class MainController < ApplicationController
 	end
 	
 	def howtozoom
-		@meta_title = "Self Drive Cars Rental In Bangalore | Join Online, Book A Car & Drive | Zoomcar.in"
+		@meta_title = "Self Drive Cars Rental In #{@city.name} | Join Online, Book A Car & Drive | Zoomcar.in"
 		@meta_description = "Read how to be a better ZoomCar Member"
 		@meta_keywords = "zoomcar member"
 		@canonical = "http://www.zoomcar.in/howtozoom"
@@ -141,7 +141,7 @@ class MainController < ApplicationController
 	end
 	
 	def index
-		@meta_title = "Self Drive Cars Rental In Bangalore | Join Online, Book A Car & Drive | Zoomcar.in"
+		@meta_title = "Self Drive Cars Rental In #{@city.name} | Join Online, Book A Car & Drive | Zoomcar.in"
 		@meta_description = "Book a self-drive car online. Self driving car rental made easy like never before, simply join us for renting a car by the hour, day, week or month. Our tariff includes fuel, insurance & taxes."
 		@meta_keywords = "zoomcar, self drive car, self drive car rental, renting a car, self drive cars"
 		@canonical = "http://www.zoomcar.in"
@@ -177,16 +177,16 @@ class MainController < ApplicationController
 	end
 	
 	def offers
-		@meta_title = "Zoom for Less in Bangalore | www.zoomcar.in"
-		@meta_description = "Offers running in Bangalore on Zoom"
+		@meta_title = "Zoom for Less in #{@city.name} | www.zoomcar.in"
+		@meta_description = "Offers running in #{@city.name} on Zoom"
 		@meta_keywords = "zoomcar offers"
-		@canonical = "http://www.zoomcar.in/bangalore/offers"
+		@canonical = "http://www.zoomcar.in/#{@city.name}/offers"
 		@header = 'offers'
 	end
 	
 	def outstation
 		@meta_title = "Outstation Car Rental | Rent Self-Drive Car For Outstation Trips"
-		@meta_description = "Zoomcar provides local car hire for outstation trips outside Karnataka state.  Book outstation car for Goa, Kerala, Tamil Nadu and Andhra Pradesh at budget prices"
+		@meta_description = "Zoomcar provides local car hire for outstation trips outside Karnataka and Maharashtra state.  Book outstation car for Goa, Kerala, Tamil Nadu and Andhra Pradesh at budget prices"
 		@meta_keywords = "Outstation car rental, outstation car hire, self drive car for outstation"
 		@canonical = "http://www.zoomcar.in/outstation"
 		@header = 'help'
@@ -201,9 +201,9 @@ class MainController < ApplicationController
 	end
 	
 	def reva
-		@meta_title = "Electric Car Hire | Hire Reva For Self-Drive In Bangalore"
-		@meta_description = "Zoomcar now offers eco friendly electric car for hire in Bangalore. Now rent Mahindra Reva E20 India's only fully electric car by the hour or by the day."
-		@meta_keywords = "electric car hire, hire Reva in Bangalore"
+		@meta_title = "Electric Car Hire | Hire Reva For Self-Drive In #{@city.name}"
+		@meta_description = "Zoomcar now offers eco friendly electric car for hire in #{@city.name}. Now rent Mahindra Reva E20 India's only fully electric car by the hour or by the day."
+		@meta_keywords = "electric car hire, hire Reva in #{@city.name}"
 		@canonical = "http://www.zoomcar.in/reva"
 		@header = 'help'
 	end
@@ -217,10 +217,10 @@ class MainController < ApplicationController
 	end
 	
 	def tariff
-		@meta_title = "ZoomCar Hire Tariffs In Bangalore | Zoomcar.in"
-		@meta_description = "ZoomCar offers the simplest, easiest car-hire tariff in Bangalore. Find out what all is included"
+		@meta_title = "ZoomCar Hire Tariffs In #{@city.name} | Zoomcar.in"
+		@meta_description = "ZoomCar offers the simplest, easiest car-hire tariff in #{@city.name}. Find out what all is included"
 		@meta_keywords = "zoomcar hire tariffs"
-		@canonical = "http://www.zoomcar.in/tariff"
+		@canonical = "http://www.zoomcar.in/#{@city.name}/tariff"
 		@cargroup = Cargroup.list
 		@header = 'tariff'
 	end

@@ -1,6 +1,6 @@
 Web::Application.routes.draw do
 	
-	root to: "main#index", :defaults => {:city => DEFAULT_CITY}
+	root to: "main#index"
 	require 'sidekiq/web'
 	
 
@@ -12,7 +12,7 @@ Web::Application.routes.draw do
 			:registrations => "users/registrations", 
 			:sessions => "users/sessions"
 		}
-	scope "/(:city)", :defaults => {:city => DEFAULT_CITY} do
+	scope "/(:city)" do
 		get '/' => "main#index"
 		get '/search' => "bookings#search"
 		post '/search/:id' => "bookings#search"
