@@ -1,6 +1,6 @@
 - cargroup = @booking.cargroup
 - location = @booking.location
-- fare = cargroup.check_fare(@booking.starts, @booking.ends)
+- fare = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_fare_calc(@booking.starts, @booking.ends,cargroup.id)
 .bg-w.bs-9.grey.droid.size-14
 	.bg-zoomb.white.p-5.f-b.size-20.p-l10.p-r10
 		.fl

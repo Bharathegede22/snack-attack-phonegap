@@ -2,7 +2,7 @@ class BookingMailer < ActionMailer::Base
   
   layout 'email'
   
-  default from: "ZoomCar <help@zoomcar.in>", bcc: "support@zoomcar.in"
+  default from: "ZoomCar <help@zoomcar.in>"#, bcc: "support@zoomcar.in"
   
   def cancel(booking, charge)
 		@booking = Booking.find_by_id booking
