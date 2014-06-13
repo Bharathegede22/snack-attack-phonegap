@@ -41,7 +41,8 @@ class BookingsController < ApplicationController
 			session[:credits] = params[:fare].to_i
 			flash[:message] = 'Credits applied, please carry on!'
 		end
-		@fare = @booking.cargroup.check_fare(@booking.starts, @booking.ends)
+		#@fare = @booking.cargroup.check_fare(@booking.starts, @booking.ends)
+		@fare = "Pricing#{Pricing::DEFAULT_VERSION}".check_fare_calc(@booking.starts, @booking.ends,@booking.cargroup.id)
 		render json: {html: render_to_string('_outstanding.haml', layout: false)}
 	end
 
@@ -98,6 +99,7 @@ class BookingsController < ApplicationController
 		@booking.ref_initial = session[:ref_initial]
 		@booking.ref_immediate = session[:ref_immediate]
 		@booking.through_signup = true
+		#@booking.pricing
 		
 		if promo
 			@booking.promo = session[:promo_code]

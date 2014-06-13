@@ -12,6 +12,8 @@ PAYU_URL = configurations['payu_url']
 PAYU_KEY = configurations['payu_key']
 PAYU_SALT = configurations['payu_salt']
 
+MAIL_INTERCEPTOR = configurations['mail_interceptor']
+
 AWS_SES_ID = configurations['aws_ses_id']
 AWS_SES_KEY = configurations['aws_ses_key']
 

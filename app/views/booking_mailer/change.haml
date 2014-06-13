@@ -1,6 +1,7 @@
 - cargroup = @booking.cargroup
 - location = @booking.location
 - outstanding = @booking.outstanding
+- version = Pricing.pricing_verison(@booking.pricing_id)
 %br/
 Hi #{@user.name},
 %br/
@@ -100,7 +101,7 @@ Please review the details of your reservation:
 		%p{style: "margin:5px 0 0 0; padding:0;"}
 			\- Please remember to carry your valid credit / debit card for paying any fee at the time you return the vehicle.
 	%p{style: "margin:5px 0 0 0; padding:0;"}
-		- fare = cargroup.check_fare(@booking.starts, @booking.ends)
+		- fare = "Pricing#{version}".constantize.check_fare_calc(@booking.starts, @booking.ends,cargroup.id)
 		\- As a friendly reminder, your reservation comes with 
 		%b
 			#{fare[:kms]}
