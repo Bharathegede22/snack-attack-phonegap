@@ -187,7 +187,7 @@ class Booking < ActiveRecord::Base
 			self.status = 10
 			self.save(validate: false)
 			BookingMailer.cancel(self.id, charge.id).deliver
-			#sendsms(charge) ------ Send message for reschedule
+			sendsms('cancel', (total - fee))
 		end
 		return total
 	end
@@ -279,10 +279,14 @@ class Booking < ActiveRecord::Base
 			self.save(validate: false)
 			if charge
 				BookingMailer.change(self.id, charge.id).deliver
-				#sendsms(charge) ------ Send message for reschedule
+				if charge.refund == 1
+					sendsms('change', -1 * charge.amount.to_i)
+				else
+					sendsms('change', charge.amount.to_i)
+				end
 			else
 				BookingMailer.change(self.id, nil).deliver
-				#sendsms(nil) ------Send message for reschedule when charge is nil
+				sendsms('change', 0)
 			end
 		end
 		return [str, fare]
@@ -513,37 +517,22 @@ class Booking < ActiveRecord::Base
 		self.total = self.estimate - self.discount
 	end
 	
-	def sendsms (charge)
-		cargroup = self.cargroup
-		location = self.location
-		outstanding = self.outstanding
-		str1 = ""
-		str2 = ""
-
-
-		if charge 
-			if charge.amount==1
-				str1 = "#{charge.amount} "+ "is refunded back to the reservation"
-			else
-				str1 = "#{charge.amount} "+ "is added as charges to the reservation"
-			end
-		else
-			str = "No change in your reservation charges"
+	def sendsms(action, amount)
+		message =  case action 
+		when 'change' then "Zoom booking (#{self.confirmation_key}) is changed. #{self.cargroup.display_name} from #{self.starts.strftime('%I:%M %p, %d %b')} till #{self.ends.strftime('%I:%M %p, %d %b')} at #{self.location.shortname}. "
+		when 'cancel' then "Zoom booking (#{self.confirmation_key}) is cancelled. Rs.#{amount} will be refunded back to your account in 4 days. "
 		end
-
-		if outstanding >0
-			if self.starts < Time.now
-				str2 = "Rs#{outstanding} "+"is outstanding amount when you drop the vehicle back to Zoom"
+		if action != 'cancel'
+			if amount == 0
+				message << "No change in booking amount. "
+			elsif amount < 0
+				message << "Rs.#{-1*amount.to_i} will be refunded once your booking concludes. "
 			else
-				str2 ="Make Payement know"
+				message << "Rs.#{amount.to_i} is outstanding. "
 			end
-		elsif outstanding <0
-			str2 = "Rs#{0-outstanding} "+"will refunded back to your account"
 		end
-
-		message = "Zoom booking has changed (#{self.confirmation_key}) for #{self.cargroup.display_name} So #{str1} and #{str2}. Zoom Support : #{CommonHelper::CUSTOMER_CARE}."
-		SmsSender.perform_async(self.user_mobile,message,self.id)	
-		#puts message
+		message << "#{CommonHelper::CUSTOMER_CARE} : Zoom Support."
+		SmsSender.perform_async(self.user_mobile, message, self.id)
 	end
 	
 	def setup
@@ -692,7 +681,6 @@ class Booking < ActiveRecord::Base
 	
 	def after_save_tasks
 		#Utilization.manage(self.id) if !self.jsi.blank? || self.status > 0
-		SmsSender.perform_async(self.user_mobile, "Zoom booking (#{self.confirmation_key}) for #{self.cargroup.display_name} at #{self.starts.strftime('%I:%M %p, %d %b')} is confirmed. Zoom Support : #{CommonHelper::CUSTOMER_CARE}.", self.id) if self.status_changed? && (self.status == 1 || self.status == 6)
 	end
 	
 	def before_save_tasks

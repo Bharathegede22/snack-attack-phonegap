@@ -155,6 +155,7 @@ class Payment < ActiveRecord::Base
 						b.status = 6
 					end
 					BookingMailer.payment(b.id).deliver
+					SmsSender.perform_async(b.user_mobile, "Zoom booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{CommonHelper::CUSTOMER_CARE} : Zoom Support.", b.id)
 				end
 				b.notes += "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs." + self.amount.to_s + " - Payment Received through <u>" + self.through_text + "</u>.<br/>"
 				b.save(:validate => false)
