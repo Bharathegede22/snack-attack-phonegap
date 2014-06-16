@@ -58,11 +58,15 @@ class Location < ActiveRecord::Base
 		return "Self Drive Cars On Rent At #{self.name}, #{self.city.name} | Zoomcar"
 	end
 	
-	def shortname
+	def shortname(star = true)
 		if self.status == 1
 			return self.name.split(',').last.split('(').first.strip
 		else
-			return self.name.split(',').last.split('(').first.strip + " *"
+			if star
+				return self.name.split(',').last.split('(').first.strip + " *"
+			else
+				return self.name.split(',').last.split('(').first.strip
+			end
 		end
 	end
 	
