@@ -24,7 +24,7 @@ class MainController < ApplicationController
 				end
 				
 				#@tariff = @car.check_fare(@starts, @ends) if flash[:error].blank?
-				@tariff = "Pricing#{Pricing::DEFAULT_VERSION}".check_fare_calc(@starts, @ends, params[:car]) if flash[:error].blank?
+				@tariff = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_fare_calc(@starts, @ends, params[:car]) if flash[:error].blank?
 			elsif !params[:process].blank? && params[:process] == 'checkout' && !session[:book].blank? && !session[:book][:starts].blank? && !session[:book][:ends].blank? && !session[:book][:car].blank?
 				@car = Cargroup.find_by_id(session[:book][:car])
 				@starts = Time.zone.parse(session[:book][:starts])

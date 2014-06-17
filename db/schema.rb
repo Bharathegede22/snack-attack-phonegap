@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140515125411) do
+ActiveRecord::Schema.define(version: 20140611140305) do
 
   create_table "announcements", force: true do |t|
     t.string  "note"
@@ -32,6 +32,15 @@ ActiveRecord::Schema.define(version: 20140515125411) do
   end
 
   add_index "attractions", ["city_id"], name: "index_attractions_on_city_id", using: :btree
+
+  create_table "booking_checklists", force: true do |t|
+    t.integer  "booking_id"
+    t.integer  "checklist_id"
+    t.boolean  "status",       default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "starts",       default: true
+  end
 
   create_table "bookings", force: true do |t|
     t.integer  "car_id",           limit: 2
@@ -95,6 +104,7 @@ ActiveRecord::Schema.define(version: 20140515125411) do
     t.string   "promo"
     t.integer  "credit_status",                                       default: 0
     t.integer  "offer_id"
+    t.integer  "pricing_id"
   end
 
   add_index "bookings", ["car_id"], name: "index_bookings_on_car_id", using: :btree
@@ -190,6 +200,7 @@ ActiveRecord::Schema.define(version: 20140515125411) do
     t.integer  "user_id"
     t.datetime "updated_at"
     t.boolean  "impact",                default: false
+    t.datetime "created_at"
   end
 
   add_index "carmovements", ["car_id"], name: "index_carmovements_on_car_id", using: :btree
@@ -258,6 +269,15 @@ ActiveRecord::Schema.define(version: 20140515125411) do
 
   add_index "charges", ["booking_id"], name: "index_charges_on_booking_id", using: :btree
 
+  create_table "checklists", force: true do |t|
+    t.integer  "header"
+    t.string   "name"
+    t.boolean  "active",     default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "starts",     default: false
+  end
+
   create_table "cities", force: true do |t|
     t.string "name"
     t.text   "description"
@@ -288,6 +308,14 @@ ActiveRecord::Schema.define(version: 20140515125411) do
     t.string   "note"
     t.integer  "creditable_id"
     t.string   "source_name"
+  end
+
+  create_table "debugs", force: true do |t|
+    t.integer  "debugable_id"
+    t.string   "debugable_type"
+    t.text     "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "emails", force: true do |t|
@@ -421,6 +449,24 @@ ActiveRecord::Schema.define(version: 20140515125411) do
   add_index "payments", ["booking_id"], name: "index_payments_on_booking_id", using: :btree
   add_index "payments", ["key"], name: "index_payments_on_key", using: :btree
 
+  create_table "pricings", force: true do |t|
+    t.integer  "cargroup_id"
+    t.integer  "city_id"
+    t.boolean  "status",                                default: false
+    t.integer  "weekly_fare"
+    t.integer  "hourly_fare"
+    t.integer  "monthly_fare"
+    t.string   "version"
+    t.datetime "starts"
+    t.decimal  "daily_fare",   precision: 10, scale: 0
+    t.integer  "daily_kms"
+    t.integer  "hourly_kms"
+    t.integer  "weekly_kms"
+    t.integer  "monthly_kms"
+  end
+
+  add_index "pricings", ["cargroup_id", "city_id"], name: "index_pricings_on_cargroup_id_and_city_id", using: :btree
+
   create_table "refunds", force: true do |t|
     t.integer  "booking_id"
     t.integer  "status",     limit: 1,                          default: 0
@@ -503,18 +549,18 @@ ActiveRecord::Schema.define(version: 20140515125411) do
   create_table "users", force: true do |t|
     t.string   "name"
     t.date     "dob"
-    t.string   "phone",                  limit: 15
+    t.string   "phone",                           limit: 15
     t.string   "license"
-    t.integer  "status",                 limit: 1,  default: 0
-    t.string   "pincode",                limit: 8
-    t.integer  "role",                   limit: 1,  default: 0
-    t.boolean  "mobile",                            default: false
-    t.string   "email",                                             null: false
-    t.string   "encrypted_password",                default: "",    null: false
+    t.integer  "status",                          limit: 1,  default: 0
+    t.string   "pincode",                         limit: 8
+    t.integer  "role",                            limit: 1,  default: 0
+    t.boolean  "mobile",                                     default: false
+    t.string   "email",                                                      null: false
+    t.string   "encrypted_password",                         default: "",    null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          limit: 3,  default: 0
+    t.integer  "sign_in_count",                   limit: 3,  default: 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
@@ -527,21 +573,22 @@ ActiveRecord::Schema.define(version: 20140515125411) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "city"
-    t.boolean  "gender",                            default: false
-    t.string   "country",                limit: 10
-    t.string   "state",                  limit: 50
+    t.boolean  "gender",                                     default: false
+    t.string   "country",                         limit: 10
+    t.string   "state",                           limit: 50
     t.string   "authentication_token"
     t.string   "ref_initial"
     t.string   "ref_immediate"
     t.string   "otp"
     t.datetime "otp_valid_till"
-    t.integer  "otp_attempts",           limit: 1
+    t.integer  "otp_attempts",                    limit: 1
     t.datetime "otp_last_attempt"
     t.integer  "total_credits"
     t.string   "note"
-    t.boolean  "license_verified",                  default: false
+    t.boolean  "license_verified",                           default: false
     t.string   "blacklist_reason"
     t.string   "blacklist_auth"
+    t.string   "authentication_token_valid_till"
   end
 
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
