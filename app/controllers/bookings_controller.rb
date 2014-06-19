@@ -114,6 +114,7 @@ class BookingsController < ApplicationController
 			Inventory.block_plain(@booking.cargroup_id, @booking.location_id, @booking.starts, @booking.ends)
 			@booking.status = 1
 		end
+
 		@booking.save!
 		
 		if promo && promo[:coupon]
@@ -131,11 +132,7 @@ class BookingsController < ApplicationController
 		# session[:book] = nil
 		# session[:promo_code] = nil
 		# session[:credits] = nil
-		
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
 		if @booking.status == 11	
 			flash[:notice] = "We will Notify you once the Vehicle is available."
 			session[:notify] = nil
