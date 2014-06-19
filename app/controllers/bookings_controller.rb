@@ -22,6 +22,9 @@ class BookingsController < ApplicationController
 		redirect_to "/bookings/do" and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		generic_meta
 		@header = 'booking'
+		
+		## get list of Corporates and role of current_user
+		@corporates = Corporate.make_corporate_hash if user_signed_in? && current_user.support?
 	end
 
 	def checkoutab
@@ -105,6 +108,15 @@ class BookingsController < ApplicationController
 		end
 		
 		@booking.status = 11 if session[:notify].present?
+<<<<<<< Updated upstream
+=======
+
+		if !session[:corporate_id].blank? && current_user.support?
+			@booking.corporate_id = session[:corporate_id]
+			Inventory.block_plain(@booking.cargroup_id, @booking.location_id, @booking.starts, @booking.ends)
+			@booking.status = 1
+		end
+>>>>>>> Stashed changes
 		@booking.save!
 		
 		if promo && promo[:coupon]
@@ -123,6 +135,10 @@ class BookingsController < ApplicationController
 		# session[:promo_code] = nil
 		# session[:credits] = nil
 		
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 		if @booking.status == 11	
 			flash[:notice] = "We will Notify you once the Vehicle is available."
 			session[:notify] = nil
@@ -134,8 +150,11 @@ class BookingsController < ApplicationController
 			session[:book] = nil
 			session[:promo_code] = nil
 			session[:credits] = nil
-			
-			if @booking.outstanding > 0
+
+			if !session[:corporate_id].blank? && current_user.support?
+				flash[:notice] = "Booking for Corporate Successful"
+			  	redirect_to "/bookings/#{@booking.encoded_id}"
+			elsif @booking.outstanding > 0 
 				redirect_to "/bookings/payment"
 			else
 				u = @booking.user
@@ -286,6 +305,13 @@ class BookingsController < ApplicationController
 	    end
 		end
     render json: {html: render_to_string('_promo.haml', layout: false)}
+  end
+
+  def corporate
+  		unless params[:corporate_id].blank?
+  			session[:corporate_id] = params[:corporate_id]
+  		end
+  		redirect_to "/bookings/checkout"
   end
 	
 	def reschedule

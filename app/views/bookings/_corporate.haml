@@ -1,0 +1,49 @@
+- if session[:corporate_id].blank?
+	.bg-e.p-10.border-c.solid.r-5
+		.p-b5
+			.fl
+				.search-item
+					%b Corporate Booking(optional)
+					.btn-group.m-l15
+						%button.btn.btn-default{type: "button", id: 'corpButton',value: ''}
+							Select Corporate
+						%button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+							%span.caret
+							%span.sr-only Toggle Dropdown
+						%ul.dropdown-menu{role: "menu"}
+							- @corporates.each do |key,value|
+								%li{:id => key, :value=> value}
+									%a{:href => "javascript:void(0)", :class => "corp", :onClick => "changeCorp(#{key},'#{value}');"}
+										= value
+		
+			.fl.p-l20
+				.button{onclick: "corporateCheckout()"} Apply 
+			.fc
+	.p-b15
+- else
+	.bg-e.p-10.border-c.solid.r-5
+		.p-b5
+			.fl
+				.search-item
+					%b Corporate Booking(optional)
+					.btn-group.m-l15
+						%button.btn.btn-default{type: "button", id: 'corpButton',value: '#{session[:corporate_id]}'}
+							= @corporates[session[:corporate_id]]
+						%button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+							%span.caret
+							%span.sr-only Toggle Dropdown
+						%ul.dropdown-menu{role: "menu"}
+							- @corporates.each do |key,value|
+								%li{:id => key, :value=> value}
+									%a{:href => "javascript:void(0)", :class => "corp", :onClick => "changeCorp(#{key},'#{value}');"}
+										= value
+		
+			.fl.p-l20
+				.button{onclick: "corporateCheckout()"} Apply
+			.fc
+			.fl
+				.p-b5
+					Corporate 
+					%b #{@corporates[session[:corporate_id]]}
+					has been Applied
+	.p-b15

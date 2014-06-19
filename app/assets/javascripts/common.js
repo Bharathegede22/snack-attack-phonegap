@@ -104,6 +104,16 @@ function checkout() {
 	window.location = "/bookings/docreate";
 }
 
+function corporateCheckout(){
+	corporate_id = $('#corpButton').val();
+	if(corporate_id != ''){
+		window.location = "/bookings/corporate?corporate_id="+corporate_id;
+	}else{
+		window.alert("Please select a corporate");
+	}
+	
+}
+
 function checkUser() {
 	if($('#UserBar').length) {
 		getData("/users/status", 'UserBar', 'replace', null);
@@ -609,3 +619,9 @@ $(function () {
   		$(this).tab('show');
 	})
 });
+
+
+function changeCorp(corpId, corpName){
+	$('#corpButton').text(corpName);
+	$('#corpButton').val(corpId);
+}

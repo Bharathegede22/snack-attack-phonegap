@@ -44,6 +44,8 @@
 								%b Date of Birth
 							%td
 								= current_user.dob.strftime("%d/%m/%Y")
+					- if current_user.support?
+						= render :partial => 'corporate'
 					#OutstandingDiv
 						= render :partial => 'outstanding'
 					.t-c

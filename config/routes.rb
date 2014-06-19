@@ -50,6 +50,7 @@ Web::Application.routes.draw do
 			get 'thanks'
 			get 'userdetails'
 			get 'widget'
+			get 'corporate'
 			
 			post 'license'
 			post 'payu'
