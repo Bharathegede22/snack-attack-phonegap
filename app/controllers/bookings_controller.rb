@@ -108,15 +108,12 @@ class BookingsController < ApplicationController
 		end
 		
 		@booking.status = 11 if session[:notify].present?
-<<<<<<< Updated upstream
-=======
 
 		if !session[:corporate_id].blank? && current_user.support?
 			@booking.corporate_id = session[:corporate_id]
 			Inventory.block_plain(@booking.cargroup_id, @booking.location_id, @booking.starts, @booking.ends)
 			@booking.status = 1
 		end
->>>>>>> Stashed changes
 		@booking.save!
 		
 		if promo && promo[:coupon]
