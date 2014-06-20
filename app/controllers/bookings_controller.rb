@@ -22,9 +22,6 @@ class BookingsController < ApplicationController
 		redirect_to "/bookings/do" and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		generic_meta
 		@header = 'booking'
-		
-		## get list of Corporates and role of current_user
-		@corporates = Corporate.make_corporate_hash if user_signed_in? && current_user.support?
 	end
 
 	def checkoutab
@@ -36,6 +33,15 @@ class BookingsController < ApplicationController
 	def complete
 		render layout: 'plain'
 	end
+	
+	def corporate
+		if !params[:clear].blank? && params[:clear].to_i == 1
+  		session[:corporate_id] = nil
+  	else
+			session[:corporate_id] = params[:corporate_id] if !params[:corporate_id].blank?
+		end
+		render json: {html: render_to_string('_corporate.haml', layout: false)}
+  end
 	
 	def credits
 		if current_user.total_credits.to_i < params[:fare].to_i
@@ -111,8 +117,12 @@ class BookingsController < ApplicationController
 
 		if !session[:corporate_id].blank? && current_user.support?
 			@booking.corporate_id = session[:corporate_id]
-			Inventory.block_plain(@booking.cargroup_id, @booking.location_id, @booking.starts, @booking.ends)
-			@booking.status = 1
+			if Inventory.block(@booking.cargroup_id, @booking.location_id, @booking.starts, @booking.ends) == 1
+				@booking.status = 1
+			else
+				Inventory.block_plain(@booking.cargroup_id, @booking.location_id, @booking.starts, @booking.ends)
+				@booking.status = 6
+			end
 		end
 
 		@booking.save!
@@ -126,13 +136,6 @@ class BookingsController < ApplicationController
 		
 		Credit.use_credits(@booking, session[:credits]) if !session[:credits].blank?
 		
-		# session[:booking_id] = @booking.encoded_id
-		# session[:search] = nil
-		# session[:book][:notify] = nil
-		# session[:book] = nil
-		# session[:promo_code] = nil
-		# session[:credits] = nil
-
 		if @booking.status == 11	
 			flash[:notice] = "We will Notify you once the Vehicle is available."
 			session[:notify] = nil
@@ -146,8 +149,10 @@ class BookingsController < ApplicationController
 			session[:credits] = nil
 
 			if !session[:corporate_id].blank? && current_user.support?
-				flash[:notice] = "Booking for Corporate Successful"
-			  	redirect_to "/bookings/#{@booking.encoded_id}"
+				flash[:notice] = "Corporate Booking is Successful"
+				session[:corporate_id] = nil
+				session[:booking_id] = nil
+		  	redirect_to "/bookings/#{@booking.encoded_id}"
 			elsif @booking.outstanding > 0 
 				redirect_to "/bookings/payment"
 			else
@@ -301,14 +306,7 @@ class BookingsController < ApplicationController
     render json: {html: render_to_string('_promo.haml', layout: false)}
   end
 
-  def corporate
-  		unless params[:corporate_id].blank?
-  			session[:corporate_id] = params[:corporate_id]
-  		end
-  		redirect_to "/bookings/checkout"
-  end
-	
-	def reschedule
+  def reschedule
 		@confirm = !params[:confirm].blank?
 		if request.post?
 			if @confirm

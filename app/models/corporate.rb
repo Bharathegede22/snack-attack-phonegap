@@ -1,11 +1,19 @@
 class Corporate < ActiveRecord::Base
-
-	def self.make_corporate_hash
+	
+	has_many :bookings
+	
+	def self.live
+		Rails.cache.fetch("corporates") do
+			Corporate.find_by_sql("SELECT * FROM corporates WHERE active = 1 ORDER BY name ASC")
+		end
+	end
+	
+	def self.live_hash
 		corporate_hash = {}
-		Corporate.all.each do |record|
+		Corporate.live.each do |record|
 			corporate_hash[record.id.to_s] = record.name 
 		end
-		corporate_hash
+		return corporate_hash
 	end
 
 end

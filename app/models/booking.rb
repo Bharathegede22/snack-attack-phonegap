@@ -2,6 +2,7 @@ class Booking < ActiveRecord::Base
 	
 	belongs_to :car
 	belongs_to :cargroup
+	belongs_to :corporate
 	belongs_to :location
 	belongs_to :offer
 	belongs_to :user
@@ -17,7 +18,9 @@ class Booking < ActiveRecord::Base
 	has_one :coupon_code
 	has_one	:review, :inverse_of => :booking, dependent: :destroy
 	has_one :debug, :as => :debugable, dependent: :destroy
+	
 	has_paper_trail
+	
 	attr_writer :through_search
 	attr_writer :through_signup
     

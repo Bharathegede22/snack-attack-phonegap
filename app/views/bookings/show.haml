@@ -9,6 +9,11 @@
 %h1.t-c
 	= "Booking # " + @booking.confirmation_key.upcase
 %br/
+- unless @booking.corporate_id.nil?										
+	.alert.alert-warning
+		.black
+			%b Corporate Booking : 
+			= @booking.corporate.name
 .row
 	.col-md-8
 		.row.size-20
@@ -29,15 +34,6 @@
 					- if !cargroup.disclaimer.blank?
 						.red.size-10
 							= cargroup.disclaimer.html_safe
-		- unless @booking.corporate_id.nil?										
-			.row
-				.col-md-3
-					.p-5 
-						%b Corporate Details
-				.col-md-9
-					.p-5
-						- corporate_id = @booking.corporate_id
-						= Corporate.find(corporate_id).name.capitalize
 		.row
 			.col-md-3
 				.p-5

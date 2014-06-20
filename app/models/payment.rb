@@ -56,7 +56,7 @@ class Payment < ActiveRecord::Base
 		count = 0
 		Payment.find_by_sql("SELECT p.* FROM payments p 
 			INNER JOIN bookings b ON b.id = p.booking_id 
-			WHERE p.through = 'payu' AND p.status = 1 AND b.status = 0 AND created_at < #{(Time.now - 30.minutes).to_s(:db)}").each do |p|
+			WHERE p.through = 'payu' AND p.status = 1 AND b.status = 0 AND p.created_at < #{(Time.now - 30.minutes).to_s(:db)}").each do |p|
 			p.save
 			count += 1
 		end

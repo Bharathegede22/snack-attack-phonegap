@@ -1,49 +1,38 @@
+- @corporates = Corporate.live_hash
 - if session[:corporate_id].blank?
 	.bg-e.p-10.border-c.solid.r-5
 		.p-b5
-			.fl
-				.search-item
-					%b Corporate Booking(optional)
-					.btn-group.m-l15
-						%button.btn.btn-default{type: "button", id: 'corpButton',value: ''}
-							Select Corporate
-						%button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
-							%span.caret
-							%span.sr-only Toggle Dropdown
-						%ul.dropdown-menu{role: "menu"}
+			%b Corporate Booking (Optional)
+		.p-b5
+			%form{:id => "CorporateForm", :onsubmit => "return SubmitForm(this,'/bookings/corporate','CorporateDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+				.row
+					.col-md-7
+						%select#CorporateId.form-control{name: 'corporate_id'}
+							%option{value: ''} Select
 							- @corporates.each do |key,value|
-								%li{:id => key, :value=> value}
-									%a{:href => "javascript:void(0)", :class => "corp", :onClick => "changeCorp(#{key},'#{value}');"}
-										= value
-		
-			.fl.p-l20
-				.button{onclick: "corporateCheckout()"} Apply 
-			.fc
-	.p-b15
+								%option{value: "#{key}"} #{value}
+					.col-md-5
+						#CorporateSubmit
+							%button.btn.btn-default{type:"submit"} Submit
+			#CorporateWait{style: "display:none;"}
+				.wait
 - else
 	.bg-e.p-10.border-c.solid.r-5
 		.p-b5
-			.fl
-				.search-item
-					%b Corporate Booking(optional)
-					.btn-group.m-l15
-						%button.btn.btn-default{type: "button", id: 'corpButton',value: '#{session[:corporate_id]}'}
-							= @corporates[session[:corporate_id]]
-						%button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
-							%span.caret
-							%span.sr-only Toggle Dropdown
-						%ul.dropdown-menu{role: "menu"}
-							- @corporates.each do |key,value|
-								%li{:id => key, :value=> value}
-									%a{:href => "javascript:void(0)", :class => "corp", :onClick => "changeCorp(#{key},'#{value}');"}
-										= value
-		
-			.fl.p-l20
-				.button{onclick: "corporateCheckout()"} Apply
-			.fc
-			.fl
-				.p-b5
-					Corporate 
-					%b #{@corporates[session[:corporate_id]]}
-					has been Applied
-	.p-b15
+			%b Corporate Booking (Optional)
+		.p-b5
+			%form{:id => "CorporateForm", :onsubmit => "return SubmitForm(this,'/bookings/corporate?clear=1','CorporateDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+				.row
+					.col-md-7
+						.p-t5
+							%b
+								%i
+									%u
+										= @corporates[session[:corporate_id]]
+					.col-md-5
+						#CorporateSubmit
+							%button.btn.btn-default.btn-xs{type:"submit"}
+								%span.glyphicon.glyphicon-remove
+			#CorporateWait{style: "display:none;"}
+				.wait
+.p-b15
