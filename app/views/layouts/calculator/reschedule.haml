@@ -1,6 +1,6 @@
 - render_flash
 .vertical-widget
-	%form{:id => "ReschForm", :onsubmit => "return SubmitForm(this,'/calculator/reschedule','ModalContent');", :action => "javascript:void(0)", "data-ajax" => "false"}
+	%form{:id => "ReschForm", :onsubmit => "return SubmitForm(this,'/#{@city.name}/calculator/reschedule','ModalContent');", :action => "javascript:void(0)", "data-ajax" => "false"}
 		.row
 			.col-md-5
 				.p-t20.t-r

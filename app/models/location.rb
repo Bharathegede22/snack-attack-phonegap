@@ -70,7 +70,7 @@ class Location < ActiveRecord::Base
 		end
 	end
 	
-	def self.live(city_id=1)
+	def self.live(city_id=City.find_by_name(DEFAULT_CITY).id)
 		Rails.cache.fetch("locations-#{city_id}") do
 			Location.find_by_sql("SELECT l.* FROM locations l 
 				INNER JOIN cars c ON c.location_id = l.id 

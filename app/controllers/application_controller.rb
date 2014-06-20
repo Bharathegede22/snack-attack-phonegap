@@ -4,12 +4,16 @@ class ApplicationController < ActionController::Base
   
   #protect_from_forgery with: :exception
   
+  before_filter :check_city
   before_filter :check_params
   
+  def check_city
+    @city = City.find_by_name(DEFAULT_CITY)
+    @city = City.find_by_name(params[:city]) if !params[:city].blank?
+    cookies[:city] = {:value=>@city.name, :expires => 30.days.from_now, :domain => ".#{HOSTNAME.gsub('www.','')}"}
+  end
+
   def check_params
-  	# Check City
-  	@city = City.find_by_name(params[:city]) if !params[:city].blank?
-  	
   	# Check Ref Initial
   	if cookies[:ref].blank?
   		vref = ''

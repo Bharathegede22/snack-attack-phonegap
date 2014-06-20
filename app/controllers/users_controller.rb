@@ -82,6 +82,7 @@ class UsersController < ApplicationController
 	end
 	
 	def status
+		p @city.inspect
 		render json: {html: render_to_string('/users/status.haml', :layout => false)}
 	end
 	

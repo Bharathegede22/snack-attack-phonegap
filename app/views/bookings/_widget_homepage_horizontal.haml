@@ -8,7 +8,7 @@
 			@booking.cargroup_id = session[:search][:car]
 		end
 	end
-%form{:id => "SearchForm", :onsubmit => "return SubmitForm(this,'/search/nav','SearchFormDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+%form{:id => "SearchForm", :onsubmit => "return SubmitForm(this,'/#{@city.name}/search/nav','SearchFormDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 	.item.fl
 		#StartDate.box.datetimebox
 			.cal
@@ -46,7 +46,7 @@
 	- if @booking && @booking.valid?
 		:javascript
 			pushEvent('Navigation Search', 'Submit');
-			window.location = "http://#{HOSTNAME}/search";
+			window.location = "http://#{HOSTNAME}/#{@city.name}/search";
 	- else
 		:javascript
 			pushEvent('Navigation Search', 'Submit');

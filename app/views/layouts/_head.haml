@@ -18,7 +18,7 @@
 	%link{href: asset_path('favicon.png'), rel: "shortcut icon", type: "image/png"}/
 	%link{href: "https://fonts.googleapis.com/css?family=Droid+Sans", rel: "stylesheet"}/
 	- if params[:controller] == 'main' && params[:action] == 'index'
-		%meta{property: "og:title", content: "Self Drive Cars In Bangalore"}
+		%meta{property: "og:title", content: "Self Drive Cars In #{@city.name}"}
 		%meta{property: "og:image", content: 'http://assets.zoomcar.in/images/logo-big.jpg'}
 		%meta{property: "og:url", content: @canonical}
 		%meta{property: "og:site_name", content: "ZoomCar"}

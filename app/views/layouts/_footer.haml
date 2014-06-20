@@ -3,27 +3,27 @@
 		.partition
 			%h3 How It Works?
 			.p-t5
-				%a{:href => "/howtozoom"} This is How You Zoom
+				%a{:href => "/#{@city.name}/howtozoom"} This is How You Zoom
 			.p-t5
-				%a{:href => "/safety"} Zoom in Safety
+				%a{:href => "/#{@city.name}/safety"} Zoom in Safety
 			.p-t5
-				%a{:href => "/outstation"} Going Outstation?
+				%a{:href => "/#{@city.name}/outstation"} Going Outstation?
 			.p-t5
-				%a{:href => "/reva"} Zoom's Electric!
+				%a{:href => "/#{@city.name}/reva"} Zoom's Electric!
 			.p-t5
-				%a{:href => "/privacy"} Privacy Policy
+				%a{:href => "/#{@city.name}/privacy"} Privacy Policy
 			.p-t5
-				%a{:href => "/faq"} FAQs
+				%a{:href => "/#{@city.name}/faq"} FAQs
 			.p-t5
-				%a{:href => "/bangalore"} What's Up Bangalore
+				%a{:href => "/#{@city.name}/#{@city.name}"} What's Up #{@city.name}
 		.partition.t-c
 			%h3 About Us
 			.p-t5
-				%a{:href => "/about"} Zoom Team
+				%a{:href => "/#{@city.name}/about"} Zoom Team
 			.p-t5
-				%a{:href => "/careers"} Careers @ Zoom
+				%a{:href => "/#{@city.name}/careers"} Careers @ Zoom
 			.p-t5
-				%a{:href => "http://www.zoomcar.in/blog/", :target => "_blank"} Zoom Blog
+				%a{:href => "http://www.zoomcar.in/#{@city.name}/blog/", :target => "_blank"} Zoom Blog
 			.m-t10.lgrey
 				&copy; Copyright #{Time.now.year} ZoomCar India Private Ltd.
 				%br/

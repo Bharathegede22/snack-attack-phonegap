@@ -4,7 +4,7 @@
 		.wrapper
 			.main-content.search-page
 				:ruby
-					cargroups = Cargroup.list
+					cargroups = Cargroup.city_list(@city)
 					if !@booking.cargroup_id.blank?
 						tmp = []
 						cargroups.each do |c|
@@ -15,7 +15,7 @@
 						end
 						cargroups = tmp
 					end
-					locs = Location.live
+					locs = Location.live(@city.id)
 					if !@booking.location_id.blank?
 						tmp = []
 						locs.each do |l|
@@ -34,14 +34,14 @@
 	- else
 		.wrapper.bg-f
 			.p-20
-				%h1 Search Self-Drive Cars in Bangalore
+				%h1 Search Self-Drive Cars in #{@city.name}
 				%br/
 				.row
 					.col-md-6
 						.f-b.size-20.droid.p-5
 							Zoom offers the following vehicles :
 						%ul
-							- Cargroup.list.each do |c|
+							- Cargroup.city_list(@city).each do |c|
 								%li.p-5
 									= c.shortname
 									- if !c.disclaimer.blank?
@@ -73,7 +73,7 @@
 				s.parentNode.insertBefore(x, s);
 			})(document);
 			function initializeMap() {
-				var myLatlng = new google.maps.LatLng(13.0667, 77.5667);
+				var myLatlng = new google.maps.LatLng(#{@city.lat}, #{@city.lng});
 				var mapOptions = {
 					zoom: 10,
 					center: myLatlng,
