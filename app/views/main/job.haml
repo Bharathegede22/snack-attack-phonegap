@@ -8,19 +8,7 @@
 		= raw(@job.description)
 	%br/
 	%h3 About Zoom
-	Zoom is India's first 100% self-drive car hire service. We're a membership-based service that allows customers to rent cars out by the hour or by the day. At present, we have a fleet of 
-	= Car.active
-	vehicles across 
-	= Location.live.length
-	different locations in Bangalore. We offer the 
-	- array = []
-	- Cargroup.name_list.each do |c|
-		- array << c.display_name.split('7')[0].strip.split('8')[0].strip
-	- array = array.uniq
-	= array.join(', ').gsub(', ' + array.last, '')
-	and
-	= array.last + "."
-	We're in rapid expansion mode as we look to grow across Bangalore and other Indian metros in 2014.
+	Zoom is India's first 100% self-drive car hire service. We're a membership-based service that allows customers to rent cars out by the hour, day, week or month. At present, we have a fleet of nearly 200 vehicles across more than 25 locations in Bangalore. We offer more than 10 models covering hatchbacks, sedans, suvs and luxury cars. We're in rapid expansion mode as we look to grow across Bangalore and other Indian metros.
 	%br/
 	%br/
 	%h3 How To Apply

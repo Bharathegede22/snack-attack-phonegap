@@ -33,7 +33,7 @@
 						%b Zoom Location
 					%td.p-10.t-c.bg-zoomb.white
 						%b Mobile No.
-				- Location.live.each do |l|
+				- Location.live(@city).each do |l|
 					- if !l.mobile.blank?
 						%tr.p-l10
 							%td.p-5.p-l20

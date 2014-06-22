@@ -98,8 +98,10 @@ Web::Application.routes.draw do
 	
 	post 'calculator/:id' => 'main#calculator'
 	
-	get '/:city' => 'main#city', constraints: {city: /bangalore/}
+	get '/:city' => 'main#index', constraints: {city: /bangalore/}
+	get '/:city/attractions' => 'main#city', constraints: {city: /bangalore/}
 	get '/:city/offers' => 'main#offers', constraints: {city: /bangalore/}
+	get '/:city/attractions' => 'seo#index', constraints: {city: /bangalore/}
 	get '/:city/explore' => 'seo#explore', constraints: {city: /bangalore/}
 	get '/:city/nearby' => 'seo#nearby', constraints: {city: /bangalore/}
 	get '/:city/:id' => 'seo#index', constraints: {city: /bangalore/}

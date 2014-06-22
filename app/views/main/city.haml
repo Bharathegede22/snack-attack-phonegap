@@ -1,9 +1,9 @@
 :ruby
-	cars = Cargroup.live(@city.id)
+	cars = Cargroup.live(@city)
 	tmp = nil
 	locs = []
 	@locations = {}
-	Location.live(@city.id).each do |l|
+	Location.live(@city).each do |l|
 		@locations[l.id.to_s] = l
 	end
 .static
@@ -46,7 +46,7 @@
 				mapTypeId: google.maps.MapTypeId.ROADMAP
 			}
 			var map = new google.maps.Map(document.getElementById("Gmap"), mapOptions);
-	- Location.live(@city.id).each do |a|
+	- Location.live(@city).each do |a|
 		:plain
 			var infowindow#{a.id} = new google.maps.InfoWindow({
 				content: "#{a.mapcontent}"

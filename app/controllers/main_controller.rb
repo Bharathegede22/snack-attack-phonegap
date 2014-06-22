@@ -71,10 +71,10 @@ class MainController < ApplicationController
 	end
 	
 	def city
-		@meta_title = @city.meta_title
-		@meta_description = @city.meta_description
-		@meta_keywords = @city.meta_keywords
-		@canonical = @city.link
+		@meta_title = @city.meta_title('attractions')
+		@meta_description = @city.meta_description('attractions')
+		@meta_keywords = @city.meta_keywords('attractions')
+		@canonical = @city.link('attractions')
 	end
 	
 	def eligibility
@@ -141,10 +141,10 @@ class MainController < ApplicationController
 	end
 	
 	def index
-		@meta_title = "Self Drive Cars Rental In Bangalore | Join Online, Book A Car & Drive | Zoomcar.in"
-		@meta_description = "Book a self-drive car online. Self driving car rental made easy like never before, simply join us for renting a car by the hour, day, week or month. Our tariff includes fuel, insurance & taxes."
-		@meta_keywords = "zoomcar, self drive car, self drive car rental, renting a car, self drive cars"
-		@canonical = "http://www.zoomcar.in"
+		@meta_title = @city.meta_title
+		@meta_description = @city.meta_description
+		@meta_keywords = @city.meta_keywords
+		@canonical = @city.link
 		@header = 'homepage'
 		#expires_in 1.months, :public => true, 'max-stale' => 0 #if Rails.env == 'production'
 	end
@@ -221,7 +221,7 @@ class MainController < ApplicationController
 		@meta_description = "ZoomCar offers the simplest, easiest car-hire tariff in Bangalore. Find out what all is included"
 		@meta_keywords = "zoomcar hire tariffs"
 		@canonical = "http://www.zoomcar.in/tariff"
-		@cargroup = Cargroup.list
+		@cargroup = Cargroup.list(@city)
 		@header = 'tariff'
 	end
 	

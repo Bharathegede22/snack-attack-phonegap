@@ -2,6 +2,7 @@ class Booking < ActiveRecord::Base
 	
 	belongs_to :car
 	belongs_to :cargroup
+	belongs_to :city
 	belongs_to :corporate
 	belongs_to :location
 	belongs_to :offer
@@ -25,8 +26,8 @@ class Booking < ActiveRecord::Base
 	attr_writer :through_signup
     
 	validates :starts, :ends, presence: true
-	validates :cargroup_id, :location_id, presence: true, if: Proc.new {|b| !b.through_search?}
-	validates :cargroup_id, :location_id, :user_id, presence: true, if: Proc.new {|b| b.through_signup?}
+	validates :cargroup_id, :city_id, :location_id, presence: true, if: Proc.new {|b| !b.through_search?}
+	validates :cargroup_id, :city_id, :location_id, :user_id, presence: true, if: Proc.new {|b| b.through_signup?}
 	validate :dates_order
 	
 	after_create :after_create_tasks
@@ -35,11 +36,11 @@ class Booking < ActiveRecord::Base
 	
 	def block_extension
 		if self.car_id.blank?
-			return Inventory.block_extension(self.cargroup_id, self.location_id, self.last_ends, self.ends)
+			return Inventory.block_extension(self.city, self.cargroup_id, self.location_id, self.last_ends, self.ends)
 		else
 			c = self.car
-			check = c.check_extension(self.last_ends, self.ends)
-			c.manage_inventory(self.last_ends, self.ends, true) if check == 1
+			check = c.check_extension(self.city, self.last_ends, self.ends)
+			c.manage_inventory(self.city, self.last_ends, self.ends, true) if check == 1
 			return check
 		end
 	end
@@ -76,9 +77,9 @@ class Booking < ActiveRecord::Base
 	
 	def check_extension
 		if self.car_id.blank?
-			return Inventory.check_extension(self.last_ends, self.ends, self.cargroup_id, self.location_id)
+			return Inventory.check_extension(self.last_ends, self.ends, self.city, self.cargroup_id, self.location_id)
 		else
-			return self.car.check_extension(self.last_ends, self.ends)
+			return self.car.check_extension(self.city, self.last_ends, self.ends)
 		end
 	end
 	
@@ -145,6 +146,13 @@ class Booking < ActiveRecord::Base
 	
 	def dates_order
 		if !self.starts.blank? && !self.ends.blank?
+			if self.new_record?
+		    errors.add(:starts, "Booking cannot be made more than #{CommonHelper::BOOKING_WINDOW} days in advance") if starts > Time.today + CommonHelper::BOOKING_WINDOW.days
+		    errors.add(:starts, "cannot be in the past") if starts < Time.now
+		    
+		    errors.add(:ends, "Booking cannot be made more than #{CommonHelper::BOOKING_WINDOW} days in advance") if ends > Time.today + CommonHelper::BOOKING_WINDOW.days
+		    errors.add(:ends, "cannot be in the past") if ends < Time.now
+		  end
 			if self.starts > self.ends
 				errors.add(:ends, "can't be less than the starting time")
 			elsif (self.starts + 1.hours) > self.ends
@@ -156,7 +164,7 @@ class Booking < ActiveRecord::Base
 	def do_cancellation
 		total = 0
 		if self.status < 9
-			self.manage_inventory(self.starts, self.ends, false)
+			self.manage_inventory(self.city, self.starts, self.ends, false)
 			self.charges.each do |c|
 				if !c.activity.include?('charge')
 					if c.refund > 0
@@ -221,7 +229,7 @@ class Booking < ActiveRecord::Base
 			elsif self.ends < self.last_ends
 				action_text = 'shortened_trip_refund'
 				str, fare = ['Shortening', get_fare('short')]
-				self.manage_inventory(self.ends, self.last_ends, false)
+				self.manage_inventory(self.city, self.ends, self.last_ends, false)
 				self.rescheduled = true
 			end
 		end
@@ -457,17 +465,17 @@ class Booking < ActiveRecord::Base
 		return "http://" + HOSTNAME + "/bookings/" + self.encoded_id
 	end
 	
-	def manage_inventory(start_time, end_time, block)
+	def manage_inventory(city, start_time, end_time, block)
 		if self.car_id.blank?
 			if block
 				# Block Inventory
-				Inventory.block_plain(self.cargroup_id, self.location_id, start_time, end_time)
+				Inventory.block_plain(city, self.cargroup_id, self.location_id, start_time, end_time)
 			else
 				# Release Inventory
-				Inventory.release(self.cargroup_id, self.location_id, start_time, end_time)
+				Inventory.release(city, self.cargroup_id, self.location_id, start_time, end_time)
 			end
 		else
-			self.car.manage_inventory(start_time, end_time, block)
+			self.car.manage_inventory(city, start_time, end_time, block)
 		end
 	end
 	

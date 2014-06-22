@@ -1,10 +1,9 @@
 class BookingsController < ApplicationController
 
-	
 	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
 	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule, :feedback]
 	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :notify, :userdetails]
-	before_filter :check_search_access, :only => [:credits, :docreate, :docreatenotify, :license, :login, :userdetails]
+	before_filter :check_search_access, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
   before_filter :check_blacklist, :only => [:docreate]
 
@@ -117,10 +116,10 @@ class BookingsController < ApplicationController
 
 		if !session[:corporate_id].blank? && current_user.support?
 			@booking.corporate_id = session[:corporate_id]
-			if Inventory.block(@booking.cargroup_id, @booking.location_id, @booking.starts, @booking.ends) == 1
+			if Inventory.block(@city, @booking.cargroup_id, @booking.location_id, @booking.starts, @booking.ends) == 1
 				@booking.status = 1
 			else
-				Inventory.block_plain(@booking.cargroup_id, @booking.location_id, @booking.starts, @booking.ends)
+				Inventory.block_plain(@city, @booking.cargroup_id, @booking.location_id, @booking.starts, @booking.ends)
 				@booking.status = 6
 			end
 		end
@@ -376,8 +375,9 @@ class BookingsController < ApplicationController
 			@booking.ends = Time.zone.parse(session[:search][:ends]) if !session[:search].blank? && !session[:search][:ends].blank?
 			@booking.location_id = session[:search][:loc] if !session[:search].blank? && !session[:search][:loc].blank?
 			@booking.cargroup_id = session[:search][:car] if !session[:search].blank? && !session[:search][:car].blank?
+			@booking.city_id = @city.id
 			@booking.through_search = true
-			@inventory = Inventory.check(@booking.starts, @booking.ends, nil, nil) if !session[:search].blank? && @booking.valid?
+			@inventory = Inventory.check(@booking.starts, @booking.ends, @city, nil, nil) if !session[:search].blank? && @booking.valid?
 			@header = 'search'
 		end
 	end
@@ -403,7 +403,7 @@ class BookingsController < ApplicationController
 			else
 				@page = params[:page].to_i
 			end
-			@inventory = Inventory.get(params[:car].to_i, params[:location].to_i, @booking.starts, @booking.ends, @page)
+			@inventory = Inventory.get(@city, params[:car].to_i, params[:location].to_i, @booking.starts, @booking.ends, @page)
 			if @page == 0
 				render json: {html: render_to_string('timeline.haml', layout: false)}
 			else
@@ -473,7 +473,7 @@ class BookingsController < ApplicationController
 	def check_inventory
 		if @booking
 			if @booking.jsi.blank? && @booking.status == 0
-				@available = Inventory.check(@booking.starts, @booking.ends, @booking.cargroup_id, @booking.location_id)
+				@available = Inventory.check(@booking.starts, @booking.ends, @city, @booking.cargroup_id, @booking.location_id)
 				if @available == 0 && !session[:notify].present?
 					flash[:error] = "Sorry, but the car is no longer available"
 					redirect_to(:back) and return
@@ -489,11 +489,12 @@ class BookingsController < ApplicationController
 			@booking.ends = Time.zone.parse(session[:book][:ends])
 			@booking.location_id = session[:book][:loc]
 			@booking.cargroup_id = session[:book][:car]
+			@booking.city_id = @city.id
 		end
 	end
 	
 	def check_search_access
-		redirect_to '/' and return if !@booking
+		redirect_to '/search' and return if !@booking || !@booking.valid?
 	end
 	
 	def image_params

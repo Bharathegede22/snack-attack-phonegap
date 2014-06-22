@@ -2,10 +2,6 @@ class Cargroup < ActiveRecord::Base
 	
 	has_many :bookings
 	
-  def cargroupObj
-  	return Cargroup.where("status = 1").order("priority ASC")
-  end  
-	
 	def check_fare(start_date, end_date)
 		temp = {:estimate => 0, :discount => 0, :days => 0, :normal_days => 0, :discounted_days => 0, :hours => 0, :normal_hours => 0, :discounted_hours => 0, :kms => 0}
 		cargroup = self
@@ -229,19 +225,19 @@ class Cargroup < ActiveRecord::Base
 		return "http://www.zoomcar.in/" + CommonHelper.escape(city.name.downcase) + "/" + CommonHelper.escape(self.name.downcase) + "-car-rental_" + self.encoded_id
 	end
 	
-	def locations
-  	Rails.cache.fetch("cargroup-locations-#{self.id}") do
+	def locations(city)
+  	Rails.cache.fetch("cargroup-locations-#{city.id}-#{self.id}") do
 		 	Location.find_by_sql("SELECT l.* FROM locations l 
 		 		INNER JOIN cars c ON c.location_id = l.id 
-		 		WHERE c.cargroup_id = #{self.id} AND c.status > 0 AND l.status > 0 
+		 		WHERE c.cargroup_id = #{self.id} AND c.status > 0 AND l.status > 0 AND l.city_id = #{city.id} 
 		 		GROUP BY l.id 
 		 		ORDER BY l.id DESC")
 		end
   end
   
-  def locations_hash
+  def locations_hash(city)
   	tmp = {}
-  	self.locations.each do |l|
+  	self.locations(city).each do |l|
   		tmp[l.id.to_s] = 1
   	end
   	return tmp
@@ -259,35 +255,31 @@ class Cargroup < ActiveRecord::Base
 		return "#{self.name} Car On Self Drive In #{city.name} | Zoomcar"
 	end
 	
-	def self.list
-  	Rails.cache.fetch("cargroup-list") do
-  		Cargroup.find_by_sql("SELECT * FROM cargroups WHERE status = 1 ORDER BY priority ASC")
+	def self.list(city)
+  	Rails.cache.fetch("cargroup-list-#{city.id}") do
+  		Cargroup.find_by_sql("SELECT cg.* FROM cargroups cg 
+				INNER JOIN cars c ON c.cargroup_id = cg.id 
+				INNER JOIN locations l ON l.id = c.location_id 
+				WHERE cg.status > 0 AND c.status > 0 AND l.status > 0 AND l.city_id = #{city.id} 
+				GROUP BY cg.id
+				ORDER BY cg.priority ASC
+			")
   	end
   end
 	
-	def self.live(city_id=1)
+	def self.live(city)
 		Cargroup.find_by_sql("SELECT cg.*, l.name AS l_name, l.id AS l_id, COUNT(DISTINCT c.id) AS total FROM cargroups cg 
 			INNER JOIN cars c ON c.cargroup_id = cg.id 
 			INNER JOIN locations l ON l.id = c.location_id 
-			WHERE cg.status > 0 AND c.status > 0 AND l.status > 0 AND l.city_id = #{city_id} 
+			WHERE cg.status > 0 AND c.status > 0 AND l.status > 0 AND l.city_id = #{city.id} 
 			GROUP BY cg.id, l.id 
 			ORDER BY cg.priority ASC")
 	end
 	
-	def self.name_list
-		Rails.cache.fetch("cargroup-name-list") do
-			Cargroup.find(:all, :select => "display_name", :conditions => "status = 1", :order => "priority ASC")
-  	end
+  def self.random(city)
+  	Cargroup.list(city).sample
   end
   
-  def self.random
-  	Cargroup.where("status > 0").order("RAND()").first
-  end
-  
-	def self.return_group
-  	Cargroup.all
-  end
-	
 	def shortname
 		self.display_name.gsub('Mahindra ','') rescue ""
 	end

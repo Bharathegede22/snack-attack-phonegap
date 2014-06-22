@@ -6,7 +6,7 @@
 				.p-t20.t-r
 					%b Select a Car *
 			.col-md-6
-				- cargroups = Cargroup.list
+				- cargroups = Cargroup.list(@city)
 				.dropdown
 					#CalCars.dropdown-toggle.box{'data-toggle' => "dropdown"}
 						.car

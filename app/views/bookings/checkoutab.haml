@@ -3,8 +3,8 @@
 		cargroup = @booking.cargroup
 		location = @booking.location
 	else
-		cargroup = Cargroup.random
-		location = Location.random
+		cargroup = Cargroup.random(@city)
+		location = Location.random(@city)
 		@booking = Booking.new
 		@booking.starts = Time.today + 1.days
 		@booking.ends = Time.today + 2.days

@@ -70,18 +70,18 @@ class Location < ActiveRecord::Base
 		end
 	end
 	
-	def self.live(city_id=1)
-		Rails.cache.fetch("locations-#{city_id}") do
+	def self.live(city)
+		Rails.cache.fetch("locations-#{city.id}") do
 			Location.find_by_sql("SELECT l.* FROM locations l 
 				INNER JOIN cars c ON c.location_id = l.id 
-				WHERE c.status > 0 AND l.status > 0 AND l.city_id = #{city_id} 
+				WHERE c.status > 0 AND l.status > 0 AND l.city_id = #{city.id} 
 				GROUP BY l.id
 				ORDER BY id DESC")
 		end
 	end
 	
-	def self.random
-  	Location.where("status > 0").order("RAND()").first
+	def self.random(city)
+  	Location.live(city).sample
   end
   
 end

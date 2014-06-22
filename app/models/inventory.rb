@@ -9,23 +9,19 @@ class Inventory < ActiveRecord::Base
 	
 	after_save :after_save_tasks
 	
-	def manage_cache
-		Rails.cache.delete("inventory-#{self.cargroup_id}-#{self.location_id}-#{self.slot.beginning_of_day.to_i}")
-	end
-	
-	def self.block(cargroup, location, starts, ends)
-		check = check(starts, ends, cargroup, location)
-		block_plain(cargroup, location, starts, ends) if check == 1
+	def self.block(city, cargroup, location, starts, ends)
+		check = check(starts, ends, city, cargroup, location)
+		block_plain(city, cargroup, location, starts, ends) if check == 1
 		return check
 	end
 	
-	def self.block_extension(cargroup, location, starts, ends)
-		check = check_extension(starts, ends, cargroup, location)
-		block_plain(cargroup, location, starts, ends) if check == 1
+	def self.block_extension(city, cargroup, location, starts, ends)
+		check = check_extension(starts, ends, city, cargroup, location)
+		block_plain(city, cargroup, location, starts, ends) if check == 1
 		return check
 	end
 	
-	def self.block_plain(cargroup, location, starts, ends)
+	def self.block_plain(city, cargroup, location, starts, ends)
 		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
 		Rails.logger.warn "Inventory_block_cg_#{cargroup}_loc_#{location}: starts #{(starts + 330.minutes).to_s(:db)}, ends #{(ends + 330.minutes).to_s(:db)}"
 		ActiveRecord::Base.connection.execute("UPDATE inventories SET total = (total-1) WHERE 
@@ -36,44 +32,30 @@ class Inventory < ActiveRecord::Base
 		ActiveRecord::Base.connection.execute("UNLOCK TABLES")
 	end
 	
-	def self.cache
-		start_date = '2013-11-01 00:00:00'.to_datetime
-		end_date = '2014-04-01 00:00:00'.to_datetime
-		Cargroup.find(:all).each do |car|
-			Location.find(:all).each do |loc|
-				date = start_date
-				while date < end_date do
-					Inventory.get(car.id, loc.id, date)
-					date += 1.days
-				end
-			end
-		end
-	end
-	
-	def self.check(start_time, end_time, cargroup, location)
+	def self.check(start_time, end_time, city, cargroup, location)
 		if !cargroup.blank? && !location.blank?
-			return check_plain(start_time, end_time, cargroup, location, true, true, true)[cargroup.to_s][location.to_s]
+			return check_plain(start_time, end_time, city, cargroup, location, true, true, true)[cargroup.to_s][location.to_s]
 		else
-			return check_plain(start_time, end_time, cargroup, location, true, true, true)
+			return check_plain(start_time, end_time, city, cargroup, location, true, true, true)
 		end
 	end
 	
-	def self.check_extension(start_time, end_time, cargroup, location)
-		return check_plain(start_time, end_time, cargroup, location, true, false, true)[cargroup.to_s][location.to_s]
+	def self.check_extension(start_time, end_time, city, cargroup, location)
+		return check_plain(start_time, end_time, city, cargroup, location, true, false, true)[cargroup.to_s][location.to_s]
 	end
 	
-	def self.check_plain(start_time, end_time, cargroup, location, timezone_padding=false, start_padding=false, end_padding=false)
+	def self.check_plain(start_time, end_time, city, cargroup, location, timezone_padding=false, start_padding=false, end_padding=false)
 		Inventory.connection.clear_query_cache
-		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE, cargroups READ, locations READ, locations AS l READ, cars AS c READ")
+		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE, cargroups READ, cities READ, locations READ, locations AS l READ, cars AS c READ")
 		if cargroup
 			cars = [Cargroup.find(cargroup)]
 		else
-			cars = Cargroup.list
+			cars = Cargroup.list(city)
 		end
 		if location
 			locs = [Location.find(location)]
 		else
-			locs = Location.live
+			locs = Location.live(city)
 		end
 		check = {}
 		cars.each do |c|
@@ -108,7 +90,7 @@ class Inventory < ActiveRecord::Base
 		return check
 	end
 	
-	def self.get(cargroup, location, starts, ends, page)
+	def self.get(city, cargroup, location, starts, ends, page)
 		cg = Cargroup.find(cargroup)
 		starts = starts.to_date.to_datetime
 		if ends == ends.beginning_of_day
@@ -143,7 +125,7 @@ class Inventory < ActiveRecord::Base
 		return temp
 	end
 	
-	def self.release(cargroup, location, starts, ends)
+	def self.release(city, cargroup, location, starts, ends)
 		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
 		Rails.logger.warn "Inventory_release_cg_#{cargroup}_loc_#{location}: starts #{(starts + 330.minutes).to_s(:db)}, ends #{(ends + 330.minutes).to_s(:db)}"
 		ActiveRecord::Base.connection.execute("UPDATE inventories SET total = (total+1) WHERE 
@@ -157,7 +139,6 @@ class Inventory < ActiveRecord::Base
 	private
 	
 	def after_save_tasks
-		self.manage_cache
 	end
 
 end

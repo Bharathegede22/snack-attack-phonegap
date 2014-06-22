@@ -49,12 +49,12 @@
 					%li{:id => ("Location"), :role => "presentation"}
 						%a{:href => "javascript:void(0)", :onclick => "changeLocation('','All Locations','nav');"}
 							All Locations
-					-Zone.where(:city_id=>1).each do |z|
+					- Zone.live(@city).each do |z|
 						%li.dropdown-submenu
 							%a{:href=>"#"} 
 								=z.name
 								%ul.dropdown-menu
-									- Location.live.each do |l|
+									- Location.live(@city).each do |l|
 										- if l.zone_id == z.id
 											- if l.id == @booking.location_id
 												%li.active{:id => ("Location" + l.id.to_s), :role => "presentation"}
@@ -79,7 +79,7 @@
 					%li{:id => ("Cars"), :role => "presentation"}
 						%a{:href => "javascript:void(0)", :onclick => "changeCar('','All Cars','Cars','nav');"}
 							All Cars
-					- Cargroup.list.each do |c|
+					- Cargroup.list(@city).each do |c|
 						- if c.id == @booking.cargroup_id
 							%li.active{:id => ("Cars" + c.id.to_s), :role => "presentation"}
 								%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.shortname}','Cars','nav');"}

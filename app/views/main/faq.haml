@@ -1,7 +1,7 @@
 :ruby
-	locs = Location.live.collect {|l| l.name.gsub(',', ' at')}
-	cars = Cargroup.list.collect {|c| c.name}
-	cg = Cargroup.find(1)
+	locs = Location.live(@city).collect {|l| l.name.gsub(',', ' at')}
+	cars = Cargroup.list(@city).collect {|c| c.name}
+	cg = Cargroup.list(@city).first
 .static
 	%h1 Frequently Asked Questions
 

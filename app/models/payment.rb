@@ -148,10 +148,10 @@ class Payment < ActiveRecord::Base
 				if b.status == 0
 					if !b.car_id.blank?
 						b.status = 1
-					elsif Inventory.block(b.cargroup_id, b.location_id, b.starts, b.ends) == 1
+					elsif Inventory.block(b.city, b.cargroup_id, b.location_id, b.starts, b.ends) == 1
 						b.status = 1
 					else
-						Inventory.block_plain(b.cargroup_id, b.location_id, b.starts, b.ends)
+						Inventory.block_plain(b.city, b.cargroup_id, b.location_id, b.starts, b.ends)
 						b.status = 6
 					end
 					BookingMailer.payment(b.id).deliver

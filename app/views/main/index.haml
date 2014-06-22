@@ -1,11 +1,11 @@
-- @cargroup = Cargroup.list
+- @cargroup = Cargroup.list(@city)
 .homepage
 	.afold
 		.cars
 			.h1
 				%h1
 					%span
-						Self Drive Cars In Bangalore
+						= @city.h1
 				%p
 					%span
 						Zoom in the City and Outstation
