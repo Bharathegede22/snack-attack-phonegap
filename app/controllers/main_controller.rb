@@ -132,6 +132,14 @@ class MainController < ApplicationController
 		#expires_in 1.months, :public => true, 'max-stale' => 0 #if Rails.env == 'production'
 	end
 	
+	def howitworks
+		@meta_title = "Self Drive Cars Rental In Bangalore | Join Online, Book A Car & Drive | Zoomcar.in"
+		@meta_description = "Know how Zoom works"
+		@meta_keywords = "how zoomcar works"
+		@canonical = "http://www.zoomcar.in/howitworks"
+		@header = 'help'
+	end
+
 	def howtozoom
 		@meta_title = "Self Drive Cars Rental In Bangalore | Join Online, Book A Car & Drive | Zoomcar.in"
 		@meta_description = "Read how to be a better ZoomCar Member"
