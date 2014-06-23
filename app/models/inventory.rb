@@ -1,5 +1,7 @@
 class Inventory < ActiveRecord::Base
+	
 	establish_connection "#{Rails.env}_inventory"	
+	
 	belongs_to :cargroup
 	belongs_to :city
 	belongs_to :location
@@ -28,7 +30,7 @@ class Inventory < ActiveRecord::Base
 	def self.block_plain(cargroup, location, starts, ends)
 		Inventory.connection.execute("LOCK TABLES inventories WRITE")
 		Rails.logger.warn "Inventory_block_cg_#{cargroup}_loc_#{location}: starts #{(starts + 330.minutes).to_s(:db)}, ends #{(ends + 330.minutes).to_s(:db)}"
-		ActiveRecord::Base.connection.execute("UPDATE inventories SET total = (total-1) WHERE 
+		Inventory.connection.execute("UPDATE inventories SET total = (total-1) WHERE 
 			cargroup_id = #{cargroup} AND 
 			location_id = #{location} AND 
 			slot >= '#{(starts + 330.minutes).to_s(:db)}' AND 
@@ -64,7 +66,7 @@ class Inventory < ActiveRecord::Base
 	
 	def self.check_plain(start_time, end_time, cargroup, location, timezone_padding=false, start_padding=false, end_padding=false)
 		Inventory.connection.clear_query_cache
-		Inventory.connection.execute("LOCK TABLES inventories WRITE")
+		Inventory.connection.execute("LOCK TABLES inventories WRITE, cargroups READ, locations READ, locations AS l READ, cars AS c READ")
 		if cargroup
 			cars = [Cargroup.find(cargroup)]
 		else
@@ -144,14 +146,14 @@ class Inventory < ActiveRecord::Base
 	end
 	
 	def self.release(cargroup, location, starts, ends)
-		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
+		Inventory.connection.execute("LOCK TABLES inventories WRITE")
 		Rails.logger.warn "Inventory_release_cg_#{cargroup}_loc_#{location}: starts #{(starts + 330.minutes).to_s(:db)}, ends #{(ends + 330.minutes).to_s(:db)}"
-		ActiveRecord::Base.connection.execute("UPDATE inventories SET total = (total+1) WHERE 
+		Inventory.connection.execute("UPDATE inventories SET total = (total+1) WHERE 
 			cargroup_id = #{cargroup} AND 
 			location_id = #{location} AND 
 			slot >= '#{(starts + 330.minutes).to_s(:db)}' AND 
 			slot < '#{(ends + 330.minutes).to_s(:db)}'")
-		ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+		Inventory.connection.execute("UNLOCK TABLES")
 	end
 	
 	private

@@ -307,7 +307,19 @@ class Booking < ActiveRecord::Base
 		end
 		return [str, fare]
 	end
-
+	
+	def downgraded?
+		if self.pricing_mode_changed?
+			case self.pricing_mode_was
+			when 'm'
+				return true if self.pricing_mode == 'w' || self.pricing_mode == 'h'
+			when 'w'
+				return true if self.pricing_mode == 'h'
+			end
+		end
+		return false
+	end
+	
 	def encoded_id
 		CommonHelper.encode('booking', self.id)
 	end

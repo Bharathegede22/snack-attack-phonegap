@@ -1,14 +1,16 @@
-class Pricingv2 < Pricing
+class Pricingv2
 	
 	BUFFER_TIME = 30
 	CHARGE_CAP = 2500
 	CHARGE_PERCENTAGE = 25
 	CREDIT_PERCENTAGE = 50
 	LATE_FEE = 300
+	SECURITY = 5000
 	START_BUFFER_TIME = 24
 	WEEKDAY_DISCOUNT = 40
 	
 	def self.cancel
+		data = get(@@booking.starts, @@booking.ends, @@booking.pricing_mode)
 		total = 0
 		if Time.now > (@@booking.starts - START_BUFFER_TIME.hours)
 			@booking.charges.each do |c|
@@ -26,21 +28,32 @@ class Pricingv2 < Pricing
 				total = (total*(CHARGE_PERCENTAGE/100.0)).round
 			end
 		end
-		return total
+		data[:penalty] = total
+		data[:refund] = data[:total]
+		return data
 	end
 	
-	def self.check(booking)
+	def self.check(booking, action=nil)
 		cargroup = booking.cargroup
 		@@pricing = cargroup.active_pricing(booking.city_id)
 		@@booking = booking
 		
-		if booking.status < 9 && booking.returned_at_changed?
-			if booking.returned_at > (booking.ends + BUFFER_TIME.minutes)
-				return check_late
-			elsif booking.returned_at < (booking.ends - BUFFER_TIME.minutes)
-				return check_early
-			end
+		if !action.blank?
+			return case action
+			when 'cancel'				then cancel
+			when 'early' 				then early
+			when 'late' 				then late
+			when 'new' 					then get(@@booking.starts, @@booking.ends, @@booking.pricing_mode)
+			when 'reschedule'		then reschedule
 		else
+			if booking.status < 9 && booking.returned_at_changed?
+				if booking.returned_at > (booking.ends + BUFFER_TIME.minutes)
+					return late
+				elsif booking.returned_at < (booking.ends - BUFFER_TIME.minutes)
+					return early
+				end
+			else
+			end
 		end
 	end
 	
@@ -49,14 +62,6 @@ class Pricingv2 < Pricing
 		data = get(@@booking.starts, @@booking.ends, @@booking.pricing_mode)
 		tmp = get(@@booking.starts, @@booking.returned_at, @@booking.pricing_mode)
 		data[:credits] = ((data[:total] - tmp[:total])*(CREDIT_PERCENTAGE/100.0)) if (data[:total] > tmp[:total])
-		data -= tmp
-		return data
-	end
-	
-	def self.extend
-		data = {total: 0, estimate: 0, normal_discount: 0, offer_discount: 0, total_hours: 0, normal_hours: 0, discounted_hours: 0, kms: 0, penalty: 0, credits: 0, refund: 0}}
-		data = get(@@booking.starts, @@booking.ends, @@booking.pricing_mode)
-		tmp = get(@@booking.starts, @@booking.ends_was, @@booking.pricing_mode)
 		data -= tmp
 		return data
 	end
@@ -70,12 +75,28 @@ class Pricingv2 < Pricing
 		return data
 	end
 	
-	def self.reschedule
+	def self.reschedule(action=nil)
 		data = {total: 0, estimate: 0, normal_discount: 0, offer_discount: 0, total_hours: 0, normal_hours: 0, discounted_hours: 0, kms: 0, penalty: 0, credits: 0, refund: 0}
-		data = get(@@booking.starts, @@booking.ends_was, @@booking.pricing_mode)
+		data = get(@@booking.starts_was, @@booking.ends_was, @@booking.pricing_mode_was)
 		tmp = get(@@booking.starts, @@booking.ends, @@booking.pricing_mode)
-		c
-		data -= tmp
+		
+		if tmp[:total] < data[:total]
+			# Charges for late reschedule
+			if (Time.now > (@@booking.starts_was - START_BUFFER_TIME.hours))
+				if @@booking.downgraded?
+					data[:penalty] = (data[:total]*(CHARGE_PERCENTAGE/100.0)).round
+				else
+					data[:penalty] = ((data[:total] - tmp[:total])*(CHARGE_PERCENTAGE/100.0)).round
+				end
+				data[:penalty] = CHARGE_CAP if data[:penalty] > CHARGE_CAP
+			end
+			data -= tmp
+			data[:refund] = data[:total]
+			return data
+		else
+			tmp -= data
+			data = tmp
+		end
 		return data
 	end
 	
@@ -83,7 +104,7 @@ class Pricingv2 < Pricing
 		data = {total: 0, estimate: 0, normal_discount: 0, offer_discount: 0, total_hours: 0, normal_hours: 0, discounted_hours: 0, kms: 0, penalty: 0, credits: 0, refund: 0}
 		data = get(@@booking.starts, @@booking.ends_was, @@booking.pricing_mode_was)
 		tmp = get(@@booking.starts, @@booking.ends, @@booking.pricing_mode)
-		if @@booking.pricing_mode_changed?
+		if @@booking.downgrade?
 			# Cancel Booking
 			data[:penalty] = (data[:total]*(CHARGE_PERCENTAGE/100.0)).round
 			data[:penalty] = CHARGE_CAP if data[:penalty] > CHARGE_CAP
