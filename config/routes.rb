@@ -12,7 +12,7 @@ Web::Application.routes.draw do
 			:registrations => "users/registrations", 
 			:sessions => "users/sessions"
 		}
-	scope "/(:city)" do
+	scope "/(:city)", constraints: {city: /Bangalore|Pune/} do
 		get '/' => "main#index"
 		get '/search' => "bookings#search"
 		post '/search/:id' => "bookings#search"
@@ -98,27 +98,27 @@ Web::Application.routes.draw do
 	end
 end
 	
-	post '/:city/calculator/:id' => 'main#calculator'
+	post '/:city/calculator/:id' => 'main#calculator', constraints: {city: /Bangalore|Pune/}
 	
 	#get '/:city' => 'main#city', constraints: {city: /bangalore|pune/}
 	get '/:city/offers' => 'main#offers', constraints: {city: /(Bangalore|Pune)/}
-	get '/:city/explore' => 'seo#explore', constraints: {city: /(bangalore|pune)/}
-	get '/:city/nearby' => 'seo#nearby', constraints: {city: /bangalore|pune/}
+	get '/:city/explore' => 'seo#explore', constraints: {city: /(Bangalore|Pune)/}
+	get '/:city/nearby' => 'seo#nearby', constraints: {city: /Bangalore|Pune/}
 	#get '/:city/:id' => 'seo#index', constraints: {city: /bangalore|pune/}
-	get '/:city/tariff'=>'main#tariff'
-	get '/:city/safety'=>'main#safety'
-	get '/:city/safety'=>'main#safety'
-	get '/:city/calculator/:id'=>'main#calculator'
-	get '/:city/howtozoom'=>'main#howtozoom'
-	get '/:city/outstation'=>'main#outstation'
-	get '/:city/reva'=>'main#reva'
-	get '/:city/faq'=>'main#faq'
-	get '/:city/handover'=>'main#handover'
-	get '/:city/fees'=>'main#fees'
-	get '/:city/eligibility'=>'main#eligibility'
-	get '/:city/member'=>'main#member'
-	get '/:city/privacy'=>'main#privacy'
-	get '/:city/faq'=>'main#faq'
+	get '/:city/tariff'=>'main#tariff', constraints: {city: /Bangalore|Pune/}
+	get '/:city/safety'=>'main#safety', constraints: {city: /Bangalore|Pune/}
+	get '/:city/safety'=>'main#safety', constraints: {city: /Bangalore|Pune/}
+	get '/:city/calculator/:id'=>'main#calculator', constraints: {city: /Bangalore|Pune/}
+	get '/:city/howtozoom'=>'main#howtozoom', constraints: {city: /Bangalore|Pune/}
+	get '/:city/outstation'=>'main#outstation', constraints: {city: /Bangalore|Pune/}
+	get '/:city/reva'=>'main#reva', constraints: {city: /Bangalore|Pune/}
+	get '/:city/faq'=>'main#faq', constraints: {city: /Bangalore|Pune/}
+	get '/:city/handover'=>'main#handover', constraints: {city: /Bangalore|Pune/}
+	get '/:city/fees'=>'main#fees', constraints: {city: /Bangalore|Pune/}
+	get '/:city/eligibility'=>'main#eligibility', constraints: {city: /Bangalore|Pune/}
+	get '/:city/member'=>'main#member', constraints: {city: /Bangalore|Pune/}
+	get '/:city/privacy'=>'main#privacy', constraints: {city: /Bangalore|Pune/}
+	get '/:city/faq'=>'main#faq', constraints: {city: /Bangalore|Pune/}
 	# get 'job/:id' => 'main#job'
  #  get ':action(.:format)' => 'main'
  #  get ':action/:id' => 'main'

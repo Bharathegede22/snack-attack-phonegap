@@ -2,16 +2,16 @@ class Offer < ActiveRecord::Base
 	
 	has_many :bookings
 	has_many :coupon_codes
+	has_many :city_offers
+	has_many :cities, through: :city_offers
 	
-	def self.get(code,city)
+	def self.get(code)
 		code = code.downcase.strip
 		offer = nil
 		coupon = nil
 		text = ''
-		
 		# Promo
 		offer = Offer.find_by(:promo_code => code)
-		
 		# Coupon
 		if offer.blank?
 			coupon = CouponCode.find_by(:code => code)
