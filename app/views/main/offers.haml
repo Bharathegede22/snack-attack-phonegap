@@ -16,7 +16,7 @@
 				%b.black PLEASE NOTE:
 				%br/
 				A reservation beginning on Sunday will not have the first 24-hour period qualify for discount.
-	- Offer.active.each do |offer|
+	- @city.active_offers.each do |offer|
 		%br/
 		.tariff-special
 			.p-20

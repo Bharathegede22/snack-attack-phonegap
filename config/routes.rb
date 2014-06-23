@@ -74,29 +74,29 @@ Web::Application.routes.draw do
 			end
 		end
 
-	#as :user do
-	#	get 'signin' => 'users#signin', :as => :new_user_session
-	#	post 'signin' => 'users#signin', :as => :user_session
-	#end
+		#as :user do
+		#	get 'signin' => 'users#signin', :as => :new_user_session
+		#	post 'signin' => 'users#signin', :as => :user_session
+		#end
 
-	resources :users do
-		collection do
-			get 'forgot'
-			get 'license'
-			get 'password'
-			get 'settings'
-			get 'social'
-			get 'signin'
-			get 'signup'
-			get 'status'
-			get 'credits'
-
-			post 'license'
-			post 'signup'
-			post 'update'
+		resources :users do
+			collection do
+				get 'forgot'
+				get 'license'
+				get 'password'
+				get 'settings'
+				get 'social'
+				get 'signin'
+				get 'signup'
+				get 'status'
+				get 'credits'
+	
+				post 'license'
+				post 'signup'
+				post 'update'
+			end
 		end
 	end
-end
 	
 	post '/:city/calculator/:id' => 'main#calculator', constraints: {city: /Bangalore|Pune/}
 	
