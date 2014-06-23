@@ -55,23 +55,17 @@
 						%b.caret
 					%ul.dropdown-menu
 						%li
-							%a{href: "/howtozoom"}
-								This is How You Zoom
-						%li
-							%a{href: "/safety"}
-								Zoom in Safety
-						%li
-							%a{href: "/outstation"}
-								Going Outstation?
-						%li
-							%a{href: "/reva"}
-								Zoom's Electric!
+							%a{href: "/howitworks"}
+								How ZoomCar Works
 						%li
 							%a{href: "/faq"}
 								FAQs
 						%li
-							%a{href: "/handover"}
-								Zoom Responsibly
+							%a{href: "/outstation"}
+								Going Outstation?
+						%li
+							%a{href: "/safety"}
+								Zoom in Safety
 				%li.dropdown
 					- cls = (!@header.blank? && @header == 'policy') ? 'dropdown-toggle active' : 'dropdown-toggle'
 					%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}
@@ -90,6 +84,9 @@
 						%li
 							%a{href: "/privacy"}
 								Privacy Policy
+						%li
+							%a{href: "/handover"}
+								Zoom Responsibly
 				%li
 					- cls = (!@header.blank? && @header == 'offers') ? 'active' : ''
 					%a{class: cls, href: "/bangalore/offers"} Offers
