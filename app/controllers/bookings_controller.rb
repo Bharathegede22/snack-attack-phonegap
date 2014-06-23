@@ -42,7 +42,7 @@ class BookingsController < ApplicationController
 			flash[:message] = 'Credits applied, please carry on!'
 		end
 		#@fare = @booking.cargroup.check_fare(@booking.starts, @booking.ends)
-		@fare = "Pricing#{Pricing::DEFAULT_VERSION}".check_fare_calc(@booking.starts, @booking.ends,@booking.cargroup.id)
+		@fare = "Pricing#{Pricing::DEFAULT_VERSION}".check_fare_calc(@booking.starts, @booking.ends,@booking.cargroup.id,@city.id)
 		render json: {html: render_to_string('_outstanding.haml', layout: false)}
 	end
 
@@ -90,7 +90,7 @@ class BookingsController < ApplicationController
 		end
 		
 		promo = nil
-		promo = Offer.get(session[:promo_code]) if !session[:promo_code].blank?
+		promo = Offer.get(session[:promo_code],@city) if !session[:promo_code].blank?
 		
 		@booking.user_id = current_user.id
 		@booking.user_name = current_user.name
@@ -283,7 +283,7 @@ class BookingsController < ApplicationController
   		session[:promo_code] = nil
   	else
 			if !params[:promo].blank?
-				@offer = Offer.get(params[:promo])
+				@offer = Offer.get(params[:promo],@city)
 				session[:promo_code] = params[:promo].upcase if @offer[:offer] && @offer[:error].blank?
 	    end
 		end

@@ -2,6 +2,8 @@ class City < ActiveRecord::Base
 	
 	has_many :attractions
 	has_many :locations
+	has_many :city_offers
+	has_many :offers, through: :city_offers
 	def h1(action=nil)
 		return case action
 		when 'inside' then "Rent Self Drive Cars, Explore #{self.name}"
@@ -44,4 +46,9 @@ class City < ActiveRecord::Base
 		end
 	end
 	
+	def active_offers
+		Rails.cache.fetch("#{name}-offers") do
+			offers.where("status = 1 AND visibility = 1").to_a
+		end
+	end
 end

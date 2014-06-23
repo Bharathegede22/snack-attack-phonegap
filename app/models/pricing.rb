@@ -9,17 +9,17 @@ class Pricing < ActiveRecord::Base
 		Pricing.create(city_id: city_id, cargroup_id: cargroup_id, monthly_fare: monthly_fare, weekly_fare: weekly_fare, hourly_fare: hourly_fare, monthly_kms: monthly_kms, weekly_kms: weekly_kms, hourly_kms: hourly_kms, starts: starts, status: true)
 	end
 
-	def self.for_type(cargroup_id, city_id, given_time = Time.now)
-		Pricing.where("cargroup_id = ? AND city_id = ? AND effective_from < ?", cargroup_id, city_id, given_time).sort_by(&:effective_from).last rescue nil
-	end
+	# def self.for_type(cargroup_id, city_id, given_time = Time.now)
+	# 	Pricing.where("cargroup_id = ? AND city_id = ? AND effective_from < ?", cargroup_id, city_id, given_time).sort_by(&:effective_from).last rescue nil
+	# end
 
-	def self.present(cargroup_id,city_id,starts)
-		Pricing.where("cargroup_id =? AND city_id =? AND ")
-	end
+	# def self.present(cargroup_id,city_id,starts)
+	# 	Pricing.where("cargroup_id =? AND city_id =? AND ")
+	# end
 
-	def self.applicable_version(cargroup_id,city_id,given_time = Time.now)
-		Pricing.where("cargroup_id = ? AND city_id = ? AND starts < ?", cargroup_id, city_id, given_time).sort_by(&:starts).last rescue nil
-	end
+	# def self.applicable_version(cargroup_id,city_id,given_time = Time.now)
+	# 	Pricing.where("cargroup_id = ? AND city_id = ? AND starts < ?", cargroup_id, city_id, given_time).sort_by(&:starts).last rescue nil
+	# end
 
 	def self.latest_pricing(booking)
 		cargroup_id = booking.cargroup_id
@@ -32,5 +32,9 @@ class Pricing < ActiveRecord::Base
 		Rails.cache.fetch("pricing-city-#{pricing_id}") do
 		 	return Pricing.find_by_id(pricing_id).version
 		end
+	end
+
+	def self.get_pricing(cargroup_id,city_id)
+		return Pricing.where("cargroup_id = ? AND city_id = ? AND version = ?" , cargroup_id, city_id, DEFAULT_VERSION).sort_by(&:starts).last rescue nil
 	end
 end

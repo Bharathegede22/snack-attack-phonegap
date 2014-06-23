@@ -2,16 +2,16 @@ class Offer < ActiveRecord::Base
 	
 	has_many :bookings
 	has_many :coupon_codes
+	has_many :city_offers
+	has_many :cities, through: :city_offers
 	
 	def self.get(code)
 		code = code.downcase.strip
 		offer = nil
 		coupon = nil
 		text = ''
-		
 		# Promo
 		offer = Offer.find_by(:promo_code => code)
-		
 		# Coupon
 		if offer.blank?
 			coupon = CouponCode.find_by(:code => code)
@@ -19,10 +19,15 @@ class Offer < ActiveRecord::Base
 		end
 		
 		if offer
-			if offer.valid_till.blank? || offer.valid_till > Time.now
-				text = "Coupon code <b>#{code.upcase}</b> has already been used." if coupon && coupon.used
-			elsif !offer.valid_till.blank? && offer.valid_till < Time.now
-				text = "Offer has expired."
+			available = CityOffer.find_by(offer_id: offer.id, city_id: city.id)
+			if !available.blank?
+				if offer.valid_till.blank? || offer.valid_till > Time.now
+					text = "Coupon code <b>#{code.upcase}</b> has already been used." if coupon && coupon.used
+				elsif !offer.valid_till.blank? && offer.valid_till < Time.now
+					text = "Offer has expired."
+				end
+			else
+				text = "Offer is not available for your city"
 			end
 		else
 			text = "No active offer was found for <b>#{code.upcase}</b>."

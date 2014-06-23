@@ -8,8 +8,11 @@ class ApplicationController < ActionController::Base
   before_filter :check_params
   
   def check_city
-    @city = City.find_by_name(DEFAULT_CITY)
-    @city = City.find_by_name(params[:city]) if !params[:city].blank?
+    if !params[:city].blank?
+      @city = Rails.cache.fetch('current_city') {City.find_by_name(params[:city])} 
+    else
+      @city = City.find_by_name(DEFAULT_CITY)
+    end
     cookies[:city] = {:value=>@city.name, :expires => 30.days.from_now, :domain => ".#{HOSTNAME.gsub('www.','')}"}
   end
 

@@ -24,13 +24,13 @@ class MainController < ApplicationController
 				end
 				
 				#@tariff = @car.check_fare(@starts, @ends) if flash[:error].blank?
-				@tariff = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_fare_calc(@starts, @ends, params[:car]) if flash[:error].blank?
+				@tariff = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_fare_calc(@starts, @ends, params[:car],@city.id) if flash[:error].blank?
 			elsif !params[:process].blank? && params[:process] == 'checkout' && !session[:book].blank? && !session[:book][:starts].blank? && !session[:book][:ends].blank? && !session[:book][:car].blank?
 				@car = Cargroup.find_by_id(session[:book][:car])
 				@starts = Time.zone.parse(session[:book][:starts])
 				@ends = Time.zone.parse(session[:book][:ends])
 				#@tariff = @car.check_fare(@starts, @ends) if flash[:error].blank?
-				@tariff = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_fare_calc(@starts, @ends, params[:car]) if flash[:error].blank?
+				@tariff = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_fare_calc(@starts, @ends, params[:car],@city.id) if flash[:error].blank?
 			end
 			render json: {html: render_to_string("/layouts/calculator/tariff.haml", layout: false)}
 		when 'reschedule'
@@ -53,17 +53,17 @@ class MainController < ApplicationController
 					@tariff = {}
 					if @ends > @newends
 						#@tariff[:reschedule] = @car.check_reschedule(@starts, @starts, @newends, @ends)
-						@tariff[:reschedule] = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_reschedule_calc(@starts, @starts, @newends, @ends,params[:car])
+						@tariff[:reschedule] = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_reschedule_calc(@starts, @starts, @newends, @ends,params[:car],@city.id)
 					else
 						#@tariff[:reschedule] = @car.check_reschedule(@starts, @starts, @ends, @newends)
-						@tariff[:reschedule] = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_reschedule_calc(@starts, @starts, @ends, @newends, params[:car])
+						@tariff[:reschedule] = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_reschedule_calc(@starts, @starts, @ends, @newends, params[:car],@city.id)
 					end
 					# @tariff[:late] = @car.check_late(@ends, @newends)
 					# @tariff[:old] = @car.check_fare(@starts, @ends)
 					# @tariff[:new] = @car.check_fare(@starts, @newends)
-					@tariff[:late] = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_late_calc(@ends, @newends, params[:car])
-					@tariff[:old] = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_fare_calc(@starts, @ends, params[:car])
-					@tariff[:new] = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_fare_calc(@starts, @newends, params[:car])
+					@tariff[:late] = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_late_calc(@ends, @newends, params[:car], @city.id)
+					@tariff[:old] = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_fare_calc(@starts, @ends, params[:car], @city.id)
+					@tariff[:new] = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_fare_calc(@starts, @newends, params[:car], @city.id)
 				end
 			end
 			render json: {html: render_to_string("/layouts/calculator/reschedule.haml", layout: false)}
@@ -228,7 +228,8 @@ class MainController < ApplicationController
 		@meta_description = "ZoomCar offers the simplest, easiest car-hire tariff in #{@city.name}. Find out what all is included"
 		@meta_keywords = "zoomcar hire tariffs"
 		@canonical = "http://www.zoomcar.in/#{@city.name}/tariff"
-		@cargroup = Cargroup.list
+		@cargroup = Cargroup.city_list(@city)
+		#@cargroup = Cargroup.list
 		@header = 'tariff'
 	end
 	
