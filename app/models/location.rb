@@ -17,7 +17,7 @@ class Location < ActiveRecord::Base
 	end
 	
 	def h2(city=nil)
-		return "Zoom from <b>#{self.name}</b> or our <b>#{Location.live.length - 1}</b> other locations in #{self.city.name}"
+		return "Zoom from <b>#{self.name}</b> or our <b>#{Location.live(self.city).length - 1}</b> other locations in #{self.city.name}"
 	end
 	
 	def link(city=nil)
