@@ -10,7 +10,7 @@
 					mapTypeId: google.maps.MapTypeId.ROADMAP
 				}
 				var map = new google.maps.Map(document.getElementById("GmapCustom"), mapOptions);
-		- Location.live(@city.id).each do |l|
+		- Location.live(@city).each do |l|
 			- if !l.lat.blank? && !l.lng.blank?
 				:plain
 					var infowindow#{l.id} = new google.maps.InfoWindow({
