@@ -93,16 +93,6 @@ class ApplicationController < ActionController::Base
  		end
  	end
  	
- 	def check_invite
-    # Checking for invitation
-    if !params[:from].blank?
-			session[:from] = params[:from]
-			cookies.permanent.signed[:from] = params[:from]
-		else
-			session[:from] = cookies.signed[:from] if session[:from].blank?
-		end
-  end
-  
   def generic_meta
   	@meta_title = "Zoomcar"
 		@meta_description = "Zoomcar"

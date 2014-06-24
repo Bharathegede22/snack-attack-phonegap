@@ -1,5 +1,7 @@
 class Inventory < ActiveRecord::Base
 	
+	establish_connection "#{Rails.env}_inventory"	
+	
 	belongs_to :cargroup
 	belongs_to :city
 	belongs_to :location
@@ -22,14 +24,14 @@ class Inventory < ActiveRecord::Base
 	end
 	
 	def self.block_plain(city, cargroup, location, starts, ends)
-		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
+		Inventory.connection.execute("LOCK TABLES inventories WRITE")
 		Rails.logger.warn "Inventory_block_cg_#{cargroup}_loc_#{location}: starts #{(starts + 330.minutes).to_s(:db)}, ends #{(ends + 330.minutes).to_s(:db)}"
-		ActiveRecord::Base.connection.execute("UPDATE inventories SET total = (total-1) WHERE 
+		Inventory.connection.execute("UPDATE inventories SET total = (total-1) WHERE 
 			cargroup_id = #{cargroup} AND 
 			location_id = #{location} AND 
 			slot >= '#{(starts + 330.minutes).to_s(:db)}' AND 
 			slot < '#{(ends + 330.minutes).to_s(:db)}'")
-		ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+		Inventory.connection.execute("UNLOCK TABLES")
 	end
 	
 	def self.check(start_time, end_time, city, cargroup, location)
@@ -46,7 +48,7 @@ class Inventory < ActiveRecord::Base
 	
 	def self.check_plain(start_time, end_time, city, cargroup, location, timezone_padding=false, start_padding=false, end_padding=false)
 		Inventory.connection.clear_query_cache
-		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE, cargroups READ, cities READ, locations READ, locations AS l READ, cars AS c READ")
+		Inventory.connection.execute("LOCK TABLES inventories WRITE, cargroups READ, locations READ, locations AS l READ, cars AS c READ")
 		if cargroup
 			cars = [Cargroup.find(cargroup)]
 		else
@@ -86,7 +88,7 @@ class Inventory < ActiveRecord::Base
 			end
 			check[c.id.to_s] = tmp
 		end
-		ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+		Inventory.connection.execute("UNLOCK TABLES")
 		return check
 	end
 	
@@ -112,13 +114,13 @@ class Inventory < ActiveRecord::Base
 		starts = Time.today if starts < Time.today
 		if ends > Time.today || ends <= Time.today + CommonHelper::BOOKING_WINDOW.days
 			Inventory.connection.clear_query_cache
-			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
+			Inventory.connection.execute("LOCK TABLES inventories WRITE")
 			temp = Inventory.find_by_sql("SELECT slot, total FROM inventories 
 				WHERE cargroup_id = #{cargroup} AND location_id = #{location} AND 
 				slot >= '#{starts.to_s(:db)}' AND 
 				slot < '#{ends.to_s(:db)}' 
 				ORDER BY slot ASC")
-			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+			Inventory.connection.execute("UNLOCK TABLES")
 		else
 			temp = []
 		end
@@ -126,14 +128,14 @@ class Inventory < ActiveRecord::Base
 	end
 	
 	def self.release(city, cargroup, location, starts, ends)
-		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
+		Inventory.connection.execute("LOCK TABLES inventories WRITE")
 		Rails.logger.warn "Inventory_release_cg_#{cargroup}_loc_#{location}: starts #{(starts + 330.minutes).to_s(:db)}, ends #{(ends + 330.minutes).to_s(:db)}"
-		ActiveRecord::Base.connection.execute("UPDATE inventories SET total = (total+1) WHERE 
+		Inventory.connection.execute("UPDATE inventories SET total = (total+1) WHERE 
 			cargroup_id = #{cargroup} AND 
 			location_id = #{location} AND 
 			slot >= '#{(starts + 330.minutes).to_s(:db)}' AND 
 			slot < '#{(ends + 330.minutes).to_s(:db)}'")
-		ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+		Inventory.connection.execute("UNLOCK TABLES")
 	end
 	
 	private

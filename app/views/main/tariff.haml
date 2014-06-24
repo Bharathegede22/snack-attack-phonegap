@@ -32,9 +32,9 @@
 							Hourly Trip
 						.r-10.bg-w.zoom-b.p-5
 							.fl
-								₹ #{show_currency(((1.0 - CommonHelper::WEEKDAY_DISCOUNT/100.0)*cargroup.hourly_fare).to_i)}
+								₹ #{show_currency(((1.0 - CommonHelper::WEEKDAY_DISCOUNT/100.0)*Pricing.get_pricing(cargroup.id,@city.id).hourly_fare).to_i)}
 							.fr
-								₹ #{show_currency(cargroup.hourly_fare)}
+								₹ #{show_currency(Pricing.get_pricing(cargroup.id,@city.id).hourly_fare)}
 							.fc
 						.p-5.size-10
 							.fl
@@ -44,7 +44,7 @@
 							.fc
 						.white
 							%i.size-10 includes
-							#{show_currency(cargroup.hourly_km_limit)} Kms
+							#{show_currency(Pricing.get_pricing(cargroup.id,@city.id).hourly_kms)} Kms
 							%span.size-10 #
 					.inline-block.bg-zoomb.p-10.r-5.m-10{style: 'width:170px;'}
 						.p-b10
@@ -52,9 +52,9 @@
 							%span.size-10 (> 10 Hours)
 						.r-10.bg-w.zoom-b.p-5
 							.fl
-								₹ #{show_currency(((1.0 - CommonHelper::WEEKDAY_DISCOUNT/100.0)*cargroup.daily_fare).to_i)}
+								₹ #{show_currency(((1.0 - CommonHelper::WEEKDAY_DISCOUNT/100.0)*Pricing.get_pricing(cargroup.id,@city.id).daily_fare).to_i)}
 							.fr
-								₹ #{show_currency(cargroup.daily_fare)}
+								₹ #{show_currency(Pricing.get_pricing(cargroup.id,@city.id).daily_fare)}
 							.fc
 						.p-5.size-10
 							.fl
@@ -64,31 +64,31 @@
 							.fc
 						.white
 							%i.size-10 includes
-							#{show_currency(cargroup.daily_km_limit)} Kms
+							#{show_currency(Pricing.get_pricing(cargroup.id,@city.id).daily_kms)} Kms
 							%span.size-10 #
 					.inline-block.bg-zoomb.p-10.r-5.m-10{style: 'width:170px;'}
 						.p-b10
 							Weekly Trip
 							%span.size-10 (> 6 Days)
 						.r-10.bg-w.zoom-b.p-5
-							₹ #{show_currency(cargroup.weekly_fare)}
+							₹ #{show_currency(Pricing.get_pricing(cargroup.id,@city.id).weekly_fare)}
 						.p-5.size-10
 							&nbsp;
 						.white
 							%i.size-10 includes
-							#{show_currency(cargroup.weekly_km_limit)} Kms
+							#{show_currency(Pricing.get_pricing(cargroup.id,@city.id).weekly_kms)} Kms
 							%span.size-10 #
 					.inline-block.bg-zoomb.p-10.r-5.m-10{style: 'width:170px;'}
 						.p-b10
 							Monthly Trip
 							%span.size-10 (> 4 Weeks)
 						.r-10.bg-w.zoom-b.p-5
-							₹ #{show_currency(cargroup.monthly_fare)}
+							₹ #{show_currency(Pricing.get_pricing(cargroup.id,@city.id).monthly_fare)}
 						.p-5.size-10
 							&nbsp;
 						.white
 							%i.size-10 includes
-							#{show_currency(cargroup.monthly_km_limit)} Kms
+							#{show_currency(Pricing.get_pricing(cargroup.id,@city.id).monthly_kms)} Kms
 							%span.size-10 #
 				.row.zoomb
 					.inline-block{style: 'width:150px;'}

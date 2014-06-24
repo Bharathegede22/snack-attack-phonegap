@@ -11,7 +11,7 @@
 		@booking.location_id = location.id
 		@booking.cargroup_id = cargroup.id
 	end
-	@fare = cargroup.check_fare(@booking.starts, @booking.ends)
+	@fare = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_fare_calc(@booking.starts, @booking.ends,cargroup.id)
 .content
 	= render :partial => "/bookings/search_steps", locals: {step: 4}
 	.wrapper

@@ -2,7 +2,15 @@ class City < ActiveRecord::Base
 	
 	has_many :attractions
 	has_many :bookings
+	has_many :city_offers
 	has_many :locations
+	has_many :offers, through: :city_offers
+	
+	def active_offers
+		Rails.cache.fetch("offers-#{self.id}") do
+			offers.where("status = 1 AND visibility = 1").to_a
+		end
+	end
 	
 	def h1(action=nil)
 		return case action

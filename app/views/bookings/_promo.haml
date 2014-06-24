@@ -1,5 +1,5 @@
 #PromoDiv
-	- @offer ||= Offer.get(session[:promo_code]) if !session[:promo_code].blank?
+	- @offer ||= Offer.get(session[:promo_code],@city) if !session[:promo_code].blank?
 	- if @offer && !@offer[:error].blank?
 		.alert.alert-danger
 			= @offer[:error].html_safe

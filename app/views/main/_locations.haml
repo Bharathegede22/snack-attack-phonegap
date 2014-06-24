@@ -1,6 +1,6 @@
 - if true
-	.homepage-map-bg
-		.homepage-map
+	%div{:class => "homepage-map-bg-#{@city.id}"}
+		%div.homepage-map{:class => "homepage-map-#{@city.id}"}
 			- if header
 				.p-5
 					%h2 Find Us In Your Neighbourhood!

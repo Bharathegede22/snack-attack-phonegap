@@ -1,5 +1,7 @@
 class Car < ActiveRecord::Base
 	
+	belongs_to :location
+
 	def check_extension(city, starts, ends)
 		check = 1
 		Carmovement.find(:all, :conditions => ["car_id = ? AND ((starts <= ? AND ends > ?) OR (starts >= ? AND starts <= ?))", self.id, starts, starts, starts, ends]).each do |cm|

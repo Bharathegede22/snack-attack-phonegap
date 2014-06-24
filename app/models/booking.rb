@@ -31,6 +31,7 @@ class Booking < ActiveRecord::Base
 	validate :dates_order
 	
 	after_create :after_create_tasks
+	before_create :before_create_tasks
 	after_save :after_save_tasks
 	before_save :before_save_tasks
 	
@@ -83,32 +84,32 @@ class Booking < ActiveRecord::Base
 		end
 	end
 	
-	def check_late
-		data = {:hours => 0, :billed_hours => 0, :standard_hours => 0, :discounted_hours => 0, :estimate => 0, :discount => 0}
-		if !self.returned_at.blank? && self.returned_at > (self.ends + 30.minutes)
-			cargroup = self.cargroup
-			rate = cargroup.hourly_fare
-			data[:hours] = (self.returned_at.to_i - self.ends.to_i)/3600
-			data[:hours] += 1 if (self.returned_at.to_i - self.ends.to_i) > data[:hours]*3600
-			data[:billed_hours] += data[:hours]
-			min = 1
-			wday = self.ends.wday
-			while min <= data[:hours]*60
-				if min == ((min/60)*60)
-					data[:estimate] += rate
-					if [0,5,6].include?(wday)
-						data[:standard_hours] += 1
-					else
-						data[:discounted_hours] += 1
-						data[:discount] += rate*(CommonHelper::WEEKDAY_DISCOUNT/100.0)
-					end
-					wday = (self.ends + min.minutes).wday
-				end
-				min += 1
-			end
-		end
-		return data
-	end
+	# def check_late
+	# 	data = {:hours => 0, :billed_hours => 0, :standard_hours => 0, :discounted_hours => 0, :estimate => 0, :discount => 0}
+	# 	if !self.returned_at.blank? && self.returned_at > (self.ends + 30.minutes)
+	# 		cargroup = self.cargroup
+	# 		rate = cargroup.hourly_fare
+	# 		data[:hours] = (self.returned_at.to_i - self.ends.to_i)/3600
+	# 		data[:hours] += 1 if (self.returned_at.to_i - self.ends.to_i) > data[:hours]*3600
+	# 		data[:billed_hours] += data[:hours]
+	# 		min = 1
+	# 		wday = self.ends.wday
+	# 		while min <= data[:hours]*60
+	# 			if min == ((min/60)*60)
+	# 				data[:estimate] += rate
+	# 				if [0,5,6].include?(wday)
+	# 					data[:standard_hours] += 1
+	# 				else
+	# 					data[:discounted_hours] += 1
+	# 					data[:discount] += rate*(CommonHelper::WEEKDAY_DISCOUNT/100.0)
+	# 				end
+	# 				wday = (self.ends + min.minutes).wday
+	# 			end
+	# 			min += 1
+	# 		end
+	# 	end
+	# 	return data
+	# end
 	
 	def check_payment
 		total = self.outstanding
@@ -122,23 +123,29 @@ class Booking < ActiveRecord::Base
 	
 	def check_reschedule
 		str, fare = ['', nil]
+		price = Pricing.find_by_id(self.pricing_id)
+		if !price.blank?
+			version = price.version
+		end
+
 		if !self.returned_at.blank?
 			if self.returned_at < self.ends
-				str, fare = ['Early Return', get_adjusted_fare('early')]
+				str, fare = ['Early Return', get_adjusted_fare('early',version)]
 			elsif self.returned_at > self.ends
-				str, fare = ['Late', check_late]
+				str, fare = ['Late', "Pricing#{version}".constantize.check_late(self)]
+				#str, fare = ['Late', Pricingv1.check_late(self)]
 			end
 		elsif (self.starts != self.last_starts || self.ends != self.last_ends)
 			if self.ends > self.last_ends
 				check = self.check_extension
 				if check == 1
-					str, fare = ['Extending', get_adjusted_fare('extend')]
+					str, fare = ['Extending', get_adjusted_fare('extend',version)]
 				else
 					BookingMailer.change_failed(self.id).deliver
 					str, fare = ['NA', nil]
 				end
 			elsif self.ends < self.last_ends
-				str, fare = ['Shortening', get_adjusted_fare('short')]
+				str, fare = ['Shortening', get_adjusted_fare('short',version)]
 			end
 		end
 		return [str, fare]
@@ -205,14 +212,21 @@ class Booking < ActiveRecord::Base
 	
 	def do_reschedule
 		str, fare = ['', nil]
+		price = Pricing.find_by_id(self.pricing_id)
+		if !price.blank?
+			version = price.version
+		end
 		if !self.returned_at.blank?
 			if self.returned_at < self.ends
 				action_text = 'early_return_refund'
-				str, fare = ['Early Return', get_fare('early')]
+				#str, fare = ['Early Return', get_fare('early')]
+				#str, fare = ['Early Return', "Pricing#{version}".constantize.get_fare('early',self)]
+				str, fare = ['Early Return', "Pricing#{version}".constantize.get_fare('early',self)]
 				self.early = true
 			elsif self.returned_at > (self.ends + 30.minutes)
 				action_text = 'late_fee'
-				str, fare = ['Late Return', check_late]
+				#str, fare = ['Late Return', "Pricing#{version}".constantize.check_late(self)]
+				str, fare = ['Late Return', "Pricing#{version}".constantize.check_late(self)]
 				self.late = true
 			end
 		elsif (self.starts != self.last_starts || self.ends != self.last_ends)
@@ -220,7 +234,8 @@ class Booking < ActiveRecord::Base
 				action_text = 'extension_fee'
 				check = self.block_extension
 				if check == 1
-					str, fare = ['Extending', get_fare('extend')]
+					#str, fare = ['Extending', Pricingv1.get_fare('extend',self)]
+					str, fare = ['Extending', "Pricing#{version}".constantize.get_fare('extend',self)]
 					self.extended = true
 				else
 					BookingMailer.change_failed(self.id).deliver
@@ -228,7 +243,7 @@ class Booking < ActiveRecord::Base
 				end
 			elsif self.ends < self.last_ends
 				action_text = 'shortened_trip_refund'
-				str, fare = ['Shortening', get_fare('short')]
+				str, fare = ['Shortening', Pricingv1.get_fare('short',self)]
 				self.manage_inventory(self.city, self.ends, self.last_ends, false)
 				self.rescheduled = true
 			end
@@ -257,8 +272,8 @@ class Booking < ActiveRecord::Base
 				# Trip modification charges
 				if action_text == 'early_return_refund' || (action_text == 'shortened_trip_refund' && (Time.now > (self.ends - 24.hours)))
 					fare_new = case action_text 
-					when 'early_return_refund' then get_adjusted_fare('early')
-					when 'shortened_trip_refund' then get_adjusted_fare('short')
+					when 'early_return_refund' then get_adjusted_fare('early',version)
+					when 'shortened_trip_refund' then get_adjusted_fare('short',version)
 					end
 					charge = Charge.new(:booking_id => self.id, :activity => action_text.gsub('refund', 'charge'), :estimate => 0, :discount => 0, :amount => 0)
 					charge.hours = fare[:hours].round
@@ -302,13 +317,26 @@ class Booking < ActiveRecord::Base
 		end
 		return [str, fare]
 	end
-
+	
+	def downgraded?
+		if self.pricing_mode_changed?
+			case self.pricing_mode_was
+			when 'm'
+				return true if self.pricing_mode == 'w' || self.pricing_mode == 'h'
+			when 'w'
+				return true if self.pricing_mode == 'h'
+			end
+		end
+		return false
+	end
+	
 	def encoded_id
 		CommonHelper.encode('booking', self.id)
 	end
 	
-	def get_adjusted_fare(action)
-		data = get_fare(action)
+	def get_adjusted_fare(action,version)
+		#b1= booking
+		data = "Pricing#{version}".constantize.get_fare(action,self)
 		if data[:billed_hours] > 0
 			if action == 'early'
 				data[:estimate] = (data[:estimate]/4).round
@@ -323,143 +351,143 @@ class Booking < ActiveRecord::Base
 		return data
 	end
 	
-	def get_fare(action)
-		case action
-		when 'early'
-			start_date = self.starts
-			end_date_old = self.returned_at
-			end_date_new = self.ends
-		when 'extend'
-			start_date = self.starts
-			end_date_old = self.last_ends
-			end_date_new = self.ends
-		when 'short'
-			start_date = self.starts
-			end_date_old = self.ends
-			end_date_new = self.last_ends
-		end
-		data = {:hours => 0, :billed_hours => 0, :standard_hours => 0, :discounted_hours => 0, :estimate => 0, :discount => 0}
-		cargroup = self.cargroup
-		rate = {:hourly => (cargroup.hourly_fare/60.0), :daily => cargroup.daily_fare, :weekly => cargroup.weekly_fare, :monthly => cargroup.monthly_fare}
+	# def get_fare(action)
+	# 	case action
+	# 	when 'early'
+	# 		start_date = self.starts
+	# 		end_date_old = self.returned_at
+	# 		end_date_new = self.ends
+	# 	when 'extend'
+	# 		start_date = self.starts
+	# 		end_date_old = self.last_ends
+	# 		end_date_new = self.ends
+	# 	when 'short'
+	# 		start_date = self.starts
+	# 		end_date_old = self.ends
+	# 		end_date_new = self.last_ends
+	# 	end
+	# 	data = {:hours => 0, :billed_hours => 0, :standard_hours => 0, :discounted_hours => 0, :estimate => 0, :discount => 0}
+	# 	cargroup = self.cargroup
+	# 	rate = {:hourly => (cargroup.hourly_fare/60.0), :daily => cargroup.daily_fare, :weekly => cargroup.weekly_fare, :monthly => cargroup.monthly_fare}
 		
-		# Old Values
-		min_old = (end_date_old.to_i - start_date.to_i)/60
-		hour_old = min_old/60
-		hour_old += 1 if (end_date_old.to_i - start_date.to_i) > hour_old*3600
+	# 	# Old Values
+	# 	min_old = (end_date_old.to_i - start_date.to_i)/60
+	# 	hour_old = min_old/60
+	# 	hour_old += 1 if (end_date_old.to_i - start_date.to_i) > hour_old*3600
 		
-		# New Values
-		min_new = (end_date_new.to_i - start_date.to_i)/60
-		hour_new = min_new/60
-		hour_new += 1 if (end_date_new.to_i - start_date.to_i) > hour_new*3600
+	# 	# New Values
+	# 	min_new = (end_date_new.to_i - start_date.to_i)/60
+	# 	hour_new = min_new/60
+	# 	hour_new += 1 if (end_date_new.to_i - start_date.to_i) > hour_new*3600
 		
-		data[:hours] = hour_new - hour_old
-		data[:days] = data[:hours]/24
-		data[:hours] = data[:hours] - (data[:hours]/24)*24
+	# 	data[:hours] = hour_new - hour_old
+	# 	data[:days] = data[:hours]/24
+	# 	data[:hours] = data[:hours] - (data[:hours]/24)*24
 		
-		min = 0
-		billed = 0
-		billed_total = 0
-		daily = {:actual => 0, :billed => 0}
-		daily_last = {:actual => 0, :billed => 0}
-		wday = start_date.wday
-		wday_c = start_date.wday
-		array = []
-		rev = 0
-		disc = 0
+	# 	min = 0
+	# 	billed = 0
+	# 	billed_total = 0
+	# 	daily = {:actual => 0, :billed => 0}
+	# 	daily_last = {:actual => 0, :billed => 0}
+	# 	wday = start_date.wday
+	# 	wday_c = start_date.wday
+	# 	array = []
+	# 	rev = 0
+	# 	disc = 0
 		
-		if (hour_new/24) >= 7
-			hour_process = 7*24
-		else
-			hour_process = hour_new
-		end
+	# 	if (hour_new/24) >= 7
+	# 		hour_process = 7*24
+	# 	else
+	# 		hour_process = hour_new
+	# 	end
 		
-		# Hourly / Daily Tariff
-		if (hour_old/24) < 7
-			while min <= (hour_process*60)
-				if (min-((min/1440)*1440)) == 0
-					billed = 0
-					wday_c = (start_date + min.minutes).wday
-				end
-				if ((((start_date + min.minutes).hour == 0) && ((start_date + min.minutes).min == 0)) || (min == hour_process*60))
-					if daily_last[:billed] > 0
-						array_last = array.last
-						if array_last && ((array_last + daily_last[:actual]) >= 600)
-							rev = (rate[:daily] - ((600 - daily_last[:billed])*rate[:hourly]))
-						else
-							rev = daily_last[:billed]*rate[:hourly]
-						end
-						if [0,1,6].include?(wday)
-							data[:standard_hours] += daily_last[:billed]/60
-							disc = 0
-						else
-							data[:discounted_hours] += daily_last[:billed]/60
-							disc = rev*(CommonHelper::WEEKDAY_DISCOUNT/100.0)
-						end
-						data[:estimate] += rev
-						data[:discount] += disc
-					end
-					if daily[:billed] > 0
-						if (daily[:actual] >= 600)
-							rev = (rate[:daily] - ((600 - daily[:billed])*rate[:hourly]))
-						else
-							rev = daily[:billed]*rate[:hourly]
-						end
-						if [0,5,6].include?(wday)
-							data[:standard_hours] += daily[:billed]/60
-							disc = 0
-						else
-							data[:discounted_hours] += daily[:billed]/60
-							disc = rev*(CommonHelper::WEEKDAY_DISCOUNT/100.0)
-						end
-						data[:estimate] += rev
-						data[:discount] += disc
-					end
-					array << daily[:actual]
-					daily = {:actual => 0, :billed => 0}
-					daily_last = {:actual => 0, :billed => 0}
-					wday = (start_date + min.minutes).wday
-					date = (start_date + min.minutes).to_date
-				end
-				if billed < 600
-					if wday == wday_c
-						daily[:actual] += 1
-						daily[:billed] += 1 if min >= (hour_old*60)
-					else
-						daily_last[:actual] += 1
-						daily_last[:billed] += 1 if min >= (hour_old*60)
-					end
-					billed_total += 1 if min >= (hour_old*60)
-				end
-				billed += 1
-				min += 1
-			end
-			data[:billed_hours] = billed_total/60
-		end
+	# 	# Hourly / Daily Tariff
+	# 	if (hour_old/24) < 7
+	# 		while min <= (hour_process*60)
+	# 			if (min-((min/1440)*1440)) == 0
+	# 				billed = 0
+	# 				wday_c = (start_date + min.minutes).wday
+	# 			end
+	# 			if ((((start_date + min.minutes).hour == 0) && ((start_date + min.minutes).min == 0)) || (min == hour_process*60))
+	# 				if daily_last[:billed] > 0
+	# 					array_last = array.last
+	# 					if array_last && ((array_last + daily_last[:actual]) >= 600)
+	# 						rev = (rate[:daily] - ((600 - daily_last[:billed])*rate[:hourly]))
+	# 					else
+	# 						rev = daily_last[:billed]*rate[:hourly]
+	# 					end
+	# 					if [0,1,6].include?(wday)
+	# 						data[:standard_hours] += daily_last[:billed]/60
+	# 						disc = 0
+	# 					else
+	# 						data[:discounted_hours] += daily_last[:billed]/60
+	# 						disc = rev*(CommonHelper::WEEKDAY_DISCOUNT/100.0)
+	# 					end
+	# 					data[:estimate] += rev
+	# 					data[:discount] += disc
+	# 				end
+	# 				if daily[:billed] > 0
+	# 					if (daily[:actual] >= 600)
+	# 						rev = (rate[:daily] - ((600 - daily[:billed])*rate[:hourly]))
+	# 					else
+	# 						rev = daily[:billed]*rate[:hourly]
+	# 					end
+	# 					if [0,5,6].include?(wday)
+	# 						data[:standard_hours] += daily[:billed]/60
+	# 						disc = 0
+	# 					else
+	# 						data[:discounted_hours] += daily[:billed]/60
+	# 						disc = rev*(CommonHelper::WEEKDAY_DISCOUNT/100.0)
+	# 					end
+	# 					data[:estimate] += rev
+	# 					data[:discount] += disc
+	# 				end
+	# 				array << daily[:actual]
+	# 				daily = {:actual => 0, :billed => 0}
+	# 				daily_last = {:actual => 0, :billed => 0}
+	# 				wday = (start_date + min.minutes).wday
+	# 				date = (start_date + min.minutes).to_date
+	# 			end
+	# 			if billed < 600
+	# 				if wday == wday_c
+	# 					daily[:actual] += 1
+	# 					daily[:billed] += 1 if min >= (hour_old*60)
+	# 				else
+	# 					daily_last[:actual] += 1
+	# 					daily_last[:billed] += 1 if min >= (hour_old*60)
+	# 				end
+	# 				billed_total += 1 if min >= (hour_old*60)
+	# 			end
+	# 			billed += 1
+	# 			min += 1
+	# 		end
+	# 		data[:billed_hours] = billed_total/60
+	# 	end
 		
-		# Weekly Tariff
-		if (hour_new/24) >= 7 && (hour_old/24) < 28
-			if (hour_new/24) >= 28
-				hour_process = 21*24
-			else
-				hour_process = hour_new - (24*7)
-			end
-			hour_process -= (hour_old - (24*7)) if (hour_old/24) >= 7
-			data[:estimate] += (hour_process * (rate[:weekly]/(7*24.0)))
-			data[:billed_hours] += hour_process
-		end
+	# 	# Weekly Tariff
+	# 	if (hour_new/24) >= 7 && (hour_old/24) < 28
+	# 		if (hour_new/24) >= 28
+	# 			hour_process = 21*24
+	# 		else
+	# 			hour_process = hour_new - (24*7)
+	# 		end
+	# 		hour_process -= (hour_old - (24*7)) if (hour_old/24) >= 7
+	# 		data[:estimate] += (hour_process * (rate[:weekly]/(7*24.0)))
+	# 		data[:billed_hours] += hour_process
+	# 	end
 		
-		# Monthly Tariff
-		if (hour_new/24) >= 28
-			hour_process = hour_new - (24*28)
-			hour_process -= (hour_old - (24*28)) if (hour_old/24) >= 28
-			data[:estimate] += (hour_process * (rate[:monthly]/(28*24.0)))
-			data[:billed_hours] += hour_process
-		end
-		#debugger
-		data[:estimate] = data[:estimate].round
-		data[:discount] = data[:discount].round
-		return data
-	end
+	# 	# Monthly Tariff
+	# 	if (hour_new/24) >= 28
+	# 		hour_process = hour_new - (24*28)
+	# 		hour_process -= (hour_old - (24*28)) if (hour_old/24) >= 28
+	# 		data[:estimate] += (hour_process * (rate[:monthly]/(28*24.0)))
+	# 		data[:billed_hours] += hour_process
+	# 	end
+	# 	#debugger
+	# 	data[:estimate] = data[:estimate].round
+	# 	data[:discount] = data[:discount].round
+	# 	return data
+	# end
 	
 	def link
 		return "http://" + HOSTNAME + "/bookings/" + self.encoded_id
@@ -516,7 +544,8 @@ class Booking < ActiveRecord::Base
 	end
 
 	def set_fare
-		tmp = self.cargroup.check_fare(self.starts, self.ends)
+		#tmp = self.cargroup.check_fare(self.starts, self.ends)
+		tmp = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_fare_calc(self.starts, self.ends,self.cargroup.id)
 		self.estimate = tmp[:estimate].round
 		self.discount = tmp[:discount].round
 		self.days = tmp[:days]
@@ -691,7 +720,6 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def after_save_tasks
-		#Utilization.manage(self.id) if !self.jsi.blank? || self.status > 0
 	end
 	
 	def before_save_tasks
@@ -714,6 +742,12 @@ class Booking < ActiveRecord::Base
 		end
 		self.last_starts = self.starts
 		self.last_ends = self.ends
+	end
+
+	def before_create_tasks
+		if self.pricing_id.blank?
+			self.pricing_id = Pricing.latest_pricing(self)
+		end
 	end
 	
 end

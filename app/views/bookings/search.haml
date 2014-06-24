@@ -34,7 +34,7 @@
 	- else
 		.wrapper.bg-f
 			.p-20
-				%h1 Search Self-Drive Cars in Bangalore
+				%h1 Search Self-Drive Cars in #{@city.name}
 				%br/
 				.row
 					.col-md-6
@@ -73,7 +73,7 @@
 				s.parentNode.insertBefore(x, s);
 			})(document);
 			function initializeMap() {
-				var myLatlng = new google.maps.LatLng(13.0667, 77.5667);
+				var myLatlng = new google.maps.LatLng(#{@city.lat}, #{@city.lng});
 				var mapOptions = {
 					zoom: 10,
 					center: myLatlng,

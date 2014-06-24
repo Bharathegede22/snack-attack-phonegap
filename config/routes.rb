@@ -1,8 +1,7 @@
 Web::Application.routes.draw do
 	
 	root to: "main#index"
-	require 'sidekiq/web'
-	
+
 	devise_for :users, 
 		:controllers => {
 			:confirmations => "users/confirmations", 
@@ -14,7 +13,7 @@ Web::Application.routes.draw do
 	
 	get '/search' => "bookings#search"
 	post '/search/:id' => "bookings#search"
-	
+
 	resources :abtest do
 		collection do
 			get 'homepage'
@@ -22,14 +21,6 @@ Web::Application.routes.draw do
 		end
 	end
 
-	if Rails.env == 'production'
-		authenticate :user, lambda { |u| u.admin? } do
-			mount Sidekiq::Web => '/sidekiq'
-		end
-	else
-	  	mount Sidekiq::Web => '/sidekiq'
-	end
-	
 	resources :bookings do
 		collection do
 			get 'checkout'
@@ -60,23 +51,17 @@ Web::Application.routes.draw do
 		member do
 			get 'cancel'
 			get 'dopayment'
+			get 'feedback'
 			get 'invoice'
 			get 'payments'
 			get 'payment'
 			get 'reschedule'
 			
-			get 'feedback'
-			post 'feedback'
-
 			post 'cancel'
+			post 'feedback'
 			post 'reschedule'
 		end
 	end
-	
-	#as :user do
-	#	get 'signin' => 'users#signin', :as => :new_user_session
-	#	post 'signin' => 'users#signin', :as => :user_session
-	#end
 
 	resources :users do
 		collection do
@@ -96,19 +81,23 @@ Web::Application.routes.draw do
 		end
 	end
 	
+	scope "/(:city)", constraints: {city: /bangalore|pune/} do
+		get '/' => 'main#index'
+		get '/attractions' => 'main#city'
+		get '/offers' => 'main#offers'
+		get '/attractions' => 'seo#index'
+		get '/explore' => 'seo#explore'
+		get '/nearby' => 'seo#nearby'
+		get '/tariff'=>'main#tariff'
+		get '/safety'=>'main#safety'
+		get '/fees'=>'main#fees'
+		get '/:id' => 'seo#index'
+	end
+	
 	post 'calculator/:id' => 'main#calculator'
-	
-	get '/:city' => 'main#index', constraints: {city: /bangalore/}
-	get '/:city/attractions' => 'main#city', constraints: {city: /bangalore/}
-	get '/:city/offers' => 'main#offers', constraints: {city: /bangalore/}
-	get '/:city/attractions' => 'seo#index', constraints: {city: /bangalore/}
-	get '/:city/explore' => 'seo#explore', constraints: {city: /bangalore/}
-	get '/:city/nearby' => 'seo#nearby', constraints: {city: /bangalore/}
-	get '/:city/:id' => 'seo#index', constraints: {city: /bangalore/}
-	
 	get 'job/:id' => 'main#job'
-  get ':action(.:format)' => 'main'
-  get ':action/:id' => 'main'
-  get ':action' => 'main'
+ 	get ':action(.:format)' => 'main'
+	get ':action/:id' => 'main'
+	get ':action' => 'main'
   
 end

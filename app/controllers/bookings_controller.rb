@@ -49,7 +49,8 @@ class BookingsController < ApplicationController
 			session[:credits] = params[:fare].to_i
 			flash[:message] = 'Credits applied, please carry on!'
 		end
-		@fare = @booking.cargroup.check_fare(@booking.starts, @booking.ends)
+		#@fare = @booking.cargroup.check_fare(@booking.starts, @booking.ends)
+		@fare = "Pricing#{Pricing::DEFAULT_VERSION}".check_fare_calc(@booking.starts, @booking.ends,@booking.cargroup.id,@city.id)
 		render json: {html: render_to_string('_outstanding.haml', layout: false)}
 	end
 
@@ -97,7 +98,7 @@ class BookingsController < ApplicationController
 		end
 		
 		promo = nil
-		promo = Offer.get(session[:promo_code]) if !session[:promo_code].blank?
+		promo = Offer.get(session[:promo_code],@city) if !session[:promo_code].blank?
 		
 		@booking.user_id = current_user.id
 		@booking.user_name = current_user.name
@@ -106,6 +107,7 @@ class BookingsController < ApplicationController
 		@booking.ref_initial = session[:ref_initial]
 		@booking.ref_immediate = session[:ref_immediate]
 		@booking.through_signup = true
+		#@booking.pricing
 		
 		if promo
 			@booking.promo = session[:promo_code]
@@ -298,7 +300,7 @@ class BookingsController < ApplicationController
   		session[:promo_code] = nil
   	else
 			if !params[:promo].blank?
-				@offer = Offer.get(params[:promo])
+				@offer = Offer.get(params[:promo],@city)
 				session[:promo_code] = params[:promo].upcase if @offer[:offer] && @offer[:error].blank?
 	    end
 		end
@@ -349,10 +351,10 @@ class BookingsController < ApplicationController
 	end
 	
 	def search
-		@meta_title = "Zoom - Car Hire in Bangalore"
-		@meta_description = "Enjoy the Freedom of Four Wheels with self-drive car hire by the hour or by the day. Now in Bangalore!"
-		@meta_keywords = "car hire, car rental, car rent, car sharing, car share, shared car, car club, rental car, car-sharing, hire car, renting a car, bangalore, bangalore car hire, bangalore car rental, bangalore car rent, bangalore car sharing, bangalore car share, bangalore car club, bangalore rental car, bangalore car-sharing, bangalore hire car, bagalore renting a car, India, Indian, Indian car-sharing, India car-sharing, Indian car-share, India car-share, India car club, Indian car club, India car sharing, Indian car, Zoomcar, Zoom car, travel india, travel bangalore, explore india, explore bangalore, travel, explore, self-drive, self drive, self-drive bangalore, self drive bangalore"
-		@canonical = "https://www.zoomcar.in/search"
+		@meta_title = "Zoom - Car Hire in #{@city.name}"
+		@meta_description = "Enjoy the Freedom of Four Wheels with self-drive car hire by the hour or by the day. Now in #{@city.name}!"
+		@meta_keywords = "car hire, car rental, car rent, car sharing, car share, shared car, car club, rental car, car-sharing, hire car, renting a car, #{@city.name}, #{@city.name} car hire, #{@city.name} car rental, #{@city.name} car rent, #{@city.name} car sharing, #{@city.name} car share, #{@city.name} car club, #{@city.name} rental car, #{@city.name} car-sharing, #{@city.name} hire car,#{@city.name} renting a car, India, Indian, Indian car-sharing, India car-sharing, Indian car-share, India car-share, India car club, Indian car club, India car sharing, Indian car, Zoomcar, Zoom car, travel india, travel #{@city.name}, explore india, explore #{@city.name}, travel, explore, self-drive, self drive, self-drive #{@city.name}, self drive #{@city.name}"
+		@canonical = "https://www.zoomcar.in/#{@city.name}/search"
 		if request.post?
 			@booking = Booking.new
 			@booking.starts = Time.zone.parse(params[:starts]) if !params[:starts].blank?

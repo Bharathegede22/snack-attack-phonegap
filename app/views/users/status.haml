@@ -4,15 +4,15 @@
 		%b.caret
 	%ul.dropdown-menu.pull-right
 		%li
-			%a{:href => "#{@sslhost}/bookings"} My Bookings
+			%a{:href => "#{@sslhost}/#{@city.name}/bookings"} My Bookings
 		- if !false
 			%li
-				%a{:href => "#{@sslhost}/users/credits"} Credits History
+				%a{:href => "#{@sslhost}/#{@city.name}/users/credits"} Credits History
 		%li
-			%a{:href => "#{@sslhost}/users/settings"}
+			%a{:href => "#{@sslhost}/#{@city.name}/users/settings"}
 				Account Settings
 		%li
-			%a{:href => "#{@sslhost}/users/license"}
+			%a{:href => "#{@sslhost}/#{@city.name}/users/license"}
 				License Details
 		%li
 			%a{:href => "javascript:void(0)", :onclick => "logOut('#{destroy_user_session_path}');"}
