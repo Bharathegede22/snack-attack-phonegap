@@ -6,18 +6,22 @@
 		.p-10.f-b.size-28
 			What is ZoomCar?
 		.p-10
-			ZoomCar is a Self-Drive car rental service which allows you to rent cars by the hour, day, week, or month. We have a wide variety of cars and many locations, in fact you can find us in your neighbourhood. Basically, we save you the cost and hassle of owning a car while giving you all the good parts: 
-			%span.f-b.zoom convenience
-			,
-			%span.f-b.zoom mobility 
+			ZoomCar is a 
+			%span#self-drive.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<div class='p-10'>With ZoomCar you drive the car yourself. No chauffeurs, so you can go where you want when you want.</div>"} Self-Drive
+			car rental service which allows you to rent cars by the hour, day, week, or month. We have a wide variety of cars and many locations, in fact you can find us in your neighbourhood. Basically, we save you the cost and hassle of owning a car while giving you all the good parts: 
+			= succeed "," do
+				%span.f-b.zoom convenience
+			= succeed "," do
+				%span.f-b.zoom mobility 
 			and 
-			%span.f-b.zoom independence
-			\.
+			= succeed "." do
+				%span.f-b.zoom independence
+
 	.fc
 
 	%br/
 
-	%table.m-auto{:cellpadding => '0', :cellspacing => '0', :border => '0', :width => '100%', :style => 'text-align: center;'}
+	%table.m-auto{:cellpadding => '0', :cellspacing => '0', :border => '0', :width => '860px', :style => 'text-align: center;'}
 		%tr
 			%td.border-zoom{:valign => 'top', :style => 'width: 239px'}
 				.feature2.size-14
@@ -34,17 +38,12 @@
 					= image_tag("features/3.png", :alt => "Any duration")
 					.m-t10.feature
 						Range of Cars: SUV, Luxury, Sedan,...
+		%tr
 			%td.border-zoom{:valign => 'top', :style => 'width: 239px'}
 				.feature2.size-14
 					= image_tag("features/4.png", :alt => "Any duration")
 					.m-t10.feature
 						Fuel, GPS, and Insurance are on Us!
-		%tr
-			%td.border-zoom{:valign => 'top', :style => 'width: 239px'}
-				.feature2.size-14
-					= image_tag("features/5.png", :alt => "Any duration")
-					.m-t10.feature
-						Free Kms With Every Booking
 			%td.border-zoom{:valign => 'top', :style => 'width: 239px'}
 				.feature2.size-14
 					= image_tag("features/6.png", :alt => "Any duration")
@@ -55,11 +54,6 @@
 					= image_tag("features/7.png", :alt => "Any duration")
 					.m-t10.feature
 						Go Anywhere. Our Cars Have All-India Permits
-			%td.border-zoom{:valign => 'top', :style => 'width: 239px'}
-				.feature2.size-14
-					= image_tag("features/8.png", :alt => "Any duration")
-					.m-t10.feature
-						24/7 Call Center and Roadside Assistance
 
 	%br/
 	%br/
@@ -127,9 +121,17 @@
 	%br/
 	%br/
 	
-	%a#signup-hiw{href: "javascript:void(0)", onclick: "showModal('Sign Up', '/users/signup');"}
-		Sign Up
+	- if user_signed_in?
+	- else
+		%div{:style => 'width: 550px; margin: 0 auto;'}
+			#signup-call.fl
+				Ready to make your first booking?
+			%a#signup-hiw.fl{href: "javascript:void(0)", onclick: "showModal('Sign Up', '/users/signup');"}
+				Sign Up
+			.fc
+
 	.t-c.size-14.f-i.m-t10
 		Still have questions or curious to find out more? Check out our 
-		%a.f-b{:href => '/faq'} FAQs
+		= succeed "." do
+			%a.f-b{:href => '/faq'} FAQs
 
