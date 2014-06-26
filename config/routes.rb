@@ -1,7 +1,5 @@
 Web::Application.routes.draw do
 	
-	root to: "main#index"
-
 	devise_for :users, 
 		:controllers => {
 			:confirmations => "users/confirmations", 
@@ -11,9 +9,6 @@ Web::Application.routes.draw do
 			:sessions => "users/sessions"
 		}
 	
-	get '/search' => "bookings#search"
-	post '/search/:id' => "bookings#search"
-
 	resources :abtest do
 		collection do
 			get 'homepage'
@@ -41,24 +36,24 @@ Web::Application.routes.draw do
 			get 'thanks'
 			get 'userdetails'
 			get 'widget'
-			
-			post 'corporate'
-			post 'credits'
+
 			post 'license'
 			post 'payu'
 			post 'promo'
+			post 'credits'
 		end
 		member do
 			get 'cancel'
 			get 'dopayment'
-			get 'feedback'
 			get 'invoice'
 			get 'payments'
 			get 'payment'
 			get 'reschedule'
-			
-			post 'cancel'
+
+			get 'feedback'
 			post 'feedback'
+
+			post 'cancel'
 			post 'reschedule'
 		end
 	end
@@ -80,7 +75,7 @@ Web::Application.routes.draw do
 			post 'update'
 		end
 	end
-	
+
 	post '/calculator/:id' => 'main#calculator'
 	get '/calculator/:id' => 'main#calculator'
 	

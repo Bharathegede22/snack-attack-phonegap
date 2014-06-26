@@ -1,6 +1,6 @@
 class Inventory < ActiveRecord::Base
 	
-	establish_connection "#{Rails.env}_inventory"	
+	#establish_connection "#{Rails.env}_inventory"	
 	
 	belongs_to :cargroup
 	belongs_to :city
@@ -48,7 +48,7 @@ class Inventory < ActiveRecord::Base
 	
 	def self.check_plain(start_time, end_time, city, cargroup, location, timezone_padding=false, start_padding=false, end_padding=false)
 		Inventory.connection.clear_query_cache
-		Inventory.connection.execute("LOCK TABLES inventories WRITE, cargroups READ, locations READ, locations AS l READ, cars AS c READ")
+		Inventory.connection.execute("LOCK TABLES inventories WRITE, cargroups READ, locations READ, locations AS l READ, cities AS ct READ, cars AS c READ")
 		if cargroup
 			cars = [Cargroup.find(cargroup)]
 		else
