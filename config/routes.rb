@@ -81,6 +81,12 @@ Web::Application.routes.draw do
 		end
 	end
 	
+	post '/calculator/:id' => 'main#calculator'
+	get '/calculator/:id' => 'main#calculator'
+	
+	get '/job/:id' => 'main#job'
+ 	get ':action' => 'main', constraints: {action: /about|careers|contact|eligibility|faq|handover|howitworks|member|outstation|reva|privacy/}
+ 	
 	scope "/(:city)", constraints: {city: /bangalore|pune/} do
 		get '/' => 'main#index'
 		get '/attractions' => 'main#city'
@@ -93,11 +99,5 @@ Web::Application.routes.draw do
 		get '/fees'=>'main#fees'
 		get '/:id' => 'seo#index'
 	end
-	
-	post 'calculator/:id' => 'main#calculator'
-	get 'job/:id' => 'main#job'
- 	get ':action(.:format)' => 'main'
-	get ':action/:id' => 'main'
-	get ':action' => 'main'
   
 end

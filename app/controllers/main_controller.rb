@@ -12,58 +12,88 @@ class MainController < ApplicationController
 		case @action
 		when 'tariff'
 			if request.post?
-				@car = Cargroup.find_by_id(params[:car]) if !params[:car].blank?
-				@starts = Time.zone.parse(params[:starts]) if !params[:starts].blank?
-				@ends = Time.zone.parse(params[:ends]) if !params[:ends].blank?
+				@booking = Booking.new
+				@booking.city_id = @city.id
+				@booking.cargroup_id = params[:car] if !params[:car].blank?
+				@booking.starts = Time.zone.parse(params[:starts]) if !params[:starts].blank?
+				@booking.ends = Time.zone.parse(params[:ends]) if !params[:ends].blank?
 				@kms = params[:kms]
-				
-				if @car.blank?
+				if @booking.cargroup_id.blank?
 					flash[:error] = 'Unindentified Vehicle.'
-				elsif @starts >= @ends
+				elsif @booking.starts >= @booking.ends
 					flash[:error] = 'Pickup and Return time are not in increasing order.'
 				end
-				
-				#@tariff = @car.check_fare(@starts, @ends) if flash[:error].blank?
-				@tariff = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_fare_calc(@starts, @ends, params[:car],@city.id) if flash[:error].blank?
 			elsif !params[:process].blank? && params[:process] == 'checkout' && !session[:book].blank? && !session[:book][:starts].blank? && !session[:book][:ends].blank? && !session[:book][:car].blank?
-				@car = Cargroup.find_by_id(session[:book][:car])
-				@starts = Time.zone.parse(session[:book][:starts])
-				@ends = Time.zone.parse(session[:book][:ends])
-				#@tariff = @car.check_fare(@starts, @ends) if flash[:error].blank?
-				@tariff = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_fare_calc(@starts, @ends, params[:car],@city.id) if flash[:error].blank?
+				@booking = Booking.new
+				@booking.city_id = @city.id
+				@booking.cargroup_id = session[:book][:car]
+				@booking.starts = Time.zone.parse(session[:book][:starts])
+				@booking.ends = Time.zone.parse(session[:book][:ends])
+			end
+			if @booking && flash[:error].blank?
+				@booking.valid?
+				@tariff = @booking.get_fare
 			end
 			render json: {html: render_to_string("/layouts/calculator/tariff.haml", layout: false)}
 		when 'reschedule'
 			if request.post?
-				@car = Cargroup.find_by_id(params[:car]) if !params[:car].blank?
-				@starts = Time.zone.parse(params[:starts]) if !params[:starts].blank?
-				@ends = Time.zone.parse(params[:ends]) if !params[:ends].blank?
-				@newends = Time.zone.parse(params[:newends]) if !params[:newends].blank?
+				@booking = Booking.new
+				@booking.city_id = @city.id
+				@booking.cargroup_id = params[:car] if !params[:car].blank?
+				@booking.starts_last = Time.zone.parse(params[:starts]) if !params[:starts].blank?
+				@booking.ends_last = Time.zone.parse(params[:ends]) if !params[:ends].blank?
+				@booking.starts = Time.zone.parse(params[:newstarts]) if !params[:newstarts].blank?
+				@booking.ends = Time.zone.parse(params[:newends]) if !params[:newends].blank?
 				@kms = params[:kms]
 				
-				if @car.blank?
+				if @booking.cargroup_id.blank?
 					flash[:error] = 'Unindentified Vehicle.'
-				elsif @starts >= @ends
-					flash[:error] = 'Pickup and Original Return time are not in increasing order.'
-				elsif @starts >= @newends
-					flash[:error] = 'Pickup and New Return time are not in increasing order.'
+				elsif @booking.starts_last >= @booking.ends_last
+					flash[:error] = 'Original Pickup and Return time are not in increasing order.'
+				elsif @booking.starts >= @booking.ends
+					flash[:error] = 'New Pickup and Return time are not in increasing order.'
 				end
 				
-				if flash[:error].blank?
-					@tariff = {}
-					if @ends > @newends
-						#@tariff[:reschedule] = @car.check_reschedule(@starts, @starts, @newends, @ends)
-						@tariff[:reschedule] = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_reschedule_calc(@starts, @starts, @newends, @ends,params[:car],@city.id)
+				if @booking && flash[:error].blank?
+					@booking.valid?
+					@tariff = {early: {}, extended: {}, late: {}, mod: {}, org: {}, reschedule: {}, short: {}}
+					
+					booking 							= Booking.new
+					booking.city_id 			= @booking.city_id
+					booking.cargroup_id 	= @booking.cargroup_id
+					booking.starts 				= @booking.starts_last
+					booking.ends 					= @booking.ends_last
+					booking.status				= 10
+					booking.valid?
+					
+					@tariff[:org] = booking.get_fare
+					
+					booking.starts 				= @booking.starts
+					booking.ends 					= @booking.ends
+					
+					@tariff[:mod] = booking.get_fare
+					
+					if @booking.starts_last != @booking.starts
+						@tariff[:reschedule] = @booking.get_fare
 					else
-						#@tariff[:reschedule] = @car.check_reschedule(@starts, @starts, @ends, @newends)
-						@tariff[:reschedule] = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_reschedule_calc(@starts, @starts, @ends, @newends, params[:car],@city.id)
+						if @booking.ends_last < @booking.ends
+							@tariff[:extended] = @booking.get_fare
+							
+							booking.starts				= @booking.starts
+							booking.ends 					= @booking.ends_last
+							booking.returned_at 	= @booking.ends
+							booking.status				= 0
+							@tariff[:late] = booking.get_fare
+						else
+							@tariff[:short] = @booking.get_fare
+							
+							booking.starts				= @booking.starts
+							booking.ends 					= @booking.ends_last
+							booking.returned_at 	= @booking.ends
+							booking.status				= 0
+							@tariff[:early] = booking.get_fare
+						end
 					end
-					# @tariff[:late] = @car.check_late(@ends, @newends)
-					# @tariff[:old] = @car.check_fare(@starts, @ends)
-					# @tariff[:new] = @car.check_fare(@starts, @newends)
-					@tariff[:late] = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_late_calc(@ends, @newends, params[:car], @city.id)
-					@tariff[:old] = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_fare_calc(@starts, @ends, params[:car], @city.id)
-					@tariff[:new] = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_fare_calc(@starts, @newends, params[:car], @city.id)
 				end
 			end
 			render json: {html: render_to_string("/layouts/calculator/reschedule.haml", layout: false)}

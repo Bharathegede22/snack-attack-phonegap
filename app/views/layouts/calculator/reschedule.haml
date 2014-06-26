@@ -1,10 +1,20 @@
 - render_flash
+:ruby
+	if @booking
+		@car = @booking.cargroup
+		@starts = @booking.starts_last
+		@ends = @booking.ends_last
+		@newstarts = @booking.starts
+		@newends = @booking.ends
+	end
 .vertical-widget
-	%form{:id => "ReschForm", :onsubmit => "return SubmitForm(this,'/#{@city.name}/calculator/reschedule','ModalContent');", :action => "javascript:void(0)", "data-ajax" => "false"}
+	%form{:id => "ReschForm", :onsubmit => "return SubmitForm(this,'/calculator/reschedule','ModalContent');", :action => "javascript:void(0)", "data-ajax" => "false"}
 		.row
-			.col-md-5
-				.p-t20.t-r
-					%b Select a Car *
+			.col-md-6
+				%b Select a Car *
+			.col-md-6
+				%b Expected Kms
+		.row
 			.col-md-6
 				- cargroups = Cargroup.list(@city)
 				.dropdown
@@ -33,10 +43,19 @@
 							%input#ReCarsVal{name: 'car', type: "text", value: cargroups.first.id, readonly: 'true'}
 						- else
 							%input#ReCarsVal{name: 'car', type: "text", value: @car.id, readonly: 'true'}
+			.col-md-6
+				.box
+					.unpointer
+						.loc
+						.txt
+							%input#KmsVal{name: 'kms', type: "text", value: @kms, 'dummy-title' => "Enter Kms", :onclick => "pushEvent('Rescheduler', 'Mileage');"}
+						.fc
+		.row.p-t20
+			.col-md-6
+				%b Original Pickup Time *
+			.col-md-6
+				%b Original Dropoff Time *
 		.row
-			.col-md-5
-				.p-t20.t-r
-					%b Original Pickup Time *
 			.col-md-6
 				#OrgStartDate.box.datetimebox
 					.cal
@@ -48,10 +67,6 @@
 					.arrw
 					.fc
 				#OrgStartDateValError.error
-		.row
-			.col-md-5
-				.p-t20.t-r
-					%b Original Dropoff Time *
 			.col-md-6
 				#OrgEndDate.box.datetimebox
 					.cal
@@ -63,10 +78,23 @@
 					.arrw
 					.fc
 				#OrgEndDateValError.error
+		.row.p-t20
+			.col-md-6
+				%b New Pickup Time *
+			.col-md-6
+				%b New Dropoff Time *
 		.row
-			.col-md-5
-				.p-t20.t-r
-					%b New Dropoff Time *
+			.col-md-6
+				#NewStartDate.box.datetimebox
+					.cal
+					.txt
+						- if @newstarts.blank?
+							%input#NewStartDateVal.datetime.validate-presence.newstarts-recal{name: 'newstarts', type: "text", value: "", readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
+						- else
+							%input#NewStartDateVal.datetime.validate-presence.newstarts-recal{name: 'newstarts', type: "text", value: @newstarts.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
+					.arrw
+					.fc
+				#NewStartDateValError.error
 			.col-md-6
 				#NewEndDate.box.datetimebox
 					.cal
@@ -78,17 +106,6 @@
 					.arrw
 					.fc
 				#NewEndDateValError.error
-		.row
-			.col-md-5
-				.p-t20.t-r
-					%b Expected Kms
-			.col-md-6
-				.box
-					.unpointer
-						.loc
-						.txt
-							%input#KmsVal{name: 'kms', type: "text", value: @kms, 'dummy-title' => "Enter Kms", :onclick => "pushEvent('Rescheduler', 'Mileage');"}
-						.fc
 		.t-c
 			#ReschSubmit
 				= submit_tag "Calculate", :class => 'button size-12 m-auto'
@@ -98,77 +115,76 @@
 	%table.table.table-bordered.bg-f6
 		%tr
 			%td
-				Cancellation Refund **
+				&nbsp;
 			%td
-				before 24 hours
-			%td.t-r
-				= @tariff[:old][:estimate]
+				%b Before 24 hours
+			%td
+				%b Within 24 hours
 		%tr
 			%td
 				Cancellation Refund **
 			%td
-				within 24 hours
-			%td.t-r
-				:ruby
-					tmp = (0.25*@tariff[:old][:estimate]).to_i
-					tmp = 2000 if tmp > 2000
-				= @tariff[:old][:estimate] - tmp
-		- if @ends < @newends
+				= @tariff[:org][:total]
+			%td
+				= @tariff[:org][:total] - @tariff[:org][:penalty]
+		- if @booking.starts_last != @booking.starts
+			- if @tariff[:reschedule][:refund] > 0
+				%tr
+					%td
+						Reschedule Refund
+					%td
+						= @tariff[:reschedule][:refund]
+					%td
+						= @tariff[:reschedule][:refund] - @tariff[:reschedule][:penalty]
+			- else
+				%tr
+					%td
+						Reschedule Charges
+					%td
+						= @tariff[:reschedule][:total]
+					%td
+						= @tariff[:reschedule][:total] - @tariff[:reschedule][:penalty]
+		- elsif @booking.ends_last < @booking.ends
 			%tr
 				%td
 					Extension Charges
 				%td
-					&nbsp;
-				%td.t-r
-					= @tariff[:reschedule][:estimate]
+					= '-'
+				%td
+					= @tariff[:extended][:total]
 			%tr.danger
 				%td
 					Late Charges
 				%td
-					without inconvenience fee
-				%td.t-r
-					= @tariff[:late][:estimate]
+					= '-'
+				%td
+					= @tariff[:late][:total]
 		- else
 			%tr
 				%td
 					Shortening Refund
 				%td
-					before 24 hours
-				%td.t-r
-					= @tariff[:reschedule][:estimate]
-			%tr
+					= @tariff[:short][:total]
 				%td
-					Shortening Refund
-				%td
-					within 24 hours
-				%td.t-r
-					= (@tariff[:reschedule][:estimate]/2)
+					= @tariff[:short][:total] - @tariff[:short][:penalty]
 			%tr
 				%td
 					Early Return Credits
 				%td
-					&nbsp;
-				%td.t-r
-					= (0.25*@tariff[:reschedule][:estimate]).to_i
-		- tmp = @kms.to_i - ((@tariff[:new][:kms] > @tariff[:old][:kms]) ? @tariff[:new][:kms] : @tariff[:old][:kms])
-		- if tmp > 0
-			%tr.danger
+					= '-'
 				%td
-					Extra Kms Charges
-				%td
-					= tmp
-					Kms @
-					Rs.#{@car.excess_kms}/Km
-				%td.t-r
-					= tmp * @car.excess_kms
-		- else
-			%tr
-				%td
-					Extra Kms Charges
-				%td
-					&nbsp;
-				%td.t-r
-					0
+					= @tariff[:early][:refund] - @tariff[:early][:penalty]
+		%tr.bg-c
+			%td
+				%b Change :
+				= @tariff[:mod][:days]*24 + @tariff[:mod][:hours] - @tariff[:org][:days]*24 - @tariff[:org][:hours]
+				hours
+			%td
+				%b Old Fare :
+				= @tariff[:org][:total]
+			%td
+				%b New Fare :
+				= @tariff[:mod][:total]
 	.m-5.t-c.f-b
 		** - Cancellation of original booking
 .f-i.red.size-12.t-c

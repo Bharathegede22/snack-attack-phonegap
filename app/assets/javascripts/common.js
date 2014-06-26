@@ -224,6 +224,8 @@ function initializeDatePicker() {
 				pushEvent('Calculator', 'Starts');
 			} else if($('#' + id + 'Val').hasClass('starts-recal')) {
 				pushEvent('Rescheduler', 'Org Starts');
+			} else if($('#' + id + 'Val').hasClass('newstarts-recal')) {
+				pushEvent('Rescheduler', 'New Starts');
 			}
 		} else if(id.search('End') != -1) {
 			var pid = id.replace('End','Start');
