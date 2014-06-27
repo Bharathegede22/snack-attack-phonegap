@@ -17,7 +17,13 @@ class MainController < ApplicationController
 				@booking.cargroup_id = params[:car] if !params[:car].blank?
 				@booking.starts = Time.zone.parse(params[:starts]) if !params[:starts].blank?
 				@booking.ends = Time.zone.parse(params[:ends]) if !params[:ends].blank?
-				@kms = params[:kms]
+				if !params[:kms].blank?
+					@kms = params[:kms].to_i
+					if @kms > 0
+						@booking.start_km = 0
+						@booking.end_km = params[:kms].to_i
+					end
+				end				
 				if @booking.cargroup_id.blank?
 					flash[:error] = 'Unindentified Vehicle.'
 				elsif @booking.starts >= @booking.ends
@@ -44,7 +50,16 @@ class MainController < ApplicationController
 				@booking.ends_last = Time.zone.parse(params[:ends]) if !params[:ends].blank?
 				@booking.starts = Time.zone.parse(params[:newstarts]) if !params[:newstarts].blank?
 				@booking.ends = Time.zone.parse(params[:newends]) if !params[:newends].blank?
-				@kms = params[:kms]
+				@booking.start_km = 0
+				@booking.end_km = 0
+				
+				if !params[:kms].blank?
+					@kms = params[:kms].to_i
+					if @kms > 0
+						@booking.start_km = 0
+						@booking.end_km = params[:kms].to_i
+					end
+				end				
 				
 				if @booking.cargroup_id.blank?
 					flash[:error] = 'Unindentified Vehicle.'
@@ -82,6 +97,8 @@ class MainController < ApplicationController
 							booking.starts				= @booking.starts
 							booking.ends 					= @booking.ends_last
 							booking.returned_at 	= @booking.ends
+							booking.start_km 			= @booking.start_km
+							booking.end_km 				= @booking.end_km
 							booking.status				= 0
 							@tariff[:late] = booking.get_fare
 						else
@@ -90,6 +107,8 @@ class MainController < ApplicationController
 							booking.starts				= @booking.starts
 							booking.ends 					= @booking.ends_last
 							booking.returned_at 	= @booking.ends
+							booking.start_km 			= @booking.start_km
+							booking.end_km 				= @booking.end_km
 							booking.status				= 0
 							@tariff[:early] = booking.get_fare
 						end

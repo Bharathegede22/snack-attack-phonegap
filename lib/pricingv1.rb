@@ -26,29 +26,36 @@ class Pricingv1
 	def self.check(booking)
 		@@booking = booking
 		@@pricing = booking.pricing
+		data = {}
 		if @@booking.status < 9
 			if !@@booking.returned_at.blank?
 				if @@booking.returned_at > (@@booking.ends + BUFFER_TIME.minutes)
 					# Late
-					return late
+					data = late
 				elsif @@booking.returned_at < (@@booking.ends - BUFFER_TIME.minutes)
 					# Early
-					return early
+					data = early
 				end
 			else
 				if !@@booking.starts_last.blank? && !@@booking.ends_last.blank?
 					if @@booking.starts != @@booking.starts_last || @@booking.ends != @@booking.ends_last
-						# Rescheduled
-						return reschedule
+						# Reshceduled
+						data = reschedule
 					end
 				end
 			end
 		else
 			# Cancellation
-			return cancel
+			data = cancel
 		end
 		# No change
-		return normal
+		data = normal if data.blank?
+		
+		# Excess Kms
+		if (@@booking.end_km.to_i - @@booking.start_km.to_i) > data[:kms]
+			data[:kms_penalty] = ((@@booking.end_km.to_i - @@booking.start_km.to_i - data[:kms]) * data[:excess_kms]).round
+		end
+		return data
 	end
 	
 	def self.early
@@ -59,11 +66,14 @@ class Pricingv1
 			data[:penalty] = (data[:refund]*((100-CREDIT_PERCENTAGE)/100.0)).round
 		end
 		data[:log] = true
-		return substract_hash(data,tmp)
+		data = substract_hash(data,tmp)
+		data[:kms] += tmp[:kms]
+		return data
 	end
 	
 	def self.late
 		data = get_hash
+		tmp = get_fare(@@booking.starts, @@booking.returned_at)
 		data[:hours] = (@@booking.returned_at.to_i - @@booking.ends.to_i)/3600
 		data[:hours] += 1 if (@@booking.returned_at.to_i - @@booking.ends.to_i) > data[:hours]*3600
 		data[:billed_hours] += data[:hours]
@@ -85,6 +95,7 @@ class Pricingv1
 		data[:estimate] = data[:estimate].round
 		data[:discount] = data[:discount].round
 		data[:total] = data[:estimate] - data[:discount]
+		data[:kms] = tmp[:kms]
 		data[:log] = true
 		return data
 	end
@@ -106,9 +117,11 @@ class Pricingv1
 				data[:penalty] = CHARGE_CAP if data[:penalty] > CHARGE_CAP
 			end
 			data = substract_hash(data,tmp)
-			return data
+			data[:kms] = tmp[:kms]
 		else
-			data = substract_hash(tmp,data)
+			tmp = substract_hash(tmp,data)
+			tmp[:kms] += data[:kms]
+			data = tmp
 		end
 		return data
 	end
@@ -121,7 +134,7 @@ class Pricingv1
 			hours: 0, billed_hours: 0, standard_hours: 0, discounted_hours: 0, 
 			days: 0, standard_days: 0, discounted_days: 0, 
 			excess_kms: @@pricing.excess_kms, kms: 0, log: false, 
-			penalty: 0, refund: 0
+			penalty: 0, refund: 0, kms_penalty: 0
 		}
 	end
 	
@@ -190,4 +203,5 @@ class Pricingv1
 		end
 		return org
 	end
+	
 end

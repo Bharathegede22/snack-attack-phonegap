@@ -6,20 +6,20 @@
 %nav.navbar.navbar-fixed-top{:role => "navigation"}
 	.wrapper
 		%a.logo{:href => '/'}
-		.span.fl
+		.broadcast.fl
 			#CityBar.dropdown.fr
-				%a.dropdown-toggle.p-r10{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
+				%a.dropdown-toggle.p-r10.p-l10{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
 					= @city.name
 					%b.caret
-				%ul.dropdown-menu.pull-right
-					- City.all.each do |city|
+				%ul.dropdown-menu.pull-left
+					- City.active.each do |city|
 						%li
-							=link_to city.name, "/#{city.name}"
+							= link_to city.name, "/#{city.name.downcase}"
 		.info
 			.broadcast.fr
 				#UserBar.dropdown.fr
-					%a.dropdown-toggle.p-r10{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
-						Sign Up / Sign In
+					%a.dropdown-toggle.p-r10.p-l10{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
+						My Account
 						%b.caret
 					%ul.dropdown-menu.pull-right
 						%li
@@ -102,8 +102,6 @@
 				%li
 					- cls = (!@header.blank? && @header == 'offers') ? 'active' : ''
 					%a{class: cls, href: "/#{@city.name.downcase}/offers"} Offers
-				%li
-					%a{href: "/blog"} Blog
 			.fc
 		.fc
 	- cls = (!@header.blank? && @header == 'search') ? '' : 'hide'

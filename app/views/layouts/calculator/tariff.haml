@@ -116,31 +116,28 @@
 			%td.t-r
 				Rs.
 				= @tariff[:discount]
-		- if @tariff[:kms].to_i >= @kms.to_i
+		- if @tariff[:kms_penalty] == 0
 			%tr
 				%td
-					%b Extra Kms
+					%b Excess Km Charge
 				%td.t-r
 					Rs. 0
 		- else
 			%tr.danger
 				%td
-					%b Extra Kms
+					%b Extra Km Charge
 					&nbsp;&nbsp;&nbsp;
 					(#{(@kms.to_i - @tariff[:kms].to_i)} Kms @ Rs.#{@tariff[:excess_kms]}/Km)
 				%td.t-r
 					Rs.
-					= ((@kms.to_i - @tariff[:kms].to_i) * @tariff[:excess_kms]).to_i
+					= @tariff[:kms_penalty]
 		%tr.success
 			%td
 				%b Total
 			%td.t-r
 				%b
 					Rs.
-					- if @tariff[:kms].to_i < @kms.to_i
-						= @tariff[:total] + ((@kms.to_i - @tariff[:kms].to_i) * @tariff[:excess_kms]).to_i
-					- else
-						= @tariff[:total]
+					= @tariff[:total] + @tariff[:kms_penalty]
 .m-5.t-c.f-b
 	Zoom's fare includes fuel & taxes.
 .f-i.red.size-12.t-c

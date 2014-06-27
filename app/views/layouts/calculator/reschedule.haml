@@ -126,7 +126,9 @@
 			%td
 				= @tariff[:org][:total]
 			%td
-				= @tariff[:org][:total] - @tariff[:org][:penalty]
+				= @tariff[:org][:total]
+				= "- #{@tariff[:org][:penalty]}"
+				%sup ##
 		- if @booking.starts_last != @booking.starts
 			- if @tariff[:reschedule][:refund] > 0
 				%tr
@@ -134,16 +136,28 @@
 						Reschedule Refund
 					%td
 						= @tariff[:reschedule][:refund]
+						+ #{@tariff[:reschedule][:kms_penalty]}
+						%sup #
 					%td
-						= @tariff[:reschedule][:refund] - @tariff[:reschedule][:penalty]
+						= @tariff[:reschedule][:refund] 
+						+ #{@tariff[:reschedule][:kms_penalty]}
+						%sup #
+						= "- @tariff[:reschedule][:penalty]"
+						%sup ##
 			- else
 				%tr
 					%td
 						Reschedule Charges
 					%td
 						= @tariff[:reschedule][:total]
+						+ #{@tariff[:reschedule][:kms_penalty]}
+						%sup #
 					%td
-						= @tariff[:reschedule][:total] - @tariff[:reschedule][:penalty]
+						= @tariff[:reschedule][:total] 
+						+ #{@tariff[:reschedule][:kms_penalty]}
+						%sup #
+						+ #{@tariff[:reschedule][:penalty]}
+						%sup ##
 		- elsif @booking.ends_last < @booking.ends
 			%tr
 				%td
@@ -152,6 +166,8 @@
 					= '-'
 				%td
 					= @tariff[:extended][:total]
+					+ #{@tariff[:extended][:kms_penalty]}
+					%sup #
 			%tr.danger
 				%td
 					Late Charges
@@ -159,21 +175,35 @@
 					= '-'
 				%td
 					= @tariff[:late][:total]
+					+ #{@tariff[:late][:kms_penalty]}
+					%sup #
+					+ #{@tariff[:late][:penalty]}
+					%sup ##
 		- else
 			%tr
 				%td
 					Shortening Refund
 				%td
 					= @tariff[:short][:total]
+					+ #{@tariff[:short][:kms_penalty]}
+					%sup #
 				%td
-					= @tariff[:short][:total] - @tariff[:short][:penalty]
+					= @tariff[:short][:total]
+					+ #{@tariff[:short][:kms_penalty]}
+					%sup #
+					+ #{@tariff[:short][:penalty]}
+					%sup ##
 			%tr
 				%td
 					Early Return Credits
 				%td
 					= '-'
 				%td
-					= @tariff[:early][:refund] - @tariff[:early][:penalty]
+					= @tariff[:early][:refund] 
+					= "- (#{@tariff[:early][:kms_penalty]})"
+					%sup #
+					= "- #{@tariff[:early][:penalty]}"
+					%sup ##
 		%tr.bg-c
 			%td
 				%b Change :
@@ -187,6 +217,12 @@
 				= @tariff[:mod][:total]
 	.m-5.t-c.f-b
 		** - Cancellation of original booking
+		%br/
+		%sup #
+		= "- Excess Kms : Charged at Rs.#{@tariff[:org][:excess_kms]}/Km"
+		%br/
+		%sup ##
+		= "- Penalty"
 .f-i.red.size-12.t-c
 	This calculator is only to help you estimate your charges, refunds & credits
 	%br/

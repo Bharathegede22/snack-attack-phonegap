@@ -15,22 +15,19 @@ class ApplicationController < ActionController::Base
     
     # Fallback ip detect
     if city.blank?
-    	city = 'bangalore'
-    	if false
-		    if session[:city]
-		      city = session[:city]
-		    elsif cookies[:city]
-		      city = cookies[:city]
-		    else
-		    	city_prompt = true
-		      ip = request.headers["X-Real-IP"] if request.headers["X-Real-IP"] && !request.headers["X-Real-IP"].empty?
-		      if ip
-		        city = get_city_from_ip(ip)
-		      else
-		        city = 'bangalore'
-		      end
-		    end
-		  end
+	    if session[:city]
+	      city = session[:city]
+	    elsif cookies[:city]
+	      city = cookies[:city]
+	    else
+	    	city_prompt = true
+	      ip = request.headers["X-Real-IP"] if request.headers["X-Real-IP"] && !request.headers["X-Real-IP"].empty?
+	      if ip
+	        city = get_city_from_ip(ip)
+	      else
+	        city = 'bangalore'
+	      end
+	    end
     end
     if city_prompt
     	@city = City.lookup(city.downcase)
