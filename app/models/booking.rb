@@ -436,8 +436,7 @@ class Booking < ActiveRecord::Base
 				message << "Rs.#{amount.to_i} is outstanding. "
 			end
 		end
-		support_contact = City.find(self.city_id).contact_phone
-		message << "#{support_contact} : Zoom Support."
+		message << "#{self.city.contact_phone} : Zoom Support."
 		SmsSender.perform_async(self.user_mobile, message, self.id)
 	end
 	
