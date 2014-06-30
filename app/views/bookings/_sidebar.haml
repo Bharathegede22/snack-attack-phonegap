@@ -1,6 +1,21 @@
-- cargroup = @booking.cargroup
-- location = @booking.location
-- fare = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_fare_calc(@booking.starts, @booking.ends,cargroup.id)
+:ruby
+	cargroup = @booking.cargroup
+	location = @booking.location
+	fare = @booking.get_fare
+	tmp = ''
+	h = fare[:hours]
+	d = h/24
+	h -= d*24
+	if d == 1
+		tmp << "1 day, "
+	elsif d > 0
+		tmp << d.to_s + " days, "
+	end
+	if h == 1
+		tmp << "1 hour"
+	elsif h > 0
+		tmp << h.to_s + " hours"
+	end
 .bg-w.bs-9.grey.droid.size-14
 	.bg-zoomb.white.p-5.f-b.size-20.p-l10.p-r10
 		.fl
@@ -39,18 +54,6 @@
 				= @booking.ends.strftime("%d/%m/%y %I:%M %p")
 			.fc
 	.p-10.bg-c.t-c
-		:ruby
-			tmp = ''
-			if fare[:days] == 1
-				tmp << "1 day, "
-			elsif fare[:days] > 0
-				tmp << fare[:days].to_s + " days, "
-			end
-			if fare[:hours] == 1
-				tmp << "1 hour"
-			elsif fare[:hours] > 0
-				tmp << fare[:hours].to_s + " hours"
-			end
 		Rented for
 		%b
 			= tmp.chomp(', ')
@@ -69,7 +72,7 @@
 	.bg-6.t-c.white.f-b.size-18
 		.p-10.fl
 			Total :
-			₹#{fare[:estimate] - fare[:discount]}
+			₹#{fare[:total]}
 		.calc.m-5.fr.help{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Tariff Estimator"}
 		.fc
 	.p-10.size-12

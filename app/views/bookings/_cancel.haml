@@ -10,14 +10,14 @@
 			.col-md-6
 				= @booking.starts.strftime("%d/%m/%Y %H:%M %p (%A)")
 			.col-md-6.t-r
-				= @booking.last_ends.strftime("%d/%m/%Y %H:%M %p (%A)")
+				= @booking.ends.strftime("%d/%m/%Y %H:%M %p (%A)")
 	.alert.alert-danger
 		This action is irreversible, your booking will be cancelled.
 	%form{:id => "SearchForm", :onsubmit => "return SubmitForm(this,'/bookings/#{@booking.encoded_id}/cancel','ModalContent');", :action => "javascript:void(0)", "data-ajax" => "false"}
 		.size-20
 			.label.label-info
 				%b
-					= @fare
+					= (@fare[:refund] - @fare[:penalty]).round
 				will be refunded
 		.p-t10
 			#SearchSubmit

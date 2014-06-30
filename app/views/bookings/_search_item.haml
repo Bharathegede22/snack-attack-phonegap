@@ -25,6 +25,13 @@
 	locs.each do |x|
 		count += 1 if x[1] == 1
 	end
+	booking = Booking.new
+	booking.city_id = @city.id
+	booking.starts = @booking.starts
+	booking.ends = @booking.ends
+	booking.cargroup_id = car.id
+	booking.valid?
+	fare = booking.get_fare
 - if !locs.blank?
 	.search-item
 		.default
@@ -96,10 +103,9 @@
 															= l[0].shortname
 						.fc
 				.actions
-					- fare = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_fare_calc(@booking.starts, @booking.ends, car.id)
-					.tariff.r-5.help.help-event{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-placement' => 'left', 'data-title' => "<div class='size-12 t-l'><b class='zoom size-16'>Fare Breakup</b><br/><table width='200'><tr><td>Normal Tariff</td><td>₹#{fare[:estimate]}</td></tr><tr><td>Discount</td><td>₹#{fare[:discount]}</td></tr><tr class='f-b yellow'><td>Total</td><td>₹#{(fare[:estimate] - fare[:discount])}</td></tr><tr><td class='p-l10'>Free Kms</td><td>#{fare[:kms]}</td></tr><tr><td class='p-l10'>Excess Km Charge</td><td>₹#{car.excess_kms.to_i}/Km</td></tr></table></div>", 'data-event' => "#{car.display_name}"}
+					.tariff.r-5.help.help-event{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-placement' => 'left', 'data-title' => "<div class='size-12 t-l'><b class='zoom size-16'>Fare Breakup</b><br/><table width='200'><tr><td>Normal Tariff</td><td>₹#{fare[:estimate]}</td></tr><tr><td>Discount</td><td>₹#{fare[:discount]}</td></tr><tr class='f-b yellow'><td>Total</td><td>₹#{(fare[:total])}</td></tr><tr><td class='p-l10'>Free Kms</td><td>#{fare[:kms]}</td></tr><tr><td class='p-l10'>Excess Km Charge</td><td>₹#{car.excess_kms.to_i}/Km</td></tr></table></div>", 'data-event' => "#{car.display_name}"}
 						%span.size-18 ₹
-						#{show_currency(fare[:estimate] - fare[:discount])}
+						#{show_currency(fare[:total])}
 					- if locs[0][1] == 1
 						.button{id: 'ButtonYes' + car.id.to_s, onclick: "doBooking(#{car.id}, #{locs[0][0].id});"}
 							Book

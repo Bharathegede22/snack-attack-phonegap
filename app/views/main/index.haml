@@ -25,6 +25,7 @@
 					.carousel-inner
 						- @cargroup.each do |cargroup|
 							- next if cargroup.id == 4
+							- pricing = cargroup.active_pricing(@city.id)
 							:ruby
 								if cargroup == @cargroup.first
 									style = "background:url(#{asset_path 'cars/' + cargroup.id.to_s + '.jpg'}) no-repeat center top;"
@@ -50,11 +51,11 @@
 													%td
 														.item.r-5
 															.fare
-																%b ₹#{show_currency((cargroup.hourly_fare*0.6).to_i)}/hour
+																%b ₹#{show_currency((pricing.hourly_fare*((100 - pricing.mode::WEEKDAY_DISCOUNT)/100.0)).to_i)}/hour
 													%td
 														.item.r-5
 															.fare
-																%b ₹#{show_currency((cargroup.daily_fare*0.6).to_i)}/day
+																%b ₹#{show_currency((pricing.daily_fare*((100 - pricing.mode::WEEKDAY_DISCOUNT)/100.0)).to_i)}/day
 		.tariff-bg
 			%h2.text.droid.size-20
 				Find Us In Your Neighbourhood!
@@ -86,7 +87,7 @@
 			.widget-hor
 				.bg.r-5.bs-3.p-10
 					#SearchFormDiv.form
-						= render :partial => '/bookings/widget_homepage_horizontal'
+						= render :partial => '/bookings/widget_homepage'
 = render :partial => '/main/locations', :locals => {header: false}
 = render :partial => '/main/reviews'
 = render :partial => '/main/press'

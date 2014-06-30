@@ -10,8 +10,24 @@
 		@booking.ends = Time.today + 2.days
 		@booking.location_id = location.id
 		@booking.cargroup_id = cargroup.id
+		@booking.city_id = @city.id
+		@booking.valid?
 	end
-	@fare = cargroup.check_fare(@booking.starts, @booking.ends)
+	@fare = @booking.get_fare
+	tmp = ''
+	h = @fare[:hours]
+	d = h/24
+	h -= d*24
+	if d == 1
+		tmp << "1 day, "
+	elsif d > 0
+		tmp << d.to_s + " days, "
+	end
+	if h == 1
+		tmp << "1 hour"
+	elsif h > 0
+		tmp << h.to_s + " hours"
+	end
 .content
 	= render :partial => "/bookings/search_steps", locals: {step: 4}
 	.wrapper
@@ -86,18 +102,6 @@
 										= @booking.ends.strftime("%d/%m/%y %I:%M %p")
 									.fc
 							.p-10.bg-c.t-c
-								:ruby
-									tmp = ''
-									if @fare[:days] == 1
-										tmp << "1 day, "
-									elsif @fare[:days] > 0
-										tmp << @fare[:days].to_s + " days, "
-									end
-									if @fare[:hours] == 1
-										tmp << "1 hour"
-									elsif @fare[:hours] > 0
-										tmp << @fare[:hours].to_s + " hours"
-									end
 								Rented for
 								%b
 									= tmp.chomp(', ')

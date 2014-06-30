@@ -35,7 +35,7 @@
 				We're Hiring
 			.fc
 			.support
-				#{CommonHelper::CUSTOMER_CARE}
+				= @city.contact_phone
 		.links
 			%ul.nav.navbar-nav.fr
 				- if @header.blank? || @header != 'homepage'
@@ -76,7 +76,7 @@
 							%a{href: "/reva"}
 								Zoom's Electric!
 						%li
-							%a{href: "/faq"}
+							%a{href: "/#{@city.name.downcase}/faq"}
 								FAQs
 						%li
 							%a{href: "/handover"}

@@ -1,0 +1,197 @@
+- @cargroup = Cargroup.list(@city)
+.static
+	%h1 Zoom Standard Tariffs
+	.m-t10.size-20.t-c
+		%i Zoom offers the simplest, easiest to understand car-rental tariff in India
+	%br/
+	#tariff-header.tariff-header
+		- @cargroup.each_with_index do |cargroup, index|
+			- if index == 0
+				%a.block.active{:href => "#car#{cargroup.id}", 'data-toggle' => "tab"}
+					#{cargroup.display_name}
+			- else
+				%a.block{:href => "#car#{cargroup.id}", 'data-toggle' => "tab"}
+					#{cargroup.display_name}
+		.fc
+	#tariff-body.p-10.t-c.tab-content.solid.border-c
+		- @cargroup.each_with_index do |cargroup, index|
+			:ruby
+				if index == 0
+					cls = 'tab-pane fade in active'
+				else
+					cls = 'tab-pane fade'
+				end
+				pricing = cargroup.active_pricing(@city.id)
+			%div{:class => cls, :id => "car#{cargroup.id}"}
+				.row.white
+					.inline-block{style: 'width:150px;'}
+						= image_tag("cars/#{cargroup.id}small.jpg", :alt => cargroup.display_name)
+						%br/
+						%br/
+					.inline-block.bg-zoomb.p-10.r-5.m-10{style: 'width:170px;'}
+						.p-b10
+							Hourly Trip
+						.r-10.bg-w.zoom-b.p-5
+							.fl
+								₹ #{show_currency(((1.0 - pricing.mode::WEEKDAY_DISCOUNT/100.0)*pricing.hourly_fare).round)}
+							.fr
+								₹ #{show_currency(pricing.hourly_fare)}
+							.fc
+						.p-5.size-10
+							.fl
+								(Mon - Thu)
+							.fr
+								(Fri - Sun)
+							.fc
+						.white
+							%i.size-10 includes
+							#{show_currency(pricing.hourly_kms)} Kms
+							%sup #
+					.inline-block.bg-zoomb.p-10.r-5.m-10{style: 'width:170px;'}
+						.p-b10
+							Daily Trip 
+							%span.size-10 (>= 10 Hours)
+						.r-10.bg-w.zoom-b.p-5
+							.fl
+								₹ #{show_currency(((1.0 - pricing.mode::WEEKDAY_DISCOUNT/100.0)*pricing.daily_fare).round)}
+							.fr
+								₹ #{show_currency(pricing.daily_fare)}
+							.fc
+						.p-5.size-10
+							.fl
+								(Mon - Thu)
+							.fr
+								(Fri - Sun)
+							.fc
+						.white
+							%i.size-10 includes
+							#{show_currency(pricing.daily_kms)} Kms
+							%sup #
+					.inline-block.bg-zoomb.p-10.r-5.m-10{style: 'width:170px;'}
+						.p-b10
+							Weekly Trip
+							%span.size-10 (>= 7 Days)
+						.r-10.bg-w.zoom-b.p-5
+							₹ #{show_currency(pricing.weekly_fare)}
+						.p-5.size-10
+							&nbsp;
+						.white
+							%i.size-10 includes
+							#{show_currency(pricing.weekly_kms)} Kms
+							%sup #
+					.inline-block.bg-zoomb.p-10.r-5.m-10{style: 'width:170px;'}
+						.p-b10
+							Monthly Trip
+							%span.size-10 (>= 4 Weeks)
+						.r-10.bg-w.zoom-b.p-5
+							₹ #{show_currency(pricing.monthly_fare)}
+						.p-5.size-10
+							&nbsp;
+						.white
+							%i.size-10 includes
+							#{show_currency(pricing.monthly_kms)} Kms
+							%sup #
+				.row.zoomb
+					.inline-block{style: 'width:150px;'}
+					.inline-block.border-zoomb.solid.p-5.r-5.m-5{style: 'width:750px;'}
+						%b
+							%sup #
+							₹ #{cargroup.excess_kms}/Km
+						will be charged beyond free usage
+	%br/
+	.row
+		.col-md-6
+			.border-c.solid
+				.header.bg-zoomb.white.p-10.f-b
+					Included in Zoom Tariff
+				.p-10.border-b-c.tick
+					The Km cap associated with an hourly, daily, weekly, or monthly booking
+				.p-10.border-b-c.tick
+					Fuel *
+				.p-10.border-b-c.tick
+					Full insurance
+				.p-10.border-b-c.tick
+					Taxes
+				.p-10.border-b-c.tick
+					Roadside assistance, towing, and impounding caused by vehicle failure
+				.p-10.border-b-c.tick
+					Routine maintenance & cleaning
+				.p-10.border-b-c.tick
+					GPS technology
+				.p-10.border-b-c.tick
+					24-hour customer support
+				.p-10.tick
+					Child seat on request
+		.col-md-6
+			.border-c.solid
+				.header.bg-zoomb.white.p-10.f-b
+					Excluded from Zoom Tariff
+				.p-10.border-b-c.cross
+					More than the requisite Km cap associated with an hourly, daily, weekly, or monthly booking
+				.p-10.border-b-c.cross
+					Tolls and road taxes (in-state & out-state) **
+				.p-10.border-b-c.cross
+					₹5,000 damage charge
+				.p-10.border-b-c.cross
+					Traffic & parking violations
+				.p-10.border-b-c.cross
+					Roadside assistance, towing, and impounding caused by member failure
+				.p-10.border-b-c.cross
+					Filth requiring extra cleaning
+				.p-10.border-b-c.cross
+					Penalty fee for violating Zoom rules
+				.p-10.cross
+					Car washing during member reservation
+	
+	%br/
+
+	%p
+		* If you refuel the vehicle during your reservation, you will be reimbursed the full amount you pay (Fuel Receipt required).
+	%p
+		** Permit costs to enter Andhra Pradesh will be reimbursed by Zoom.
+
+	%p
+		Please book more time than you think you will need for your journey. Zoom is fully committed to reliably providing vehicles when our members have them reserved, so please do return your vehicle on-time. If you return a vehicle late and it causes an inconvenience to another member, you will be charged a penalty to compensate them.
+
+	%p
+		But we don't want you to pay more than you should for time you aren't Zooming! If you return a vehicle 1 hour or more before your reservation ends, you will get a driving credit for ½ of the unused time. If you have a vehicle only with a daily tariff component, you are eligible for a credit equivalent to ½ of the daily tariff in the event you return the car a day or more early (e.g. a 3 day rental that is returned 1 full day early will result in a driving credit equal to ½ of the standard daily tariff for that respective vehicle).
+	%br/
+	%br/
+
+	/ .t-c
+	/ 	%table.table.table-bordered
+	/ 		%tbody
+	/ 			%tr.active
+	/ 				%td.t-l{:colspan => '6'}
+	/ 					%span.red
+	/ 						%b
+	/ 							= "# - "
+	/ 						Mahindra Reva has a maximum range of
+	/ 						%b 100 Km
+	/ 						on a full charge.
+	/ 					%br/
+	/ 					%b 
+	/ 						= "1 - "
+	/ 					Upto 24 hours. 1 - 10 Hours are charged, while 11 - 24 Hours are free.
+	/ 					%br/
+	/ 					%b 
+	/ 						= "2 - "
+	/ 					Beyond 24 hours. Full days are charged based on this fare, partial hours are charged based on hourly fare.
+	/ 					%br/
+	/ 					%b 
+	/ 						= "3 - "
+	/ 					Beyond 7 Days. Any subsequent partial days/hours are charged on pro-rated base of this fare only.
+	/ 					%br/
+	/ 					%b 
+	/ 						= "4 - "
+	/ 					Beyond 28 Days. Any subsequent partial days/hours are charged on pro-rated base of this fare only.
+	/ 					%br/
+	/ 					%br/
+	/ 					%b
+	/ 						= "** - "
+	/ 					All Zoom reservation comes with free driving kms, which are based on vehicle type and reservation duration. Any kms in excess of these limits will be charged at the rates shown here. For weekly/monthly reservations, free kms will be given on pro-rated basis using weekly/monthly limit. For daily reservation, free kms can comprise of the daily and hourly free kms.  
+	/ %br/
+
+.mod-calculator-box
+	.mod-calculator.r-tl-10.r-tr-10.ts-0{:onclick => "showModal('Tariff Calculator', '/calculator/tariff'); return false;"}
+		Tariff Calculator

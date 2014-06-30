@@ -13,7 +13,7 @@
 			.p-t5
 				%a{:href => "/privacy"} Privacy Policy
 			.p-t5
-				%a{:href => "/faq"} FAQs
+				%a{:href => "/#{@city.name.downcase}/faq"} FAQs
 			.p-t5
 				%a{:href => @city.link('attractions')} Locations and Cars
 		.partition.t-c

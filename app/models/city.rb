@@ -57,6 +57,10 @@ class City < ActiveRecord::Base
 		end
 	end
 	
+	def mode
+		return "Pricing#{self.pricing_mode}".constantize
+	end
+	
 	def self.active
 		Rails.cache.fetch("cities") do
 			City.find_by_sql("SELECT * FROM cities")

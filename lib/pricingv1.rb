@@ -4,6 +4,7 @@ class Pricingv1
 	CHARGE_CAP = 2000
 	CHARGE_PERCENTAGE = 25
 	CREDIT_PERCENTAGE = 25
+	LATE_FEE = 600
 	SHORT_PERCENTAGE = 50
 	START_BUFFER_TIME = 24
 	WEEKDAY_DISCOUNT = 40
@@ -17,9 +18,10 @@ class Pricingv1
 		end
 		if @@booking.id.blank? || (!@@booking.id.blank? && Time.now > (@@booking.starts - START_BUFFER_TIME.hours))
 			data[:penalty] = (data[:refund]*(CHARGE_PERCENTAGE/100.0)).round
-			data[:log] = true
+			data[:penalty] = CHARGE_CAP if data[:penalty] > CHARGE_CAP
 		end
-		data[:penalty] = CHARGE_CAP if data[:penalty] > CHARGE_CAP
+		data[:penalty] = data[:penalty].round
+		data[:log] = true
 		return data
 	end
 	
@@ -39,8 +41,11 @@ class Pricingv1
 			else
 				if !@@booking.starts_last.blank? && !@@booking.ends_last.blank?
 					if @@booking.starts != @@booking.starts_last || @@booking.ends != @@booking.ends_last
-						# Reshceduled
+						# Rescheduled
 						data = reschedule
+					else
+						# No Change
+						data = get_hash
 					end
 				end
 			end
@@ -61,11 +66,11 @@ class Pricingv1
 	def self.early
 		data = get_fare(@@booking.starts, @@booking.ends)
 		tmp = get_fare(@@booking.starts, @@booking.returned_at)
+		data[:log] = true if data[:hours] != tmp[:hours]
 		if (data[:total] > tmp[:total])
 			data[:refund] = data[:total] - tmp[:total]
 			data[:penalty] = (data[:refund]*((100-CREDIT_PERCENTAGE)/100.0)).round
 		end
-		data[:log] = true
 		data = substract_hash(data,tmp)
 		data[:kms] += tmp[:kms]
 		return data
@@ -76,7 +81,6 @@ class Pricingv1
 		tmp = get_fare(@@booking.starts, @@booking.returned_at)
 		data[:hours] = (@@booking.returned_at.to_i - @@booking.ends.to_i)/3600
 		data[:hours] += 1 if (@@booking.returned_at.to_i - @@booking.ends.to_i) > data[:hours]*3600
-		data[:billed_hours] += data[:hours]
 		min = 1
 		wday = @@booking.ends.wday
 		while min <= data[:hours]*60
@@ -107,8 +111,10 @@ class Pricingv1
 	def self.reschedule
 		data = get_fare(@@booking.starts_last, @@booking.ends_last)
 		tmp = get_fare(@@booking.starts, @@booking.ends)
-		data[:log] = true
-		
+		if data[:hours] != tmp[:hours] || data[:total] != tmp[:total]
+			data[:log] = true
+			tmp[:log] = true
+		end
 		if tmp[:total] < data[:total]
 			# Charges for late reschedule
 			data[:refund] = data[:total] - tmp[:total]
@@ -131,8 +137,7 @@ class Pricingv1
 	def self.get_hash
 		return {
 			total: 0, estimate: 0, discount: 0, 
-			hours: 0, billed_hours: 0, standard_hours: 0, discounted_hours: 0, 
-			days: 0, standard_days: 0, discounted_days: 0, 
+			hours: 0, standard_hours: 0, discounted_hours: 0, 
 			excess_kms: @@pricing.excess_kms, kms: 0, log: false, 
 			penalty: 0, refund: 0, kms_penalty: 0
 		}
@@ -142,21 +147,23 @@ class Pricingv1
 		temp = get_hash
 		h = (end_date.to_i - start_date.to_i)/3600
 		h += 1 if (end_date.to_i - start_date.to_i) > h*3600
+		
+		temp[:hours] = h
 		d = h/24
 		h = h - d*24
-		temp[:days] = d
-		temp[:hours] = h
 		
 		if d > 0
 			if d >= 28
 				# Monthly
 				h = d*24 + h
+				temp[:standard_hours] = h
 				temp[:estimate] = ((@@pricing.monthly_fare/(28*24.0))*h).round
 				temp[:kms] = ((@@pricing.monthly_kms/(28*24.0))*h).round
 				return temp
 			elsif d >= 7
 				# Weekly
 				h = d*24 + h
+				temp[:standard_hours] = h
 				temp[:estimate] = ((@@pricing.weekly_fare/(7*24.0))*h).round
 				temp[:kms] = ((@@pricing.weekly_kms/(7*24.0))*h).round
 				return temp
@@ -168,9 +175,9 @@ class Pricingv1
 					temp[:kms] += @@pricing.daily_kms
 					if wday > 0 && wday < 5
 						temp[:discount] += @@pricing.daily_fare*(WEEKDAY_DISCOUNT/100.0)
-						temp[:discounted_days] += 1
+						temp[:discounted_hours] += 24
 					else
-						temp[:standard_days] += 1
+						temp[:standard_hours] += 24
 					end
 				end
 			end

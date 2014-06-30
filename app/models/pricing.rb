@@ -5,4 +5,8 @@ class Pricing < ActiveRecord::Base
 	
 	has_many :bookings
 	
+	def mode
+		return "Pricing#{self.version}".constantize
+	end
+	
 end

@@ -53,6 +53,7 @@ namespace :generic do
 	  run "ln -s #{shared_path}/configurations.yml #{release_path}/config/configurations.yml"
 	  run "ln -s #{shared_path}/database.yml #{release_path}/config/database.yml"
 	  run "ln -s #{shared_path}/database.yml #{release_path}/config/varnishd.yml"
+	  run "ln -s #{shared_path}/GeoLiteCity.dat #{release_path}/GeoLiteCity.dat"
 	  run "chmod 777 #{release_path}/public/sitemap.xml"
 	end
 	

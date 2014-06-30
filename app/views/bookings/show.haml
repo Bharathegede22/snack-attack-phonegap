@@ -96,11 +96,14 @@
 						Extend
 					.btn.btn-warning{onclick: "showModal('Shorten Your Booking', '/bookings/#{@booking.encoded_id}/reschedule');"}
 						Shorten
+				- when 'near'
+					.btn.btn-warning{onclick: "showModal('Change Your Booking', '/bookings/#{@booking.encoded_id}/reschedule');"}
+						Change
+					.btn.btn-danger{onclick: "showModal('Cancel Your Booking', '/bookings/#{@booking.encoded_id}/cancel');"}
+						Cancel
 				- when 'future'
-					.btn.btn-success{onclick: "showModal('Extend Your Booking', '/bookings/#{@booking.encoded_id}/reschedule');"}
-						Extend
-					.btn.btn-warning{onclick: "showModal('Shorten Your Booking', '/bookings/#{@booking.encoded_id}/reschedule');"}
-						Shorten
+					.btn.btn-success{onclick: "showModal('Change Your Booking', '/bookings/#{@booking.encoded_id}/reschedule');"}
+						Change
 					.btn.btn-danger{onclick: "showModal('Cancel Your Booking', '/bookings/#{@booking.encoded_id}/cancel');"}
 						Cancel
 				- else

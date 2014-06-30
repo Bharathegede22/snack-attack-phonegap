@@ -2,7 +2,7 @@
 	cargroup = @booking.cargroup
 	location = @booking.location
 	offer = @booking.offer
-	version = Pricing.pricing_verison(@booking.pricing_id)
+	fare = @booking.get_fare
 %br/
 Hi #{@user.name},
 %br/
@@ -90,7 +90,6 @@ Please review the details of your reservation:
 	%p{style: "margin:5px 0 0 0; padding:0;"}
 		\- Please remember to carry your original driving license at the time of picking the car. Zoom reserves the right of cancelling the reservation if the original driving license is not produced.
 	%p{style: "margin:5px 0 0 0; padding:0;"}
-		- fare = "Pricing#{version}".constantize.check_fare_calc(@booking.starts, @booking.ends,cargroup.id)
 		\- As a friendly reminder, your reservation comes with 
 		%b
 			#{fare[:kms]}

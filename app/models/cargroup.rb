@@ -3,7 +3,7 @@ class Cargroup < ActiveRecord::Base
 	has_many :bookings
 	
 	def active_pricing(city)
-		Rails.cache.fetch("cargroup-pricing-#{city}") do
+		Rails.cache.fetch("cargroup-pricing-#{city}-#{self.id}") do
 			Pricing.find_by_sql("SELECT * FROM pricings 
 				WHERE city_id = #{city} AND cargroup_id = #{self.id} AND status = 1 AND starts <= '#{Time.today.to_s(:db)}' 
 				ORDER BY starts DESC 

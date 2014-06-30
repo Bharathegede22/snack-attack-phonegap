@@ -75,23 +75,26 @@ Web::Application.routes.draw do
 			post 'update'
 		end
 	end
-
+	
+	post '/search/:id' => 'bookings#search'
+	get '/search' => 'bookings#search'
+	
 	post '/calculator/:id' => 'main#calculator'
 	get '/calculator/:id' => 'main#calculator'
 	
 	get '/job/:id' => 'main#job'
- 	get ':action' => 'main', constraints: {action: /about|careers|contact|eligibility|faq|handover|howitworks|member|outstation|reva|privacy/}
+ 	get ':action' => 'main', constraints: {action: /about|careers|contact|eligibility|handover|howitworks|member|outstation|reva|privacy/}
  	
 	scope "/(:city)", constraints: {city: /bangalore|pune/} do
 		get '/' => 'main#index'
 		get '/attractions' => 'main#city'
-		get '/offers' => 'main#offers'
-		get '/attractions' => 'seo#index'
 		get '/explore' => 'seo#explore'
+		get '/faq'=>'main#faq'
+		get '/fees'=>'main#fees'
+		get '/offers' => 'main#offers'
 		get '/nearby' => 'seo#nearby'
 		get '/tariff'=>'main#tariff'
 		get '/safety'=>'main#safety'
-		get '/fees'=>'main#fees'
 		get '/:id' => 'seo#index'
 	end
   

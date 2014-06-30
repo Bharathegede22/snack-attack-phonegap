@@ -9,10 +9,12 @@ class BookingsController < ApplicationController
 
 	def cancel
 		if request.post?
+			@booking.valid?
 			fare = @booking.do_cancellation
-			flash[:notice] = "Your booking is successfully <b>cancelled</b>. <b>#{fare}</b> will be refunded to you shortly."
+			flash[:notice] = "Your booking is successfully <b>cancelled</b>. <b>#{fare[:refund] - fare[:penalty]}</b> will be refunded to you shortly."
 		else
-			@fare = @booking.check_cancellation
+			@booking.status = 9
+			@fare = @booking.get_fare
 		end
 		render json: {html: render_to_string('_cancel.haml', layout: false)}
 	end
@@ -107,7 +109,6 @@ class BookingsController < ApplicationController
 		@booking.ref_initial = session[:ref_initial]
 		@booking.ref_immediate = session[:ref_immediate]
 		@booking.through_signup = true
-		#@booking.pricing
 		
 		if promo
 			@booking.promo = session[:promo_code]
@@ -311,6 +312,7 @@ class BookingsController < ApplicationController
 		@confirm = !params[:confirm].blank?
 		if request.post?
 			if @confirm
+				@booking.starts = Time.zone.parse(params[:starts]) if !params[:starts].blank?
 				@booking.ends = Time.zone.parse(params[:ends]) if !params[:ends].blank?
 				@booking.through_signup = true
 				if @booking.valid?
@@ -319,15 +321,18 @@ class BookingsController < ApplicationController
 						flash[:error] = "Sorry, but the car is no longer available"
 					else
 						tmp = ''
-						if @fare[:days] == 1
+						h = @fare[:hours]
+						d = h/24
+						h -= d*24
+						if d == 1
 							tmp << "1 day, "
-						elsif @fare[:days] > 0
-							tmp << @fare[:days].to_s + " days, "
+						elsif d > 0
+							tmp << d.to_s + " days, "
 						end
-						if @fare[:hours] == 1
+						if h == 1
 							tmp << "1 hour"
-						elsif @fare[:hours] > 0
-							tmp << @fare[:hours].to_s + " hours"
+						else
+							tmp << h.to_s + " hours"
 						end
 						flash[:notice] = "Your booking successfully <b>" + @string.downcase.gsub('ing', 'ed') + "</b> by " + tmp.chomp(', ')
 						@success = true
@@ -337,11 +342,15 @@ class BookingsController < ApplicationController
 					flash[:error] = "Please fix the error!"
 				end
 			else
+				@booking.starts = Time.zone.parse(params[:starts]) if !params[:starts].blank?
 				@booking.ends = Time.zone.parse(params[:ends]) if !params[:ends].blank?
 				if @booking.valid?
 					@string, @fare = @booking.check_reschedule
-					flash[:error] = "Sorry, but the car is no longer available" if !@fare && @string == 'NA'
-					@confirm = true
+					if !@fare && @string == 'NA'
+						flash[:error] = "Sorry, but the car is no longer available"
+					else
+						@confirm = true
+					end
 				else
 					flash[:error] = "Please fix the error!"
 				end
@@ -357,29 +366,26 @@ class BookingsController < ApplicationController
 		@canonical = "https://www.zoomcar.in/#{@city.name}/search"
 		if request.post?
 			@booking = Booking.new
+			@booking.city_id = @city.id
 			@booking.starts = Time.zone.parse(params[:starts]) if !params[:starts].blank?
 			@booking.ends = Time.zone.parse(params[:ends]) if !params[:ends].blank?
 			@booking.location_id = params[:loc] if !params[:loc].blank?
 			@booking.cargroup_id = params[:car] if !params[:car].blank?
-			@booking.through_search = true
 			@booking.valid?
 			session[:search] = {:starts => params[:starts], :ends => params[:ends], :loc => params[:loc], :car => params[:car]}
-			if params[:id] == 'homepage_ab'
-				render json: {html: render_to_string('_widget_homepage_ab.haml', layout: false)}
-			elsif params[:id] == 'homepage'
+			if params[:id] == 'homepage'
 				render json: {html: render_to_string('_widget_homepage.haml', layout: false)}
 			else
 				render json: {html: render_to_string('_widget.haml', layout: false)}
 			end
 		else
 			@booking = Booking.new
+			@booking.city_id = @city.id
 			@booking.starts = Time.zone.parse(session[:search][:starts]) if !session[:search].blank? && !session[:search][:starts].blank?
 			@booking.ends = Time.zone.parse(session[:search][:ends]) if !session[:search].blank? && !session[:search][:ends].blank?
 			@booking.location_id = session[:search][:loc] if !session[:search].blank? && !session[:search][:loc].blank?
 			@booking.cargroup_id = session[:search][:car] if !session[:search].blank? && !session[:search][:car].blank?
-			@booking.city_id = @city.id
-			@booking.through_search = true
-			@inventory = Inventory.check(@booking.starts, @booking.ends, @city, nil, nil) if !session[:search].blank? && @booking.valid?
+			@inventory = Inventory.search(@city, @booking.starts, @booking.ends) if !session[:search].blank? && @booking.valid?
 			@header = 'search'
 		end
 	end
@@ -473,9 +479,10 @@ class BookingsController < ApplicationController
   end
   
 	def check_inventory
-		if @booking
+		if @booking.valid?
 			if @booking.jsi.blank? && @booking.status == 0
-				@available = Inventory.check(@booking.starts, @booking.ends, @city, @booking.cargroup_id, @booking.location_id)
+				cargroup = @booking.cargroup
+				@available = Inventory.do_check(@city.id, @booking.cargroup_id, @booking.location_id, (@booking.starts - cargroup.wait_period.minutes), (@booking.ends + cargroup.wait_period.minutes))
 				if @available == 0 && !session[:notify].present?
 					flash[:error] = "Sorry, but the car is no longer available"
 					redirect_to(:back) and return
@@ -492,6 +499,7 @@ class BookingsController < ApplicationController
 			@booking.location_id = session[:book][:loc]
 			@booking.cargroup_id = session[:book][:car]
 			@booking.city_id = @city.id
+			@booking.valid?
 		end
 	end
 	

@@ -1,12 +1,14 @@
-- @cargroup = Cargroup.list
+- @cargroup = Cargroup.list(@city)
 .homepage
-	.afold-n
-		.cars-n
+	.afold
+		.cars
 			.h1
 				%h1
-					Self Drive Cars In Bangalore
+					%span
+						= @city.h1
 				%p
-					Zoom in the City and Outstation
+					%span
+						Zoom in the City and Outstation
 			.slider
 				#CarSlider.carousel.slide{'data-ride' => "carousel", 'data-interval' => '7000', 'data-pause' => 'click'}
 					%ol.carousel-indicators
@@ -37,23 +39,26 @@
 								.lazy{:style => style, 'data-background' => databg}
 									.cars-content
 										.car-tariff
-											.item.r-5
-												.fare
-													%b ₹#{show_currency(cargroup.hourly_fare)}/hour
-											.item.r-5
-												.fare
-													%b ₹#{show_currency(cargroup.daily_fare)}/day
-											.item.r-5
-												.fare
-													%b ₹#{show_currency(cargroup.weekly_fare)}/week
-											.item.r-5.last
-												.fare
-													%b ₹#{show_currency(cargroup.monthly_fare)}/month
-											.fc
-		.tariff-bg-n
+											%table.m-auto.car-bg.r-5
+												%tr
+													%td
+														.car-name
+															= cargroup.name
+													%td
+														.car-help
+															%i starts at
+													%td
+														.item.r-5
+															.fare
+																%b ₹#{show_currency((cargroup.hourly_fare*0.6).to_i)}/hour
+													%td
+														.item.r-5
+															.fare
+																%b ₹#{show_currency((cargroup.daily_fare*0.6).to_i)}/day
+		.tariff-bg
 			%h2.text.droid.size-20
 				Find Us In Your Neighbourhood!
-		.tariff-n
+		.tariff.tariff-includes
 			.includes
 				#BubbleAllIn.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>No Hidden Costs</b><br/>Here at Zoom, you will get what you pay for. Following items are standard in all our cars."}
 					.p-10
@@ -78,10 +83,10 @@
 						.p-10
 							.parking
 		.wrapper
-			.widget-n
+			.widget-hor
 				.bg.r-5.bs-3.p-10
 					#SearchFormDiv.form
-						= render :partial => '/bookings/widget_homepage_horizontal'
+						= render :partial => '/bookings/widget_homepage'
 = render :partial => '/main/locations', :locals => {header: false}
 = render :partial => '/main/reviews'
 = render :partial => '/main/press'

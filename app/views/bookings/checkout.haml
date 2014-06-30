@@ -10,8 +10,10 @@
 		@booking.ends = Time.today + 2.days
 		@booking.location_id = location.id
 		@booking.cargroup_id = cargroup.id
+		@booking.city_id = @city.id
+		@booking.valid?
 	end
-	@fare = "Pricing#{Pricing::DEFAULT_VERSION}".constantize.check_fare_calc(@booking.starts, @booking.ends,cargroup.id)
+	@fare = @booking.get_fare
 .content
 	= render :partial => "/bookings/search_steps", locals: {step: 4}
 	.wrapper

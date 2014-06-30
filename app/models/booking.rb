@@ -29,8 +29,7 @@ class Booking < ActiveRecord::Base
 	attr_writer :through_search
 	attr_writer :through_signup
     
-	validates :starts, :ends, :city_id, :pricing_id, presence: true
-	validates :cargroup_id, :location_id, presence: true, if: Proc.new {|b| !b.through_search?}
+	validates :starts, :ends, :city_id, presence: true
 	validates :cargroup_id, :location_id, :user_id, presence: true, if: Proc.new {|b| b.through_signup?}
 	validate :dates_order
 	
@@ -39,17 +38,6 @@ class Booking < ActiveRecord::Base
 	before_create :before_create_tasks
 	before_save :before_save_tasks
 	before_validation :before_validation_tasks
-	
-	def block_extension
-		if self.car_id.blank?
-			return Inventory.block_extension(self.city, self.cargroup_id, self.location_id, self.ends_lasts, self.ends)
-		else
-			c = self.car
-			check = c.check_extension(self.city, self.ends_last, self.ends)
-			c.manage_inventory(self.city, self.ends_last, self.ends, true) if check == 1
-			return check
-		end
-	end
 	
 	def cancellation_charge
 		total = Charge.find_by_booking_id_and_activity(self.id, 'cancellation_charge')
@@ -60,12 +48,27 @@ class Booking < ActiveRecord::Base
 		end
 	end
 	
-	def check_extension
+	def check_inventory
+		check = 1
 		if self.car_id.blank?
-			return Inventory.check_extension(self.last_ends, self.ends, self.city, self.cargroup_id, self.location_id)
+			cargroup = self.cargroup
+			Inventory.connection.clear_query_cache
+			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
+			if self.starts != self.starts_last || self.ends != self.ends_last
+				if self.starts < self.starts_last
+					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
+				end
+				 if check == 1 && self.ends > self.ends_last
+					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, self.ends_last, (self.ends + cargroup.wait_period.minutes))
+				end
+			else
+				check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
+			end
+			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
 		else
-			return self.car.check_extension(self.city, self.last_ends, self.ends)
+			check = self.car.check_inventory(self.city_id, self.starts_last, self.ends_last, self.starts, self.ends)
 		end
+		return check
 	end
 	
 	def check_payment
@@ -76,6 +79,31 @@ class Booking < ActiveRecord::Base
 			payment = nil
 		end
 		return payment
+	end
+	
+	def check_reschedule
+		return if self.starts == self.starts_last && self.ends == self.ends_last
+		check = self.check_inventory
+		if check != 1
+			BookingMailer.change_failed(self.id).deliver
+			return ['NA', nil]
+		end
+		str, fare = ['', nil]
+		if (self.starts != self.starts_last || self.ends != self.ends_last)
+			if self.starts == self.starts_last
+				if self.ends > self.ends_last
+					str = 'Extending'
+				elsif self.ends < self.ends_last
+					str = 'Shortening'
+				end
+			else
+				str = 'Rescheduling'
+			end
+		else
+			str = 'No Change'
+		end
+		fare = self.get_fare
+		return [str, fare]
 	end
 	
 	def dates_order
@@ -96,138 +124,142 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def do_cancellation
-		if self.status < 9
-			self.manage_inventory(self.city, self.starts, self.ends, false)
-			fare = self.get_fare
-			charge = Charge.new(booking_id: self.id, refund: 1, activity: 'cancellation_refund', estimate: data[:refund], discount: 0, amount: data[:refund])
+		return nil if self.status > 8
+		self.status = 10
+		self.manage_inventory
+		data = self.get_fare
+		charge = Charge.where(["booking_id = ? AND activity = 'cancellation_refund'", self.id]).first
+		charge = Charge.new(booking_id: self.id, activity: 'cancellation_refund') if !charge
+		charge.refund = 1
+		charge.estimate = data[:refund]
+		charge.discount = 0
+		charge.amount = data[:refund]
+		if charge.save
+			note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs."
+			note += data[:refund].to_s + " - Cancellation Refund.<br/>"
+			self.notes += note
+		end
+		if data[:penalty] > 0
+			charge = Charge.where(["booking_id = ? AND activity = 'cancellation_charge'", self.id]).first
+			charge = Charge.new(booking_id: self.id, activity: 'cancellation_refund')
+			charge.estimate = data[:penalty]
+			charge.discount = 0
+			charge.amount = data[:penalty]
 			if charge.save
 				note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs."
-				note += data[:refund].to_s + " - Cancellation Refund.<br/>"
+				note += data[:penalty].to_s + " - Cancellation Charge.<br/>"
 				self.notes += note
 			end
-			if data[:penalty] > 0
-				charge = Charge.new(booking_id: self.id, activity: 'cancellation_charge', estimate: data[:penalty], discount: 0, amount: data[:penalty])
+		end
+		self.save(validate: false)
+		BookingMailer.cancel(self.id, charge.id).deliver
+		sendsms('cancel', (data[:refund] - data[:penalty]))
+		return data
+	end
+	
+	def do_charge(str, fare, action_text)
+		if fare[:log] && fare[:total] > 0
+			charge = Charge.new(booking_id: self.id, activity: action_text, estimate: 0, discount: 0, amount: 0)
+			charge.hours = fare[:hours].round
+			charge.billed_total_hours += fare[:hours].round
+			charge.billed_discounted_hours += fare[:discounted_hours].round
+			charge.billed_standard_hours += fare[:standard_hours].round
+			charge.estimate += fare[:estimate]
+			charge.discount += fare[:discount]
+			if fare[:refund] > 0
+				charge.amount += fare[:refund]
+				charge.refund = 1
+			else
+				charge.amount += fare[:total]
+			end
+			if charge.save
+				note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs."
+				note << case str
+				when 'Early Return' then charge.amount.to_s + ' - Early Return Credits.' + self.ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.returned_at.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+				when 'Late Return' then charge.amount.to_s + " - Late Charge." + self.ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.returned_at.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+				when 'Rescheduling' 
+					if charge.refund
+						charge.amount.to_s + " - Reschedule Charge." + self.starts_last.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends_last.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.starts_last.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+					else
+						charge.amount.to_s + " - Reschedule Refund." + self.starts_last.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends_last.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.starts_last.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+					end
+				when 'Extending' then charge.amount.to_s + " - Extension Charges." + self.ends_last.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+				when 'Shortening' then charge.amount.to_s + " - Shorten Refund." + self.ends_last.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+				end
+				self.notes += note
+			end
+			# Trip modification charges
+			if fare[:penalty] > 0
+				charge = Charge.new(booking_id: self.id, activity: action_text.gsub('refund', 'charge'), estimate: 0, discount: 0, amount: 0)
+				charge.hours = fare[:hours].round
+				charge.billed_total_hours += fare[:hours].round
+				charge.billed_discounted_hours += fare[:discounted_hours].round
+				charge.billed_standard_hours += fare[:standard_hours].round
+				charge.estimate += fare[:penalty]
+				charge.discount += 0
+				charge.amount += fare[:penalty]
 				if charge.save
 					note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs."
-					note += data[:penalty].to_s + " - Cancellation Charge.<br/>"
+					note << case str
+					when 'Early Return' then charge.amount.to_s + ' - Early Return Fee.' + self.ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.returned_at.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+					else charge.amount.to_s + " - Reschedule Fee." + self.starts_last.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends_last.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.starts_last.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+					end
 					self.notes += note
 				end
 			end
-			self.status = 10
-			self.save(validate: false)
-			BookingMailer.cancel(self.id, charge.id).deliver
-			sendsms('cancel', (data[:refund] - data[:penalty]))
+			return charge
+		else
+			note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b>"
+			note << case str
+			when 'Early Return' then 'No Early Return Credits.' + self.ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.returned_at.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+			when 'Rescheduling' then 'No Reschedule Charges.' + self.starts_last.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends_last.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.starts_last.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+			when 'Extending' then "No Extension Charges." + self.last_ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+			when 'Shortening' then "No Reschedule Refund." + self.last_ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+			end
+			self.notes += note
+			return nil
 		end
-		return (data[:refund] - data[:penalty])
 	end
 	
 	def do_reschedule
 		str = ''
 		fare = self.get_fare
-		if fare[:log]
-			if !self.returned_at.blank?
-				if fare[:total_hours] < 0
-					action_text = 'early_return_refund'
-					str = 'Early Return'
-					self.early = true
+		return if self.starts == self.starts_last && self.ends == self.ends_last
+		if self.starts != self.starts_last
+			str = 'Rescheduling'
+			check = self.manage_inventory
+			if fare[:hours] > 0
+				action_text = 'reschedule_fee'
+				if check != 1
+					BookingMailer.change_failed(self.id).deliver
+					str = 'NA'
 				else
-					action_text = 'late_fee'
-					str = 'Late Return'
-					self.late = true
+					self.rescheduled = true
 				end
-			elsif self.starts != self.starts_last
-				str = 'Rescheduling'
+			elsif fare[:hours] < 0
+				action_text = 'reschedule_refund'
 				self.rescheduled = true
-				if fare[:total_hours] > 0
-					action_text = 'reschedule_fee'
-					check = self.block_extension
-					if check != 1
-						BookingMailer.change_failed(self.id).deliver
-						str = 'NA'
-					end
-				elsif fare[:total_hours] < 0
-					action_text = 'reschedule_refund'
-					self.manage_inventory(self.city, self.ends, self.ends_last, false)
-				end
-			elsif self.ends != self.ends_last
-				if self.ends > self.ends_last
-					action_text = 'extension_fee'
-					check = self.block_extension
-					if check == 1
-						str = 'Extending'
-						self.extended = true
-					else
-						BookingMailer.change_failed(self.id).deliver
-						str = 'NA'
-					end
-				else
-					action_text = 'shortened_trip_refund'
-					str = 'Shortening'
-					self.manage_inventory(self.city, self.ends, self.last_ends, false)
-					self.shortened = true
-				end
 			end
-			if fare[:billed_hours] > 0
-				charge = Charge.new(booking_id: self.id, activity: action_text, estimate: 0, discount: 0, amount: 0)
-				charge.hours = fare[:hours].round
-				charge.billed_total_hours += fare[:billed_hours].round
-				charge.billed_discounted_hours += fare[:discounted_hours].round
-				charge.billed_standard_hours += fare[:standard_hours].round
-				charge.estimate += fare[:estimate]
-				charge.discount += fare[:discount]
-				if fare[:refund] > 0
-					charge.amount += fare[:refund]
-					charge.refund = 1
+		elsif self.ends != self.ends_last
+			check = self.manage_inventory
+			if self.ends > self.ends_last
+				action_text = 'extension_fee'
+				if check == 1
+					str = 'Extending'
+					self.extended = true
 				else
-					charge.amount += fare[:total]
-				end
-				if charge.save
-					note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs."
-					note << case str
-					when 'Early Return' then charge.amount.to_s + ' - Early Return Credits.' + self.ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.returned_at.strftime("%d/%m/%y %I:%M %p") + "<br/>"
-					when 'Late Return' then charge.amount.to_s + " - Late Charge." + self.ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.returned_at.strftime("%d/%m/%y %I:%M %p") + "<br/>"
-					when 'Rescheduling' 
-						if charge.refund
-							charge.amount.to_s + " - Reschedule Charge." + self.last_ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
-						else
-							charge.amount.to_s + " - Reschedule Refund." + self.last_ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
-						end
-					when 'Extending' then charge.amount.to_s + " - Extension Charges." + self.last_ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
-					when 'Shortening' then charge.amount.to_s + " - Shorten Refund." + self.last_ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
-					end
-					self.notes += note
-				end
-				# Trip modification charges
-				if fare[:penalty] > 0
-					charge = Charge.new(booking_id: self.id, activity: action_text.gsub('refund', 'charge'), estimate: 0, discount: 0, amount: 0)
-					charge.hours = fare[:hours].round
-					charge.billed_total_hours += fare[:billed_hours].round
-					charge.billed_discounted_hours += fare[:discounted_hours].round
-					charge.billed_standard_hours += fare[:standard_hours].round
-					charge.estimate += fare[:penalty]
-					charge.discount += 0
-					charge.amount += fare[:penalty]
-					if charge.save
-						note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs."
-						note << case str
-						when 'Early Return' then charge.amount.to_s + ' - Early Return Charge.' + self.ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.returned_at.strftime("%d/%m/%y %I:%M %p") + "<br/>"
-						else charge.amount.to_s + " - Reschedule Charge." + self.last_ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
-						end
-						note << self.starts.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
-						self.notes += note
-					end
+					BookingMailer.change_failed(self.id).deliver
+					str = 'NA'
 				end
 			else
-				note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b>"
-				note << case str
-				when 'Early Return' then 'No Early Return Credits.' + self.ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.returned_at.strftime("%d/%m/%y %I:%M %p") + "<br/>"
-				when 'Rescheduling' then 'No Reschedule Charges.' + self.ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.returned_at.strftime("%d/%m/%y %I:%M %p") + "<br/>"
-				when 'Extending' then "No Extension Charges." + self.last_ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
-				when 'Shortening' then "No Reschedule Refund." + self.last_ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
-				end
-				self.notes += note
+				action_text = 'shortened_trip_refund'
+				str = 'Shortening'
+				self.shortened = true
 			end
-			self.save(validate: false)
+		end
+		charge = self.do_charge(str, fare, action_text)
+		self.save(validate: false)
+		if charge || str == 'Rescheduling'
 			if charge
 				BookingMailer.change(self.id, charge.id).deliver
 				if charge.refund == 1
@@ -240,6 +272,25 @@ class Booking < ActiveRecord::Base
 				sendsms('change', 0)
 			end
 		end
+		return [str, fare]
+	end
+	
+	def do_return
+		str = ''
+		fare = self.get_fare
+		return if self.returned_at.blank? || self.returned_at == self.returned_at_was
+		if self.ends < self.returned_at
+			action_text = 'early_return_refund'
+			str = 'Early Return'
+			self.early = true
+			Inventory.release(self.cargroup_id, self.location_id, self.returned_at, self.ends)
+		elsif self.ends > self.returned_at
+			action_text = 'late_fee'
+			str = 'Late Return'
+			self.late = true
+		end
+		charge = self.do_charge(str, fare, action_text)
+		self.save(validate: false)
 		return [str, fare]
 	end
 	
@@ -271,18 +322,44 @@ class Booking < ActiveRecord::Base
 		return "http://" + HOSTNAME + "/bookings/" + self.encoded_id
 	end
 	
-	def manage_inventory(city, start_time, end_time, block)
+	def manage_inventory
+		check = 1
+		cargroup = self.cargroup
+		Inventory.connection.clear_query_cache
+		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
 		if self.car_id.blank?
-			if block
-				# Block Inventory
-				Inventory.block_plain(city, self.cargroup_id, self.location_id, start_time, end_time)
+			if self.starts != self.starts_last || self.ends != self.ends_last
+				if self.starts < self.starts_last
+					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
+				end
+				if self.ends > self.ends_last
+					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, self.ends_last, (self.ends + cargroup.wait_period.minutes)) if check == 1
+				end
+				if check == 1
+					if self.starts < self.starts_last
+						Inventory.block(self.cargroup_id, self.location_id, self.starts, self.starts_last)
+					elsif self.starts > self.starts_last
+						Inventory.release(self.cargroup_id, self.location_id, self.starts_last, self.starts)
+					end
+					if self.ends > self.ends_last
+						Inventory.block(self.cargroup_id, self.location_id, self.ends_last, self.ends)
+					elsif self.ends < self.ends_last
+						Inventory.release(self.cargroup_id, self.location_id, self.ends, self.ends_last)
+					end
+				end
 			else
-				# Release Inventory
-				Inventory.release(city, self.cargroup_id, self.location_id, start_time, end_time)
+				if self.status < 9
+					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
+					Inventory.block(self.cargroup_id, self.location_id, self.starts, self.ends) if check == 1
+				else
+					Inventory.do_release(self.cargroup_id, self.location_id, self.starts, self.ends)
+				end
 			end
 		else
-			self.car.manage_inventory(city, start_time, end_time, block)
+			check =  self.car.manage_inventory(self.city_id, self.starts_last, self.ends_last, self.starts, self.ends, (self.status < 9))
 		end
+		ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+		return check
 	end
 	
 	def outstanding
@@ -336,15 +413,12 @@ class Booking < ActiveRecord::Base
 	end
 
 	def set_fare
-		tmp = "Pricing#{self.pricing.version}".constantize.check(self)
-		self.total = tmp[:estimate]
+		tmp = self.get_fare
+		self.total = tmp[:total]
 		self.estimate = tmp[:estimate]
 		self.discount = tmp[:discount]
-		self.days = tmp[:days]
-		self.normal_days =  tmp[:normal_days]
-		self.discounted_days = tmp[:discounted_days]
 		self.hours = tmp[:hours]
-		self.normal_hours = tmp[:normal_hours]
+		self.normal_hours = tmp[:standard_hours]
 		self.discounted_hours = tmp[:discounted_hours]
 	end
 	
@@ -390,8 +464,10 @@ class Booking < ActiveRecord::Base
 		else
 			if self.starts <= Time.zone.now && self.ends >= Time.zone.now
 				return 'live'
-			elsif self.starts > Time.zone.now
+			elsif self.starts > Time.zone.now + 24.hours
 				return 'future'
+			elsif self.starts > Time.zone.now
+				return 'near'
 			elsif self.ends < Time.zone.now
 				return 'completed'
 			end
@@ -488,17 +564,14 @@ class Booking < ActiveRecord::Base
   protected
 	
 	def after_create_tasks
-		charge = Charge.new(:booking_id => self.id, :activity => 'booking_fee')
-		charge.hours = self.days*24 + self.hours
-		charge.billed_total_hours = self.days*10
-		charge.billed_total_hours += (self.hours > 10 ? 10 : self.hours)
-		charge.billed_discounted_hours = self.discounted_days*10
-		charge.billed_discounted_hours += (self.discounted_hours > 10 ? 10 : self.discounted_hours)
-		charge.billed_standard_hours = self.normal_days*10
-		charge.billed_standard_hours += (self.normal_hours > 10 ? 10 : self.normal_hours)
-		charge.estimate = self.estimate.round
-		charge.discount = self.discount.round
-		charge.amount = (charge.estimate - charge.discount)
+		charge 													= Charge.new(:booking_id => self.id, :activity => 'booking_fee')
+		charge.hours 										= self.hours
+		charge.billed_total_hours 			= self.hours
+		charge.billed_discounted_hours 	= self.discounted_hours
+		charge.billed_standard_hours 		= self.normal_hours
+		charge.estimate 								= self.estimate
+		charge.discount 								= self.discount
+		charge.amount 									= self.total
 		charge.save
 		self.confirmation_key = self.encoded_id.upcase
 		self.save(validate: false)
@@ -517,19 +590,9 @@ class Booking < ActiveRecord::Base
 			self.notes = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs." + self.total.to_i.to_s + " - Booking Charges."
 			self.notes += self.starts.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
 		else
-			if !self.returned_at.blank?
-				self.ends = self.returned_at
-				self.status = 5
-			end
-			if !self.comment.blank?
-				self.notes += "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : Comment Added - </b>" + self.comment + "<br/>"
-				self.comment = ''
-			end
 			self.total = self.revenue
 			self.balance = self.outstanding
 		end
-		self.last_starts = self.starts
-		self.last_ends = self.ends
 	end
 
 	def before_validation_tasks

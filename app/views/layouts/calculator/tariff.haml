@@ -93,15 +93,18 @@
 			%td.t-r
 				:ruby
 					tmp = ''
-					if @tariff[:days] == 1
+					h = @tariff[:hours]
+					d = h/24
+					h -= d*24
+					if d == 1
 						tmp << "1 day, "
-					elsif @tariff[:days] > 0
-						tmp << @tariff[:days].to_s + " days, "
+					elsif d > 0
+						tmp << d.to_s + " days, "
 					end
-					if @tariff[:hours] == 1
+					if h == 1
 						tmp << "1 hour"
-					elsif @tariff[:hours] > 0
-						tmp << @tariff[:hours].to_s + " hours"
+					elsif h > 0
+						tmp << h.to_s + " hours"
 					end
 				= tmp.chomp(', ')
 		%tr

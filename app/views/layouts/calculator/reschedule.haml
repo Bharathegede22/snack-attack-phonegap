@@ -142,7 +142,7 @@
 						= @tariff[:reschedule][:refund] 
 						+ #{@tariff[:reschedule][:kms_penalty]}
 						%sup #
-						= "- @tariff[:reschedule][:penalty]"
+						= "- #{@tariff[:reschedule][:penalty]}"
 						%sup ##
 			- else
 				%tr
@@ -200,7 +200,7 @@
 					= '-'
 				%td
 					= @tariff[:early][:refund] 
-					= "- (#{@tariff[:early][:kms_penalty]})"
+					= "- #{@tariff[:early][:kms_penalty]}"
 					%sup #
 					= "- #{@tariff[:early][:penalty]}"
 					%sup ##

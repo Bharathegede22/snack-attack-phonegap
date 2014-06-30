@@ -144,14 +144,15 @@ class Payment < ActiveRecord::Base
 	def after_save_tasks
 		if self.status == 1 
 			b = self.booking
+			b.valid?
 			if b && b.outstanding <= 0
 				if b.status == 0
 					if !b.car_id.blank?
 						b.status = 1
-					elsif Inventory.block(b.city, b.cargroup_id, b.location_id, b.starts, b.ends) == 1
+					elsif b.manage_inventory == 1
 						b.status = 1
 					else
-						Inventory.block_plain(b.city, b.cargroup_id, b.location_id, b.starts, b.ends)
+						Inventory.block(b.cargroup_id, b.location_id, b.starts, b.ends)
 						b.status = 6
 					end
 					BookingMailer.payment(b.id).deliver
