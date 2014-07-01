@@ -138,11 +138,11 @@ class Pricingv2
 		end
 		
 		data[:hours] = h
-		hour = 0
+		hour = 1
 		wday = start_date.wday
 		data[:kms] = (kms*data[:hours]).round
 		
-		while hour < h
+		while hour <= h
 			data[:estimate] += fare
 			if discount == 0 || [0,5,6].include?(wday)
 				data[:standard_hours] += 1

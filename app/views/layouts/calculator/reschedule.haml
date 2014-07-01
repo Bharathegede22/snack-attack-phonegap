@@ -207,8 +207,22 @@
 		%tr.bg-c
 			%td
 				%b Change :
-				= @tariff[:mod][:days]*24 + @tariff[:mod][:hours] - @tariff[:org][:days]*24 - @tariff[:org][:hours]
-				hours
+				:ruby
+					h = @tariff[:mod][:hours] - @tariff[:org][:hours]
+					tmp = ''
+					d = h/24
+					h -= d*24
+					if d == 1
+						tmp << "1 day, "
+					elsif d > 0
+						tmp << d.to_s + " days, "
+					end
+					if h == 1
+						tmp << "1 hour"
+					elsif h > 0
+						tmp << h.to_s + " hours"
+					end
+				= tmp.chomp(', ')
 			%td
 				%b Old Fare :
 				= @tariff[:org][:total]
