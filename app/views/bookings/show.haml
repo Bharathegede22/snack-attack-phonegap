@@ -120,7 +120,7 @@
 				%td{:colspan => '2'}
 					%h4.f-b Fare Breakdown
 			- @booking.charges.each do |c|
-				- if !c.activity.include?('early_return')
+				- if !['early_return', 'security_deposit'].include?(c.activity)
 					%tr
 						%td
 							= c.activity_text
@@ -134,6 +134,19 @@
 			%tr.f-b
 				%td
 					Total
+				%td.t-r
+					= tmp
+			- @booking.charges.each do |c|
+				- if ['security_deposit'].include?(c.activity)
+					%tr.bg-y
+						%td
+							Fully Refundable Deposit
+						%td.t-r
+							= c.amount
+							- tmp += c.amount
+			%tr.f-b.bg-c
+				%td
+					Grand Total
 				%td.t-r
 					= tmp
 					- @total += tmp

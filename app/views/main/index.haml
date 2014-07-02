@@ -76,7 +76,13 @@
 				#BubbleNav.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Zip Zap Zoom</b><br/>All Zoom cars are fitted with a 3G enabled tablet to guide you on your journey."}
 					.p-10
 						.navigation
-				#BubbleDeposit.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>In You We Trust</b><br/>The start of our relationship is not with a bag of money. Just pay the rental using your credit/debit card and you are good to zoom."}
+				:ruby
+					if @city.mode::SECURITY == 0
+						txt = "The start of our relationship is not with a bag of money. Just pay the rental and you are good to zoom."
+					else
+						txt = "The start of our relationship is not with a bag of money. Just pay the rental and a small <u>fully refundable</u> deposit of <b class='zoom'>Rs.#{@city.mode::SECURITY}</b> at the time of booking and you are good to zoom."
+					end
+				#BubbleDeposit.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>In You We Trust</b><br/>#{txt.html_safe}"}
 					.p-10
 						.deposit
 				- if false

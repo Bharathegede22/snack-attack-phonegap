@@ -65,7 +65,14 @@
 			%h4.f-b Fare Breakdown
 			%table.table.table-bordered
 				- @booking.charges.each do |c|
-					- if !c.activity.include?('early_return')
+					- if ['security_deposit'].include?(c.activity)
+						%tr.bg-y
+							%td
+								Fully Refundable Deposit
+							%td.t-r
+								= c.amount
+								- tmp += c.amount
+					- elsif !c.activity.include?('early_return')
 						%tr
 							%td
 								= c.activity_text

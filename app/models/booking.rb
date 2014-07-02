@@ -573,6 +573,11 @@ class Booking < ActiveRecord::Base
 		charge.discount 								= self.discount
 		charge.amount 									= self.total
 		charge.save
+		if self.pricing.mode::SECURITY > 0
+			charge 						= Charge.new(:booking_id => self.id, :activity => 'security_deposit')
+			charge.amount 		= self.pricing.mode::SECURITY
+			charge.save
+		end
 		self.confirmation_key = self.encoded_id.upcase
 		self.save(validate: false)
 	end

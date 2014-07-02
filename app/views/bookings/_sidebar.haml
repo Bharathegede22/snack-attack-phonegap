@@ -2,6 +2,7 @@
 	cargroup = @booking.cargroup
 	location = @booking.location
 	fare = @booking.get_fare
+	pricing = @booking.pricing
 	tmp = ''
 	h = fare[:hours]
 	d = h/24
@@ -17,7 +18,7 @@
 		tmp << h.to_s + " hours"
 	end
 .bg-w.bs-9.grey.droid.size-14
-	.bg-zoomb.white.p-5.f-b.size-20.p-l10.p-r10
+	.bg-zoomb.white.p-5.f-b.size-18.p-l10.p-r10
 		.fl
 			Booking Summary
 		.fr
@@ -34,62 +35,101 @@
 			.m-auto{:class => 'car' + @booking.cargroup_id.to_s}
 		Available at
 		%br/
-		%b.help.pointer{onclick: "showModal('#{location.shortname}', '/map?lat=#{location.lat}&lng=#{location.lng}&title=#{location.shortname}');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Click here to see map"}
+		%b
 			%u
 				= location.shortname
+			%span.size-12.help.pointer{onclick: "showModal('#{location.shortname}', '/map?lat=#{location.lat}&lng=#{location.lng}&title=#{location.shortname}');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Click here to see the map"}
+				(?)
 		- if !location.disclaimer.blank?
 			.red.size-10
 				= location.disclaimer.html_safe
-	.p-10.bg-e
-		.p-b5.f-b
+	.p-5.bg-e
+		.p-l5.p-r5.f-b
 			.fl
 				Pickup Time
 			.fr
 				Dropoff Time
 			.fc
-		.size-12
+		.p-l5.p-r5.size-12
 			.fl
 				= @booking.starts.strftime("%d/%m/%y %I:%M %p")
 			.fr
 				= @booking.ends.strftime("%d/%m/%y %I:%M %p")
 			.fc
-	.p-10.bg-c.t-c
+	.p-5.bg-c.t-c
 		Rented for
 		%b
 			= tmp.chomp(', ')
-	.p-10
-		%table{width: '100%'}
-			%tr
-				%td.p-5
-					%b Normal Tariff
-				%td.p-5.t-r
-					₹#{fare[:estimate]}
-			%tr
-				%td.p-5
-					%b Discount
-				%td.p-5.t-r
-					₹#{fare[:discount]}
-	.bg-6.t-c.white.f-b.size-18
-		.p-10.fl
-			Total :
-			₹#{fare[:total]}
-		.calc.m-5.fr.help{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Tariff Estimator"}
-		.fc
-	.p-10.size-12
-		%table{width: '100%'}
-			%tr
-				%td.p-5.f-b
-					.fl Free Kms
-					.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "All Zoom reservations comes with free driving kms, which are based on vehicle type and reservation duration."} (?)
+	%table{width: '100%'}
+		%tr
+			%td.p-5.p-l10
+				%b Normal Tariff
+			%td.p-5.t-r.p-r10
+				₹#{show_currency fare[:estimate]}
+		%tr
+			%td.p-5.p-l10
+				%b Mon-Thu Discount
+			%td.p-5.t-r.p-r10
+				₹#{show_currency fare[:discount]}
+		%tr.black.f-b
+			%td.p-5.p-l10
+				Total
+				%span.size-12.help.pointer{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Tariff Estimator"}
+					%i (view calculator)
+			%td.p-5.t-r.p-r10
+				₹#{show_currency fare[:total]}
+		- if pricing.mode::SECURITY > 0
+			%tr.bg-y.black
+				%td.p-5.p-l10
+					.fl
+						%b Refundable Deposit
+					.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Fully refundable security deposit which will be released once your booking is over."} (?)
 					.fc
-				%td.p-5.t-r
-					= fare[:kms]
-			%tr
-				%td.p-5.f-b
-					.fl Excess Kms Charge
-					.fl.p-l5.help.pointer{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "If you travel more than #{fare[:kms]} Kms during the reservation, then Kms beyond #{fare[:kms]} will be charged at this price. Click here to enter your expected Kms to estimate your final tariff."} (?)
-					.fc
-				%td.p-5.t-r
-					₹#{cargroup.excess_kms.to_i} / Km
+				%td.p-5.t-r.p-r10
+					₹#{show_currency pricing.mode::SECURITY}
+		%tr.bg-6.white.f-b.size-16
+			%td.p-5.p-l10
+				Payable Amount
+			%td.p-5.t-r.p-r10
+				₹#{show_currency(fare[:total] + pricing.mode::SECURITY)}
+		%tr
+			%td.p-5.p-l10.f-b
+				.fl Free Kms
+				.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "All Zoom reservations comes with free driving kms, which are based on vehicle type and reservation duration."} (?)
+				.fc
+			%td.p-5.t-r.p-r10
+				= fare[:kms]
+		%tr
+			%td.p-5.p-l10.f-b
+				.fl Excess Kms Charge
+				.fl.p-l5.help.pointer{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "If you travel more than #{fare[:kms]} Kms during the reservation, then Kms beyond #{fare[:kms]} will be charged at this price. Click here to enter your expected Kms to estimate your final tariff."} (?)
+				.fc
+			%td.p-5.t-r.p-r10
+				₹#{cargroup.excess_kms.to_i} / Km
+- if false
+	%br/
+	.bg-w.bs-9.grey.droid.size-14
+		.bg-zoomb.white.p-5.f-b.size-18.p-l10.p-r10
+			Booking Includes
+		.p-5.t-c.size-16
+			.tariff-includes
+				.item
+					.p-5
+						.all-in
+				.item
+					.p-5
+						.fuel
+				.item
+					.p-5
+						.insurance
+				.item
+					.p-5
+						.taxes
+				.item
+					.p-5
+						.navigation
+				.item
+					.p-5
+						.deposit
 %br/
 %br/

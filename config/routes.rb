@@ -21,6 +21,7 @@ Web::Application.routes.draw do
 			get 'checkout'
 			get 'checkoutab'
 			get 'complete'
+			get 'corporate'
 			get 'details'
 			get 'do'
 			get 'docreate'
@@ -37,10 +38,11 @@ Web::Application.routes.draw do
 			get 'userdetails'
 			get 'widget'
 
+			post 'credits'
+			post 'corporate'
 			post 'license'
 			post 'payu'
 			post 'promo'
-			post 'credits'
 		end
 		member do
 			get 'cancel'
@@ -83,7 +85,7 @@ Web::Application.routes.draw do
 	get '/calculator/:id' => 'main#calculator'
 	
 	get '/job/:id' => 'main#job'
- 	get ':action' => 'main', constraints: {action: /about|careers|contact|eligibility|handover|howitworks|member|outstation|reva|privacy/}
+ 	get ':action' => 'main', constraints: {action: /about|careers|contact|eligibility|handover|howitworks|map|member|outstation|reva|privacy/}
  	
 	scope "/(:city)", constraints: {city: /bangalore|pune/} do
 		get '/' => 'main#index'
