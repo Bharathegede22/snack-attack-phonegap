@@ -5,7 +5,7 @@ class Offer < ActiveRecord::Base
 	has_many :city_offers
 	has_many :cities, through: :city_offers
 	
-	def self.get(code)
+	def self.get(code,city)
 		code = code.downcase.strip
 		offer = nil
 		coupon = nil
