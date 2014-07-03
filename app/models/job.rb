@@ -25,7 +25,9 @@ class Job < ActiveRecord::Base
 	end
 	
   def self.live
-  	Job.find(:all, :conditions => "status = 1", :order => "department ASC, hire_type ASC, id DESC")
+  	Rails.cache.fetch("jobs") do
+  		Job.find_by_sql("SELECT * FROM jobs WHERE status = 1 ORDER BY department ASC, hire_type ASC, id DESC")
+  	end
   end
   
 end

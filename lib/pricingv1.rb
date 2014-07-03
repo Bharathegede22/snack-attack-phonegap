@@ -160,14 +160,14 @@ class Pricingv1
 				temp[:standard_hours] = h
 				temp[:estimate] = ((@@pricing.monthly_fare/(28*24.0))*h).round
 				temp[:kms] = ((@@pricing.monthly_kms/(28*24.0))*h).round
-				return temp
+				h = 0
 			elsif d >= 7
 				# Weekly
 				h = d*24 + h
 				temp[:standard_hours] = h
 				temp[:estimate] = ((@@pricing.weekly_fare/(7*24.0))*h).round
 				temp[:kms] = ((@@pricing.weekly_kms/(7*24.0))*h).round
-				return temp
+				h = 0
 			else
 				# Daily Fair
 				(0..(d-1)).each do |i|
@@ -183,6 +183,7 @@ class Pricingv1
 				end
 			end
 		end
+		
 		# Hourly Fair
 		wday = (start_date + d.days).wday
 		if h <= 10

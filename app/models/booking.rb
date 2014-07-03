@@ -213,8 +213,8 @@ class Booking < ActiveRecord::Base
 			note << case str
 			when 'Early Return' then 'No Early Return Credits.' + self.ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.returned_at.strftime("%d/%m/%y %I:%M %p") + "<br/>"
 			when 'Rescheduling' then 'No Reschedule Charges.' + self.starts_last.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends_last.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.starts_last.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
-			when 'Extending' then "No Extension Charges." + self.last_ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
-			when 'Shortening' then "No Reschedule Refund." + self.last_ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+			when 'Extending' then "No Extension Charges." + self.ends_last.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+			when 'Shortening' then "No Reschedule Refund." + self.ends_last.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
 			end
 			self.notes += note
 			return nil
@@ -279,6 +279,15 @@ class Booking < ActiveRecord::Base
 		str = ''
 		fare = self.get_fare
 		return if self.returned_at.blank? || self.returned_at == self.returned_at_was
+		# Manage Inventory
+		if !self.returned_at_was.blank?
+			if self.returned_at_was > self.ends
+				self.manage_inventory(self.ends, self.returned_at_was, false)
+			elsif self.returned_at_was < self.ends
+				self.manage_inventory(self.car_id, self.returned_at_was, self.ends, true)
+			end
+		end
+					
 		if self.ends < self.returned_at
 			action_text = 'early_return_refund'
 			str = 'Early Return'
@@ -310,10 +319,6 @@ class Booking < ActiveRecord::Base
 		CommonHelper.encode('booking', self.id)
 	end
 	
-	def through_search?
-    @through_search
-  end
-  
 	def get_fare
 		return "Pricing#{self.pricing.version}".constantize.check(self)
 	end
@@ -325,9 +330,9 @@ class Booking < ActiveRecord::Base
 	def manage_inventory
 		check = 1
 		cargroup = self.cargroup
-		Inventory.connection.clear_query_cache
-		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
 		if self.car_id.blank?
+			Inventory.connection.clear_query_cache
+			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
 			if self.starts != self.starts_last || self.ends != self.ends_last
 				if self.starts < self.starts_last
 					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
@@ -352,13 +357,13 @@ class Booking < ActiveRecord::Base
 					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
 					Inventory.block(self.cargroup_id, self.location_id, self.starts, self.ends) if check == 1
 				else
-					Inventory.do_release(self.cargroup_id, self.location_id, self.starts, self.ends)
+					Inventory.release(self.cargroup_id, self.location_id, self.starts, self.ends)
 				end
 			end
+			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
 		else
-			check =  self.car.manage_inventory(self.city_id, self.starts_last, self.ends_last, self.starts, self.ends, (self.status < 9))
+			check = self.car.manage_inventory(elf.starts_last, self.ends_last, self.starts, self.ends, (self.status < 9))
 		end
-		ActiveRecord::Base.connection.execute("UNLOCK TABLES")
 		return check
 	end
 	
@@ -523,7 +528,15 @@ class Booking < ActiveRecord::Base
 		return txt
 	end
 	
-	def total_charges
+	def through_search?
+    @through_search
+  end
+  
+  def through_signup?
+    @through_signup
+  end
+  
+  def total_charges
 		total = 0
 		self.charges.each do |c|
 			if !c.activity.include?('early_return')
@@ -553,15 +566,7 @@ class Booking < ActiveRecord::Base
 		return total.to_i
 	end
 	
-	def through_search?
-    @through_search
-  end
-  
-  def through_signup?
-    @through_signup
-  end
-  
-  protected
+	protected
 	
 	def after_create_tasks
 		charge 													= Charge.new(:booking_id => self.id, :activity => 'booking_fee')

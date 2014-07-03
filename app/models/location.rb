@@ -1,6 +1,11 @@
 class Location < ActiveRecord::Base
 	
 	belongs_to :city
+	belongs_to :hub, class_name: "Location"
+	belongs_to :user
+	belongs_to :zone
+	
+	has_many :images, :as => :imageable, dependent: :destroy
 	
 	def address_html
 		text = ""
@@ -58,18 +63,6 @@ class Location < ActiveRecord::Base
 		return "Self Drive Cars On Rent At #{self.name}, #{self.city.name} | Zoomcar"
 	end
 	
-	def shortname(star = true)
-		if self.status == 1
-			return self.name.split(',').last.split('(').first.strip
-		else
-			if star
-				return self.name.split(',').last.split('(').first.strip + " *"
-			else
-				return self.name.split(',').last.split('(').first.strip
-			end
-		end
-	end
-	
 	def self.live(city)
 		Rails.cache.fetch("locations-#{city.id}") do
 			Location.find_by_sql("SELECT l.* FROM locations l 
@@ -84,4 +77,16 @@ class Location < ActiveRecord::Base
   	Location.live(city).sample
   end
   
+  def shortname(star=true)
+		if self.status == 1
+			return self.name.split(',').last.strip
+		else
+			if star
+				return self.name.split(',').last.strip + " *"
+			else
+				return self.name.split(',').last.strip
+			end
+		end
+	end
+	
 end
