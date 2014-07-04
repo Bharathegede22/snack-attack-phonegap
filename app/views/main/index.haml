@@ -76,13 +76,12 @@
 				#BubbleNav.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Zip Zap Zoom</b><br/>All Zoom cars are fitted with a 3G enabled tablet to guide you on your journey."}
 					.p-10
 						.navigation
-
 				- if @city.mode::SECURITY == 0
 					#BubbleDeposit.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>In You We Trust</b><br/>The start of our relationship is not with a bag of money. Just pay the rental and you are good to zoom."}
 						.p-10
 							.deposit
 				- else
-					#BubbleDeposit.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Security Deposit</b><br/>We take a small, fully refundable security deposit of ₹ 5000 at the time of booking."}
+					#BubbleDeposit.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Security Deposit</b><br/>We take a small, fully refundable security deposit of ₹ #{@city.mode::SECURITY} at the time of booking."}
 						.p-10
 							.deposit
 				- if false

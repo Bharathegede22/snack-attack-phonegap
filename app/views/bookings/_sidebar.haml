@@ -33,8 +33,7 @@
 				= cargroup.disclaimer.html_safe
 		.colored
 			.m-auto{:class => 'car' + @booking.cargroup_id.to_s}
-		Available at
-		%br/
+		Location :
 		%b
 			%u
 				= location.shortname
@@ -70,16 +69,16 @@
 			%td.p-5.p-l10
 				%b Mon-Thu Discount
 			%td.p-5.t-r.p-r10
-				₹#{show_currency fare[:discount]}
-		%tr.black.f-b
-			%td.p-5.p-l10
-				Total
-				%span.size-12.help.pointer{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Tariff Estimator"}
-					%i (view calculator)
-			%td.p-5.t-r.p-r10
+				\- ₹#{show_currency fare[:discount]}
+		%tr.bg-c
+			%td.p-5.p-l10.f-b
+				%b.black Fare Total
+				%span.size-12.help.pointer{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Tariff Calculator"}
+					%u (view calculator)
+			%td.p-5.t-r.p-r10.black.f-b
 				₹#{show_currency fare[:total]}
 		- if pricing.mode::SECURITY > 0
-			%tr.bg-y.black
+			%tr
 				%td.p-5.p-l10
 					.fl
 						%b Refundable Deposit

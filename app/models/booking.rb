@@ -362,7 +362,7 @@ class Booking < ActiveRecord::Base
 			end
 			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
 		else
-			check = self.car.manage_inventory(elf.starts_last, self.ends_last, self.starts, self.ends, (self.status < 9))
+			check = self.car.manage_inventory(self.starts_last, self.ends_last, self.starts, self.ends, (self.status < 9))
 		end
 		return check
 	end

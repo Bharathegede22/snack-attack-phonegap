@@ -1,5 +1,6 @@
 class Car < ActiveRecord::Base
 	
+	belongs_to :cargroup
 	belongs_to :location
 	
 	def check_inventory(city, starts_was, ends_was, starts, ends)
@@ -43,10 +44,9 @@ class Car < ActiveRecord::Base
 			Inventory.connection.clear_query_cache
 			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
 			carmovements.uniq.each do |ar|
-				ar.each do |i|
-					cm = i[0]
-					starts_tmp = i[1]
-					ends_tmp = i[2]
+				starts_tmp = ar[1]
+				ends_tmp = ar[2]
+				ar[0].each do |cm|
 					if check == 1
 						start_time = (cm.starts > starts_tmp) ? cm.starts : starts_tmp
 						end_time = (cm.ends < ends_tmp) ? cm.ends : ends_tmp
@@ -103,10 +103,9 @@ class Car < ActiveRecord::Base
 		Inventory.connection.clear_query_cache
 		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
 		carmovements.uniq.each do |ar|
-			ar.each do |i|
-				cm = i[0]
-				starts_tmp = i[1]
-				ends_tmp = i[2]
+			starts_tmp = ar[3]
+			ends_tmp = ar[4]
+			ar[0].each do |cm|
 				if check == 1
 					start_time = (cm.starts > starts_tmp) ? cm.starts : starts_tmp
 					end_time = (cm.ends < ends_tmp) ? cm.ends : ends_tmp
@@ -118,10 +117,9 @@ class Car < ActiveRecord::Base
 			
 		if check == 1
 			carmovements.each do |ar|
-				ar.each do |i|
-					cm = i[0]
-					starts_tmp = i[3]
-					ends_tmp = i[4]
+				starts_tmp = ar[1]
+				ends_tmp = ar[2]
+				ar[0].each do |cm|
 					start_time = (cm.starts > starts_tmp) ? cm.starts : starts_tmp
 					end_time = (cm.ends < ends_tmp) ? cm.ends : ends_tmp
 					if block

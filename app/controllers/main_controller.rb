@@ -207,11 +207,12 @@ class MainController < ApplicationController
 	end
 	
 	def index
+		head :moved_permanently, :location => "/bangalore" and return if request.url.split('?').first.split('/').last != @city.name.downcase
 		@meta_title = @city.meta_title
 		@meta_description = @city.meta_description
 		@meta_keywords = @city.meta_keywords
-		@canonical = @city.link
 		@header = 'homepage'
+		@canonical = @city.link
 		#expires_in 1.months, :public => true, 'max-stale' => 0 #if Rails.env == 'production'
 	end
 	
