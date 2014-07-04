@@ -16,7 +16,7 @@
 	#fee-body.tab-content
 		#fee-1.tab-pane.fade.in.active
 			%p
-				All Zoom bookings come with a maximum of 10 paid hours per day (as defined by 24 hour day). Zoom doesn't charge anything between 10 to 24 hours of the booking for every 24 hour cycle. After 24 hours a new cycle is started and paid hours for the booking are calculated again using the aforementioned approach. See the below table for some examples.
+				Zoomcar charges for every hour a member uses our car. Any usage between 1 - 59 minutes is treated as a full hour. Hourly rates are different from Mon-Thu and Fri-Sun. All hours are billed according to which day they are starting from. See the below table for some examples.
 				%br/
 				%table.size-13{:cellpadding => '0', :cellspacing => '0', :border => '0', :aling => 'left', :width => '100%'}
 					%tr.bg-zoomb.white
@@ -29,7 +29,7 @@
 						%td.border-zoom.t-c{:width => '160'}
 							.p-10
 								%b Paid Hours
-						%td.border-zoom.t-c
+						%td.border-zoom
 							.p-10
 								%b Comment
 					%tr
@@ -42,9 +42,9 @@
 						%td.border-zoom.t-c
 							.p-10
 								8 Hours
-						%td.border-zoom.t-c
+						%td.border-zoom
 							.p-10
-								All hours are billed
+								All hours are billed at Mon-Thu price.
 					%tr
 						%td.border-zoom.t-c
 							.p-10
@@ -54,56 +54,40 @@
 								Tuesday 1pm
 						%td.border-zoom.t-c
 							.p-10
-								10 Hours
+								24 Hours
+						%td.border-zoom
+							.p-10
+								All hours are billed at Mon-Thu price.
+					%tr
 						%td.border-zoom.t-c
 							.p-10
-								10 Hours from Mon 1pm to Mon 11pm.
+								Thursday 1.30pm
+						%td.border-zoom.t-c
+							.p-10
+								Friday 1.30pm
+						%td.border-zoom.t-c
+							.p-10
+								24 Hours
+						%td.border-zoom
+							.p-10
+								11 hours are billed at Mon-Thu price.
 								%br/
-								0 Hours from Mon 11pm to Tue 1pm.
-								%b.black #
+								17 hours are billed at Fri-Sun price.
 					%tr
+						%td.border-zoom.t-c
+							.p-10
+								Sunday 1.30pm
 						%td.border-zoom.t-c
 							.p-10
 								Monday 1pm
 						%td.border-zoom.t-c
 							.p-10
-								Tuesday 5pm
-						%td.border-zoom.t-c
+								24 Hours
+						%td.border-zoom
 							.p-10
-								14 Hours
-						%td.border-zoom.t-c
-							.p-10
-								10 Hours from Mon 1pm to Mon 11pm.
+								11 hours are billed at Fri-Sun price.
 								%br/
-								0 Hours from Mon 11pm to Tue 1pm.
-								%b.black #
-								%br/
-								4 Hours from Tue 1pm to Tue 5pm.
-					%tr
-						%td.border-zoom.t-c
-							.p-10
-								Monday 1pm
-						%td.border-zoom.t-c
-							.p-10
-								Wednesday 1am
-						%td.border-zoom.t-c
-							.p-10
-								20 Hours
-						%td.border-zoom.t-c
-							.p-10
-								10 Hours from Mon 1pm to Mon 11pm.
-								%br/
-								0 Hours from Mon 11pm to Tue 1pm.
-								%b.black #
-								%br/
-								10 Hours from Tue 1pm to Tue 11pm.
-								%br/
-								0 Hours from Tue 11pm to Wed 1pm.
-								%b.black #
-				* - Time belongs to the same week
-				%br/
-				= '# -' 
-				Max. 10 hours can be billed in a 24 hour cycle.
+								13 hours are billed at Mon-Thu price.
 		#fee-2.tab-pane.fade
 			%p
 				All Zoom reservation comes with free driving kms, which are calculated based on vehicle type and reservation duration. Any kms in excess of these limits will be charged at the appropriate rates. For weekly/monthly reservations, free kms will be given on pro-rated basis using weekly/monthly limit. For daily reservation, free kms can comprise of the daily and hourly free kms.
