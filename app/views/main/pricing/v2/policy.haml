@@ -7,10 +7,8 @@
 		%a.block.fl{:href => "#fee-2", 'data-toggle' => "tab"}
 			Free Kms
 		%a.block.fl{:href => "#fee-3", 'data-toggle' => "tab"}
-			Early / Late Return
+			Return & Reschedule
 		%a.block.fl{:href => "#fee-4", 'data-toggle' => "tab"}
-			Reschedule
-		%a.block.fl{:href => "#fee-5", 'data-toggle' => "tab"}
 			Penalty Fees
 		.fc
 	#fee-body.tab-content
@@ -72,7 +70,7 @@
 							.p-10
 								11 hours are billed at Mon-Thu price.
 								%br/
-								17 hours are billed at Fri-Sun price.
+								13 hours are billed at Fri-Sun price.
 					%tr
 						%td.border-zoom.t-c
 							.p-10
@@ -154,290 +152,70 @@
 									%u more than or equal 
 								to the last limit.
 		#fee-3.tab-pane.fade
-			.f-b.size-16.m-b5.t-u Returning a Vehicle Early
-			%p
-				When Members return a vehicle 1 hour or more prior to the end of their reservation, they will receive free driving credits equal to #{Pricingv2::CREDIT_PERCENTAGE}% of the amount of 
-				%b 
-					%i
-						%u paid hours
-				remaining for the reservation. If you have a vehicle only with a daily tariff component, you are eligible for credits equivalent to #{Pricingv2::CREDIT_PERCENTAGE}% of the daily tariff in the event you return the car a day or more early. 
-				See the below table for some examples.
-				%br/
-				%table.size-13{:cellpadding => '0', :cellspacing => '0', :border => '0', :aling => 'left', :width => '100%'}
-					%tr.bg-zoomb.white
-						%td.border-zoom.t-c{:width => '120'}
-							.p-10
-								%b Start Time *
-						%td.border-zoom.t-c{:width => '120'}
-							.p-10
-								%b End Time *
-						%td.border-zoom.t-c{:width => '120'}
-							.p-10
-								%b Return Time *
-						%td.border-zoom.t-c{:width => '160'}
-							.p-10
-								%b Credits
-						%td.border-zoom
-							.p-10
-								%b Comment
-					%tr
-						%td.border-zoom.t-c
-							.p-10
-								Monday 1pm
-						%td.border-zoom.t-c
-							.p-10
-								Monday 9pm
-						%td.border-zoom.t-c
-							.p-10
-								Monday 5pm
-						%td.border-zoom.t-c
-							.p-10
-								1 (#{Pricingv2::CREDIT_PERCENTAGE}% of 4) Hour Usage		
-						%td.border-zoom
-							.p-10
-								4 Hours (5pm to 9pm) were billed initially
-					%tr
-						%td.border-zoom.t-c
-							.p-10
-								Monday 1pm
-						%td.border-zoom.t-c
-							.p-10
-								Tuesday 1pm
-						%td.border-zoom.t-c
-							.p-10
-								Tuesday 10am
-						%td.border-zoom.t-c
-							.p-10
-								Zero
-						%td.border-zoom
-							.p-10
-								Returned hours were not billed initially
-					%tr
-						%td.border-zoom.t-c
-							.p-10
-								Monday 1pm
-						%td.border-zoom.t-c
-							.p-10
-								Tuesday 1pm
-						%td.border-zoom.t-c
-							.p-10
-								Monday 5pm
-						%td.border-zoom.t-c
-							.p-10
-								1.5 (#{Pricingv2::CREDIT_PERCENTAGE}% of 6) Hours Usage		
-						%td.border-zoom
-							.p-10
-								Only 6 hours were billed from Monday 5pm till Tuesday 1pm
-					%tr
-						%td.border-zoom.t-c
-							.p-10
-								Monday 1pm
-						%td.border-zoom.t-c
-							.p-10
-								Thursday 1pm
-						%td.border-zoom.t-c
-							.p-10
-								Monday 5pm
-						%td.border-zoom.t-c
-							.p-10
-								1.5 (#{Pricingv2::CREDIT_PERCENTAGE}% of 6) Hours Usage
-								%br/
-								0.5 (#{Pricingv2::CREDIT_PERCENTAGE}% of 2) Days Usage
-						%td.border-zoom
-							.p-10
-								Only 6 hours were billed from Monday 5pm till Tuesday 1pm
-								%br/
-								2 days (Tuesday 1pm to Thursday 1pm) were billed initially
-				* - Time belongs to the same week
-				%br/
-				%b
-					See our Trip Modication Estimator to estimate your early return credits.
-				%br/
-				%br/
-				.f-b.size-16.t-u Returning a Vehicle Late
-				%p
-					%ol
-						%li
-							Member has a #{Pricingv2::BUFFER_TIME} minute grace period in which there will be no late penalty fee. After this #{Pricingv2::BUFFER_TIME} minute grace period, the Member will be charged the hourly tariff in subsequent hourly intervals from original return time. This penalty fee continues until the vehicle is returned. See the below table for some examples.
-							%br/
-							.p-t5
-								%table.size-13{:cellpadding => '0', :cellspacing => '0', :border => '0', :width => '300'}
-									%tr.bg-zoomb.white
-										%td.border-zoom.t-c
-											.p-5
-												%b Time
-										%td.border-zoom.t-c
-											.p-5
-												%b Penalty
-									%tr
-										%td.border-zoom.t-c
-											.p-5
-												0-30 Minutes
-										%td.border-zoom.t-c
-											.p-5
-												No Charge
-									%tr
-										%td.border-zoom.t-c
-											.p-5
-												31-60 Minutes
-										%td.border-zoom.t-c
-											.p-5
-												1 Hour Tariff
-									%tr
-										%td.border-zoom.t-c
-											.p-5
-												1-2 Hours
-										%td.border-zoom.t-c
-											.p-5
-												2 Hours Tariff
-							.f-b.m-t10
-								See our Trip Modication Estimator to estimate your late charges.
-						%li
-							In the event that the Member's lateness prohibits another reservation from commencing on time, then the late Member will be charged an inconvenience charge of ₹#{Pricingv2::LATE_FEE} per each hour that the Member does not return the vehicle.
-		#fee-4.tab-pane.fade
-			.f-b.size-16.m-b5.t-u
-				Extending Reservation
-			%ol
-				%li
-					A member can extend his reservation anytime before his reservation ends, as long as the extension doesn't interfere with another member's pre-existing booking. Reservations can be extended either through the website, mobile app, or through our customer care.
-					%br/
-					%b
-						See our Trip Modication Estimator to estimate your extension charge.
-			.f-b.size-16.m-b5.t-u
-				Cancelling Reservation
-			%ol
-				%li
-					For a reservation that is cancelled #{Pricingv2::START_BUFFER_TIME} hours or more before it is scheduled to start, you will receive a refund for the full amount of the reservation.
-				%li
-					For a reservation that is cancelled less than #{Pricingv2::START_BUFFER_TIME} hours before it is scheduled to start, you will be obligated to pay #{Pricingv2::CHARGE_PERCENTAGE}% of the reservation amount, with a maximum of Rs#{Pricingv2::CHARGE_CAP}.
-					%br/
-					%b
-						See our Trip Modication Estimator to estimate your cancellation refund.
-				%li
-					In the event that Zoom cancels your reservation for whatever reason, Zoom will reimburse the full amount of the reservation and will additionally award a future driving credit to your account. The exact amount of driving credit depends on the severity of the circumstances which caused the cancelled reservation.
-			.f-b.size-16.m-b5.t-u
-				Shortening Reservation
-			%ol
-				%li
-					For a reservation that is shortened #{Pricingv2::START_BUFFER_TIME} hours or more before its new end time, you will receive a refund for the full amount of the fee for the remainder of the reservation.
-				%li
-					For a reservation that is shortened less than #{Pricingv2::START_BUFFER_TIME} hours before its new end time, you will receive a refund equal to #{Pricingv2::SHORT_PERCENTAGE}% of the amount of the fee for the remainder of the reservation. If you have a vehicle only with a daily tariff component, you are eligible for a refund equivalent to #{Pricingv2::SHORT_PERCENTAGE}% of the daily tariff in the event you shorten the reservation by a day or more.
-			%p.f-b Some examples :
 			%table.size-13{:cellpadding => '0', :cellspacing => '0', :border => '0', :aling => 'left', :width => '100%'}
-				%tr.bg-zoomb.white
-					%td.border-zoom.t-c{:width => '120'}
-						.p-10
-							%b Start Time *
-					%td.border-zoom.t-c{:width => '120'}
-						.p-10
-							%b Original End Time *
-					%td.border-zoom.t-c{:width => '120'}
-						.p-10
-							%b New End Time *
-					%td.border-zoom.t-c{:width => '120'}
-						.p-10
-							%b Cutoff Time *
+				%tr
 					%td.border-zoom.t-c{:width => '180'}
+						.p-10.f-b
+							Late Return
+					%td.border-zoom
 						.p-10
-							%b Refund
-					%td.border-zoom.t-c
-						.p-10
-							%b Comment
+							1. Standard hourly charges will be applicable per hour of delay. Weekend or weekday delays will be charged accordingly.
+							%br/
+							2. Free KMs will be given at 10 km per hour of delay.
+							%br/
+							3. An additional Rs. 300 per hour will be charged as late fee.
 				%tr
-					%td.border-zoom.t-c
+					%td.border-zoom.t-c{:width => '180'}
+						.p-10.f-b
+							Early Return
+					%td.border-zoom
 						.p-10
-							Monday 1pm
-					%td.border-zoom.t-c
-						.p-10
-							Monday 9pm
-					%td.border-zoom.t-c
-						.p-10
-							Monday 5pm
-					%td.border-zoom.t-c
-						.p-10
-							Sunday 5pm
-					%td.border-zoom.t-c
-						.p-10
-							Before Cutoff : 4 Hours Usage
+							1. Credit worth 50% of billed hourly rate will be given for the remaining hours of your booking.
 							%br/
-							After Cutoff : 2 Hours Usage
-					%td.border-zoom.t-c
-						.p-10
-							4 Hours (5pm to 9pm) were billed initially
-				%tr
-					%td.border-zoom.t-c
-						.p-10
-							Monday 1pm
-					%td.border-zoom.t-c
-						.p-10
-							Tuesday 1pm
-					%td.border-zoom.t-c
-						.p-10
-							Tuesday 10am
-					%td.border-zoom.t-c
-						.p-10
-							Monday 10am
-					%td.border-zoom.t-c
-						.p-10
-							Zero
-					%td.border-zoom.t-c
-						.p-10
-							Returned hours were not billed initially
-				%tr
-					%td.border-zoom.t-c
-						.p-10
-							Monday 1pm
-					%td.border-zoom.t-c
-						.p-10
-							Tuesday 1pm
-					%td.border-zoom.t-c
-						.p-10
-							Monday 5pm
-					%td.border-zoom.t-c
-						.p-10
-							Sunday 5pm
-					%td.border-zoom.t-c
-						.p-10
-							Before Cutoff : 6 Hours Usage
-							%br/
-							After Cutoff : 3 Hours Usage
-					%td.border-zoom.t-c
-						.p-10
-							Only 6 hours were billed from Monday 5pm till Tuesday 1pm
-				%tr
-					%td.border-zoom.t-c
-						.p-10
-							Monday 1pm
-					%td.border-zoom.t-c
-						.p-10
-							Thursday 1pm
-					%td.border-zoom.t-c
-						.p-10
-							Monday 5pm
-					%td.border-zoom.t-c
-						.p-10
-							Sunday 5pm
-					%td.border-zoom.t-c
-						.p-10
-							Before Cutoff
-							%br/
-							2 Days, 6 Hours Usage
-							%br/
-							After Cutoff
-							%br/
-							1 Day, 3 Hours Usage
-					%td.border-zoom.t-c
-						.p-10
-							Only 6 hours were billed from Monday 5pm till Tuesday 1pm
-							%br/
-							2 days (Tuesday 1pm to Thursday 1pm) were billed
-			* - Time belongs to the same week
+							2. Free KMs will be given  only for the hours for which you did not get credit.
 			%br/
-			%b
-				See our Trip Modication Estimator to estimate your refund.
+			%table.size-13{:cellpadding => '0', :cellspacing => '0', :border => '0', :aling => 'left', :width => '100%'}
+				%tr
+					%td.border-zoom.t-c{:width => '180'}
+						.p-10.f-b
+							Shortening Post Start
+					%td.border-zoom
+						.p-10
+							1. 25% of the difference between the old amount and the new amount will be charged as Trip Modification Fee with a maximum reschedule charge of Rs 2500.
+							%br/
+							2. Free KMs you received will be reduced based on the new duration.
+				%tr
+					%td.border-zoom.t-c{:width => '180'}
+						.p-10.f-b
+							Extension Post Start
+					%td.border-zoom
+						.p-10
+							1. Extension can be done as per availability and regular charges
+				%tr
+					%td.border-zoom.t-c{:width => '180'}
+						.p-10.f-b
+							Reschedule Before Start
+					%td.border-zoom
+						.p-10
+							1. No additional charges if the trip is rescheduled more than 24 hours before the booking start time.
+							%br/
+							2. A charge of 25% of the difference between the old amount and the new amount is applicable if the trip is rescheduled within 24 hours of booking start time, with a maximum reschedule charge of Rs. 2500.
+							%br/
+							3. There will be no additional charge if the new amount is greater than old amount.
 			%br/
-			%br/
-		#fee-5.tab-pane.fade
+			%table.size-13{:cellpadding => '0', :cellspacing => '0', :border => '0', :aling => 'left', :width => '100%'}
+				%tr
+					%td.border-zoom.t-c{:width => '180'}
+						.p-10.f-b
+							Cancellation
+					%td.border-zoom
+						.p-10
+							1. There are no charges if you cancel more than 24 hours before booking start time.
+							%br/
+							2. A charge of 25% of booking amount is applicable if cancelled within 24 hours of the booking start time, with a maximum cancellation charge of Rs. 2,500.
+
+
+		#fee-4.tab-pane.fade
 			.f-b.size-16.m-b5.t-u
 				Fee for Returning the Vehicle to the Wrong Location
 			%ol
@@ -508,8 +286,12 @@
 		%ol
 			%li
 				Zoom provides full wrap unlimited third party liability insurance without a maximum cap.
-			%li
-				If member is involved in an incident (including but not limited to a collision or misuse of the vehicle) Member will be responsible for a standard insurance deductible payment of up to ₹#{CommonHelper::LIABILITY}. At the time the reservation is completed, the Member will originally be charged a flat fee of ₹1,000. The Member will be obligated to pay the balance of the repair cost (up to ₹#{CommonHelper::LIABILITY}) after the repair work has been complete and Zoom has sent the Member a repair invoice. The balance of the payment owed will be made electronically by the Member via an email invoice from Zoom.
+			- if @city.id == 2
+				%li
+					If member is involved in an incident (including but not limited to a collision or misuse of the vehicle) Member will be responsible for a standard insurance deductible payment of up to ₹5,000. The Member will be obligated to pay the repair cost (up to ₹5,000) and Zoom will send the Member a repair invoice. The payment owed will be deducted from the security deposit. Should the security deposit not cover the payment (in the case the Member has accrued late return, excess km, etc charges) the balance of the payment owed will be made electronically by the Member.
+			- else
+				%li
+					If member is involved in an incident (including but not limited to a collision or misuse of the vehicle) Member will be responsible for a standard insurance deductible payment of up to ₹#{CommonHelper::LIABILITY}. At the time the reservation is completed, the Member will originally be charged a flat fee of ₹1,000. The Member will be obligated to pay the balance of the repair cost (up to ₹#{CommonHelper::LIABILITY}) after the repair work has been complete and Zoom has sent the Member a repair invoice. The balance of the payment owed will be made electronically by the Member via an email invoice from Zoom.
 			%li
 				Member will be responsible for all towing and impounding charges associated with a collision.
 			%li
@@ -537,16 +319,16 @@
 				%th{:style => "border-right:1px solid #fff;"}
 					.p-10 Violation
 				%th{:style => "border-left:1px solid #fff;border-right:1px solid #fff;"}
-					.p-10 Panelty
+					.p-10 Penalty
 		%tbody
 			%tr
 				%td.border-zoom 
 					.p-10 Returning vehicle late
 				%td.border-zoom 
 					.p-10
-						Regular hourly tariff
+						1. Standard hourly charges will be applicable per hour of delay. Weekend or weekday delays will be charged accordingly.
 						%br/
-						PLUS ₹600 per hour late if another member is inconvenience
+						2. An additional Rs. 300 per hour will be charged as late fee.
 			%tr
 				%td.border-zoom
 					.p-10 Traffic and parking violations
@@ -556,7 +338,7 @@
 						%br/
 						PLUS ₹500 per 30 days late in payment 
 			%tr
-				%td.border-zoom 
+				%td.border-zoom.t-l
 					.p-10 Key not returned at end of reservation
 				%td.border-zoom 
 					.p-10 
