@@ -131,14 +131,14 @@
 							- else
 								= c.amount
 								- tmp += c.amount
-			%tr.f-b
+			%tr.f-b.bg-c
 				%td
-					Total
+					Fare Total
 				%td.t-r
 					= tmp
 			- @booking.charges.each do |c|
 				- if ['security_deposit'].include?(c.activity)
-					%tr.bg-y
+					%tr
 						%td
 							Fully Refundable Deposit
 						%td.t-r
@@ -146,7 +146,7 @@
 							- tmp += c.amount
 			%tr.f-b.bg-c
 				%td
-					Grand Total
+					Payable Amount
 				%td.t-r
 					= tmp
 					- @total += tmp
