@@ -47,4 +47,4 @@ class Time
 end
 configurations = YAML.load(File.read(File.join(::Rails.root.to_s, 'config', 'configurations.yml')))
 HOSTNAME = configurations['hostname']
-DEFAULT_CITY = configurations['default_city']
+MEMCACHED_KEY = configurations['memcached_key']

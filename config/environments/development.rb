@@ -17,11 +17,6 @@ Web::Application.configure do
   config.action_mailer.raise_delivery_errors = false
 	#config.action_mailer.delivery_method = :amazon_ses
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {user_name: 'bhuvnesh_dev@yahoo.com',
-    password: 'cqrlo3_qZPWays83NH3_DA',
-    address: 'smtp.mandrillapp.com',
-    port: 587
-    }
   
 	config.action_mailer.default_url_options = {:host => HOSTNAME}
 	
@@ -38,6 +33,6 @@ Web::Application.configure do
   
   config.action_controller.asset_host = "http://local.dev"
   
-  config.cache_store = :dalli_store, {:namespace => 'zoom'}
+  config.cache_store = :dalli_store, {:namespace => MEMCACHED_KEY}
   
 end
