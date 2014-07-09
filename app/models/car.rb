@@ -60,7 +60,7 @@ class Car < ActiveRecord::Base
 		return check
 	end
 	
-	def manage_inventory(city, starts_was, ends_was, starts, ends, block)
+	def manage_inventory(starts_was, ends_was, starts, ends, block)
 		check = 1
 		cargroup = self.cargroup
 		
