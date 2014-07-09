@@ -1,4 +1,5 @@
 :ruby
+	city = @booking.city
 	cargroup = @booking.cargroup
 	location = @booking.location
 	offer = @booking.offer
@@ -140,7 +141,7 @@ Please review the details of your reservation:
 					= "-"
 %br/
 %br/
-If you have any questions about your reservation you can contact Zoom at #{CommonHelper::CUSTOMER_CARE_EMAIL} / #{CommonHelper::CUSTOMER_CARE}.
+If you have any questions about your reservation you can contact Zoom at #{city.contact_email} / #{city.contact_phone}.
 %br/
 %br/
 %br/  

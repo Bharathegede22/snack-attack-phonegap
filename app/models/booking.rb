@@ -151,9 +151,26 @@ class Booking < ActiveRecord::Base
 				self.notes += note
 			end
 		end
+		total = 0 - data[:refund] + data[:penalty]
+		# Deposit Refund
+		deposit = Charge.where(["booking_id = ? AND activity = 'security_deposit'", self.id]).first
+		if deposit
+			charge = Charge.where(["booking_id = ? AND activity = 'security_deposit_refund'", self.id]).first
+			charge = Charge.new(booking_id: self.id, activity: 'security_deposit_refund') if !charge
+			charge.estimate = deposit.amount
+			charge.discount = 0
+			charge.amount = deposit.amount
+			charge.refund = 1
+			if charge.save
+				note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs."
+				note += data[:penalty].to_s + " - Security Deposit Refund.<br/>"
+				self.notes += note
+			end
+			total -= deposit.amount.to_i
+		end
 		self.save(validate: false)
-		BookingMailer.cancel(self.id, charge.id).deliver
-		sendsms('cancel', (data[:refund] - data[:penalty]))
+		BookingMailer.cancel(self.id, total).deliver
+		sendsms('cancel', total)
 		return data
 	end
 	
@@ -259,16 +276,17 @@ class Booking < ActiveRecord::Base
 		end
 		charge = self.do_charge(str, fare, action_text)
 		self.save(validate: false)
-		if charge || str == 'Rescheduling'
+		if fare[:hours] > 0 || str == 'Rescheduling'
 			if charge
-				BookingMailer.change(self.id, charge.id).deliver
 				if charge.refund == 1
-					sendsms('change', -1 * charge.amount.to_i)
+					total = -1 * charge.amount.to_i
 				else
-					sendsms('change', charge.amount.to_i)
+					total = charge.amount.to_i
 				end
+				BookingMailer.change(self.id, total).deliver
+				sendsms('change', total)
 			else
-				BookingMailer.change(self.id, nil).deliver
+				BookingMailer.change(self.id, 0).deliver
 				sendsms('change', 0)
 			end
 		end
@@ -377,7 +395,7 @@ class Booking < ActiveRecord::Base
 	def refund_amount
 		total = 0
 		self.charges.each do |c|
-			if !c.activity.include?('charge')
+			if !c.activity.include?('charge') && !c.activity.include?('deposit')
 				if c.refund > 0
 					total -= c.amount
 				else
@@ -577,7 +595,7 @@ class Booking < ActiveRecord::Base
 		charge.billed_standard_hours 		= self.normal_hours
 		charge.estimate 								= self.estimate
 		charge.discount 								= self.discount
-		charge.amount 									= self.total
+		charge.amount 									= self.total_fare
 		charge.save
 		if self.pricing.mode::SECURITY > 0
 			charge 						= Charge.new(:booking_id => self.id, :activity => 'security_deposit')

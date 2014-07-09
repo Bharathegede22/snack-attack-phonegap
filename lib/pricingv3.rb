@@ -123,6 +123,8 @@ class Pricingv3
 		
 		h = (end_date.to_i - start_date.to_i)/3600
 		h += 1 if (end_date.to_i - start_date.to_i) > h*3600
+		data[:hours] = h
+		
 		h = MIN_HOURS if h < MIN_HOURS
 		
 		discounted_fare = 0
@@ -135,7 +137,6 @@ class Pricingv3
 			kms = @@pricing.hourly_kms
 		end
 		
-		data[:hours] = h
 		hour = 1
 		wday = start_date.wday
 		data[:kms] = (kms*data[:hours]).round

@@ -60,61 +60,6 @@
 					.p-5
 						= @booking.ends.strftime("%d %b, %Y %I:%M %p")
 		.col-md-6
-			- total = 0
-			- tmp = 0
-			%h4.f-b Fare Breakdown
-			%table.table.table-bordered
-				- @booking.charges.each do |c|
-					- if ['security_deposit'].include?(c.activity)
-						%tr.bg-y
-							%td
-								Fully Refundable Deposit
-							%td.t-r
-								= c.amount
-								- tmp += c.amount
-					- elsif !c.activity.include?('early_return')
-						%tr
-							%td
-								= c.activity_text
-							%td.t-r
-								- if c.refund > 0
-									= "-" + c.amount.to_s
-									- tmp -= c.amount
-								- else
-									= c.amount
-									- tmp += c.amount
-				%tr.active.f-b
-					%td
-						Total
-					%td.t-r
-						= tmp
-				%tr.success
-					%td
-						Payments Received
-					%td.t-r
-						:ruby
-							total += tmp
-							tmp = 0
-							@booking.confirmed_payments.each do |p|
-								tmp += p.amount
-							end
-						= tmp
-				%tr.warning
-					%td
-						Refunds Issued
-					%td.t-r
-						:ruby
-							total -= tmp
-							tmp = 0
-							@booking.refunds.each do |r|
-								tmp += r.amount if !r.through.include?('early_return')
-							end
-						= tmp
-				- total += tmp
-				%tr.bg-c
-					%td
-						%b Outstanding
-					%td.t-r
-						%b #{total}
+			= render :partial => '/bookings/summary', :locals => {:payments => false}
 	.m-20.t-c
 		This is an electronically generated receipt and doesn't require a signature

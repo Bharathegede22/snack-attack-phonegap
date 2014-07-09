@@ -1,6 +1,8 @@
-- cargroup = @booking.cargroup
-- location = @booking.location
-- outstanding = @booking.outstanding
+:ruby
+	city = @booking.city
+	cargroup = @booking.cargroup
+	location = @booking.location
+	outstanding = @booking.outstanding
 %br/
 Hi #{@user.name},
 %br/
@@ -58,13 +60,16 @@ You've cancelled the following reservation:
 %br/
 %br/
 %div{style: "background:#eeeeee; margin:0px; padding:10px; color:#000000;"}
-	- if @charge
-		%b
-			Rs.
-			= @charge.amount
-		- if @charge.refund == 1
+	- if @total != 0
+		- if @total < 0
+			%b
+				Rs.
+				= 0 - @total
 			is refunded back to the reservation.
 		- else
+			%b
+				Rs.
+				= @total
 			is added as cancellation charges to the reservation.
 	- else
 		%b
@@ -85,7 +90,7 @@ We're sorry that this reservation won't work out for you now, but check out what
 	%a{href: "http://www.zoomcar.in", target: "_blank"} www.zoomcar.in.
 %br/
 %br/
-If you have any questions about your reservation you can contact Zoom at #{CommonHelper::CUSTOMER_CARE_EMAIL} / #{CommonHelper::CUSTOMER_CARE}.
+If you have any questions about your reservation you can contact Zoom at #{city.contact_email} / #{city.contact_phone}.
 %br/
 %br/
 %br/

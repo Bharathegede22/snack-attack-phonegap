@@ -32,6 +32,9 @@
 	booking.cargroup_id = car.id
 	booking.valid?
 	fare = booking.get_fare
+	tooltip = "<div class='size-12 t-l'><div class='zoom t-c f-b size-16'>Min. billing is 4 hours</div><table width='200'><tr><td>Tariff</td><td>₹#{fare[:total]}</td></tr><tr class='yellow'><td>Free Kms</td><td>#{fare[:kms]}</td></tr><tr class='yellow'><td>Excess Km Charge</td><td>₹#{car.excess_kms.to_i}/Km</td></tr></table></div>"
+	h = (@booking.ends.to_i - @booking.starts.to_i)/3600
+	h += 1 if (@booking.ends.to_i - @booking.starts.to_i) > h*3600
 - if !locs.blank?
 	.search-item
 		.default
@@ -103,10 +106,11 @@
 															= l[0].shortname
 						.fc
 				.actions
-					- tooltip = "<div class='size-12 t-l'><b class='zoom size-16'>Fare Breakup</b><br/><table width='200'><tr><td>Normal Tariff</td><td>₹#{fare[:estimate]}</td></tr><tr><td>Discount</td><td>₹#{fare[:discount]}</td></tr><tr class='f-b yellow'><td>Total</td><td>₹#{(fare[:total])}</td></tr><tr class='yellow'><td>Free Kms</td><td>#{fare[:kms]}</td></tr><tr class='yellow'><td>Excess Km Charge</td><td>₹#{car.excess_kms.to_i}/Km</td></tr></table></div>"
 					.tariff.r-5.help.help-event{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-placement' => 'left', 'data-title' => tooltip.html_safe, 'data-event' => "#{car.display_name}"}
 						%span.size-18 ₹
 						#{show_currency(fare[:total])}
+						- if h < 4
+							%sup.size-14 *
 					- if locs[0][1] == 1
 						.button{id: 'ButtonYes' + car.id.to_s, onclick: "doBooking(#{car.id}, #{locs[0][0].id});"}
 							Book

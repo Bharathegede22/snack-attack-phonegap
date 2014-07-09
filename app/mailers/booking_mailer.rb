@@ -4,20 +4,16 @@ class BookingMailer < ActionMailer::Base
   
   default from: "ZoomCar <help@zoomcar.in>"#, bcc: "support@zoomcar.in"
   
-  def cancel(booking, charge)
+  def cancel(booking, total)
 		@booking = Booking.find_by_id booking
-		@charge = Charge.find_by_id charge
+		@total = total
 		@user = @booking.user
 		mail(:to => @user.email, :subject => "Your Zoom Reservation : #{@booking.confirmation_key}", bcc: @booking.city.contact_email)
 	end
 	
-	def change(booking, charge)
+	def change(booking, total)
 		@booking = Booking.find_by_id booking
-		if !charge.nil?
-			@charge = Charge.find_by_id charge
-		else
-			@charge = nil
-		end
+		@total = total
 		@user = @booking.user
 		mail(:to => @user.email, :subject => "Your Zoom Reservation : #{@booking.confirmation_key}", bcc: @booking.city.contact_email)
 	end

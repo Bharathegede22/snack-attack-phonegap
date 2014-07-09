@@ -8,10 +8,11 @@ class BookingsController < ApplicationController
   before_filter :check_blacklist, :only => [:docreate]
 
 	def cancel
+		@security = @booking.pricing.mode::SECURITY
 		if request.post?
 			@booking.valid?
 			fare = @booking.do_cancellation
-			flash[:notice] = "Your booking is successfully <b>cancelled</b>. <b>#{fare[:refund] - fare[:penalty]}</b> will be refunded to you shortly."
+			flash[:notice] = "Your booking is successfully <b>cancelled</b>. <b>#{fare[:refund] - fare[:penalty] + @security}</b> will be refunded to you shortly."
 		else
 			@booking.status = 9
 			@fare = @booking.get_fare
@@ -119,10 +120,11 @@ class BookingsController < ApplicationController
 
 		if !session[:corporate_id].blank? && current_user.support?
 			@booking.corporate_id = session[:corporate_id]
-			if Inventory.block(@city, @booking.cargroup_id, @booking.location_id, @booking.starts, @booking.ends) == 1
+			
+			if @booking.manage_inventory == 1
 				@booking.status = 1
 			else
-				Inventory.block_plain(@city, @booking.cargroup_id, @booking.location_id, @booking.starts, @booking.ends)
+				Inventory.block(@booking.cargroup_id, @booking.location_id, @booking.starts, @booking.ends)
 				@booking.status = 6
 			end
 		end

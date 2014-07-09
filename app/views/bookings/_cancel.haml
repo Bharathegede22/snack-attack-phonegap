@@ -17,12 +17,12 @@
 		.size-20
 			.label.label-info
 				%b
-					= (@fare[:refund] - @fare[:penalty]).round
-				will be refunded
+					= (@fare[:refund] - @fare[:penalty]).round + @security
+				will be refunded.
 		.p-t10
 			#SearchSubmit
 				= submit_tag "Confirm", :class => 'btn btn-default'
-			#SearchWait.p-5.hide
+			#SearchWait.p-5{style: 'display:none;'}
 				.wait
 - else
 	:javascript

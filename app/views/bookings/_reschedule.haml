@@ -31,23 +31,6 @@
 					%input{name: 'starts', type: "text", value: @booking.starts.strftime("%d/%m/%Y %H:%M"), readonly: 'true'}
 					%input{name: 'ends', type: "text", value: @booking.ends.strftime("%d/%m/%Y %H:%M"), readonly: 'true'}
 			- if @fare && @fare[:hours] > 0
-				.p-b10
-					%table.table.table-bordered
-						%tr
-							%td
-								%b Normal Tariff
-							%td.t-r
-								= @fare[:estimate]
-						%tr
-							%td
-								%b Discount
-							%td.t-r
-								= @fare[:discount]
-						%tr.active
-							%td
-								%b Total
-							%td.t-r
-								= @fare[:total]
 				:ruby
 					tmp = ''
 					h = @fare[:hours]
@@ -125,35 +108,37 @@
 				#SearchSubmit
 					= submit_tag "Confirm", :class => 'btn btn-default'
 				#SearchWait.p-5{style: 'display:none;'}
+					.wait
 			- else
 				#SearchSubmit
 					= submit_tag "Submit", :class => 'btn btn-default'
 				#SearchWait.p-5{style: 'display:none;'}
+					.wait
 		.fc
 	:javascript
 		initializeDatePicker();
 - else
-	- if current_user.support? || @booking.outstanding <= 0
-		:javascript
-			var auto = setTimeout(function(){ submitRedirect(); }, 3000);
-			function submitRedirect() {
-				clearTimeout(auto);
-				location.reload();
-			}
-	- else
-		.t-c
-			%br/
-			%br/
-			%br/
-			.wait
-			%br/
-			%br/
+	.t-c
+		%br/
+		%br/
+		%br/
+		.wait
+		%br/
+		%br/
+		- if current_user.support? || @booking.outstanding <= 0
+			:javascript
+				var auto = setTimeout(function(){ submitRedirect(); }, 3000);
+				function submitRedirect() {
+					clearTimeout(auto);
+					location.reload();
+				}
+		- else
 			Please wait while we proceed for payment
 			%br/
 			%br/
-		:javascript
-			var auto = setTimeout(function(){ submitRedirect(); }, 3000);
-			function submitRedirect() {
-				clearTimeout(auto);
-				window.location = "/bookings/#{@booking.encoded_id}/dopayment";
-			}
+			:javascript
+				var auto = setTimeout(function(){ submitRedirect(); }, 3000);
+				function submitRedirect() {
+					clearTimeout(auto);
+					window.location = "/bookings/#{@booking.encoded_id}/dopayment";
+				}
