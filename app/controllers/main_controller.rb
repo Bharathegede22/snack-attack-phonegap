@@ -191,7 +191,7 @@ class MainController < ApplicationController
 	end
 	
 	def howitworks
-		@meta_title = "Self Drive Cars Rental In Bangalore | Join Online, Book A Car & Drive | Zoomcar.in"
+		@meta_title = "Self Drive Cars Rental In #{@city.name} | Join Online, Book A Car & Drive | Zoomcar.in"
 		@meta_description = "Know how Zoom works"
 		@meta_keywords = "how zoomcar works"
 		@canonical = "http://www.zoomcar.in/howitworks"

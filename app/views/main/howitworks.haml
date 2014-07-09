@@ -67,7 +67,7 @@
 			In case you’re wondering if ZoomCar is what you’re looking for
 
 	#usecases.fl
-		= image_tag("usecases.jpg", :alt => "Use Cases")
+		= image_tag("usecases-#{@city.id}.jpg", :alt => "Use Cases")
 
 	.fc
 
@@ -96,7 +96,10 @@
 			.f-b.size-24.m-b10
 				Pay
 			.text.size-14
-				There are no hidden charges, even taxes are included in our prices. So go ahead and pay for your sweet ride.
+				- if @city.mode::SECURITY == 0
+					There are no hidden charges, even taxes are included in our prices. So go ahead and pay for your sweet ride.
+				- else
+					We take a small security deposit on the cars. There are no hidden charges! So go ahead and pay for your sweet ride.
 
 		.howitworks.t-c.fl
 			#howitworks3
