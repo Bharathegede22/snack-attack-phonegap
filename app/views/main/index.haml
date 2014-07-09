@@ -51,11 +51,11 @@
 													%td
 														.item.r-5
 															.fare
-																%b ₹#{show_currency((pricing.hourly_fare*((100 - pricing.mode::WEEKDAY_DISCOUNT)/100.0)).to_i)}/hour
+																%b ₹#{show_currency(pricing.hourly_discounted)}/hour
 													%td
 														.item.r-5
 															.fare
-																%b ₹#{show_currency((pricing.daily_fare*((100 - pricing.mode::WEEKDAY_DISCOUNT)/100.0)).to_i)}/day
+																%b ₹#{show_currency(pricing.daily_discounted)}/day
 		.tariff-bg
 			%h2.text.droid.size-20
 				Find Us In Your Neighbourhood!

@@ -60,7 +60,7 @@ class Car < ActiveRecord::Base
 		return check
 	end
 	
-	def manage_inventory(starts_was, ends_was, starts, ends, block)
+	def manage_inventory(city, starts_was, ends_was, starts, ends, block)
 		check = 1
 		cargroup = self.cargroup
 		
@@ -80,11 +80,11 @@ class Car < ActiveRecord::Base
 			check = 0 if Carblock.count(:conditions => ["car_id = ? AND ((starts <= ? AND ends > ?) OR (starts >= ? AND starts <= ?))", self.id, start_time, start_time, start_time, end_time]) > 0
 		end
 		
+		carmovements = []
 		# Check Inventory
 		if check == 1
 			start_time = starts
 			end_time = ends
-			carmovements = []
 			if starts != starts_was || ends != ends_was
 				if starts < starts_was
 					start_time -= cargroup.wait_period.minutes
@@ -109,7 +109,7 @@ class Car < ActiveRecord::Base
 				if check == 1
 					start_time = (cm.starts > starts_tmp) ? cm.starts : starts_tmp
 					end_time = (cm.ends < ends_tmp) ? cm.ends : ends_tmp
-					tmp = Inventory.check(city, self.cargroup_id, cm.location_id, start_time, end_time)
+					tmp = Inventory.check(1, self.cargroup_id, cm.location_id, start_time, end_time)
 					check = 0 if tmp == 0
 				end
 			end

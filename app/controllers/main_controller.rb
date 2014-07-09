@@ -207,7 +207,8 @@ class MainController < ApplicationController
 	end
 	
 	def index
-		head :moved_permanently, :location => "/bangalore" and return if request.url.split('?').first.split('/').last != @city.name.downcase
+		@city = City.lookup('bangalore') if @city.blank?
+		redirect_to "/" + @city.name.downcase and return if request.url.split('?').first.split('/').last != @city.name.downcase
 		@meta_title = @city.meta_title
 		@meta_description = @city.meta_description
 		@meta_keywords = @city.meta_keywords

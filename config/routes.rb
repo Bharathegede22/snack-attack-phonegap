@@ -85,7 +85,7 @@ Web::Application.routes.draw do
 	get '/calculator/:id' => 'main#calculator'
 	
 	get '/job/:id' => 'main#job'
- 	get ':action' => 'main', constraints: {action: /about|careers|contact|eligibility|handover|howitworks|map|member|outstation|reva|privacy/}
+ 	get ':action' => 'main', constraints: {action: /about|careers|contact|eligibility|handover|holidays|howitworks|howtozoom|map|member|outstation|reva|privacy/}
  	
 	scope "/(:city)", constraints: {city: /bangalore|pune/} do
 		get '/' => 'main#index'

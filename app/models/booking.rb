@@ -141,7 +141,7 @@ class Booking < ActiveRecord::Base
 		end
 		if data[:penalty] > 0
 			charge = Charge.where(["booking_id = ? AND activity = 'cancellation_charge'", self.id]).first
-			charge = Charge.new(booking_id: self.id, activity: 'cancellation_refund')
+			charge = Charge.new(booking_id: self.id, activity: 'cancellation_charge') if !charge
 			charge.estimate = data[:penalty]
 			charge.discount = 0
 			charge.amount = data[:penalty]
@@ -391,7 +391,7 @@ class Booking < ActiveRecord::Base
 	def revenue
 		tmp = 0
 		self.charges.each do |a|
-			if !a.activity.include?('early_return') && !['vehicle_damage_fee', 'fuel_refund', 'andhra_permit_refund'].include?(a.activity)
+			if !a.activity.blank? && !a.activity.include?('early_return') && !['vehicle_damage_fee', 'fuel_refund', 'andhra_permit_refund'].include?(a.activity)
 				if a.refund > 0
 					tmp -= a.amount.to_i
 				else
@@ -417,16 +417,6 @@ class Booking < ActiveRecord::Base
 		#Utilization.manage(id)
 	end
 
-	def set_fare
-		tmp = self.get_fare
-		self.total = tmp[:total]
-		self.estimate = tmp[:estimate]
-		self.discount = tmp[:discount]
-		self.hours = tmp[:hours]
-		self.normal_hours = tmp[:standard_hours]
-		self.discounted_hours = tmp[:discounted_hours]
-	end
-	
 	def sendsms(action, amount)
 		message =  case action 
 		when 'change' then "Zoom booking (#{self.confirmation_key}) is changed. #{self.cargroup.display_name} from #{self.starts.strftime('%I:%M %p, %d %b')} till #{self.ends.strftime('%I:%M %p, %d %b')} at #{self.location.shortname}. "
@@ -443,6 +433,17 @@ class Booking < ActiveRecord::Base
 		end
 		message << "#{self.city.contact_phone} : Zoom Support."
 		SmsSender.perform_async(self.user_mobile, message, self.id)
+	end
+	
+	def set_fare
+		tmp = self.get_fare
+		self.total_fare = tmp[:total]
+		self.total = tmp[:total] + pricing.mode::SECURITY
+		self.estimate = tmp[:estimate]
+		self.discount = tmp[:discount]
+		self.hours = tmp[:hours]
+		self.normal_hours = tmp[:standard_hours]
+		self.discounted_hours = tmp[:discounted_hours]
 	end
 	
 	def setup
