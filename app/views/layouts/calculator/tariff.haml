@@ -109,16 +109,10 @@
 				= tmp.chomp(', ')
 		%tr
 			%td
-				%b Normal Tariff
+				%b Tariff
 			%td.t-r
 				Rs.
-				= @tariff[:estimate]
-		%tr
-			%td
-				%b Discount
-			%td.t-r
-				Rs.
-				= @tariff[:discount]
+				= @tariff[:total]
 		- if @tariff[:kms_penalty] == 0
 			%tr
 				%td
