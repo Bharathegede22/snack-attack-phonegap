@@ -139,7 +139,7 @@ class Pricingv3
 		
 		hour = 1
 		wday = start_date.wday
-		data[:kms] = (kms*data[:hours]).round
+		data[:kms] = (kms*h).round
 		
 		while hour <= h
 			data[:estimate] += fare

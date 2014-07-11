@@ -18,3 +18,10 @@ loader: "static.olark.com/jsclient/loader0.js",name:"olark",methods:["configure"
 /* custom configuration goes here (www.olark.com/documentation) */
 olark.identify('6746-625-10-7945');/*]]>*/</script><noscript><a href="https://www.olark.com/site/6746-625-10-7945/contact" title="Contact us" target="_blank">Questions? Feedback?</a> powered by <a href="http://www.olark.com?welcome" title="Olark live chat software">Olark live chat software</a></noscript>
 <!-- end olark code -->
+<% if @city %>
+	<% if @city.id == 1 %>
+		<script> olark.configure('system.group', '5c55a79eeb0d699a4d8d74a42f9b4a0f');</script>
+	<% elsif @city.id == 2 %>
+		<script> olark.configure('system.group', '4328e94842f52d27f861bff4f7a1da29');</script>
+	<% end %>
+<% end %>

@@ -19,12 +19,12 @@ set :use_sudo, false
 set :deploy_to, "/var/www/#{application}"
 set :rails_env, "production"
 
-role :web, "180.179.52.169"
-role :app, "180.179.52.169"
-role :db,  "180.179.52.169", :primary => true
+role :web, "23.98.75.20"
+role :app, "23.98.75.20"
+role :db,  "23.98.75.20", :primary => true
 
-ssh_options[:user] = "root"
-ssh_options[:keys] = "~/.ssh/id_rsa_test"
+ssh_options[:user] = "wheels"
+ssh_options[:keys] = "~/.ssh/azure/test/private.key"
 ssh_options[:port] = 2255
 
 set :bundle_gemfile, "Gemfile"
