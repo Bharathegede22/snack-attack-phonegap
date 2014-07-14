@@ -22,7 +22,7 @@ class Cargroup < ActiveRecord::Base
 	end
 	
 	def h1(city)
-		return "Hire #{self.name}"
+		return "Rent #{self.name}"
 	end
 	
 	def link(city)
@@ -48,7 +48,7 @@ class Cargroup < ActiveRecord::Base
   end
   
   def meta_description(city)
-		return "Self drive #{self.name.downcase} car on hire by the hour, daily, weekly and monthly basis at affordable price in #{city.name}"
+		return "Self drive #{self.name.downcase} car on rent by the hour, daily, weekly and monthly basis at affordable price in #{city.name}"
 	end
 	
 	def meta_keywords(city)
