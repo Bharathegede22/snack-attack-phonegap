@@ -4,7 +4,24 @@ class Offer < ActiveRecord::Base
 	has_many :coupon_codes
 	has_many :city_offers
 	has_many :cities, through: :city_offers
-	
+	def check_output_condition
+		return true if self.output_condition.nil?
+		output_condition = self.output_condition.gsub(/\w+/){|word| @replace.fetch(word,word)}
+		Charge.find_by_sql(output_condition).blank? ? (return false) : (return true)
+	end
+
+	def check_booking_condition
+		return true if self.booking_condition.nil?
+		booking_condition = self.booking_condition.gsub(/\w+/) {|word| @replace.fetch(word,word)}
+		Booking.find_by_sql(booking_condition).blank? ? (return false) : (return true)
+	end
+
+	def check_user_condition
+		return true if self.user_condition.nil?
+		user_condition = self.user_condition.gsub(/\w+/){|word| @replace.fetch(word,word)}
+		User.find_by_sql(user_condition).blank? ? (return false) : (return true)
+	end
+
 	def self.get(code,city)
 		code = code.downcase.strip
 		offer = nil
@@ -39,6 +56,16 @@ class Offer < ActiveRecord::Base
 		Rails.cache.fetch("offers") do
 			Offer.find_by_sql("SELECT * FROM offers WHERE status = 1 AND visibility = 1")
 		end
+	end
+	
+	def validate_offer(user_id,booking_id)
+		none = ''
+		text = "Coupon code <b>#{self.promo_code.upcase}</b> cannot be applied to the current booking"
+		@replace = {"USER_ID" => user_id, "TIME_NOW" => Time.now.to_s(:db), "BOOKING_ID" => booking_id}
+		return text  unless self.check_user_condition
+		return text  unless self.check_booking_condition
+		return text  unless self.check_output_condition
+		return none
 	end
 	
 end

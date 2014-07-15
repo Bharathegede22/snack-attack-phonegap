@@ -5,7 +5,8 @@ class BookingsController < ApplicationController
 	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :notify, :userdetails]
 	before_filter :check_search_access, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
-  before_filter :check_blacklist, :only => [:docreate]
+  	before_filter :check_blacklist, :only => [:docreate]
+  	before_filter :check_promo,		:only => [:checkout]
 
 	def cancel
 		@security = @booking.pricing.mode::SECURITY
@@ -103,10 +104,13 @@ class BookingsController < ApplicationController
 		promo = nil
 		promo = Offer.get(session[:promo_code],@city) if !session[:promo_code].blank?
 		
-		@booking.user_id = current_user.id
-		@booking.user_name = current_user.name
-		@booking.user_email = current_user.email
-		@booking.user_mobile = current_user.phone
+		unless session[:promo_booking].blank?
+			@booking = Booking.find(session[:promo_booking])
+			session[:promo_booking] = nil
+			@booking.status = 0
+		end
+
+		@booking.user_details(current_user)
 		@booking.ref_initial = session[:ref_initial]
 		@booking.ref_immediate = session[:ref_immediate]
 		@booking.through_signup = true
@@ -301,12 +305,27 @@ class BookingsController < ApplicationController
   def promo
   	if !params[:clear].blank? && params[:clear].to_i == 1
   		session[:promo_code] = nil
+  		session[:promo_booking] = nil
   	else
-			if !params[:promo].blank?
-				@offer = Offer.get(params[:promo],@city)
-				session[:promo_code] = params[:promo].upcase if @offer[:offer] && @offer[:error].blank?
-	    end
-		end
+		if !params[:promo].blank?
+			@offer = Offer.get(params[:promo],@city)
+			render json: {html: render_to_string('_promo.haml', layout: false)} and return unless @offer[:error].blank?
+
+			if session[:promo_booking].blank?
+				check_search
+				if @booking.blank?
+					@offer[:error] = "Session expired" 
+				end	
+				@booking.user_details(current_user)
+				@booking.status = -1
+				@booking.save!
+				session[:promo_booking] = @booking.id
+			end
+			
+			@offer[:error] += @offer[:offer].validate_offer(current_user.id,session[:promo_booking]) 
+			session[:promo_code] = params[:promo].upcase if @offer[:error].blank?					
+    	end
+	end
     render json: {html: render_to_string('_promo.haml', layout: false)}
   end
 
@@ -509,6 +528,11 @@ class BookingsController < ApplicationController
 		redirect_to '/search' and return if !@booking || !@booking.valid?
 	end
 	
+	def check_promo
+		session[:promo_booking] = nil
+		session[:promo_code] = nil
+	end
+
 	def image_params
 		params.require(:image).permit(:avatar)
 	end
