@@ -25,7 +25,7 @@
 		#faq-1.tab-pane.fade.in.active
 			.f-b.zoom.size-16.m-b5 #{count+=1}) What is Zoom?
 			%p
-				Zoom is India's first membership-based, self-drive car rental service which allows individuals to hire cars by the hour or by the day. Reservations are made through the website.
+				ZoomCar is a Self-Drive car rental service which allows you to rent cars by the hour, day, week, or month. We have a wide variety of cars and many locations, in fact you can find us in your neighbourhood. Basically, we save you the cost and hassle of owning a car while giving you all the good parts: convenience, mobility, and independence.
 			.f-b.zoom.size-16.m-b5 #{count+=1}) Where are Zoom vehicles located?
 			%p
 				Zoom offers vehicles at #{locs.length} locations in #{@city.name}: #{locs.join(', ')}. We are always expanding to new locations. If you want Zoom vehicles near you, let us know your location.
@@ -43,7 +43,7 @@
 				Zoom does not provide drivers. But, if you would like to arrange for a driver for your Zoom vehicle, just make sure the driver signs up to become a Zoom member first.
 			.f-b.zoom.size-16.m-b5 #{count+=1}) Do the vehicles have manual or automatic transmission?
 			%p
-				The Figos, Ventos, Scorpios, Ecosport, Honda City, Mahindra XUV W6 have manual transmission. The BMWs and Revas have automatic transmission.
+				The Figos, Ventos, Scorpios, Ecosport, Honda City, Mahindra XUV W6 have manual transmission. The Mercedes-Benz, BMWs and Revas have automatic transmission.
 
 		#faq-2.tab-pane.fade
 			.f-b.zoom.size-16.m-b5 #{count+=1}) How do I become a member?
@@ -71,7 +71,7 @@
 				It's simple on our online reservation system! Just select the type of car you want, the location you want to pick it up from, and the start and end time for your reservation. Then enter your payment details (credit or debit card) and you are ready to Zoom!
 			.f-b.zoom.size-16.m-b5 #{count+=1}) Can I book for any period of time?
 			%p
-				You can book cars by the hour, day, week, or month. You can book them 90 days in advance. The minimum reservation period is one hour, and the maximum reservation time is 14 days.
+				You can book cars by the hour, day, week, or month. You can book them 2 months in advance. The minimum reservation period is 4 hours, and the maximum reservation time is 2 months.
 			.f-b.zoom.size-16.m-b5 #{count+=1}) How far in advance do I need to make a reservation?
 			%p
 				As long as a vehicle is available, you can book immediately!  Zoom recommends customers make bookings as early as possible. 
@@ -100,7 +100,7 @@
 			%p
 				a) Credit worth 50% of billed hourly rate will be given for the remaining hours of your booking.
 				%br/
-				b) Free KMs will be given only for the hours for which you did not get credit.
+				b) Free KMs will be given according to your original booking duration.
 
 		#faq-4.tab-pane.fade
 			.f-b.zoom.size-16.m-b5 #{count+=1}) What modes of payments are accepted?
@@ -136,14 +136,10 @@
 		#faq-6.tab-pane.fade
 			.f-b.zoom.size-16.m-b5 #{count+=1}) Who pays for fuel?
 			%p
-				Unlike other car hire services, Zoom always pays for the fuel, regardless of whether the vehicle is a diesel or petrol variant. Zoom refuels the vehicles regularly. If you are driving a long distance and you need to refuel the vehicle, just give your fuel receipt to the Fleet Executive after your reservation and Zoom will happily reimburse you the full amount. 
+				Unlike other car rental services, Zoom always pays for the fuel, regardless of whether the vehicle is a diesel or petrol variant. Zoom refuels the vehicles regularly. If you are driving a long distance and you need to refuel the vehicle, just give your fuel receipt to the Fleet Executive after your reservation and Zoom will happily reimburse you the full amount. 
 			.f-b.zoom.size-16.m-b5 #{count+=1}) Is there a km limit to how much I can drive?
-			- if @city.id == 2
-				%p
-					Each reservation comes with 10 km/hr with a maximum daily driving limit of 240 km/day (24 hour period). For example, a 3 hour reservation would come with 30 km in driving at no additional charge while a 3 day reservation would come with 720 km in driving at no additional charge. There is a per-km charge for each km beyond that point. Please see Zoom tariffs for more details.
-			- else
-				%p
-					Each reservation comes with #{cg.hourly_km_limit} km/hr with a maximum daily driving limit of #{cg.daily_km_limit} km/day (24 hour period). For example, a 3 hour reservation would come with #{cg.hourly_km_limit * 3} km in driving at no additional charge while a 3 day reservation would come with #{cg.daily_km_limit * 3} km in driving at no additional charge. There is a per-km charge for each km beyond that point. Please see Zoom tariffs for more details.
+			%p
+				Each reservation comes with 10 km/hr with a maximum daily driving limit of 240 km/day (24 hour period). For example, a 3 hour reservation would come with 30 km in driving at no additional charge while a 3 day reservation would come with 720 km in driving at no additional charge. There is a per-km charge for each km beyond that point. Please see Zoom tariffs for more details.
 
 			.f-b.zoom.size-16.m-b5 #{count+=1})  What are the requirements when I drive across a State border?
 			%p
@@ -163,11 +159,10 @@
 			.f-b.zoom.size-16.m-b5 #{count+=1}) Am I responsible for parking and moving violations?
 			%p
 				Yes. Members must pay for any fines incurred during the reservation.
-			- if @city.id == 2
-				.f-b.zoom.size-16.m-b5 #{count+=1}) Why do I have to pay a deposit?
-				%p
-					We've seen that many of our customers like to Zoom off to extra far away destinations. In these instances, they typically have some additional charges at the end of their booking given the distance traveled. Additionally, it's not always so easy out there as a self-drive pilot and some damage will happen. This deposit will allow Zoom to seamlessly complete these transactions without the hassle of a human intervention as part of a formal online payment process. Our helpful support team can reconcile your payment remotely and clear your final bill in a matter of seconds. This will ensure that you are Zooming off not only at the start of your booking but also the end.
-				%p
-					Don't worry, we will only charge you the exact amount of the extra charges or damages, you do not forfeit your entire deposit for charges that are less than Rs 5000.
-				%p
-					Please do keep in mind that though we refund the remaining amount immediately it will take 4-5 business days before it reflects in your account.
+			.f-b.zoom.size-16.m-b5 #{count+=1}) Why do I have to pay a deposit?
+			%p
+				We've seen that many of our customers like to Zoom off to extra far away destinations. In these instances, they typically have some additional charges at the end of their booking given the distance traveled. Additionally, it's not always so easy out there as a self-drive pilot and some damage will happen. This deposit will allow Zoom to seamlessly complete these transactions without the hassle of a human intervention as part of a formal online payment process. Our helpful support team can reconcile your payment remotely and clear your final bill in a matter of seconds. This will ensure that you are Zooming off not only at the start of your booking but also the end.
+			%p
+				Don't worry, we will only charge you the exact amount of the extra charges or damages, you do not forfeit your entire deposit for charges that are less than Rs 5000.
+			%p
+				Please do keep in mind that though we refund the remaining amount immediately it will take 4-5 business days before it reflects in your account.

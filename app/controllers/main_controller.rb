@@ -254,7 +254,7 @@ class MainController < ApplicationController
 	
 	def outstation
 		@meta_title = "Outstation Car Rental | Rent Self-Drive Car For Outstation Trips"
-		@meta_description = "Zoomcar provides local car hire for outstation trips outside Karnataka and Maharashtra state.  Book outstation car for Goa, Kerala, Tamil Nadu and Andhra Pradesh at budget prices"
+		@meta_description = "Zoomcar provides local car rental for outstation trips outside Karnataka and Maharashtra state.  Book outstation car for Goa, Kerala, Tamil Nadu and Andhra Pradesh at budget prices"
 		@meta_keywords = "Outstation car rental, outstation car hire, self drive car for outstation"
 		@canonical = "http://www.zoomcar.in/outstation"
 		@header = 'help'
@@ -273,7 +273,7 @@ class MainController < ApplicationController
 	end
 	
 	def reva
-		@meta_title = "Electric Car Hire | Hire Reva For Self-Drive In #{@city.name}"
+		@meta_title = "Electric Car Rental | Rent Reva For Self-Drive In #{@city.name}"
 		@meta_description = "Zoomcar now offers eco friendly electric car for hire in #{@city.name}. Now rent Mahindra Reva E20 India's only fully electric car by the hour or by the day."
 		@meta_keywords = "electric car hire, hire Reva in #{@city.name}"
 		@canonical = "http://www.zoomcar.in/reva"
@@ -289,8 +289,8 @@ class MainController < ApplicationController
 	end
 	
 	def tariff
-		@meta_title = "ZoomCar Hire Tariffs In #{@city.name} | Zoomcar.in"
-		@meta_description = "ZoomCar offers the simplest, easiest car-hire tariff in #{@city.name}. Find out what all is included"
+		@meta_title = "ZoomCar Rental Tariffs In #{@city.name} | Zoomcar.in"
+		@meta_description = "ZoomCar offers the simplest, easiest car-rental tariff in #{@city.name}. Find out what all is included"
 		@meta_keywords = "zoomcar hire tariffs"
 		@canonical = "http://www.zoomcar.in/#{@city.name}/tariff"
 		@header = 'tariff'

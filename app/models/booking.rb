@@ -584,6 +584,13 @@ class Booking < ActiveRecord::Base
 		end		
 		return total.to_i
 	end
+
+	def user_details(user)
+  		self.user_id = user.id
+		self.user_name = user.name
+		self.user_email = user.email
+		self.user_mobile = user.phone
+  	end
 	
 	protected
 	
