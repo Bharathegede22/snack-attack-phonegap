@@ -40,13 +40,13 @@ class Location < ActiveRecord::Base
 	end
 	
 	def mapcontent
-		text = "<div style='width:240px;' class='size-12'><div class='zoom p-5 t-c'><b class='size-16'>" + self.shortname + "</b></div>"
-		text << "<span style='color:red;'>" + self.disclaimer + "</span><br/>" if !self.disclaimer.blank?
-		text << "<table width='100%' class='t-l'><tr class='size-14'><th>Car Type</th><th class='t-r'>Numbers</th></tr>"
+		text = "<div class='map-info'><div class='p-5 zoom size-16 f-b'>" + self.shortname + "</div>"
+		text << "<div style='color:red;'>" + self.disclaimer + "</div>" if !self.disclaimer.blank?
+		text << "<div class='p-5'><b>Cars Generally Available</b><br/>"
 		self.live.each do |cg|
-			text << "<tr><td>" + cg.shortname + "</td><td class='t-r'>" + cg.total.to_s + "</td></tr>" if cg.total > 0
+			text << cg.name + "<br/>" if cg.total > 0
 		end
-		text << "</table></div>"
+		text = text.chomp(', ') + "</div></div>"
 		return text.html_safe
 	end
 	

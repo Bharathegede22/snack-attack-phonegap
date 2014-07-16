@@ -52,7 +52,7 @@ class UsersController < ApplicationController
 		if request.post?
 			user = User.new(signup_params)
 			current_user.name = user.name
-			current_user.phone =  user.phone
+			current_user.phone = user.phone
 			current_user.dob = user.dob
 			current_user.gender = user.gender
 			current_user.country = user.country

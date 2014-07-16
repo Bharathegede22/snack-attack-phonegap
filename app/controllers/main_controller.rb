@@ -268,6 +268,10 @@ class MainController < ApplicationController
 		@header = 'policy'
 	end
 	
+	def redirect
+		redirect_to '/', :status => 404 and return
+	end
+	
 	def reva
 		@meta_title = "Electric Car Hire | Hire Reva For Self-Drive In #{@city.name}"
 		@meta_description = "Zoomcar now offers eco friendly electric car for hire in #{@city.name}. Now rent Mahindra Reva E20 India's only fully electric car by the hour or by the day."

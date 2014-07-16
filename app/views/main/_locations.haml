@@ -1,4 +1,4 @@
-- if true
+- if false
 	%div{:class => "homepage-map-bg-#{@city.id}"}
 		%div.homepage-map{:class => "homepage-map-#{@city.id}"}
 			- if header
@@ -11,18 +11,48 @@
 					.pulse
 - else
 	#Gmap.home-map
-	:javascript
-		function initializeMap() {
-			var myLatlng = new google.maps.LatLng(#{@city.lat}, #{@city.lng});
-			var mapOptions = {
-				zoom:11,
-				center: myLatlng,
-				mapTypeId: google.maps.MapTypeId.ROADMAP
+	= javascript_tag do
+		:plain
+			function initializeMap() {
+				var myLatlng = new google.maps.LatLng(#{@city.lat}, #{@city.lng});
+				var mapOptions = {
+					center: myLatlng,
+					mapTypeId: google.maps.MapTypeId.ROADMAP
+				}
+				var map = new google.maps.Map(document.getElementById("Gmap"), mapOptions);
+				var bounds = new google.maps.LatLngBounds ();
+				bounds.extend (myLatlng);
+		- Location.live(@city).each do |l|
+			- if !l.lat.blank? && !l.lng.blank?
+				:plain
+					var infowindow#{l.id} = new google.maps.InfoWindow({
+						content: "#{l.mapcontent}",
+						maxWidth: 400
+					});
+					var myLatlng#{l.id} = new google.maps.LatLng(#{l.lat}, #{l.lng});
+					bounds.extend (myLatlng#{l.id});
+					var marker#{l.id} = new google.maps.Marker({
+						flat: true,
+						icon: "#{asset_path 'map/grey.png'}",
+						position: myLatlng#{l.id},
+						map: map,
+						animation: google.maps.Animation.DROP,
+						title:"#{l.shortname}"
+					});
+					google.maps.event.addListener(marker#{l.id}, 'click', function() {
+						infowindow#{l.id}.open(map,marker#{l.id});
+					});
+		:plain
+				map.fitBounds (bounds);
 			}
-			var map = new google.maps.Map(document.getElementById("Gmap"), mapOptions);
-		}
-		var script = document.createElement("script");
-		script.type = "text/javascript";
-		script.src = "http://maps.googleapis.com/maps/api/js?key=AIzaSyBSmgKl7zFKESa4cNYeQUXUAkwGOqaXK9k&sensor=true&callback=initializeMap";
-		document.body.appendChild(script);
-
+			function checkJquery() {
+				if (window.jQuery) {
+					var script = document.createElement("script");
+					script.type = "text/javascript";
+					script.src = "http://maps.googleapis.com/maps/api/js?key=#{GOOGLE_MAP_KEY}&sensor=true&callback=initializeMap";
+					document.body.appendChild(script);
+				} else {
+					window.setTimeout(checkJquery, 1000);
+				}
+			}
+			checkJquery();

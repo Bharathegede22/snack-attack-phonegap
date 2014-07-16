@@ -120,7 +120,7 @@ class BookingsController < ApplicationController
 
 		if !session[:corporate_id].blank? && current_user.support?
 			@booking.corporate_id = session[:corporate_id]
-			
+			@booking.valid?
 			if @booking.manage_inventory == 1
 				@booking.status = 1
 			else
