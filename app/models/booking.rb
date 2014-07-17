@@ -123,6 +123,10 @@ class Booking < ActiveRecord::Base
 		end
 	end
 	
+	def defer_security_deposit
+		charges.find_by(activity: 'security_deposit').try{|c| c.destroy}
+	end
+
 	def do_cancellation
 		return nil if self.status > 8
 		self.status = 10
@@ -341,6 +345,10 @@ class Booking < ActiveRecord::Base
 		return "Pricing#{self.pricing.version}".constantize.check(self)
 	end
 	
+	def jit_deposit_allowed?
+		starts>Time.now+CommonHelper::JIT_DEPOSIT_ALLOW.hours
+	end
+
 	def link
 		return "http://" + HOSTNAME + "/bookings/" + self.encoded_id
 	end
@@ -433,6 +441,10 @@ class Booking < ActiveRecord::Base
 		book = Booking.find(id)
 		book.update_columns(total: book.revenue, balance: book.outstanding)
 		#Utilization.manage(id)
+	end
+
+	def security_amount_deferred?
+		pricing.version=='v3' && !charges.where(activity: 'security_deposit', :active=>true).any?
 	end
 
 	def sendsms(action, amount)

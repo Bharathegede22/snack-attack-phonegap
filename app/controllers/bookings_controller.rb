@@ -155,7 +155,7 @@ class BookingsController < ApplicationController
 			session[:book] = nil
 			session[:promo_code] = nil
 			session[:credits] = nil
-
+			@booking.defer_security_deposit if params[:security_deposit]=="1" && @booking.jit_deposit_allowed?
 			if !session[:corporate_id].blank? && current_user.support?
 				flash[:notice] = "Corporate Booking is Successful"
 				session[:corporate_id] = nil

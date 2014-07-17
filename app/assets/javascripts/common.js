@@ -101,7 +101,11 @@ function checkJail() {
 }
 
 function checkout() {
-	window.location = "/bookings/docreate";
+	securityDeposit="";
+	if ($("#securityDeposit:checked").length>0){
+		securityDeposit="?security_deposit=1";
+	}
+	window.location = "/bookings/docreate"+securityDeposit;
 }
 
 function checkUser() {
