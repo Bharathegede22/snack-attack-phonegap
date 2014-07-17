@@ -101,7 +101,7 @@ function checkJail() {
 }
 
 function checkout() {
-	securityDeposit="";
+	var securityDeposit="";
 	if ($("#securityDeposit:checked").length>0){
 		securityDeposit="?security_deposit=1";
 	}

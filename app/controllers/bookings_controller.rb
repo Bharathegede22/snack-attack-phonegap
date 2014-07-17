@@ -276,6 +276,7 @@ class BookingsController < ApplicationController
 			if @payment.status == 1
 				if @booking.confirmed_payments.length == 1
 					u = @booking.user
+					@booking.add_security_deposit_charge if @booking.security_amount_deferred?
 					if u.check_license
 				  	flash[:notice] = "Thanks for the payment. Please continue."
 				  else

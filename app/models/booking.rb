@@ -39,6 +39,14 @@ class Booking < ActiveRecord::Base
 	before_save :before_save_tasks
 	before_validation :before_validation_tasks
 	
+	def add_security_deposit_charge
+		if self.pricing.mode::SECURITY > 0
+			charge 				= Charge.new(:booking_id => self.id, :activity => 'security_deposit')
+			charge.amount 		= self.pricing.mode::SECURITY
+			charge.save
+		end
+	end
+
 	def cancellation_charge
 		total = Charge.find_by_booking_id_and_activity(self.id, 'cancellation_charge')
 		if total
@@ -444,7 +452,7 @@ class Booking < ActiveRecord::Base
 	end
 
 	def security_amount_deferred?
-		pricing.version=='v3' && !charges.where(activity: 'security_deposit', :active=>true).any?
+		pricing.mode::SECURITY > 0 && !charges.where(activity: 'security_deposit', :active=>true).any?
 	end
 
 	def sendsms(action, amount)
@@ -616,15 +624,11 @@ class Booking < ActiveRecord::Base
 		charge.discount 								= self.discount
 		charge.amount 									= self.total_fare
 		charge.save
-		if self.pricing.mode::SECURITY > 0
-			charge 						= Charge.new(:booking_id => self.id, :activity => 'security_deposit')
-			charge.amount 		= self.pricing.mode::SECURITY
-			charge.save
-		end
+		add_security_deposit_charge
 		self.confirmation_key = self.encoded_id.upcase
 		self.save(validate: false)
 	end
-	
+
 	def after_save_tasks
 	end
 	
