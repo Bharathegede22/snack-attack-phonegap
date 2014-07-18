@@ -351,7 +351,7 @@ class Booking < ActiveRecord::Base
 		if self.car_id.blank?
 			Inventory.connection.clear_query_cache
 			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
-			if self.starts != self.starts_last || self.ends != self.ends_last
+			if !self.starts_last.blank? && (self.starts != self.starts_last || self.ends != self.ends_last)
 				if self.starts < self.starts_last
 					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
 				end

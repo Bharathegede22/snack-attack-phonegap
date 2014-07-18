@@ -10,16 +10,32 @@
 					.dot
 					.pulse
 - else
-	#Gmap.home-map
+	#Gmap.map
 	= javascript_tag do
 		:plain
 			function initializeMap() {
 				var myLatlng = new google.maps.LatLng(#{@city.lat}, #{@city.lng});
 				var mapOptions = {
 					center: myLatlng,
-					mapTypeId: google.maps.MapTypeId.ROADMAP
+					mapTypeId: google.maps.MapTypeId.ROADMAP, 
+					scrollwheel: true, 
+					streetViewControl: false,
+					mapTypeControl: false,
+					zoomControl: true,
+					panControl: true,
+					panControlOptions: {
+						position: google.maps.ControlPosition.TOP_RIGHT
+					},
+					zoomControlOptions: {
+						style: google.maps.ZoomControlStyle.LARGE,
+						position: google.maps.ControlPosition.TOP_RIGHT
+					},
+					styles: [{"featureType":"all","stylers":[{"saturation":-100},{"gamma":0.9}]}]
 				}
 				var map = new google.maps.Map(document.getElementById("Gmap"), mapOptions);
+				map.set('zoomControl', false);
+				map.set('scrollwheel', false);
+				map.set('panControl', false);
 				var bounds = new google.maps.LatLngBounds ();
 				bounds.extend (myLatlng);
 		- Location.live(@city).each do |l|
@@ -33,17 +49,26 @@
 					bounds.extend (myLatlng#{l.id});
 					var marker#{l.id} = new google.maps.Marker({
 						flat: true,
-						icon: "#{asset_path 'map/grey.png'}",
+						icon: "#{asset_path 'map/zoom.png'}",
 						position: myLatlng#{l.id},
 						map: map,
+						optimized: false,
 						animation: google.maps.Animation.DROP,
-						title:"#{l.shortname}"
+						title: "#{l.shortname}"
 					});
 					google.maps.event.addListener(marker#{l.id}, 'click', function() {
 						infowindow#{l.id}.open(map,marker#{l.id});
 					});
 		:plain
 				map.fitBounds (bounds);
+				google.maps.event.addListener(map, 'click', function() {
+					$("#HomapageMapHelp").slideUp();
+					map.set('zoomControl', true);
+					map.set('scrollwheel', true);
+					map.set('panControl', true);
+					map.set('styles', '');
+				});
+				$("#HomapageMap").slideDown();
 			}
 			function checkJquery() {
 				if (window.jQuery) {
