@@ -15,15 +15,17 @@ function addSecurity(element) {
 	element.html("₹"+(parseFloat(element.html().replace(/[^0-9-.]/g, ''))+parseFloat($('.securityTotal').html().replace(/[^0-9-.]/g, ''))).toString()); 
 }
 
-$('#securityDeposit').click(function() {
+$('#securityDeposit').change(function() {
 	var $this = $(this);
 	// $this will contain a reference to the checkbox   
 	if ($this.is(':checked')) {
 		reduceSecurity($('.outstandingMain'));
 		reduceSecurity($('.outstandingSide'));
+		$('.securityTotal').addClass('t-s');
 	} else {
 		addSecurity($('.outstandingMain'));
 		addSecurity($('.outstandingSide'));
+		$('.securityTotal').removeClass('t-s');
 	}
 });
 
