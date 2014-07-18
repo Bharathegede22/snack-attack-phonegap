@@ -130,7 +130,6 @@ class BookingsController < ApplicationController
 
 		if !session[:corporate_id].blank? && current_user.support?
 			@booking.corporate_id = session[:corporate_id]
-			
 			if @booking.manage_inventory == 1
 				@booking.status = 1
 			else
@@ -138,7 +137,6 @@ class BookingsController < ApplicationController
 				@booking.status = 6
 			end
 		end
-
 		@booking.save!
 		
 		if promo && promo[:coupon]

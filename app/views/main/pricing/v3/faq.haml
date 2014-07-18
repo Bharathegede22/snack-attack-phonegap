@@ -138,12 +138,8 @@
 			%p
 				Unlike other car hire services, Zoom always pays for the fuel, regardless of whether the vehicle is a diesel or petrol variant. Zoom refuels the vehicles regularly. If you are driving a long distance and you need to refuel the vehicle, just give your fuel receipt to the Fleet Executive after your reservation and Zoom will happily reimburse you the full amount. 
 			.f-b.zoom.size-16.m-b5 #{count+=1}) Is there a km limit to how much I can drive?
-			- if @city.id == 2
-				%p
-					Each reservation comes with 10 km/hr with a maximum daily driving limit of 240 km/day (24 hour period). For example, a 3 hour reservation would come with 30 km in driving at no additional charge while a 3 day reservation would come with 720 km in driving at no additional charge. There is a per-km charge for each km beyond that point. Please see Zoom tariffs for more details.
-			- else
-				%p
-					Each reservation comes with #{cg.hourly_km_limit} km/hr with a maximum daily driving limit of #{cg.daily_km_limit} km/day (24 hour period). For example, a 3 hour reservation would come with #{cg.hourly_km_limit * 3} km in driving at no additional charge while a 3 day reservation would come with #{cg.daily_km_limit * 3} km in driving at no additional charge. There is a per-km charge for each km beyond that point. Please see Zoom tariffs for more details.
+			%p
+				Each reservation comes with 10 km/hr with a maximum daily driving limit of 240 km/day (24 hour period). For example, a 5 hour reservation would come with 50 km in driving at no additional charge while a 3 day reservation would come with 720 km in driving at no additional charge. There is a per-km charge for each km beyond that point. Please see Zoom tariffs for more details.
 
 			.f-b.zoom.size-16.m-b5 #{count+=1})  What are the requirements when I drive across a State border?
 			%p
@@ -163,11 +159,10 @@
 			.f-b.zoom.size-16.m-b5 #{count+=1}) Am I responsible for parking and moving violations?
 			%p
 				Yes. Members must pay for any fines incurred during the reservation.
-			- if @city.id == 2
-				.f-b.zoom.size-16.m-b5 #{count+=1}) Why do I have to pay a deposit?
-				%p
-					We've seen that many of our customers like to Zoom off to extra far away destinations. In these instances, they typically have some additional charges at the end of their booking given the distance traveled. Additionally, it's not always so easy out there as a self-drive pilot and some damage will happen. This deposit will allow Zoom to seamlessly complete these transactions without the hassle of a human intervention as part of a formal online payment process. Our helpful support team can reconcile your payment remotely and clear your final bill in a matter of seconds. This will ensure that you are Zooming off not only at the start of your booking but also the end.
-				%p
-					Don't worry, we will only charge you the exact amount of the extra charges or damages, you do not forfeit your entire deposit for charges that are less than Rs 5000.
-				%p
-					Please do keep in mind that though we refund the remaining amount immediately it will take 4-5 business days before it reflects in your account.
+			.f-b.zoom.size-16.m-b5 #{count+=1}) Why do I have to pay a deposit?
+			%p
+				We've seen that many of our customers like to Zoom off to extra far away destinations. In these instances, they typically have some additional charges at the end of their booking given the distance traveled. Additionally, it's not always so easy out there as a self-drive pilot and some damage will happen. This deposit will allow Zoom to seamlessly complete these transactions without the hassle of a human intervention as part of a formal online payment process. Our helpful support team can reconcile your payment remotely and clear your final bill in a matter of seconds. This will ensure that you are Zooming off not only at the start of your booking but also the end.
+			%p
+				Don't worry, we will only charge you the exact amount of the extra charges or damages, you do not forfeit your entire deposit for charges that are less than Rs 5000.
+			%p
+				Please do keep in mind that though we refund the remaining amount immediately it will take 4-5 business days before it reflects in your account.

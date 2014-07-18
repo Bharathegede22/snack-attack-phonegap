@@ -56,9 +56,6 @@
 														.item.r-5
 															.fare
 																%b ₹#{show_currency(pricing.daily_discounted)}/day
-		.tariff-bg
-			%h2.text.droid.size-20
-				Find Us In Your Neighbourhood!
 		.tariff.tariff-includes
 			.includes
 				#BubbleAllIn.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>No Hidden Costs</b><br/>Here at Zoom, you will get what you pay for. Following items are standard in all our cars."}
@@ -93,6 +90,13 @@
 				.bg.r-5.bs-3.p-10
 					#SearchFormDiv.form
 						= render :partial => '/bookings/widget_homepage'
-= render :partial => '/main/locations', :locals => {header: false}
+#HomapageMap.homepage-map{style: "display: none;"}
+	.bg
+		%h2.text.droid.size-20
+			Find Us In Your Neighbourhood!
+	= render :partial => '/main/locations', :locals => {header: false}
+	#HomapageMapHelp.help.ts-0
+		.text.r-5 Please click anywhere on the map to activate it
+	%br/
 = render :partial => '/main/reviews'
 = render :partial => '/main/press'
