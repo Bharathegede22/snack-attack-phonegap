@@ -11,6 +11,22 @@ jQuery.fn.center = function(){
   return this;
 }
 
+function addSecurity(element) {
+	element.html("₹"+(parseFloat(element.html().replace(/[^0-9-.]/g, ''))+parseFloat($('.securityTotal').html().replace(/[^0-9-.]/g, ''))).toString()); 
+}
+
+$('#securityDeposit').click(function() {
+	var $this = $(this);
+	// $this will contain a reference to the checkbox   
+	if ($this.is(':checked')) {
+		reduceSecurity($('.outstandingMain'));
+		reduceSecurity($('.outstandingSide'));
+	} else {
+		addSecurity($('.outstandingMain'));
+		addSecurity($('.outstandingSide'));
+	}
+});
+
 jQuery.fn.jail = function() {
 	var cacheSrc = this.attr("data-background");
 	if(cacheSrc && cacheSrc != '') {
@@ -342,6 +358,9 @@ function pushEvent(category, action, label) {
 	_gaq.push(['_trackEvent', category, action, label]);
 }
 
+function reduceSecurity(element) {
+	element.html("₹"+(parseFloat(element.html().replace(/[^0-9-.]/g, ''))-parseFloat($('.securityTotal').html().replace(/[^0-9-.]/g, ''))).toString()); 
+}
 function showAvailability(carId, locId, avail, locName, carName) {
 	$('#Avail' + carId).removeClass('yes no');
 	if(avail == 1) {

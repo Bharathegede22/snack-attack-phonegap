@@ -8,7 +8,7 @@
 	.bg-6.t-c.white.f-b.size-18.r-5.p-10.t-c
 		Total Outstanding :
 		- if !session[:credits].blank?
-			₹#{@fare[:total] + @booking.pricing.mode::SECURITY - session[:credits].to_i}
+			.outstandingMain ₹#{@fare[:total] + @booking.pricing.mode::SECURITY - session[:credits].to_i}
 		- else
-			₹#{@fare[:total] + @booking.pricing.mode::SECURITY}
+			.outstandingMain ₹#{@fare[:total] + @booking.pricing.mode::SECURITY}
 - render_flash
