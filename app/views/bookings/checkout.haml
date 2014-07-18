@@ -52,9 +52,16 @@
 					#OutstandingDiv
 						= render :partial => 'outstanding'
 					.t-c
-						.m-auto.p-10{style: "width:200px;"}
+						.m-auto.p-20{style: "width:400px;"}
 							- if @available == 1 && current_user && !current_user.is_blacklisted?
-								.button{onclick: "checkout();"} Checkout
+								-if @booking.jit_deposit_allowed?
+									%span
+										= check_box_tag :securityDeposit
+									%label.f-b.size-14{:for => 'securityDeposit'}
+										Deposit Security Amount Later
+										%span.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Booking will be cancelled if not paid before #{CommonHelper::JIT_DEPOSIT_CANCEL+2} hours of start time"}
+											%u (?)
+								.button.m-auto{onclick: "checkout();", style: "width:200px;"} Checkout
 							- else
 								.button-dis Checkout
 						= render :partial => "/bookings/blacklist"

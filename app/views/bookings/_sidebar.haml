@@ -91,12 +91,12 @@
 					.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Fully refundable security deposit which will be released once your booking is over. It will take 4-5 business days before the refund reflects in your account."}
 						%u (?)
 					.fc
-				%td.p-5.t-r.p-r10
+				%td.p-5.t-r.p-r10.securityTotal
 					₹#{show_currency pricing.mode::SECURITY}
 		%tr.bg-6.white.f-b.size-16
 			%td.p-5.p-l10
 				Payable Amount
-			%td.p-5.t-r.p-r10
+			%td.p-5.t-r.p-r10.outstandingSide
 				₹#{show_currency(fare[:total] + pricing.mode::SECURITY)}
 		%tr
 			%td.p-5.p-l10.f-b

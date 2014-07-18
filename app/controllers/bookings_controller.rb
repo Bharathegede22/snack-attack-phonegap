@@ -153,7 +153,7 @@ class BookingsController < ApplicationController
 			session[:book] = nil
 			session[:promo_code] = nil
 			session[:credits] = nil
-
+			@booking.defer_security_deposit if params[:security_deposit]=="1" && @booking.jit_deposit_allowed?
 			if !session[:corporate_id].blank? && current_user.support?
 				flash[:notice] = "Corporate Booking is Successful"
 				session[:corporate_id] = nil
@@ -274,6 +274,7 @@ class BookingsController < ApplicationController
 			if @payment.status == 1
 				if @booking.confirmed_payments.length == 1
 					u = @booking.user
+					@booking.add_security_deposit_charge if @booking.security_amount_deferred?
 					if u.check_license
 				  	flash[:notice] = "Thanks for the payment. Please continue."
 				  else

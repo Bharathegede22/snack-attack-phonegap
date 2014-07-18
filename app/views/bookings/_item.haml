@@ -11,6 +11,7 @@
 			%th Starts
 			%th Ends
 			%th Status
+			%th Outstanding
 			- if false
 				- if (defined? show_credits_us)
 					%th 
@@ -32,6 +33,7 @@
 				%td #{b.starts.strftime("%d %b, %Y %I:%M %p")}
 				%td #{b.ends.strftime("%d %b, %Y %I:%M %p")}
 				%td #{b.status_text}
+				%td #{b.outstanding}
 				- if false
 					- if (defined? show_credits_us)
 						%td 
