@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   before_filter :check_city
   before_filter :check_ref
   
-  def check_city  
+  def check_city
     # Checking explicit city in the url
     city_prompt = false
     city = params[:city]
