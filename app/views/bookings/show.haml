@@ -116,6 +116,9 @@
 		= render :partial => '/bookings/summary', :locals => {:payments => true}
 		- if @total > 0
 			%a.btn.btn-default.btn-lg{href: "/bookings/#{@booking.encoded_id}/dopayment", role: "button"} Proceed to Payment
+		%br/	
+		- if @booking.security_amount_deferred?
+			%a.btn.btn-default.btn-lg{href: "/bookings/#{@booking.encoded_id}/pay_security", role: "button"} Pay Security Deposit
 - if survey
 	:javascript
 		var _kiq = _kiq || [];

@@ -33,7 +33,7 @@
 				%td #{b.starts.strftime("%d %b, %Y %I:%M %p")}
 				%td #{b.ends.strftime("%d %b, %Y %I:%M %p")}
 				%td #{b.status_text}
-				%td #{b.outstanding}
+				%td #{b.security_amount_deferred? ? (b.outstanding + b.pricing.mode::SECURITY) : b.outstanding }
 				- if false
 					- if (defined? show_credits_us)
 						%td 
