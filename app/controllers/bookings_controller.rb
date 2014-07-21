@@ -1,12 +1,18 @@
 class BookingsController < ApplicationController
 
-	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
-	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule, :feedback]
+	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :failed, :invoice, :pay_security, :payment, :payments, :reschedule, :show, :thanks, :feedback]
+	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule, :feedback, :pay_security]
 	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :notify, :outstanding, :userdetails]
 	before_filter :check_search_access, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
 	before_filter :check_blacklist, :only => [:docreate]
 	before_filter :check_promo,		:only => [:checkout]
+
+  	def pay_security
+  		session[:booking_id] = @booking.encoded_id
+  		@booking.add_security_deposit_charge if @booking.security_amount_deferred?
+  		redirect_to "/bookings/payment"
+  	end
 
 	def cancel
 		@security = @booking.pricing.mode::SECURITY
@@ -284,7 +290,7 @@ class BookingsController < ApplicationController
 			if @payment.status == 1
 				if @booking.confirmed_payments.length == 1
 					u = @booking.user
-					@booking.add_security_deposit_charge if @booking.security_amount_deferred?
+					#@booking.add_security_deposit_charge if @booking.security_amount_deferred?
 					if u.check_license
 				  	flash[:notice] = "Thanks for the payment. Please continue."
 				  else

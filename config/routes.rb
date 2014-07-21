@@ -52,7 +52,7 @@ Web::Application.routes.draw do
 			get 'payments'
 			get 'payment'
 			get 'reschedule'
-
+			get 'pay_security'
 			get 'feedback'
 			post 'feedback'
 
@@ -81,7 +81,6 @@ Web::Application.routes.draw do
 	
 	post '/search/:id' => 'bookings#search'
 	get '/search' => 'bookings#search'
-	
 	post '/calculator/:id' => 'main#calculator'
 	get '/calculator/:id' => 'main#calculator'
 	
