@@ -23,6 +23,7 @@ class Booking < ActiveRecord::Base
 	
 	has_paper_trail
 	
+	attr_accessor :defer_deposit
 	attr_accessor :ends_last
 	attr_accessor :pricing_mode_last
 	attr_accessor :starts_last
@@ -40,11 +41,9 @@ class Booking < ActiveRecord::Base
 	before_validation :before_validation_tasks
 	
 	def add_security_deposit_charge
-		if self.pricing.mode::SECURITY > 0
-			charge 				= Charge.new(:booking_id => self.id, :activity => 'security_deposit')
-			charge.amount 		= self.pricing.mode::SECURITY
-			charge.save
-		end
+		charge 					= Charge.new(:booking_id => self.id, :activity => 'security_deposit')
+		charge.amount 	= self.pricing.mode::SECURITY
+		charge.save
 	end
 
 	def cancellation_charge
@@ -131,8 +130,8 @@ class Booking < ActiveRecord::Base
 		end
 	end
 	
-	def defer_security_deposit
-		charges.find_by(activity: 'security_deposit').try{|c| c.destroy}
+	def defer_allowed?
+		self.starts > (Time.now + CommonHelper::JIT_DEPOSIT_ALLOW.hours)
 	end
 
 	def do_cancellation
@@ -353,10 +352,6 @@ class Booking < ActiveRecord::Base
 		return "Pricing#{self.pricing.version}".constantize.check(self)
 	end
 	
-	def jit_deposit_allowed?
-		starts>Time.now+CommonHelper::JIT_DEPOSIT_ALLOW.hours
-	end
-
 	def link
 		return "http://" + HOSTNAME + "/bookings/" + self.encoded_id
 	end
@@ -476,7 +471,11 @@ class Booking < ActiveRecord::Base
 	def set_fare
 		tmp = self.get_fare
 		self.total_fare = tmp[:total]
-		self.total = tmp[:total] + pricing.mode::SECURITY
+		if self.defer_deposit.blank?
+			self.total = tmp[:total] + pricing.mode::SECURITY
+		else
+			self.total = tmp[:total]
+		end
 		self.estimate = tmp[:estimate]
 		self.discount = tmp[:discount]
 		self.hours = tmp[:hours]
@@ -606,11 +605,11 @@ class Booking < ActiveRecord::Base
 	end
 
 	def user_details(user)
-  		self.user_id = user.id
+		self.user_id = user.id
 		self.user_name = user.name
 		self.user_email = user.email
 		self.user_mobile = user.phone
-  	end
+	end
 	
 	protected
 	
@@ -624,7 +623,7 @@ class Booking < ActiveRecord::Base
 		charge.discount 								= self.discount
 		charge.amount 									= self.total_fare
 		charge.save
-		add_security_deposit_charge
+		add_security_deposit_charge if self.defer_deposit.blank? && self.pricing.mode::SECURITY > 0
 		self.confirmation_key = self.encoded_id.upcase
 		self.save(validate: false)
 	end

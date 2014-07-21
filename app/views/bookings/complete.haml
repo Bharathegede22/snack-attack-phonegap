@@ -12,7 +12,7 @@
 		_adx.xb  = '35BDU410';
 		_adx.xt  = 'conversion';
 		_adx.xtid = '#{@booking.confirmation_key}';
-		_adx.xcv = '#{@booking.total.to_i}';
+		_adx.xcv = '#{@booking.total_fare.to_i}';
 		(function(d){
 			var x = d.createElement('script');
 			x.async = true;
@@ -30,7 +30,7 @@
 
 		var fb_param = {};
 		fb_param.pixel_id = '6012188478130';
-		fb_param.value = "#{@booking.total.to_i}";
+		fb_param.value = "#{@booking.total_fare.to_i}";
 		fb_param.currency = 'INR';
 		(function(){
 			var fpw = document.createElement('script');
@@ -43,7 +43,7 @@
 		_gaq.push(['_addTrans',
 			"#{@booking.confirmation_key}", 
 			"", 
-			"#{@booking.total}", 
+			"#{@booking.total_fare}", 
 			"0.0", 
 			"0.0", 
 			"Bangalore", 
@@ -56,7 +56,7 @@
 			"#{cargroup.encoded_id}", 
 			"#{cargroup.name}", 
 			"#{location.name}", 
-			"#{@booking.total}", 
+			"#{@booking.total_fare}", 
 			"1"
 		]);
 		_gaq.push(['_trackTrans']);

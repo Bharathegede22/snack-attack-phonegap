@@ -76,28 +76,13 @@
 				%b Discount
 			%td.p-5.t-r.p-r10
 				\- ₹0
-		%tr.bg-c
+		%tr.bg-6.white.f-b.size-16
 			%td.p-5.p-l10.f-b
-				%b.black Total Tariff
+				%b Total Tariff
 				%span.size-12.help.pointer{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Tariff Calculator"}
 					%u (view calculator)
-			%td.p-5.t-r.p-r10.black.f-b
+			%td.p-5.t-r.p-r10.f-b
 				₹#{show_currency fare[:total]}
-		- if pricing.mode::SECURITY > 0
-			%tr
-				%td.p-5.p-l10
-					.fl
-						%b Refundable Deposit
-					.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Fully refundable security deposit which will be released once your booking is over. It will take 4-5 business days before the refund reflects in your account."}
-						%u (?)
-					.fc
-				%td.p-5.t-r.p-r10.securityTotal
-					₹#{show_currency pricing.mode::SECURITY}
-		%tr.bg-6.white.f-b.size-16
-			%td.p-5.p-l10
-				Payable Amount
-			%td.p-5.t-r.p-r10.outstandingSide
-				₹#{show_currency(fare[:total] + pricing.mode::SECURITY)}
 		%tr
 			%td.p-5.p-l10.f-b
 				.fl Free Kms
@@ -114,6 +99,9 @@
 				.fc
 			%td.p-5.t-r.p-r10
 				₹#{cargroup.excess_kms.to_i} / Km
+	- if pricing.mode::SECURITY > 0 && step < 4
+		.t-c.black.f-b.p-b10.p-t5
+			Refundable deposit of ₹#{show_currency pricing.mode::SECURITY} will be charged at checkout
 - if false
 	%br/
 	.bg-w.bs-9.grey.droid.size-14

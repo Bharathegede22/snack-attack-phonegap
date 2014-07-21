@@ -1,3 +1,6 @@
+:ruby
+	@fare = @booking.get_fare
+	@pricing = @booking.pricing
 - if current_user && current_user.total_credits.to_i > 0
 	.bg-e.p-10.border-c.solid.r-5
 		= render :partial => "credits"
@@ -5,10 +8,68 @@
 .bg-e.p-10.border-c.solid.r-5
 	= render :partial => "promo"
 .p-t10
-	.bg-6.t-c.white.f-b.size-18.r-5.p-10.t-c
-		Total Outstanding :
-		- if !session[:credits].blank?
-			.outstandingMain ₹#{@fare[:total] + @booking.pricing.mode::SECURITY - session[:credits].to_i}
-		- else
-			.outstandingMain ₹#{@fare[:total] + @booking.pricing.mode::SECURITY}
+	.bg-e.r-5.p-5.size-14.border-c.solid
+		%table{width: '100%'}
+			%tr
+				%td.p-5
+					%b Total Tariff
+				%td &nbsp;
+				%td.p-5.t-r
+					₹#{show_currency @fare[:total]}
+			- if @pricing.mode::SECURITY > 0
+				%tr
+					%td.p-5
+						.fl
+							%b Refundable Deposit
+						.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Fully refundable security deposit which will be released once your booking is over. It will take 4-5 business days before the refund reflects in your account."}
+							%u (?)
+						.fc
+					%td
+						- if @booking.defer_allowed?
+							%span
+								- if session[:deposit] == 1
+									%input{checked: "checked", id: "securityDeposit", name: "securityDeposit", type: "checkbox", value: "yes"}
+								- else
+									%input{id: "securityDeposit", name: "securityDeposit", type: "checkbox", value: "yes"}
+							%span
+								Pay Deposit Now
+							%span.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Booking will be cancelled if not paid before #{CommonHelper::JIT_DEPOSIT_CANCEL+2} hours of start time"}
+								%u (?)
+					%td.p-5.t-r
+						- if session[:deposit] == 1
+							₹#{show_currency @pricing.mode::SECURITY}
+						- else
+							.t-s
+								₹#{show_currency @pricing.mode::SECURITY}
+			%tr.f-b.size-18.bg-6.white
+				%td.p-5.p-l10
+					%b Payable Amount
+				%td &nbsp;
+				%td.p-5.t-r.p-r10
+					:ruby
+						if session[:deposit] == 1
+							security = @booking.pricing.mode::SECURITY
+						else
+							security = 0
+						end
+					- if !session[:credits].blank?
+						₹#{show_currency(@fare[:total] + security - session[:credits].to_i)}
+					- else
+						₹#{show_currency(@fare[:total] + security)}
 - render_flash
+:javascript
+	function checkJquery() {
+		if (window.jQuery) {
+			$('#securityDeposit').change(function() {
+				var $this = $(this);
+				if ($this.is(':checked')) {
+					getData("/bookings/outstanding?deposit=1", 'OutstandingDiv', 'replace', 'CheckoutWait');
+				} else {
+					getData("/bookings/outstanding?deposit=0", 'OutstandingDiv', 'replace', 'CheckoutWait');
+				}
+			});
+		} else {
+			window.setTimeout(checkJquery, 1000);
+		}
+	}
+	checkJquery();

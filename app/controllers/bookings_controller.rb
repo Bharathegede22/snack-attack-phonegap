@@ -2,11 +2,11 @@ class BookingsController < ApplicationController
 
 	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
 	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule, :feedback]
-	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :notify, :userdetails]
+	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :notify, :outstanding, :userdetails]
 	before_filter :check_search_access, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
-  	before_filter :check_blacklist, :only => [:docreate]
-  	before_filter :check_promo,		:only => [:checkout]
+	before_filter :check_blacklist, :only => [:docreate]
+	before_filter :check_promo,		:only => [:checkout]
 
 	def cancel
 		@security = @booking.pricing.mode::SECURITY
@@ -94,6 +94,7 @@ class BookingsController < ApplicationController
 	end
 	
 	def docreate
+		@booking.defer_deposit = true if @booking.defer_allowed? && session[:deposit] == 0
 		if !session[:credits].blank? && current_user.total_credits.to_i < session[:credits].to_i
 			session[:credits] = nil
 			flash[:error] = 'Insufficient credits, please try again!'
@@ -104,7 +105,7 @@ class BookingsController < ApplicationController
 		promo = nil
 		promo = Offer.get(session[:promo_code],@city) if !session[:promo_code].blank?
 		
-		unless session[:promo_booking].blank?
+		if !session[:promo_booking].blank?
 			@booking = Booking.find(session[:promo_booking])
 			session[:promo_booking] = nil
 			@booking.status = 0
@@ -121,7 +122,7 @@ class BookingsController < ApplicationController
 		end
 		
 		@booking.status = 11 if session[:notify].present?
-
+		
 		if !session[:corporate_id].blank? && current_user.support?
 			@booking.corporate_id = session[:corporate_id]
 			if @booking.manage_inventory == 1
@@ -148,12 +149,12 @@ class BookingsController < ApplicationController
 			redirect_to :back
 		else
 			session[:booking_id] = @booking.encoded_id
-			session[:search] = nil
-			session[:notify] = nil
-			session[:book] = nil
-			session[:promo_code] = nil
-			session[:credits] = nil
-			@booking.defer_security_deposit if params[:security_deposit]=="1" && @booking.jit_deposit_allowed?
+			session[:search] 			= nil
+			session[:notify] 			= nil
+			session[:book] 				= nil
+			session[:promo_code] 	= nil
+			session[:credits] 		= nil
+			session[:deposit] 		= nil
 			if !session[:corporate_id].blank? && current_user.support?
 				flash[:notice] = "Corporate Booking is Successful"
 				session[:corporate_id] = nil
@@ -250,6 +251,15 @@ class BookingsController < ApplicationController
 		generic_meta
 		@header = 'booking'
 		
+	end
+	
+	def outstanding
+		if params[:deposit].to_i == 1
+			session[:deposit] = 1
+		else
+			session[:deposit] = 0
+		end
+		render json: { html: render_to_string('/bookings/_outstanding.haml', :layout => false)}
 	end
 	
 	def payment
@@ -512,6 +522,7 @@ class BookingsController < ApplicationController
 	end
 	
 	def check_search
+		session[:deposit] = 1 if session[:deposit].blank?
 		if !session[:book].blank? && !session[:book][:starts].blank? && !session[:book][:ends].blank? && !session[:book][:car].blank? && !session[:book][:loc].blank?
 			@booking = Booking.new
 			@booking.starts = Time.zone.parse(session[:book][:starts])

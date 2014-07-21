@@ -11,24 +11,6 @@ jQuery.fn.center = function(){
   return this;
 }
 
-function addSecurity(element) {
-	element.html("₹"+(parseFloat(element.html().replace(/[^0-9-.]/g, ''))+parseFloat($('.securityTotal').html().replace(/[^0-9-.]/g, ''))).toString()); 
-}
-
-$('#securityDeposit').change(function() {
-	var $this = $(this);
-	// $this will contain a reference to the checkbox   
-	if ($this.is(':checked')) {
-		reduceSecurity($('.outstandingMain'));
-		reduceSecurity($('.outstandingSide'));
-		$('.securityTotal').addClass('t-s');
-	} else {
-		addSecurity($('.outstandingMain'));
-		addSecurity($('.outstandingSide'));
-		$('.securityTotal').removeClass('t-s');
-	}
-});
-
 jQuery.fn.jail = function() {
 	var cacheSrc = this.attr("data-background");
 	if(cacheSrc && cacheSrc != '') {
@@ -119,11 +101,8 @@ function checkJail() {
 }
 
 function checkout() {
-	var securityDeposit="";
-	if ($("#securityDeposit:checked").length>0){
-		securityDeposit="?security_deposit=1";
-	}
-	window.location = "/bookings/docreate"+securityDeposit;
+	$("#CheckoutWait").show();
+	window.location = "/bookings/docreate";
 }
 
 function checkUser() {
@@ -296,6 +275,29 @@ function logOut(url) {
 	getData(url, 'JsResponse', 'replace', null);
 }
 
+function mapZoom(map,newVal) {
+	$("#ZoomMinus").removeClass('box-inactive');
+	$("#ZoomMinus").addClass('box-active');
+	$("#ZoomPlus").removeClass('box-inactive');
+	$("#ZoomPlus").addClass('box-active');
+	var minVal = 10;
+	var maxVal = 16;
+	if(newVal > minVal && newVal < maxVal) {
+		map.setZoom(newVal);
+	} else if(newVal <= minVal) {
+		curVal = minVal;
+		map.setZoom(minVal);
+		$("#ZoomMinus").removeClass('box-active');
+		$("#ZoomMinus").addClass('box-inactive');
+	} else if(newVal >= maxVal) {
+		curVal = maxVal;
+		map.setZoom(maxVal);
+		$("#ZoomPlus").removeClass('box-active');
+		$("#ZoomPlus").addClass('box-inactive');
+	}
+	return false;
+}
+
 function populateLocations(cityId, zoom, divId) {
 	$("#"+divId+'Wait').show();
 	$("#"+divId).html('');
@@ -360,9 +362,6 @@ function pushEvent(category, action, label) {
 	_gaq.push(['_trackEvent', category, action, label]);
 }
 
-function reduceSecurity(element) {
-	element.html("₹"+(parseFloat(element.html().replace(/[^0-9-.]/g, ''))-parseFloat($('.securityTotal').html().replace(/[^0-9-.]/g, ''))).toString()); 
-}
 function showAvailability(carId, locId, avail, locName, carName) {
 	$('#Avail' + carId).removeClass('yes no');
 	if(avail == 1) {

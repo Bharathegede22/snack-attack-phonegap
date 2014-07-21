@@ -31,6 +31,7 @@ Web::Application.routes.draw do
 			get 'license'
 			get 'login'
 			get 'notify'
+			get 'outstanding'
 			get 'payment'
 			get 'payu'
 			get 'timeline'
