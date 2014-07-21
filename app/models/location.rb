@@ -42,11 +42,11 @@ class Location < ActiveRecord::Base
 	def mapcontent
 		text = "<div class='map-info'><div class='p-5 zoom size-16 f-b'>" + self.shortname + "</div>"
 		text << "<div style='color:red;'>" + self.disclaimer + "</div>" if !self.disclaimer.blank?
-		text << "<div class='p-5'><b>Cars Generally Available</b><br/>"
+		text << "<div class='p-5'><b>Car makes at site</b><br/>"
 		self.live.each do |cg|
 			text << cg.name + "<br/>" if cg.total > 0
 		end
-		text = text.chomp(', ') + "</div></div>"
+		text = text.chomp('<br/>') + "</div></div>"
 		return text.html_safe
 	end
 	

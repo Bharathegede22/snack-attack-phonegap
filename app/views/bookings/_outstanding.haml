@@ -8,7 +8,7 @@
 .bg-e.p-10.border-c.solid.r-5
 	= render :partial => "promo"
 .p-t10
-	.bg-e.r-5.p-5.size-14.border-c.solid
+	.bg-c.r-5.p-5.size-14.dgrey
 		%table{width: '100%'}
 			%tr
 				%td.p-5
@@ -41,11 +41,11 @@
 						- else
 							.t-s
 								₹#{show_currency @pricing.mode::SECURITY}
-			%tr.f-b.size-18.bg-6.white
-				%td.p-5.p-l10
+			%tr.f-b.size-20.black
+				%td.p-5
 					%b Payable Amount
 				%td &nbsp;
-				%td.p-5.t-r.p-r10
+				%td.p-5.t-r
 					:ruby
 						if session[:deposit] == 1
 							security = @booking.pricing.mode::SECURITY

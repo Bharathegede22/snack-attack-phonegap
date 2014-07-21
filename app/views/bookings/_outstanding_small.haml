@@ -1,0 +1,94 @@
+- if @fare && @fare[:hours] > 0
+	:ruby
+		pricing = @booking.pricing
+		tmp = ''
+		h = @fare[:hours]
+		d = h/24
+		h -= d*24
+		if d == 1
+			tmp << "1 day, "
+		elsif d > 0
+			tmp << d.to_s + " days, "
+		end
+		if h == 1
+			tmp << "1 hour"
+		elsif h > 0
+			tmp << h.to_s + " hours"
+		end
+		total = 0
+		total = @fare[:total] + @fare[:penalty] if @fare[:total] > 0
+	- if total == 0
+		.size-20
+			.fl
+				- total = 0
+				- if @fare[:refund] > 0
+					.label.label-info
+						%b
+							= @fare[:refund] - @fare[:penalty]
+						will be refunded
+				- elsif @fare[:total] > 0
+					- total = @fare[:total] + @fare[:penalty]
+					.label.label-danger
+						%b
+							= @fare[:total] + @fare[:penalty]
+						will be charged
+				- else
+					.label.label-info
+						No extra charge
+			.fr
+				%h4.zoom
+					= @string
+					by
+					= tmp.chomp(', ')
+			.fc
+	- if @booking.security_amount_deferred? && total > 0
+		.bg-e.r-5.p-5.size-14.dgrey.border-c.solid
+			%table{width: '100%'}
+				%tr
+					%td.p-5
+						%b Reschedule Charges
+					%td
+						= @string
+						by
+						= tmp.chomp(', ')
+					%td.p-5.t-r
+						₹#{show_currency total}
+				- if pricing.mode::SECURITY > 0
+					%tr
+						%td.p-5
+							.fl
+								%b Refundable Deposit
+							.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Fully refundable security deposit which will be released once your booking is over. It will take 4-5 business days before the refund reflects in your account."}
+								%u (?)
+							.fc
+						%td
+							%span
+								%input{id: "securityDeposit", name: "deposit", type: "checkbox", value:'1'}
+							%span
+								Pay Deposit Now
+							%span.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Booking will be cancelled if not paid before #{CommonHelper::JIT_DEPOSIT_CANCEL+2} hours of start time"}
+								%u (?)
+						%td.p-5.t-r
+							#DepositChange.t-s
+								₹#{show_currency pricing.mode::SECURITY}
+				%tr.f-b.size-20.black
+					%td.p-5
+						%b Payable Amount
+					%td &nbsp;
+					%td.p-5.t-r
+						#DepositChangeFinal ₹#{show_currency(total)}
+		:javascript
+			$('#securityDeposit').change(function() {
+				var $this = $(this);
+				if ($this.is(':checked')) {
+					$("#DepositChange").removeClass('t-s');
+					$("#DepositChangeFinal").html("₹#{show_currency(total + pricing.mode::SECURITY)}");
+				} else {
+					$("#DepositChange").addClass('t-s');
+					$("#DepositChangeFinal").html("₹#{show_currency(total)}");
+				}
+			});
+- else
+	%h4.zoom No change in booking amount
+.hide
+	%input{name: 'confirm', type: "text", value: '1', readonly: 'true'}

@@ -11,33 +11,44 @@
 					= c.activity_text
 				%td.t-r
 					- if c.refund > 0
-						= "-" + c.amount.to_s
+						₹#{"-" + show_currency(c.amount)}
 						- tmp -= c.amount
 					- else
-						= c.amount
+						₹#{show_currency(c.amount)}
 						- tmp += c.amount
 	%tr.f-b.bg-c
 		%td
 			Total Tariff
 		%td.t-r
-			= tmp
+			₹#{show_currency(tmp)}
+	- deposit = false
 	- @booking.charges.each do |c|
 		- if ['security_deposit', 'security_deposit_refund'].include?(c.activity)
+			- deposit = true
 			%tr
 				%td
 					= c.activity_text
 				%td.t-r
 					- if c.refund > 0
-						= "-" + c.amount.to_s
+						₹#{"-" + show_currency(c.amount)}
 						- tmp -= c.amount
 					- else
-						= c.amount
+						₹#{show_currency(c.amount)}
 						- tmp += c.amount
+	- if !deposit
+		- deposit = @pricing.mode::SECURITY
+		- if deposit > 0
+			%tr
+				%td
+					Security Deposit
+				%td.t-r
+					#Deposit.t-s
+						₹#{show_currency(deposit)}
 	%tr.f-b.bg-c
 		%td
 			Total Amount
 		%td.t-r
-			= tmp
+			₹#{show_currency(tmp)}
 			- @total += tmp
 			- tmp = 0
 	%tr.active
@@ -55,13 +66,13 @@
 			%td
 				= p.through_text + " Payment"
 			%td.t-r
-				= p.amount
+				₹#{show_currency(p.amount)}
 				- tmp += p.amount
 	%tr.f-b
 		%td
 			Total
 		%td.t-r
-			= tmp
+			₹#{show_currency(tmp)}
 	:ruby
 		@total -= tmp
 		tmp = 0
@@ -80,12 +91,12 @@
 					%td
 						= r.through_text
 					%td.t-r
-						= r.amount
+						₹#{show_currency(r.amount)}
 		%tr.f-b
 			%td
 				Total
 			%td.t-r
-				= tmp
+				₹#{show_currency(tmp)}
 	- if !@booking.promo.blank?
 		%tr.bg-e
 			%td{:colspan => '2'}
@@ -96,17 +107,17 @@
 		%tr.danger.size-16
 			%td
 				%b Outstanding
-			%td.t-r
-				%b #{@total}
+			%td.t-r.f-b
+				#DepositFinal ₹#{show_currency(@total)}
 	- elsif @total < 0
 		%tr.success.size-16
 			%td
 				%b Outstanding
-			%td.t-r
-				%b #{@total}
+			%td.t-r.f-b
+				#DepositFinal ₹#{show_currency(@total)}
 	- else
 		%tr.size-16
 			%td
 				%b Outstanding
-			%td.t-r
-				%b #{@total}
+			%td.t-r.f-b
+				#DepositFinal ₹#{show_currency(@total)}

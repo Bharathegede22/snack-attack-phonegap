@@ -41,6 +41,8 @@ class Booking < ActiveRecord::Base
 	before_validation :before_validation_tasks
 	
 	def add_security_deposit_charge
+		charge = Charge.where(["booking_id = ? AND activity = 'security_deposit'", self.id]).first
+		return if charge
 		charge 					= Charge.new(:booking_id => self.id, :activity => 'security_deposit')
 		charge.amount 	= self.pricing.mode::SECURITY
 		charge.save

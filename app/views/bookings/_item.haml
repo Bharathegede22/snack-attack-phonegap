@@ -6,10 +6,7 @@
 	%table.table-striped.table
 		%tr.active
 			%th #
-			%th Car
-			%th Location
-			%th Starts
-			%th Ends
+			%th Duration
 			%th Status
 			%th Outstanding
 			- if false
@@ -28,10 +25,14 @@
 			%tr
 				%td
 					%b #{b.confirmation_key.upcase}
-				%td #{b.cargroup.name}
-				%td #{b.location.shortname}
-				%td #{b.starts.strftime("%d %b, %Y %I:%M %p")}
-				%td #{b.ends.strftime("%d %b, %Y %I:%M %p")}
+					%br/
+					#{b.cargroup.name}
+					%br/
+					#{b.location.shortname}
+				%td 
+					#{b.starts.strftime("%d %b, %Y %I:%M %p")}
+					%br/
+					#{b.ends.strftime("%d %b, %Y %I:%M %p")}
 				%td #{b.status_text}
 				%td #{b.security_amount_deferred? ? (b.outstanding + b.pricing.mode::SECURITY) : b.outstanding }
 				- if false

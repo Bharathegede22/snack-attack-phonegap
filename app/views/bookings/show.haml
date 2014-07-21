@@ -5,6 +5,7 @@
 		survey = false
 	end
 	offer = @booking.offer
+	@pricing = @booking.pricing
 - render_flash
 %h1.t-c
 	= "Booking # " + @booking.confirmation_key.upcase
@@ -114,11 +115,40 @@
 		= render :partial => '/bookings/socialshare'
 	.col-md-4
 		= render :partial => '/bookings/summary', :locals => {:payments => true}
-		- if @total > 0
-			%a.btn.btn-default.btn-lg{href: "/bookings/#{@booking.encoded_id}/dopayment", role: "button"} Proceed to Payment
-		%br/	
 		- if @booking.security_amount_deferred?
-			%a.btn.btn-default.btn-lg{href: "/bookings/#{@booking.encoded_id}/pay_security", role: "button"} Pay Security Deposit
+			- if @total > 0
+				.p-b10.size-14
+					%span
+						%input{id: "securityDeposit", name: "deposit", type: "checkbox", value: "yes"}
+					%span
+						%b Pay ₹#{show_currency(@pricing.mode::SECURITY)} Security Deposit
+				%a.btn.btn-default.btn-lg{id: "ProceedPG", href: "/bookings/#{@booking.encoded_id}/dopayment", role: "button"} Proceed to Payment
+				:javascript
+					function checkJquery() {
+						if (window.jQuery) {
+							$('#securityDeposit').change(function() {
+								var $this = $(this);
+								if ($this.is(':checked')) {
+									$("#Deposit").removeClass('t-s');
+									$("#DepositFinal").html("₹#{show_currency(@total + @pricing.mode::SECURITY)}");
+									$("#ProceedPG").attr("href","/bookings/#{@booking.encoded_id}/dodeposit");
+								} else {
+									$("#Deposit").addClass('t-s');
+									$("#DepositFinal").html("₹#{show_currency(@total)}");
+									$("#ProceedPG").attr("href","/bookings/#{@booking.encoded_id}/dopayment");
+								}
+							});
+						} else {
+							window.setTimeout(checkJquery, 1000);
+						}
+					}
+					checkJquery();
+			- else
+				.p-b10.size-14
+					%b Pay ₹#{show_currency(@pricing.mode::SECURITY)} Security Deposit
+				%a.btn.btn-default.btn-lg{href: "/bookings/#{@booking.encoded_id}/dodeposit", role: "button"} Proceed to Payment
+		- elsif @total > 0
+			%a.btn.btn-default.btn-lg{href: "/bookings/#{@booking.encoded_id}/dopayment", role: "button"} Proceed to Payment
 - if survey
 	:javascript
 		var _kiq = _kiq || [];

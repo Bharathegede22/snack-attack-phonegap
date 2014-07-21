@@ -30,47 +30,7 @@
 				.hide
 					%input{name: 'starts', type: "text", value: @booking.starts.strftime("%d/%m/%Y %H:%M"), readonly: 'true'}
 					%input{name: 'ends', type: "text", value: @booking.ends.strftime("%d/%m/%Y %H:%M"), readonly: 'true'}
-			- if @fare && @fare[:hours] > 0
-				:ruby
-					tmp = ''
-					h = @fare[:hours]
-					d = h/24
-					h -= d*24
-					if d == 1
-						tmp << "1 day, "
-					elsif d > 0
-						tmp << d.to_s + " days, "
-					end
-					if h == 1
-						tmp << "1 hour"
-					elsif h > 0
-						tmp << h.to_s + " hours"
-					end
-				.size-20
-					.fl
-						- if @fare[:refund] > 0
-							.label.label-info
-								%b
-									= @fare[:refund] - @fare[:penalty]
-								will be refunded
-						- elsif @fare[:total] > 0
-							.label.label-danger
-								%b
-									= @fare[:total] + @fare[:penalty]
-								will be charged
-						- else
-							.label.label-info
-								No extra charge
-					.fr
-						%h4.zoom
-							= @string
-							by
-							= tmp.chomp(', ')
-					.fc
-			- else
-				%h4.zoom No change in booking amount
-			.hide
-				%input{name: 'confirm', type: "text", value: '1', readonly: 'true'}
+			= render :partial => "/bookings/outstanding_small"
 		- else
 			.row.size-14
 				.col-md-6
@@ -105,8 +65,12 @@
 						.fc
 		.p-t10
 			- if @confirm
+				- if @fare[:refund] == 0 && @fare[:total] > 0
+					- txt = 'Proceed to Payment'
+				- else
+					- txt = 'Confirm'
 				#SearchSubmit
-					= submit_tag "Confirm", :class => 'btn btn-default'
+					= submit_tag txt, :class => 'btn btn-default'
 				#SearchWait.p-5{style: 'display:none;'}
 					.wait
 			- else

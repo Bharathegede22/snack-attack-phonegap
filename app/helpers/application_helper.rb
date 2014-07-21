@@ -27,6 +27,6 @@ module ApplicationHelper
   end
  	
  	def show_currency(text)
- 		number_with_delimiter(text, locale: 'en-IN')
+ 		number_with_delimiter(text.to_i, locale: 'en-IN')
  	end
 end

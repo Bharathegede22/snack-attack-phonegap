@@ -1,18 +1,12 @@
 class BookingsController < ApplicationController
 
-	before_filter :check_booking, :only => [:cancel, :complete, :dopayment, :failed, :invoice, :pay_security, :payment, :payments, :reschedule, :show, :thanks, :feedback]
-	before_filter :check_booking_user, :only => [:cancel, :invoice, :payments, :reschedule, :feedback, :pay_security]
+	before_filter :check_booking, :only => [:cancel, :complete, :dodeposit, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
+	before_filter :check_booking_user, :only => [:dodeposit, :cancel, :invoice, :payments, :reschedule, :feedback]
 	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :notify, :outstanding, :userdetails]
 	before_filter :check_search_access, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
 	before_filter :check_blacklist, :only => [:docreate]
 	before_filter :check_promo,		:only => [:checkout]
-
-  	def pay_security
-  		session[:booking_id] = @booking.encoded_id
-  		@booking.add_security_deposit_charge if @booking.security_amount_deferred?
-  		redirect_to "/bookings/payment"
-  	end
 
 	def cancel
 		@security = @booking.pricing.mode::SECURITY
@@ -180,7 +174,12 @@ class BookingsController < ApplicationController
 			end
 		end
 	end
-
+	
+	def dodeposit
+		@booking.add_security_deposit_charge
+		redirect_to "/bookings/#{@booking.encoded_id}/dopayment"
+	end
+  	
 	def dopayment
 		session[:booking_id] = @booking.encoded_id
 		redirect_to "/bookings/payment"
@@ -371,6 +370,7 @@ class BookingsController < ApplicationController
 							tmp << h.to_s + " hours"
 						end
 						flash[:notice] = "Your booking successfully <b>" + @string.downcase.gsub('ing', 'ed') + "</b> by " + tmp.chomp(', ')
+						@booking.add_security_deposit_charge if !params[:deposit].blank? && params[:deposit].to_i == 1
 						@success = true
 						@confirm = @string = @fare = nil
 					end

@@ -46,13 +46,13 @@ Web::Application.routes.draw do
 			post 'promo'
 		end
 		member do
+			get 'dodeposit'
 			get 'cancel'
 			get 'dopayment'
 			get 'invoice'
 			get 'payments'
 			get 'payment'
 			get 'reschedule'
-			get 'pay_security'
 			get 'feedback'
 			post 'feedback'
 
