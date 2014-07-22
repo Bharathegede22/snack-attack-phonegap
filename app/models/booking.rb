@@ -41,6 +41,7 @@ class Booking < ActiveRecord::Base
 	before_validation :before_validation_tasks
 	
 	def add_security_deposit_charge
+		return if !self.corporate_id.blank?
 		charge = Charge.where(["booking_id = ? AND activity = 'security_deposit'", self.id]).first
 		return if charge
 		charge 					= Charge.new(:booking_id => self.id, :activity => 'security_deposit')
@@ -135,7 +136,15 @@ class Booking < ActiveRecord::Base
 	def defer_allowed?
 		self.starts > (Time.now + CommonHelper::JIT_DEPOSIT_ALLOW.hours)
 	end
-
+	
+	def deposit_help
+		return "ZoomCar allows you to delay paying the Security Deposit. We really don’t want your money stuck in a deposit if your booking starts days from now."
+	end
+	
+	def deposit_warning
+		return "Please pay the deposit by <b>#{(self.starts - CommonHelper::JIT_DEPOSIT_CANCEL.hours).strftime('%d/%m/%y %I:%M %p')}</b> or your booking will get <u>cancelled</u>."
+	end
+	
 	def do_cancellation
 		return nil if self.status > 8
 		self.status = 10
@@ -403,6 +412,10 @@ class Booking < ActiveRecord::Base
 		total -= self.total_payments
 		total += self.total_refunds
 		return total.to_i
+	end
+	
+	def outstanding_warning
+		return "Please pay any outstanding amount by <b>#{(self.starts - CommonHelper::JIT_DEPOSIT_CANCEL.hours).strftime('%d/%m/%y %I:%M %p')}</b> or your booking will get <u>cancelled</u>."
 	end
 	
 	def refund_amount

@@ -33,21 +33,26 @@
 									%input{id: "securityDeposit", name: "securityDeposit", type: "checkbox", value: "yes"}
 							%span
 								Pay Deposit Now
-							%span.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Booking will be cancelled if not paid before #{CommonHelper::JIT_DEPOSIT_CANCEL+2} hours of start time"}
+							%span.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => @booking.deposit_help}
 								%u (?)
 					%td.p-5.t-r
-						- if session[:deposit] == 1
+						- if !@booking.defer_allowed? || session[:deposit] == 1
 							₹#{show_currency @pricing.mode::SECURITY}
 						- else
 							.t-s
 								₹#{show_currency @pricing.mode::SECURITY}
+			- if @booking.defer_allowed? && session[:deposit] != 1
+				%tr.red.t-c
+					%td.p-5{colspan: '3'}
+						%i
+							= @booking.deposit_warning.html_safe
 			%tr.f-b.size-20.black
 				%td.p-5
 					%b Payable Amount
 				%td &nbsp;
 				%td.p-5.t-r
 					:ruby
-						if session[:deposit] == 1
+						if !@booking.defer_allowed? || session[:deposit] == 1
 							security = @booking.pricing.mode::SECURITY
 						else
 							security = 0

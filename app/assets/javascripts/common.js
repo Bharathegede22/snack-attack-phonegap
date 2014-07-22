@@ -169,6 +169,7 @@ function getData(complete_url,divId,divAction,divWait) {
       	$("#"+divWait).hide();
       }
       //$("#AjaxActive").val(0);
+      $('.help').tooltip();
     }
   );
   resp.fail(
@@ -341,6 +342,7 @@ function postData(complete_url,divId,divAction,divWait,dataStr) {
       	$("#"+divWait).hide();
       }
       $("#AjaxActive").val(0);
+      $('.help').tooltip();
     }
   );
   resp.fail(

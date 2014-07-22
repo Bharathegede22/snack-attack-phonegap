@@ -100,25 +100,28 @@ class Car < ActiveRecord::Base
 				carmovements << [Carmovement.find(:all, :conditions => ["car_id = ? AND ((starts <= ? AND ends > ?) OR (starts >= ? AND starts <= ?))", self.id, start_time, start_time, start_time, end_time]), start_time, end_time, starts, ends]
 			end
 		end
+		
 		Inventory.connection.clear_query_cache
 		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
-		carmovements.uniq.each do |ar|
-			starts_tmp = ar[3]
-			ends_tmp = ar[4]
-			ar[0].each do |cm|
-				if check == 1
-					start_time = (cm.starts > starts_tmp) ? cm.starts : starts_tmp
-					end_time = (cm.ends < ends_tmp) ? cm.ends : ends_tmp
-					tmp = Inventory.check(1, self.cargroup_id, cm.location_id, start_time, end_time)
-					check = 0 if tmp == 0
+		if block
+			carmovements.uniq.each do |ar|
+				starts_tmp = ar[1]
+				ends_tmp = ar[2]
+				ar[0].each do |cm|
+					if check == 1
+						start_time = (cm.starts > starts_tmp) ? cm.starts : starts_tmp
+						end_time = (cm.ends < ends_tmp) ? cm.ends : ends_tmp
+						tmp = Inventory.check(1, self.cargroup_id, cm.location_id, start_time, end_time)
+						check = 0 if tmp == 0
+					end
 				end
 			end
 		end
 			
 		if check == 1
 			carmovements.each do |ar|
-				starts_tmp = ar[1]
-				ends_tmp = ar[2]
+				starts_tmp = ar[3]
+				ends_tmp = ar[4]
 				ar[0].each do |cm|
 					start_time = (cm.starts > starts_tmp) ? cm.starts : starts_tmp
 					end_time = (cm.ends < ends_tmp) ? cm.ends : ends_tmp

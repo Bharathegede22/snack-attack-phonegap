@@ -4,6 +4,7 @@
 	location = @booking.location
 	offer = @booking.offer
 	fare = @booking.get_fare
+	pricing = @booking.pricing
 %br/
 Hi #{@user.name},
 %br/
@@ -65,7 +66,7 @@ Please review the details of your reservation:
 			%td{valign: 'top'}
 				%b
 					Rs.
-					#{@booking.total}*
+					#{@booking.total_fare}*
 				%br/
 				* - 
 				%i
@@ -74,6 +75,20 @@ Please review the details of your reservation:
 					and
 					%a{href: 'http://www.zoomcar.in/fees'} fee policy
 					for more.
+		- if pricing.mode::SECURITY > 0
+			%tr
+				%td{valign: 'top'} Refundable Deposit:
+				%td{valign: 'top'}
+					%b
+						Rs.
+						#{pricing.mode::SECURITY}
+					%br/
+					- if @booking.security_amount_deferred?
+						Deposit is yet to be paid.
+						%i
+							= @booking.deposit_warning
+					- else
+						Deposit is fully paid.
 		- if offer
 			%tr
 				%td
@@ -89,6 +104,7 @@ Please review the details of your reservation:
 	%b{style: "color:red; font-style:italic;"} IMPORTANT!
 	%br/
 	%p{style: "margin:5px 0 0 0; padding:0;"}
+		\- #{@booking.outstanding_warning.html_safe}
 		\- Please remember to carry your original driving license at the time of picking the car. Zoom reserves the right of cancelling the reservation if the original driving license is not produced.
 	%p{style: "margin:5px 0 0 0; padding:0;"}
 		\- As a friendly reminder, your reservation comes with 

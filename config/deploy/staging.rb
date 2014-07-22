@@ -58,17 +58,17 @@ namespace :generic do
 	
 	desc "Zero-downtime restart of Unicorn"
   task :unicorn_restart, :roles => :app do
-    run "/etc/init.d/unicorn restart_web"
+    run "sudo /etc/init.d/unicorn restart_web"
   end
 
   desc "Start unicorn"
   task :unicorn_start, :roles => :app do
-    run "/etc/init.d/unicorn start_web"
+    run "sudo /etc/init.d/unicorn start_web"
   end
 
   desc "Stop unicorn"
   task :unicorn_stop, :roles => :app do
-    run "/etc/init.d/unicorn stop_web"
+    run "sudo /etc/init.d/unicorn stop_web"
   end
   
   desc "Removing Varnish Cache"
