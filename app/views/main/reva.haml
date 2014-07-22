@@ -1,4 +1,6 @@
 - car = Cargroup.find(5)
+:ruby
+	pricing = car.active_pricing(@city.id)
 .static
 	%table{:cellspacing => '10', :cellpadding => '10', :width => '960'}
 		%tr
@@ -24,30 +26,23 @@
 							%td.f-b.p-10.p-l20
 								Hourly
 							%td.p-10
-								Rs.#{car.hourly_fare}
+								Rs.#{pricing.hourly_fare}
 							%td.p-10
-								#{car.hourly_km_limit} Km
+								#{pricing.hourly_kms} Km
 						%tr
 							%td.f-b.p-10.p-l20
 								Daily
 							%td.p-10
-								Rs.#{car.daily_fare}
+								Rs.#{pricing.daily_fare}
 							%td.p-10
-								#{car.daily_km_limit} Km
+								#{pricing.daily_kms} Km
 						%tr
 							%td.f-b.p-10.p-l20
 								Weekly
 							%td.p-10
-								Rs.#{car.weekly_fare}
+								Rs.#{pricing.weekly_fare}
 							%td.p-10
-								#{car.weekly_km_limit} Km
-						%tr
-							%td.f-b.p-10.p-l20
-								Monthly
-							%td.p-10
-								Rs.#{car.monthly_fare}
-							%td.p-10
-								#{car.monthly_km_limit} Km
+								#{pricing.weekly_kms} Km
 				.m-10.size-14.red
 					* - Excess Kms will be charged at 
 					%b Rs.#{car.excess_kms} / Km
