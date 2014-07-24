@@ -26,6 +26,7 @@ class User < ActiveRecord::Base
   validates :pincode, length: {is: 6, message: 'should be of 6 digits'}, if: Proc.new {|u| !u.pincode.blank?}
   validate :check_dob
   
+  before_create :before_create_tasks
 	before_validation :before_validation_tasks
 	
 	def admin?
@@ -229,6 +230,10 @@ class User < ActiveRecord::Base
 	end
 
   private
+  
+  def before_create_tasks
+  	#self.confirmed_at = Time.now + 2.hours
+  end
   
   def before_validation_tasks
   	if !self.country.blank? && self.country != 'IN'

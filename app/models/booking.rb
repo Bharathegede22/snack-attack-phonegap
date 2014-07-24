@@ -435,7 +435,26 @@ class Booking < ActiveRecord::Base
 	def revenue
 		tmp = 0
 		self.charges.each do |a|
-			if !a.activity.blank? && !a.activity.include?('early_return') && !['vehicle_damage_fee', 'fuel_refund', 'andhra_permit_refund'].include?(a.activity)
+			if !a.activity.include?('security') && 
+				!a.activity.include?('early_return') && 
+				!['vehicle_damage_fee', 'fuel_refund', 'andhra_permit_refund'].include?(a.activity)
+				if a.refund > 0
+					tmp -= a.amount.to_i
+				else
+					tmp += a.amount.to_i
+				end
+			end
+		end
+		self.confirmed_payments.each do |a|
+			tmp -= a.amount.to_i if a.through == 'credits'
+		end
+		return tmp
+	end
+	
+	def revenue_with_deposit
+		tmp = 0
+		self.charges.each do |a|
+			if !a.activity.include?('early_return') && !['vehicle_damage_fee', 'fuel_refund', 'andhra_permit_refund'].include?(a.activity)
 				if a.refund > 0
 					tmp -= a.amount.to_i
 				else
@@ -457,7 +476,7 @@ class Booking < ActiveRecord::Base
 		Booking.connection.clear_query_cache
 		#book = Booking.unscoped.find(id)
 		book = Booking.find(id)
-		book.update_columns(total: book.revenue, balance: book.outstanding)
+		book.update_columns(total_fare: book.revenue, total: book.revenue_with_deposit, balance: book.outstanding)
 		#Utilization.manage(id)
 	end
 
