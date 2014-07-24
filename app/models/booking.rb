@@ -543,6 +543,7 @@ class Booking < ActiveRecord::Base
 			when 7 then 'No Car'
 			when 9 then 'No Show'
 			when 10 then 'Cancelled'
+			when 12 then 'Auto Cancelled'
 			else '-'
 			end
 		else
@@ -555,6 +556,7 @@ class Booking < ActiveRecord::Base
 			when 7 then 'No Car'
 			when 9 then 'No Show'
 			when 10 then 'Cancelled'
+			when 12 then 'Auto Cancelled'
 			else '-'
 			end
 		end
@@ -576,6 +578,7 @@ class Booking < ActiveRecord::Base
 		when 7 then 'No Car'
 		when 9 then 'No Show'
 		when 10 then 'Cancelled'
+		when 12 then 'Auto Cancelled'
 		else '-'
 		end
 		return txt
