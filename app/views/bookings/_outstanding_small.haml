@@ -1,4 +1,4 @@
-- if @fare && @fare[:hours] > 0
+- if !@fare.blank? && @fare[:hours] > 0
 	:ruby
 		pricing = @booking.pricing
 		tmp = ''

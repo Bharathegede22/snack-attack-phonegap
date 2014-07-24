@@ -65,14 +65,15 @@
 						.fc
 		.p-t10
 			- if @confirm
-				- if @fare[:refund] == 0 && @fare[:total] > 0
-					- txt = 'Proceed to Payment'
-				- else
-					- txt = 'Confirm'
-				#SearchSubmit
-					= submit_tag txt, :class => 'btn btn-default'
-				#SearchWait.p-5{style: 'display:none;'}
-					.wait
+				- if !@fare.blank?
+					- if @fare[:refund] == 0 && @fare[:total] > 0
+						- txt = 'Proceed to Payment'
+					- else
+						- txt = 'Confirm'
+					#SearchSubmit
+						= submit_tag txt, :class => 'btn btn-default'
+					#SearchWait.p-5{style: 'display:none;'}
+						.wait
 			- else
 				#SearchSubmit
 					= submit_tag "Submit", :class => 'btn btn-default'

@@ -92,7 +92,7 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def check_reschedule
-		return if self.starts == self.starts_last && self.ends == self.ends_last
+		return ['', {}] if self.starts == self.starts_last && self.ends == self.ends_last
 		check = self.check_inventory
 		if check != 1
 			BookingMailer.change_failed(self.id).deliver
