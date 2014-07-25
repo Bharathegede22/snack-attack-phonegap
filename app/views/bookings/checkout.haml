@@ -53,7 +53,7 @@
 					.t-c
 						.m-auto.p-20{style: "width:400px;"}
 							- if @available == 1 && current_user && !current_user.is_blacklisted?
-								.button.m-auto{onclick: "checkout();", style: "width:200px;"} Checkout
+								.button.m-auto{onclick: "checkout({starts: '#{session[:book][:starts]}',ends: '#{session[:book][:ends]}',loc: '#{session[:book][:loc]}',car: '#{session[:book][:car]}'});", style: "width:200px;"} Checkout
 							- else
 								.button-dis Checkout
 							#CheckoutWait{style: 'display:none;'}

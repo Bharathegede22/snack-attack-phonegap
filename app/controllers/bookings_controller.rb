@@ -1,5 +1,6 @@
 class BookingsController < ApplicationController
 
+	before_filter :copy_params, :only => [:docreate]
 	before_filter :check_booking, :only => [:cancel, :complete, :dodeposit, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
 	before_filter :check_booking_user, :only => [:dodeposit, :cancel, :invoice, :payments, :reschedule, :feedback]
 	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :notify, :outstanding, :userdetails]
@@ -542,6 +543,13 @@ class BookingsController < ApplicationController
 				end
 			end
 		end
+	end
+
+	def copy_params
+		session[:book][:starts] = params[:starts] if !params[:starts].blank?
+		session[:book][:ends] = params[:ends] if !params[:ends].blank?
+		session[:book][:loc] = params[:loc] if !params[:loc].blank?
+		session[:book][:car] = params[:car] if !params[:car].blank?
 	end
 	
 	def check_search

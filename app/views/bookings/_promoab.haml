@@ -1,0 +1,37 @@
+#PromoDiv
+	- @offer ||= Offer.get(session[:promo_code],@city) if !session[:promo_code].blank?
+	- if @offer && !@offer[:error].blank?
+		.alert.alert-danger
+			= @offer[:error].html_safe
+	- if session[:promo_code].blank?
+		%form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+			.row
+				.col-md-7
+					%input#DetailsName.validate-presence.form-control{name: 'promo', type: "text", value: @promo}
+				.col-md-5
+					#PromoSubmit
+						%button.btn.btn-default{type:"submit"} Apply Promo Code
+		#PromoWait{style: "display:none;"}
+			.wait
+		#DetailsNameError.error
+	- else
+		.p-b5
+			.fl
+				%b Promo Code
+			.fr
+				%form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+					#PromoSubmit
+						%button.btn.btn-default.btn-xs{type:"submit"}
+							%span.glyphicon.glyphicon-remove
+					#PromoWait{style: "display:none;"}
+						.wait
+			.fc
+		.p-b5
+			Promo code 
+			%b #{session[:promo_code]}
+			has been applied.
+		- if @offer && @offer[:offer]
+			.p-b5.size-12
+				= @offer[:offer].summary.html_safe
+		.p-b5.size-12
+			%i Discount will be manually evaluated and refunded back to your card.
