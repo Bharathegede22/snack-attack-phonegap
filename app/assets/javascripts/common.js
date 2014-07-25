@@ -100,9 +100,13 @@ function checkJail() {
 	});
 }
 
-function checkout() {
+function checkout(data) {
 	$("#CheckoutWait").show();
-	window.location = "/bookings/docreate";
+	if(typeof(data) === 'undefined'){
+		window.location = "/bookings/docreate";	
+	} else {
+		window.location = '/bookings/docreate?starts=' + data.starts + '&ends=' + data.ends + '&loc=' + data.loc + '&car=' + data.car;
+	}
 }
 
 function checkUser() {
