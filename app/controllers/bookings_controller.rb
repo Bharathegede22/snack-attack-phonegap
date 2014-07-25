@@ -3,8 +3,8 @@ class BookingsController < ApplicationController
 	before_filter :copy_params, :only => [:docreate]
 	before_filter :check_booking, :only => [:cancel, :complete, :dodeposit, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
 	before_filter :check_booking_user, :only => [:dodeposit, :cancel, :invoice, :payments, :reschedule, :feedback]
-	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :notify, :outstanding, :userdetails]
-	before_filter :check_search_access, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :outstanding, :userdetails]
+	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :notify, :userdetails]
+	before_filter :check_search_access, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
 	before_filter :check_blacklist, :only => [:docreate]
 	before_filter :check_promo,		:only => [:checkout]
@@ -99,7 +99,16 @@ class BookingsController < ApplicationController
 	end
 	
 	def docreate
-		@booking.defer_deposit = true if @booking.defer_allowed? && session[:deposit] == 0
+		@booking.user_details(current_user)
+		@booking.ref_initial = session[:ref_initial]
+		@booking.ref_immediate = session[:ref_immediate]
+		@booking.through_signup = true
+		@booking.status = 11 if session[:notify].present?
+		
+		# Defer Deposit
+		@booking.defer_deposit = true if @booking.defer_allowed? && session[:book][:deposit] == 0
+		
+		# Check Credits
 		if !session[:credits].blank? && current_user.total_credits.to_i < session[:credits].to_i
 			session[:credits] = nil
 			flash[:error] = 'Insufficient credits, please try again!'
@@ -107,27 +116,20 @@ class BookingsController < ApplicationController
 			return
 		end
 		
+		# Check Offer
 		promo = nil
 		promo = Offer.get(session[:promo_code],@city) if !session[:promo_code].blank?
-		
 		if !session[:promo_booking].blank?
 			@booking = Booking.find(session[:promo_booking])
 			session[:promo_booking] = nil
 			@booking.status = 0
 		end
-
-		@booking.user_details(current_user)
-		@booking.ref_initial = session[:ref_initial]
-		@booking.ref_immediate = session[:ref_immediate]
-		@booking.through_signup = true
-		
 		if promo
 			@booking.promo = session[:promo_code]
 			@booking.offer_id = promo[:offer].id
 		end
 		
-		@booking.status = 11 if session[:notify].present?
-		
+		# Corporate Booking
 		if !session[:corporate_id].blank? && current_user.support?
 			@booking.corporate_id = session[:corporate_id]
 			if @booking.manage_inventory == 1
@@ -137,8 +139,10 @@ class BookingsController < ApplicationController
 				@booking.status = 6
 			end
 		end
+		
 		@booking.save!
 		
+		# Expiring Coupon Code
 		if promo && promo[:coupon]
 			promo[:coupon].used = 1
 			promo[:coupon].used_at = Time.now	
@@ -146,6 +150,7 @@ class BookingsController < ApplicationController
 			promo[:coupon].save!
 		end
 		
+		# Using crredits
 		Credit.use_credits(@booking, session[:credits]) if !session[:credits].blank?
 		
 		if @booking.status == 11	
@@ -159,7 +164,6 @@ class BookingsController < ApplicationController
 			session[:book] 				= nil
 			session[:promo_code] 	= nil
 			session[:credits] 		= nil
-			session[:deposit] 		= nil
 			if !session[:corporate_id].blank? && current_user.support?
 				flash[:notice] = "Corporate Booking is Successful"
 				session[:corporate_id] = nil
@@ -261,15 +265,6 @@ class BookingsController < ApplicationController
 		generic_meta
 		@header = 'booking'
 		
-	end
-	
-	def outstanding
-		if params[:deposit].to_i == 1
-			session[:deposit] = 1
-		else
-			session[:deposit] = 0
-		end
-		render json: { html: render_to_string('/bookings/_outstanding.haml', :layout => false)}
 	end
 	
 	def payment
@@ -417,7 +412,6 @@ class BookingsController < ApplicationController
 		@meta_description = "Enjoy the Freedom of Four Wheels with self-drive car rental by the hour or by the day. Now in #{@city.name}!"
 		@meta_keywords = "car hire, car rental, car rent, car sharing, car share, shared car, car club, rental car, car-sharing, hire car, renting a car, #{@city.name}, #{@city.name} car hire, #{@city.name} car rental, #{@city.name} car rent, #{@city.name} car sharing, #{@city.name} car share, #{@city.name} car club, #{@city.name} rental car, #{@city.name} car-sharing, #{@city.name} hire car,#{@city.name} renting a car, India, Indian, Indian car-sharing, India car-sharing, Indian car-share, India car-share, India car club, Indian car club, India car sharing, Indian car, Zoomcar, Zoom car, travel india, travel #{@city.name}, explore india, explore #{@city.name}, travel, explore, self-drive, self drive, self-drive #{@city.name}, self drive #{@city.name}"
 		@canonical = "https://www.zoomcar.in/#{@city.name}/search"
-		session[:deposit] = nil
 		if request.post?
 			@booking = Booking.new
 			@booking.city_id = @city.id
@@ -545,16 +539,7 @@ class BookingsController < ApplicationController
 		end
 	end
 
-	def copy_params
-		session[:book][:starts] = params[:starts] if !params[:starts].blank?
-		session[:book][:ends] = params[:ends] if !params[:ends].blank?
-		session[:book][:loc] = params[:loc] if !params[:loc].blank?
-		session[:book][:car] = params[:car] if !params[:car].blank?
-		session[:deposit] = params[:deposit].to_i if !params[:deposit].blank?
-	end
-	
 	def check_search
-		session[:deposit] = 1 if session[:deposit].blank?
 		if !session[:book].blank? && !session[:book][:starts].blank? && !session[:book][:ends].blank? && !session[:book][:car].blank? && !session[:book][:loc].blank?
 			@booking = Booking.new
 			@booking.starts = Time.zone.parse(session[:book][:starts])
@@ -582,6 +567,15 @@ class BookingsController < ApplicationController
 		session[:promo_code] = nil
 	end
 
+	def copy_params
+		session[:book] = {} if session[:book].blank?
+		session[:book][:starts] = params[:starts] if !params[:starts].blank?
+		session[:book][:ends] = params[:ends] if !params[:ends].blank?
+		session[:book][:loc] = params[:loc] if !params[:loc].blank?
+		session[:book][:car] = params[:car] if !params[:car].blank?
+		session[:book][:deposit] = params[:deposit].to_i if !params[:deposit].blank?
+	end
+	
 	def image_params
 		params.require(:image).permit(:avatar)
 	end

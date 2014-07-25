@@ -51,15 +51,16 @@
 					#OutstandingDiv
 						= render :partial => 'outstanding'
 					.t-c
-						.m-auto.p-20{style: "width:400px;"}
+						.m-auto.p-20{style: "width:200px;"}
 							- if @available == 1 && current_user && !current_user.is_blacklisted?
 								%form{:action => "/bookings/docreate", :id => "CheckoutForm", :method => "post"}
-									%input{name: "starts", type: "hidden", value: session[:book][:starts]}
-									%input{name: "ends", type: "hidden", value: session[:book][:ends]}
-									%input{name: "loc", type: "hidden", value: session[:book][:loc]}
-									%input{name: "car", type: "hidden", value: session[:book][:car]}
-									%input{name: "deposit", type: "hidden", value: session[:deposit], id: "checkoutDeposit"}
-									%input.button.m-auto{style: "width:200px;", type: "submit", value: "Checkout"}
+									.hide
+										%input{name: "starts", type: "hidden", value: session[:book][:starts]}
+										%input{name: "ends", type: "hidden", value: session[:book][:ends]}
+										%input{name: "loc", type: "hidden", value: session[:book][:loc]}
+										%input{name: "car", type: "hidden", value: session[:book][:car]}
+										%input{name: "deposit", type: "hidden", value: 1, id: "checkoutDeposit"}
+									%input.button.m-auto{style: "width:100%;", type: "submit", value: "Checkout"}
 							- else
 								.button-dis Checkout
 							#CheckoutWait{style: 'display:none;'}

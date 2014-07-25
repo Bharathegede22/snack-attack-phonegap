@@ -27,22 +27,17 @@
 					%td
 						- if @booking.defer_allowed?
 							%span
-								- if session[:deposit] == 1
-									%input{checked: "checked", id: "securityDeposit", name: "securityDeposit", type: "checkbox", value: "yes"}
-								- else
-									%input{id: "securityDeposit", name: "securityDeposit", type: "checkbox", value: "yes"}
+								%input{checked: "checked", id: "changeDeposit", name: "securityDeposit", type: "checkbox", value: "yes"}
 							%span
 								Pay Deposit Now
 							%span.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => @booking.deposit_help}
 								%u (?)
 					%td.p-5.t-r
-						- if !@booking.defer_allowed? || session[:deposit] == 1
-							₹#{show_currency @pricing.mode::SECURITY}
-						- else
-							.t-s
+						- if @booking.defer_allowed?
+							#Deposit
 								₹#{show_currency @pricing.mode::SECURITY}
-			- if @booking.defer_allowed? && session[:deposit] != 1
-				%tr.red.t-c
+			- if @booking.defer_allowed?
+				%tr#DepositMessage.red.t-c{style: 'display:none;'}
 					%td.p-5{colspan: '3'}
 						%i
 							= @booking.deposit_warning.html_safe
@@ -52,27 +47,29 @@
 				%td &nbsp;
 				%td.p-5.t-r
 					:ruby
-						if !@booking.defer_allowed? || session[:deposit] == 1
-							security = @booking.pricing.mode::SECURITY
+						if !session[:credits].blank?
+							total = @fare[:total] - session[:credits].to_i
 						else
-							security = 0
+							total = @fare[:total]
 						end
-					- if !session[:credits].blank?
-						₹#{show_currency(@fare[:total] + security - session[:credits].to_i)}
-					- else
-						₹#{show_currency(@fare[:total] + security)}
+					#DepositFinal
+						₹#{show_currency(total + @pricing.mode::SECURITY)}
 - render_flash
 :javascript
 	function checkJquery() {
 		if (window.jQuery) {
-			$('#securityDeposit').change(function() {
+			$('#changeDeposit').change(function() {
 				var $this = $(this);
 				if ($this.is(':checked')) {
 					$('#checkoutDeposit').val("1");
-					getData("/bookings/outstanding?deposit=1", 'OutstandingDiv', 'replace', 'CheckoutWait');
+					$("#DepositMessage").hide();
+					$("#Deposit").removeClass('t-s');
+					$("#DepositFinal").html("₹#{show_currency(total + @pricing.mode::SECURITY)}");
 				} else {
 					$('#checkoutDeposit').val("0");
-					getData("/bookings/outstanding?deposit=0", 'OutstandingDiv', 'replace', 'CheckoutWait');
+					$("#DepositMessage").show();
+					$("#Deposit").addClass('t-s');
+					$("#DepositFinal").html("₹#{show_currency(total)}");
 				}
 			});
 		} else {
