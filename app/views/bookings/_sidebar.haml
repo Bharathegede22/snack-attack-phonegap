@@ -18,90 +18,129 @@
 	elsif h > 0
 		tmp << h.to_s + " hours"
 	end
-.bg-w.bs-9.grey.droid.size-14
-	.bg-zoomb.white.p-5.f-b.size-18.p-l10.p-r10
+.bg-w.bs-9.grey.size-14
+	.bg-zoomb.white.p-10.f-b.size-18.p-l10.p-r10
 		.fl
 			Booking Summary
 		.fr
 			.glyphicon.glyphicon-pencil.pointer.help{onclick: "showSearch();", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Change your booking"}
 		.fc
-	.p-10.t-c.size-16
-		%b
-			= cargroup.display_name
-		%br/
-		- if !cargroup.disclaimer.blank?
-			.red.size-10
-				= cargroup.disclaimer.html_safe
-		.colored
+	.p-r20.p-l30.size-16.border-b-c
+		.fl.m-l20.colored
 			.m-auto{:class => 'car' + @booking.cargroup_id.to_s}
-		Location :
-		%b
-			%u
-				= location.shortname
-			%span.size-12.help.pointer{onclick: "showModal('#{location.shortname}', '/map?lat=#{location.lat}&lng=#{location.lng}&title=#{location.shortname}');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Click here to see the map"}
-				(?)
-		- if !location.disclaimer.blank?
-			.red.size-10
-				= location.disclaimer.html_safe
-	.p-5.bg-e
-		.p-l5.p-r5.f-b
-			.fl
+		.fl.p-t15.p-l15
+			.size-20.f-b.zoom-b
+				= cargroup.display_name
+			.size-14.m-t5.lgrey
+				= cargroup.seating
+				Seater
+			%br/
+			- if !cargroup.disclaimer.blank?
+				.red.size-10
+					= cargroup.disclaimer.html_safe
+		.fc
+
+	.border-b-c
+		.time.fl.p-t10.p-b10.p-l8.p-r5
+			.text-up.size-11.m-b3
 				Pickup Time
-			.fr
+			.zoom-b.f-b.size-12
+				= @booking.starts.strftime("%d %b, %Y - %I:%M %p")
+
+		.time.fl.p-t10.p-b10.p-l8.p-r5.border-l-c
+			.text-up.size-11.m-b3
 				Dropoff Time
-			.fc
-		.p-l5.p-r5.size-12
-			.fl
-				= @booking.starts.strftime("%d/%m/%y %I:%M %p")
-			.fr
-				= @booking.ends.strftime("%d/%m/%y %I:%M %p")
-			.fc
-	.p-5.bg-c.t-c
-		Rented for
-		%b
-			= tmp.chomp(', ')
-	%table{width: '100%'}
+			.zoom-b.f-b.size-12
+				= @booking.ends.strftime("%d %b, %Y - %I:%M %p")
+		.fc
+
+	.border-b-c
+		#location.p-t10.p-b10.p-l5.p-r5.icon
+			.text-up.size-11.m-b3
+				Pickup Location
+			.zoom-b.f-b.size-12
+				= location.shortname
+
+				%span.size-11.help.pointer{onclick: "showModal('#{location.shortname}', '/map?lat=#{location.lat}&lng=#{location.lng}&title=#{location.shortname}');"}
+					(view map)
+
+			- if !location.disclaimer.blank?
+				.red.size-10.m-t5
+					= location.disclaimer.html_safe
+
+	.border-b-c
+		#duration.p-t10.p-b10.p-l5.p-r5.icon
+			.text-up.size-11.m-b3
+				Duration
+			.zoom-b.f-b.size-12
+				= tmp.chomp(', ')
+
+	%table.m-t10.position-r{width: '100%'}
 		%tr
-			%td.p-5.p-l10
-				.fl
-					%b Tariff
+			%td.p-5.p-l20.size-12
+				.fl.text-up
+					Tariff
 				- if h < 4
 					.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Minimum billing is 4 hours."}
-						%u (?)
+						[?]
 				.fc
-			%td.p-5.t-r.p-r10
-				₹#{show_currency fare[:total]}
+			%td.p-5.t-r.p-r20.zoom-b.f-b.size-16
+				₹ #{show_currency fare[:total]}
+
 		%tr
-			%td.p-5.p-l10
-				%b Discount
-			%td.p-5.t-r.p-r10
-				\- ₹0
-		%tr.bg-6.white.f-b.size-16
-			%td.p-5.p-l10.f-b
-				%b Total Tariff
+			%td.p-5.p-l20.text-up.size-12
+				Discount
+			%td.p-5.t-r.p-r20.zoom-b.f-b.size-16
+				\ ₹ 0
+
+		%tr
+			%td.p-5.p-l20.p-b10.text-up.size-12
+				Fuel, GPS, Insurance & Taxes
+			%td.p-5.t-r.p-r20.p-b10.zoom.f-b.size-16
+				Free
+
+		%tr.bg-e
+			%td.p-10.p-l20.size-12
+				%b.text-up Total Tariff
 				%span.size-12.help.pointer{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Tariff Calculator"}
-					%u (view calculator)
-			%td.p-5.t-r.p-r10.f-b
-				₹#{show_currency fare[:total]}
+					[?]
+			%td.p-10.t-r.p-r20.zoom-b.f-b.size-16
+				₹ #{show_currency fare[:total]}
+
+		- if pricing.mode::SECURITY > 0
+			%tr
+				%td.p-10.p-l20.size-12
+					.fl.text-up
+						Refundable Deposit
+					.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Fully refundable security deposit which will be released once your booking is over. It will take 4-5 business days before the refund reflects in your account."}
+						[?]
+					.fc
+				%td.p-10.t-r.p-r20.zoom-b.f-b.size-16.securityTotal
+					₹ #{show_currency pricing.mode::SECURITY}
+
+		%tr.bg-6.white.bg-zoom.ribbon
+			%td.p-10.p-l20.text-up.size-16.f-b
+				Payable Amount
+			%td.p-10.t-r.p-r20.size-22.outstandingSide
+				₹ #{show_currency(fare[:total] + pricing.mode::SECURITY)}
+
 		%tr
-			%td.p-5.p-l10.f-b
-				.fl Free Kms
+			%td.p-5.p-l20.p-t10.size-12
+				.fl.text-up Free Kms
 				.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "All Zoom reservations comes with free driving kms, which are based on vehicle type and reservation duration."}
-					%u (?)
+					[?]
 				.fc
-			%td.p-5.t-r.p-r10
+			%td.p-5.t-r.p-r20.p-t10.zoom-b.f-b.size-16
 				= fare[:kms]
 		%tr
-			%td.p-5.p-l10.f-b
-				.fl Excess Kms Charge
+			%td.p-5.p-b10.p-l20.size-12
+				.fl.text-up Excess Kms Charge
 				.fl.p-l5.help.pointer{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "If you travel more than #{fare[:kms]} Kms during the reservation, then Kms beyond #{fare[:kms]} will be charged at this price. Click here to enter your expected Kms to estimate your final tariff."}
-					%u (?)
+					[?]
 				.fc
-			%td.p-5.t-r.p-r10
-				₹#{cargroup.excess_kms.to_i} / Km
-	- if pricing.mode::SECURITY > 0 && step < 4
-		.t-c.black.f-b.p-b10.p-t5
-			Refundable deposit of ₹#{show_currency pricing.mode::SECURITY} will be charged at checkout
+			%td.p-5.p-b10.t-r.p-r20.zoom-b.f-b.size-16
+				₹ #{cargroup.excess_kms.to_i} / Km
+
 - if false
 	%br/
 	.bg-w.bs-9.grey.droid.size-14

@@ -705,6 +705,14 @@ a {
 	width:677px;
 }
 
+.narrow-content {
+	width: 600px;
+}
+
+.full-content {
+	width: 960px;
+}
+
 .search-page {
 	min-height:700px;
 }
@@ -718,7 +726,7 @@ a {
 }
 
 .content .sidebar-fixed {
-	width:265px;
+	width:320px;
 }
 
 .content .sidebar .mapwrap {
@@ -1871,4 +1879,32 @@ a {
 	background-image: -moz-linear-gradient(-89deg, #6EAD23 33%, #5F941F 100%);
 	background-image: -ms-linear-gradient(-89deg, #6EAD23 33%, #5F941F 100%);
 	background-image: linear-gradient(-179deg, #6EAD23 33%, #5F941F 100%);
+}
+
+/* Booking Summary */
+.time {
+	width: 158px;
+	margin: 0;
+}
+.icon {
+	padding-left: 36px;
+}
+#location {
+	background: url(<%= asset_path 'location.png' %>) 10px 10px no-repeat;
+}
+#duration {
+	background: url(<%= asset_path 'duration.png' %>) 8px 13px no-repeat;
+}
+.ribbon {
+
+}
+
+.summary-cell {
+	height: 90px;
+	width: 240px;
+	box-sizing: border-box;
+}
+.tariff-details {
+	width: 480px;
+	margin-top: -10px;
 }
