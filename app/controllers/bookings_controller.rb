@@ -4,7 +4,7 @@ class BookingsController < ApplicationController
 	before_filter :check_booking, :only => [:cancel, :complete, :dodeposit, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
 	before_filter :check_booking_user, :only => [:dodeposit, :cancel, :invoice, :payments, :reschedule, :feedback]
 	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :notify, :outstanding, :userdetails]
-	before_filter :check_search_access, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :userdetails]
+	before_filter :check_search_access, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :outstanding, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
 	before_filter :check_blacklist, :only => [:docreate]
 	before_filter :check_promo,		:only => [:checkout]
@@ -566,7 +566,14 @@ class BookingsController < ApplicationController
 	end
 	
 	def check_search_access
-		redirect_to '/search' and return if !@booking || !@booking.valid?
+		if !@booking || !@booking.valid?
+			if request.xhr?
+				render json: {html: "<div class='alert alert-danger' role='alert'>Bad Request!</div>"}
+			else
+				redirect_to '/search'
+			end
+			return
+		end
 	end
 	
 	def check_promo

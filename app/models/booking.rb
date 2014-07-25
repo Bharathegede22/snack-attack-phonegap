@@ -92,7 +92,7 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def check_reschedule
-		return if self.starts == self.starts_last && self.ends == self.ends_last
+		return ['', {}] if self.starts == self.starts_last && self.ends == self.ends_last
 		check = self.check_inventory
 		if check != 1
 			BookingMailer.change_failed(self.id).deliver
@@ -218,9 +218,9 @@ class Booking < ActiveRecord::Base
 				when 'Late Return' then charge.amount.to_s + " - Late Charge." + self.ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.returned_at.strftime("%d/%m/%y %I:%M %p") + "<br/>"
 				when 'Rescheduling' 
 					if charge.refund
-						charge.amount.to_s + " - Reschedule Charge." + self.starts_last.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends_last.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.starts_last.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+						charge.amount.to_s + " - Reschedule Charge." + self.starts_last.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends_last.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.starts.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
 					else
-						charge.amount.to_s + " - Reschedule Refund." + self.starts_last.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends_last.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.starts_last.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+						charge.amount.to_s + " - Reschedule Refund." + self.starts_last.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends_last.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.starts.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
 					end
 				when 'Extending' then charge.amount.to_s + " - Extension Charges." + self.ends_last.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
 				when 'Shortening' then charge.amount.to_s + " - Shorten Refund." + self.ends_last.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
@@ -562,6 +562,7 @@ class Booking < ActiveRecord::Base
 			when 7 then 'No Car'
 			when 9 then 'No Show'
 			when 10 then 'Cancelled'
+			when 12 then 'Auto Cancelled'
 			else '-'
 			end
 		else
@@ -574,6 +575,7 @@ class Booking < ActiveRecord::Base
 			when 7 then 'No Car'
 			when 9 then 'No Show'
 			when 10 then 'Cancelled'
+			when 12 then 'Auto Cancelled'
 			else '-'
 			end
 		end
@@ -595,6 +597,7 @@ class Booking < ActiveRecord::Base
 		when 7 then 'No Car'
 		when 9 then 'No Show'
 		when 10 then 'Cancelled'
+		when 12 then 'Auto Cancelled'
 		else '-'
 		end
 		return txt
