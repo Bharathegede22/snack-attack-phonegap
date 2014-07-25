@@ -6,7 +6,7 @@
 	- if session[:promo_code].blank?
 		%form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 			.row
-				.col-md-7
+				.col-md-4
 					%input#DetailsName.validate-presence.form-control{name: 'promo', type: "text", value: @promo}
 				.col-md-5
 					#PromoSubmit

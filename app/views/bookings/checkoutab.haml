@@ -38,185 +38,226 @@
 	= render :partial => "/bookings/search_steps", locals: {step: 4}
 	.wrapper
 		- render_flash
-		.full-content.bg-w.bs-9.position-r.z-2
-			.bg-zoomb.white.p-10.f-b.size-18.p-l10.p-r10
-				.fl
-					Booking Summary
-				.fr
-					.glyphicon.glyphicon-pencil.pointer.help{onclick: "showSearch();", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Change your booking"}
-				.fc
-
-			.summary-cell.fl.border-r-c
-				.p-t5.p-b5.p-r20.p-l10.size-16
-					.fl.m-l15.colored
-						.m-auto{:class => 'car' + @booking.cargroup_id.to_s}
-					.fl.p-t15.p-l10
-						.size-20.f-b.zoom-b
-							= cargroup.display_name
-						.size-14.m-t5.lgrey
-							= cargroup.seating
-							Seater
-						%br/
-						- if !cargroup.disclaimer.blank?
-							.red.size-10
-								= cargroup.disclaimer.html_safe
+		- if current_user && current_user.check_details
+			.full-content.bg-w.bs-9.position-r.z-2
+				.bg-zoomb.white.p-10.f-b.size-18.p-l10.p-r10
+					.fl
+						Booking Summary
+					.fr
+						.glyphicon.glyphicon-pencil.pointer.help{onclick: "showSearch();", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Change your booking"}
 					.fc
 
-			.summary-cell.fl.border-r-c.t-c
-				.p-t8.p-b8.border-b-c
-					.text-up.size-11.m-b3
-						Pickup Time
-					.zoom-b.f-b.size-12
-						= @booking.starts.strftime("%d %b, %Y - %I:%M %p")
-
-				.p-t8.p-b8
-					.text-up.size-11.m-b3
-						Dropoff Time
-					.zoom-b.f-b.size-12
-						= @booking.ends.strftime("%d %b, %Y - %I:%M %p")
-
-			.summary-cell.fl.border-r-c.p-15
-				#location.p-t10.p-b10.p-l5.p-r5.icon
-					.text-up.size-11.m-b3
-						Pickup Location
-					.zoom-b.f-b.size-12
-						= location.shortname
-
-					.size-11.help.pointer{onclick: "showModal('#{location.shortname}', '/map?lat=#{location.lat}&lng=#{location.lng}&title=#{location.shortname}');"}
-						(view map)
-
-					- if !location.disclaimer.blank?
-						.red.size-10.m-t5
-							= location.disclaimer.html_safe
-
-			.summary-cell.fl.p-15
-				#duration.p-t10.p-b10.p-l5.p-r5.icon
-					.text-up.size-11.m-b3
-						Duration
-					.zoom-b.f-b.size-12
-						= tmp.chomp(', ')
-
-			.fc
-
-		.tariff-details.bg-w.bs-9.p-t20.m-auto
-			%table.position-r{width: '100%'}
-				%tr
-					%td.p-5.p-l20.size-12
-						.fl.text-up
-							Tariff
-						- if h < 4
-							.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Minimum billing is 4 hours."}
-								[?]
+				.summary-cell.fl.border-r-c
+					.p-t5.p-b5.p-r20.p-l10.size-16
+						.fl.m-l15.colored
+							.m-auto{:class => 'car' + @booking.cargroup_id.to_s}
+						.fl.p-t15.p-l10
+							.size-20.f-b.zoom-b
+								= cargroup.display_name
+							.size-14.m-t5.lgrey
+								= cargroup.seating
+								Seater
+							%br/
+							- if !cargroup.disclaimer.blank?
+								.red.size-10
+									= cargroup.disclaimer.html_safe
 						.fc
-					%td.p-5.t-r.p-r20.zoom-b.f-b.size-16
-						₹ #{show_currency fare[:total]}
 
-				%tr
-					%td.p-5.p-l20.size-12{'colspan' => '2'}
-						= render :partial => "promoab"
+				.summary-cell.fl.border-r-c.t-c
+					.p-t8.p-b8.border-b-c
+						.text-up.size-11.m-b3
+							Pickup Time
+						.zoom-b.f-b.size-12
+							= @booking.starts.strftime("%d %b, %Y - %I:%M %p")
 
-				/ %tr
-				/ 	%td.p-5.p-l20.text-up.size-12
-				/ 		Discount
-				/ 	%td.p-5.t-r.p-r20.zoom-b.f-b.size-16
-				/ 		\ ₹ 0
+					.p-t8.p-b8
+						.text-up.size-11.m-b3
+							Dropoff Time
+						.zoom-b.f-b.size-12
+							= @booking.ends.strftime("%d %b, %Y - %I:%M %p")
 
-				%tr
-					%td.p-5.p-l20.p-b10.text-up.size-12
-						Fuel, GPS, Insurance & Taxes
-					%td.p-5.t-r.p-r20.p-b10.zoom.f-b.size-16
-						Free
+				.summary-cell.fl.border-r-c.p-15
+					#location.p-t10.p-b10.p-l5.p-r5.icon
+						.text-up.size-11.m-b3
+							Pickup Location
+						.zoom-b.f-b.size-12
+							= location.shortname
 
-				%tr.bg-e
-					%td.p-10.p-l20.size-12
-						%b.text-up Total Tariff
-						%span.size-12.help.pointer{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Tariff Calculator"}
-							[?]
-					%td.p-10.t-r.p-r20.zoom-b.f-b.size-16
-						₹ #{show_currency fare[:total]}
+						.size-11.help.pointer{onclick: "showModal('#{location.shortname}', '/map?lat=#{location.lat}&lng=#{location.lng}&title=#{location.shortname}');"}
+							(view map)
 
-				- if pricing.mode::SECURITY > 0
+						- if !location.disclaimer.blank?
+							.red.size-10.m-t5
+								= location.disclaimer.html_safe
+
+				.summary-cell.fl.p-15
+					#duration.p-t10.p-b10.p-l5.p-r5.icon
+						.text-up.size-11.m-b3
+							Duration
+						.zoom-b.f-b.size-12
+							= tmp.chomp(', ')
+
+				.fc
+
+			.tariff-details.bg-w.bs-9.p-t20.m-auto
+				%table.position-r{width: '100%'}
 					%tr
-						%td.p-10.p-l20.size-12
+						%td.p-5.p-l20.size-12
 							.fl.text-up
-								Refundable Deposit
-							.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Fully refundable security deposit which will be released once your booking is over. It will take 4-5 business days before the refund reflects in your account."}
-								[?]
-							- if @booking.defer_allowed?
-								.fl.p-l20
-									%span
-										- if session[:deposit] == 1
-											%input{style: "margin: 0", checked: "checked", id: "securityDeposit", name: "securityDeposit", type: "checkbox", value: "yes"}
-										- else
-											%input{style: "margin: 0", id: "securityDeposit", name: "securityDeposit", type: "checkbox", value: "yes"}
-									%label{style: 'font-weight: normal; margin: 0;', for: 'securityDeposit'}
-										Pay this now
-									%span.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => @booking.deposit_help}
-										[?]
+								Tariff
+							- if h < 4
+								.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Minimum billing is 4 hours."}
+									[?]
+							.fl.p-l20
+								%a.pointer#applyPromoCode
+									Apply Promo Code
 							.fc
-						%td.p-10.t-r.p-r20.zoom-b.f-b.size-16.securityTotal
-							₹ #{show_currency pricing.mode::SECURITY}
+						%td.p-5.t-r.p-r20.zoom-b.f-b.size-16
+							₹ #{show_currency fare[:total]}
 
-				%tr.bg-6.white.bg-zoom.ribbon
-					%td.p-10.p-l20.text-up.size-16.f-b
-						Payable Amount
-					%td.p-10.t-r.p-r20.size-22.outstandingSide
-						₹ #{show_currency(fare[:total] + pricing.mode::SECURITY)}
+					%tr#promoCode{style: 'display: none'}
+						%td.p-5.p-l20.p-r20.size-12{'colspan' => '2'}
+							= render :partial => "promoab"
 
-				%tr
-					%td.p-5.p-l20.p-t10.size-12
-						.fl.text-up Free Kms
-						.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "All Zoom reservations comes with free driving kms, which are based on vehicle type and reservation duration."}
-							[?]
-						.fc
-					%td.p-5.t-r.p-r20.p-t10.zoom-b.f-b.size-16
-						= fare[:kms]
-				%tr
-					%td.p-5.p-b10.p-l20.size-12
-						.fl.text-up Excess Kms Charge
-						.fl.p-l5.help.pointer{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "If you travel more than #{fare[:kms]} Kms during the reservation, then Kms beyond #{fare[:kms]} will be charged at this price. Click here to enter your expected Kms to estimate your final tariff."}
-							[?]
-						.fc
-					%td.p-5.p-b10.t-r.p-r20.zoom-b.f-b.size-16
-						₹ #{cargroup.excess_kms.to_i} / Km
+					- if current_user && current_user.total_credits.to_i > 0
+						%tr
+							%td.p-5.p-l20.p-r20.size-12{'colspan' => '2'}
+								.bg-e.p-10.border-c.solid.r-5
+									= render :partial => "credits"
 
-		.t-c
-			.m-auto.p-20{style: "width:400px;"}
-				- if @available == 1 && current_user && !current_user.is_blacklisted?
-					.button.m-auto{onclick: "checkout();", style: "width:200px;"} Checkout
-				- else
-					.button-dis Checkout
-				#CheckoutWait{style: 'display:none;'}
-					%br/
-					.wait
-			= render :partial => "/bookings/blacklist"
-		%br/
-		%br/
-		.main-content.fl.bg-w.bs-9
-			.p-20
-				- if current_user && current_user.check_details
-					- if current_user.support?
-						#CorporateDiv
-							= render :partial => 'corporate'
-					#OutstandingDiv
-						= render :partial => 'outstanding'
-					.t-c
-						.m-auto.p-20{style: "width:400px;"}
-							- if @available == 1 && current_user && !current_user.is_blacklisted?
-								.button.m-auto{onclick: "checkout({starts: '#{session[:book][:starts]}',ends: '#{session[:book][:ends]}',loc: '#{session[:book][:loc]}',car: '#{session[:book][:car]}'});", style: "width:200px;"} Checkout
+					/ %tr
+					/ 	%td.p-5.p-l20.text-up.size-12
+					/ 		Discount
+					/ 	%td.p-5.t-r.p-r20.zoom-b.f-b.size-16
+					/ 		\ ₹ 0
+
+					%tr
+						%td.p-5.p-l20.p-b10.text-up.size-12
+							Fuel, GPS, Insurance & Taxes
+						%td.p-5.t-r.p-r20.p-b10.zoom.f-b.size-16
+							Free
+
+					%tr.bg-e
+						%td.p-10.p-l20.size-12
+							%b.text-up Total Tariff
+							%span.size-12.help.pointer{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Tariff Calculator"}
+								[?]
+						%td.p-10.t-r.p-r20.zoom-b.f-b.size-16
+							₹ #{show_currency fare[:total]}
+
+					- if pricing.mode::SECURITY > 0
+						%tr
+							%td.p-10.p-l20.size-12
+								.fl.text-up
+									Refundable Deposit
+								.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Fully refundable security deposit which will be released once your booking is over. It will take 4-5 business days before the refund reflects in your account."}
+									[?]
+								- if @booking.defer_allowed?
+									.fl.p-l20
+										%span
+											- if session[:deposit] == 1
+												%input{style: "margin: 0", checked: "checked", id: "securityDeposit", name: "securityDeposit", type: "checkbox", value: "yes"}
+											- else
+												%input{style: "margin: 0", id: "securityDeposit", name: "securityDeposit", type: "checkbox", value: "yes"}
+										%label{style: 'font-weight: normal; margin: 0;', for: 'securityDeposit'}
+											Pay this now
+										%span.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => @booking.deposit_help}
+											[?]
+								.fc
+							%td.p-10.t-r.p-r20.zoom-b.f-b.size-16.securityTotal
+								- if !@booking.defer_allowed? || session[:deposit] == 1
+									₹ #{show_currency pricing.mode::SECURITY}
+								- else
+									.t-s
+										₹ #{show_currency pricing.mode::SECURITY}
+					- if @booking.defer_allowed?
+						%tr#depositMessage{style: "display: none"}
+							%td.p-10.p-l20.p-r20.size-11.position-r{style: "top: -10px", colspan: '2'}
+								%i
+									= @booking.deposit_warning.html_safe
+
+					%tr.bg-6.white.bg-zoom.ribbon
+						%td.p-10.p-l20.text-up.size-16.f-b
+							Payable Amount
+						%td.p-10.t-r.p-r20.size-22.outstandingSide
+							:ruby
+								if !@booking.defer_allowed? || session[:deposit] == 1
+									security = @booking.pricing.mode::SECURITY
+								else
+									security = 0
+								end
+							- if !session[:credits].blank?
+								₹ #{show_currency(fare[:total] + security - session[:credits].to_i)}
 							- else
-								.button-dis Checkout
-							#CheckoutWait{style: 'display:none;'}
-								%br/
-								.wait
-						= render :partial => "/bookings/blacklist"
-				- else
-					.alert.alert-info.t-c
-						%b Please provide the following details to complete your reservation
-					.p-b10
-						= render :template => "/users/signup"
-					.t-c.f-b.f-i
-						On submitting, you will proceed to payment
+								₹ #{show_currency(fare[:total] + security)}
+
+					%tr
+						%td.p-5.p-l20.p-t10.size-12
+							.fl.text-up Free Kms
+							.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "All Zoom reservations comes with free driving kms, which are based on vehicle type and reservation duration."}
+								[?]
+							.fc
+						%td.p-5.t-r.p-r20.p-t10.zoom-b.f-b.size-16
+							= fare[:kms]
+					%tr
+						%td.p-5.p-b10.p-l20.size-12
+							.fl.text-up Excess Kms Charge
+							.fl.p-l5.help.pointer{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "If you travel more than #{fare[:kms]} Kms during the reservation, then Kms beyond #{fare[:kms]} will be charged at this price. Click here to enter your expected Kms to estimate your final tariff."}
+								[?]
+							.fc
+						%td.p-5.p-b10.t-r.p-r20.zoom-b.f-b.size-16
+							₹ #{cargroup.excess_kms.to_i} / Km
+
+			.t-c
+				.m-auto.p-20{style: "width:400px;"}
+					- if @available == 1 && current_user && !current_user.is_blacklisted?
+						%form{:action => "/bookings/docreate", :id => "CheckoutForm", :method => "post"}
+							%input{name: "starts", type: "hidden", value: session[:book][:starts]}
+							%input{name: "ends", type: "hidden", value: session[:book][:ends]}
+							%input{name: "loc", type: "hidden", value: session[:book][:loc]}
+							%input{name: "car", type: "hidden", value: session[:book][:car]}
+							%input{name: "deposit", type: "hidden", value: session[:deposit], id: "checkoutDeposit"}
+							%input.button.m-auto{style: "width:200px;", type: "submit", value: "Checkout"}
+					- else
+						.button-dis Checkout
+					#CheckoutWait{style: 'display:none;'}
+						%br/
+						.wait
+				= render :partial => "/bookings/blacklist"
+		- else
+			.alert.alert-info.t-c
+				%b Please provide the following details to complete your reservation
+			.p-b10
+				= render :template => "/users/signup"
+			.t-c.f-b.f-i
+				On submitting, you will proceed to payment
+		%br/
+		%br/
+		/ .main-content.fl.bg-w.bs-9
+		/ 	.p-20
+		/ 		- if current_user && current_user.check_details
+		/ 			- if current_user.support?
+		/ 				#CorporateDiv
+		/ 					= render :partial => 'corporate'
+		/ 			#OutstandingDiv
+		/ 				= render :partial => 'outstanding'
+		/ 			.t-c
+		/ 				.m-auto.p-20{style: "width:400px;"}
+		/ 					- if @available == 1 && current_user && !current_user.is_blacklisted?
+		/ 						.button.m-auto{onclick: "checkout({starts: '#{session[:book][:starts]}',ends: '#{session[:book][:ends]}',loc: '#{session[:book][:loc]}',car: '#{session[:book][:car]}'});", style: "width:200px;"} Checkout
+		/ 					- else
+		/ 						.button-dis Checkout
+		/ 					#CheckoutWait{style: 'display:none;'}
+		/ 						%br/
+		/ 						.wait
+		/ 				= render :partial => "/bookings/blacklist"
+		/ 		- else
+		/ 			.alert.alert-info.t-c
+		/ 				%b Please provide the following details to complete your reservation
+		/ 			.p-b10
+		/ 				= render :template => "/users/signup"
+		/ 			.t-c.f-b.f-i
+		/ 				On submitting, you will proceed to payment
 		.fc
 		%br/
 :javascript
@@ -231,3 +272,24 @@
 		var s = d.getElementsByTagName('script')[0];
 		s.parentNode.insertBefore(x, s);
 	})(document);
+
+	function checkJquery() {
+		if (window.jQuery) {
+			$('#securityDeposit').change(function() {
+				var $this = $(this);
+				if ($this.is(':checked')) {
+					$('#checkoutDeposit').val("1");
+					$('#depositMessage').hide();
+				} else {
+					$('#checkoutDeposit').val("0");
+					$('#depositMessage').show();
+				}
+			});
+			$('#applyPromoCode').click(function(){
+				$('#promoCode').toggle();
+			});
+		} else {
+			window.setTimeout(checkJquery, 1000);
+		}
+	}
+	checkJquery();
