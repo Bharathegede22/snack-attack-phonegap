@@ -550,6 +550,7 @@ class BookingsController < ApplicationController
 		session[:book][:ends] = params[:ends] if !params[:ends].blank?
 		session[:book][:loc] = params[:loc] if !params[:loc].blank?
 		session[:book][:car] = params[:car] if !params[:car].blank?
+		session[:deposit] = params[:deposit].to_i if !params[:deposit].blank?
 	end
 	
 	def check_search

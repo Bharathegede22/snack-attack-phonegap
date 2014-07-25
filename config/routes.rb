@@ -25,6 +25,7 @@ Web::Application.routes.draw do
 			get 'details'
 			get 'do'
 			get 'docreate'
+			post 'docreate'
 			get 'docreatenotify'
 			get 'donotify'
 			get 'failed'

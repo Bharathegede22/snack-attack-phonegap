@@ -68,8 +68,10 @@
 			$('#securityDeposit').change(function() {
 				var $this = $(this);
 				if ($this.is(':checked')) {
+					$('#checkoutDeposit').val("1");
 					getData("/bookings/outstanding?deposit=1", 'OutstandingDiv', 'replace', 'CheckoutWait');
 				} else {
+					$('#checkoutDeposit').val("0");
 					getData("/bookings/outstanding?deposit=0", 'OutstandingDiv', 'replace', 'CheckoutWait');
 				}
 			});
