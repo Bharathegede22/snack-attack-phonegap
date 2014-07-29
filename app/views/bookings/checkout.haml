@@ -3,8 +3,8 @@
 		cargroup = @booking.cargroup
 		location = @booking.location
 	else
-		cargroup = Cargroup.random
-		location = Location.random
+		cargroup = Cargroup.random(@city)
+		location = Location.random(@city)
 		@booking = Booking.new
 		@booking.starts = Time.today + 1.days
 		@booking.ends = Time.today + 2.days
@@ -13,13 +13,22 @@
 		@booking.city_id = @city.id
 		@booking.valid?
 	end
+	if current_user
+		user = current_user
+	else
+		user = User.find(100)
+		user.name = 'xxxxxxxxx'
+		user.email = 'xxxxxxxxx'
+		user.phone = 'xxxxxxxxx'
+		user.dob = Time.now - 25.years
+	end
 .content
 	= render :partial => "/bookings/search_steps", locals: {step: 4}
 	.wrapper
 		- render_flash
 		.main-content.fl.bg-w.bs-9
 			.p-20
-				- if current_user && current_user.check_details
+				- if user && user.check_details
 					.alert.alert-info
 						%b Please check the details before proceeding further
 					.p-b10
@@ -29,30 +38,30 @@
 							%td
 								%b Name
 							%td
-								= current_user.name
+								= user.name
 						%tr
 							%td
 								%b Email
 							%td
-								= current_user.email
+								= user.email
 						%tr
 							%td
 								%b Mobile
 							%td
-								= current_user.phone
+								= user.phone
 						%tr
 							%td
 								%b Date of Birth
 							%td
-								= current_user.dob.strftime("%d/%m/%Y")
-					- if current_user.support?
+								= user.dob.strftime("%d/%m/%Y")
+					- if user.support?
 						#CorporateDiv
 							= render :partial => 'corporate'
 					#OutstandingDiv
 						= render :partial => 'outstanding'
 					.t-c
 						.m-auto.p-20{style: "width:200px;"}
-							- if @available == 1 && current_user && !current_user.is_blacklisted?
+							- if @available == 1 && user && !user.is_blacklisted?
 								%form{:action => "/bookings/docreate", :id => "CheckoutForm", :method => "post"}
 									.hide
 										%input{name: "starts", type: "hidden", value: session[:book][:starts]}

@@ -4,7 +4,7 @@ class BookingsController < ApplicationController
 	before_filter :check_booking, :only => [:cancel, :complete, :dodeposit, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
 	before_filter :check_booking_user, :only => [:dodeposit, :cancel, :invoice, :payments, :reschedule, :feedback]
 	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :notify, :userdetails]
-	before_filter :check_search_access, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :userdetails]
+	before_filter :check_search_access, :only => [:credits, :docreate, :docreatenotify, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
 	before_filter :check_blacklist, :only => [:docreate]
 	before_filter :check_promo,		:only => [:checkout]
@@ -33,7 +33,7 @@ class BookingsController < ApplicationController
 	end
 
 	def checkoutab
-		redirect_to "/bookings/checkout" and return #if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
+		redirect_to "/bookings/do" and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		generic_meta
 		@header = 'booking'
 	end
@@ -527,7 +527,7 @@ class BookingsController < ApplicationController
   end
   
 	def check_inventory
-		if @booking.valid?
+		if @booking && @booking.valid?
 			if @booking.jsi.blank? && @booking.status == 0
 				cargroup = @booking.cargroup
 				@available = Inventory.do_check(@city.id, @booking.cargroup_id, @booking.location_id, (@booking.starts - cargroup.wait_period.minutes), (@booking.ends + cargroup.wait_period.minutes))

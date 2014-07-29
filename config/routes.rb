@@ -87,7 +87,11 @@ Web::Application.routes.draw do
 	
 	get '/job/:id' => 'main#job'
  	get ':action' => 'main', constraints: {action: /about|careers|contact|eligibility|handover|holidays|howitworks|howtozoom|map|member|outstation|reva|privacy/}
- 	get ':id' => 'main#redirect', constraints: {id: /join|mybookings|myaccount/}
+ 	
+ 	# Redirect
+ 	get ':id' => 'main#redirect', constraints: {id: /join|login|mybookings|myaccount|selfdrivecarrental/}
+ 	get '/jsi/:key/:id' => 'main#redirect'
+ 	get ':city/:id' => 'main#redirect', constraints: {action: /Pune|Bangalore/}
  	
 	scope "/(:city)", constraints: {city: /bangalore|pune/} do
 		get '/' => 'main#index'

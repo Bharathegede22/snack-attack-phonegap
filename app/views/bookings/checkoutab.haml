@@ -1,29 +1,10 @@
 :ruby
-	if @booking
+	if !@booking.blank?
 		cargroup = @booking.cargroup
 		location = @booking.location
-
-		fare = @booking.get_fare
-		pricing = @booking.pricing
-
-		tmp = ''
-		h = (@booking.ends.to_i - @booking.starts.to_i)/3600
-		h += 1 if (@booking.ends.to_i - @booking.starts.to_i) > h*3600
-		d = h/24
-		h -= d*24
-		if d == 1
-			tmp << "1 day, "
-		elsif d > 0
-			tmp << d.to_s + " days, "
-		end
-		if h == 1
-			tmp << "1 hour"
-		elsif h > 0
-			tmp << h.to_s + " hours"
-		end
 	else
-		cargroup = Cargroup.random
-		location = Location.random
+		cargroup = Cargroup.random(@city)
+		location = Location.random(@city)
 		@booking = Booking.new
 		@booking.starts = Time.today + 1.days
 		@booking.ends = Time.today + 2.days
@@ -32,13 +13,37 @@
 		@booking.city_id = @city.id
 		@booking.valid?
 	end
-
-
+	fare = @booking.get_fare
+	pricing = @booking.pricing
+	tmp = ''
+	h = (@booking.ends.to_i - @booking.starts.to_i)/3600
+	h += 1 if (@booking.ends.to_i - @booking.starts.to_i) > h*3600
+	d = h/24
+	h -= d*24
+	if d == 1
+		tmp << "1 day, "
+	elsif d > 0
+		tmp << d.to_s + " days, "
+	end
+	if h == 1
+		tmp << "1 hour"
+	elsif h > 0
+		tmp << h.to_s + " hours"
+	end
+	if current_user
+		user = current_user
+	else
+		user = User.find(100)
+		user.name = 'xxxxxxxxx'
+		user.email = 'xxxxxxxxx'
+		user.phone = 'xxxxxxxxx'
+		user.dob = Time.now - 25.years
+	end
 .content
 	= render :partial => "/bookings/search_steps", locals: {step: 4}
 	.wrapper
 		- render_flash
-		- if current_user && current_user.check_details
+		- if user && user.check_details
 			.full-content.bg-w.bs-9.position-r.z-2
 				.bg-zoomb.white.p-10.f-b.size-18.p-l10.p-r10
 					.fl
@@ -119,7 +124,7 @@
 						%td.p-5.p-l20.p-r20.size-12{'colspan' => '2'}
 							= render :partial => "promoab"
 
-					- if current_user && current_user.total_credits.to_i > 0
+					- if user && user.total_credits.to_i > 0
 						%tr
 							%td.p-5.p-l20.p-r20.size-12{'colspan' => '2'}
 								.bg-e.p-10.border-c.solid.r-5
@@ -210,7 +215,7 @@
 
 			.t-c
 				.m-auto.p-20{style: "width:400px;"}
-					- if @available == 1 && current_user && !current_user.is_blacklisted?
+					- if @available == 1 && user && !user.is_blacklisted?
 						%form{:action => "/bookings/docreate", :id => "CheckoutForm", :method => "post"}
 							%input{name: "starts", type: "hidden", value: session[:book][:starts]}
 							%input{name: "ends", type: "hidden", value: session[:book][:ends]}
@@ -235,15 +240,15 @@
 		%br/
 		/ .main-content.fl.bg-w.bs-9
 		/ 	.p-20
-		/ 		- if current_user && current_user.check_details
-		/ 			- if current_user.support?
+		/ 		- if user && user.check_details
+		/ 			- if user.support?
 		/ 				#CorporateDiv
 		/ 					= render :partial => 'corporate'
 		/ 			#OutstandingDiv
 		/ 				= render :partial => 'outstanding'
 		/ 			.t-c
 		/ 				.m-auto.p-20{style: "width:400px;"}
-		/ 					- if @available == 1 && current_user && !current_user.is_blacklisted?
+		/ 					- if @available == 1 && user && !user.is_blacklisted?
 		/ 						.button.m-auto{onclick: "checkout({starts: '#{session[:book][:starts]}',ends: '#{session[:book][:ends]}',loc: '#{session[:book][:loc]}',car: '#{session[:book][:car]}'});", style: "width:200px;"} Checkout
 		/ 					- else
 		/ 						.button-dis Checkout

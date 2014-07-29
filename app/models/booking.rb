@@ -218,9 +218,9 @@ class Booking < ActiveRecord::Base
 				when 'Late Return' then charge.amount.to_s + " - Late Charge." + self.ends.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.returned_at.strftime("%d/%m/%y %I:%M %p") + "<br/>"
 				when 'Rescheduling' 
 					if charge.refund
-						charge.amount.to_s + " - Reschedule Charge." + self.starts_last.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends_last.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.starts.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
-					else
 						charge.amount.to_s + " - Reschedule Refund." + self.starts_last.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends_last.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.starts.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
+					else
+						charge.amount.to_s + " - Reschedule Charge." + self.starts_last.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends_last.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.starts.strftime(" %d/%m/%y %I:%M %p") + " : " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
 					end
 				when 'Extending' then charge.amount.to_s + " - Extension Charges." + self.ends_last.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
 				when 'Shortening' then charge.amount.to_s + " - Shorten Refund." + self.ends_last.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
@@ -264,52 +264,47 @@ class Booking < ActiveRecord::Base
 		str = ''
 		fare = self.get_fare
 		return if self.starts == self.starts_last && self.ends == self.ends_last
-		if self.starts != self.starts_last
-			str = 'Rescheduling'
-			check = self.manage_inventory
-			if fare[:hours] > 0
-				action_text = 'reschedule_fee'
-				if check != 1
-					BookingMailer.change_failed(self.id).deliver
-					str = 'NA'
-				else
+		check = self.manage_inventory
+		if check != 1
+			BookingMailer.change_failed(self.id).deliver
+			str = 'NA'
+		else
+			if self.starts != self.starts_last
+				str = 'Rescheduling'
+				if fare[:hours] > 0
 					self.rescheduled = true
+					if fare[:refund] > 0
+						action_text = 'reschedule_refund'
+					else
+						action_text = 'reschedule_fee'
+					end
 				end
-			elsif fare[:hours] < 0
-				action_text = 'reschedule_refund'
-				self.rescheduled = true
-			end
-		elsif self.ends != self.ends_last
-			check = self.manage_inventory
-			if self.ends > self.ends_last
-				action_text = 'extension_fee'
-				if check == 1
+			elsif self.ends != self.ends_last
+				if self.ends > self.ends_last
+					action_text = 'extension_fee'
 					str = 'Extending'
 					self.extended = true
 				else
-					BookingMailer.change_failed(self.id).deliver
-					str = 'NA'
+					action_text = 'shortened_trip_refund'
+					str = 'Shortening'
+					self.shortened = true
 				end
-			else
-				action_text = 'shortened_trip_refund'
-				str = 'Shortening'
-				self.shortened = true
 			end
-		end
-		charge = self.do_charge(str, fare, action_text)
-		self.save(validate: false)
-		if fare[:hours] > 0 || str == 'Rescheduling'
-			if charge
-				if charge.refund == 1
-					total = -1 * charge.amount.to_i
+			charge = self.do_charge(str, fare, action_text)
+			self.save(validate: false)
+			if fare[:hours] > 0 || str == 'Rescheduling'
+				if charge
+					if charge.refund == 1
+						total = -1 * charge.amount.to_i
+					else
+						total = charge.amount.to_i
+					end
+					BookingMailer.change(self.id, total).deliver
+					sendsms('change', total)
 				else
-					total = charge.amount.to_i
+					BookingMailer.change(self.id, 0).deliver
+					sendsms('change', 0)
 				end
-				BookingMailer.change(self.id, total).deliver
-				sendsms('change', total)
-			else
-				BookingMailer.change(self.id, 0).deliver
-				sendsms('change', 0)
 			end
 		end
 		return [str, fare]
