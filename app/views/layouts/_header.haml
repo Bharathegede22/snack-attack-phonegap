@@ -7,15 +7,22 @@
 %nav.navbar.navbar-fixed-top{:role => "navigation"}
 	.wrapper
 		%a.logo{:href => '/'}
-		.broadcast.fl
-			#CityBar.dropdown.fr
-				%a.dropdown-toggle.p-r10.p-l10{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
-					= @city.name
-					%b.caret
-				%ul.dropdown-menu.pull-left
-					- City.active.each do |city|
-						%li
-							= link_to city.name, "/#{city.name.downcase}"
+		.fl
+			.broadcast.fl
+				#CityBar.dropdown.fr
+					%a.dropdown-toggle.p-r10.p-l10{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
+						= @city.name
+						%b.caret
+					%ul.dropdown-menu.pull-left
+						- City.active.each do |city|
+							%li
+								= link_to city.name, "/#{city.name.downcase}"
+			.fc
+			%a#android.block.mobile-app.m-t3{href: "https://play.google.com/store/apps/details?id=com.zoomcar&referrer=utm_source%3Dhome%2520page%26utm_medium%3Dheader%2520links%26utm_content%3Dandroid%26utm_campaign%3Dinstalls"}
+				Android app
+			%a#iphone.block.mobile-app.m-t3{href: "https://itunes.apple.com/us/app/zoomcar-self-drive-cars/id889910218?mt=8&utm_source=home%20page&utm_medium=header%20links&utm_content=iOS&utm_campaign=installs"}
+				iPhone app
+
 		.info
 			.broadcast.fr
 				#UserBar.dropdown.fr
