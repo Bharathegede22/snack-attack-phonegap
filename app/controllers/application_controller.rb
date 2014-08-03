@@ -7,6 +7,10 @@ class ApplicationController < ActionController::Base
   before_filter :check_city
   before_filter :check_ref
   
+  def abtest?
+    !cookies[:abtest].blank?
+  end
+
   def check_city
     # Checking explicit city in the url
     city_prompt = false
