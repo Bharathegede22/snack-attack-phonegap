@@ -8,6 +8,7 @@ class SeoController < ApplicationController
 	end
 	
 	def index
+		render_404 and return if !params[:id].include?('_')
 		str,id = CommonHelper.decode(params[:id].split('_').last.strip)
 		@object = case str
 		when 'attraction' then Attraction.find(id)
