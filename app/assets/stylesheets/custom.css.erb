@@ -1912,3 +1912,30 @@ a {
 	width: 480px;
 	margin-top: -10px;
 }
+.booking-includes {
+	background: #FBFBFB;
+	width: 520px;
+	margin-top: -10px;
+}
+.included {
+	color: #323A45;
+	font-size: 14px;
+	display: inline-block;
+	padding-left: 20px;
+	margin-right: 20px;
+	height: 18px;
+	background: url(<%= asset_path 'booking-includes.png' %>) no-repeat;
+}
+#inc-fuel { background-position: 0 0; }
+#inc-insurance { background-position: 0 -18px; }
+#inc-gps { background-position: 0 -36px; }
+#inc-taxes { background-position: 0 -54px; }
+
+.mobile-app, .mobile-app:hover {
+	color: #666;
+	height: 16px;
+	padding: 2px 0 1px 20px;
+	background: url(<%= asset_path 'mobile.png' %>) no-repeat;
+}
+#iphone { background-position: 0 0; }
+#android { background-position: 0 -16px; }
