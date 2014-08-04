@@ -6,6 +6,7 @@ class Car < ActiveRecord::Base
 	def check_inventory(city, starts_was, ends_was, starts, ends)
 		check = 1
 		cargroup = self.cargroup
+		
 		# Check Carblock
 		if starts != starts_was || ends != ends_was
 			if starts < starts_was
@@ -80,29 +81,43 @@ class Car < ActiveRecord::Base
 			check = 0 if Carblock.count(:conditions => ["car_id = ? AND ((starts <= ? AND ends > ?) OR (starts >= ? AND starts <= ?))", self.id, start_time, start_time, start_time, end_time]) > 0
 		end
 		
+		# Get Carmovements
 		carmovements = []
-		# Check Inventory
+		carmovements_m = []
 		if check == 1
 			start_time = starts
 			end_time = ends
 			if starts != starts_was || ends != ends_was
 				if starts < starts_was
 					start_time -= cargroup.wait_period.minutes
-					carmovements << [Carmovement.find(:all, :conditions => ["car_id = ? AND ((starts <= ? AND ends > ?) OR (starts >= ? AND starts <= ?))", self.id, start_time, start_time, start_time, starts_was]), start_time, starts_was, starts, starts_was]
+					cm = Carmovement.find(:all, :conditions => ["car_id = ? AND ((starts <= ? AND ends > ?) OR (starts >= ? AND starts <= ?))", self.id, start_time, start_time, start_time, starts_was])
+					carmovements << [cm, start_time, starts_was]
+					carmovements_m << [cm, starts, starts_was]
+				elsif starts > starts_was
+					cm = Carmovement.find(:all, :conditions => ["car_id = ? AND ((starts <= ? AND ends > ?) OR (starts >= ? AND starts <= ?))", self.id, starts_was, starts_was, starts_was, starts])
+					carmovements_m << [cm, starts_was, starts]
 				end
 				if ends > ends_was
 					end_time += cargroup.wait_period.minutes
-					carmovements << [Carmovement.find(:all, :conditions => ["car_id = ? AND ((starts <= ? AND ends > ?) OR (starts >= ? AND starts <= ?))", self.id, ends_was, ends_was, ends_was, end_time]), ends_was, end_time, ends_was, ends]
+					cm = Carmovement.find(:all, :conditions => ["car_id = ? AND ((starts <= ? AND ends > ?) OR (starts >= ? AND starts <= ?))", self.id, ends_was, ends_was, ends_was, end_time])
+					carmovements << [cm, ends_was, end_time]
+					carmovements_m << [cm, ends_was, ends]
+				elsif ends < ends_was
+					cm = Carmovement.find(:all, :conditions => ["car_id = ? AND ((starts <= ? AND ends > ?) OR (starts >= ? AND starts <= ?))", self.id, ends, ends, ends, ends_was])
+					carmovements_m << [cm, ends, ends_was]
 				end
 			else
 				start_time -= cargroup.wait_period.minutes
 				end_time += cargroup.wait_period.minutes
-				carmovements << [Carmovement.find(:all, :conditions => ["car_id = ? AND ((starts <= ? AND ends > ?) OR (starts >= ? AND starts <= ?))", self.id, start_time, start_time, start_time, end_time]), start_time, end_time, starts, ends]
+				cm = Carmovement.find(:all, :conditions => ["car_id = ? AND ((starts <= ? AND ends > ?) OR (starts >= ? AND starts <= ?))", self.id, start_time, start_time, start_time, end_time])
+				carmovements << [cm, start_time, end_time]
+				carmovements_m << [cm, starts, ends]
 			end
 		end
 		
 		Inventory.connection.clear_query_cache
 		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
+		# Check Inventory
 		if block
 			carmovements.uniq.each do |ar|
 				starts_tmp = ar[1]
@@ -119,9 +134,9 @@ class Car < ActiveRecord::Base
 		end
 			
 		if check == 1
-			carmovements.each do |ar|
-				starts_tmp = ar[3]
-				ends_tmp = ar[4]
+			carmovements_m.each do |ar|
+				starts_tmp = ar[1]
+				ends_tmp = ar[2]
 				ar[0].each do |cm|
 					start_time = (cm.starts > starts_tmp) ? cm.starts : starts_tmp
 					end_time = (cm.ends < ends_tmp) ? cm.ends : ends_tmp

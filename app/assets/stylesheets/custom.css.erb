@@ -1931,11 +1931,18 @@ a {
 #inc-gps { background-position: 0 -36px; }
 #inc-taxes { background-position: 0 -54px; }
 
-.mobile-app, .mobile-app:hover {
-	color: #666;
-	height: 16px;
-	padding: 2px 0 1px 20px;
-	background: url(<%= asset_path 'mobile.png' %>) no-repeat;
+.mobile-app {
+	margin-top: 15px;
 }
-#iphone { background-position: 0 0; }
-#android { background-position: 0 -16px; }
+
+.mobile-app .android, .mobile-app .iphone {
+	color: #666;
+	height: 20px;
+	width: 20px;
+	margin-right:5px;
+	background: url(<%= asset_path 'r.png' %>) no-repeat;
+	display:block;
+	float:left;
+}
+.mobile-app .iphone {background-position: 0 -130px;}
+.mobile-app .android {background-position: -20px -130px;}

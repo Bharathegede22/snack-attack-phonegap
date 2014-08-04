@@ -6,8 +6,8 @@
 		cargroup = Cargroup.random(@city)
 		location = Location.random(@city)
 		@booking = Booking.new
-		@booking.starts = Time.today + 1.days
-		@booking.ends = Time.today + 2.days
+		@booking.starts = Time.today + 30.days
+		@booking.ends = Time.today + 31.days
 		@booking.location_id = location.id
 		@booking.cargroup_id = cargroup.id
 		@booking.city_id = @city.id

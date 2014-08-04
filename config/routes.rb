@@ -91,7 +91,7 @@ Web::Application.routes.draw do
  	# Redirect
  	get ':id' => 'main#redirect', constraints: {id: /join|login|mybookings|myaccount|selfdrivecarrental/}
  	get '/jsi/:key/:id' => 'main#redirect'
- 	get ':city/:id' => 'main#redirect', constraints: {action: /Pune|Bangalore/}
+ 	get ':city/:id' => 'main#redirect', constraints: {city: /Pune|Bangalore/}
  	
 	scope "/(:city)", constraints: {city: /bangalore|pune/} do
 		get '/' => 'main#index'
