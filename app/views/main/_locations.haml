@@ -57,6 +57,7 @@
 					});
 					google.maps.event.addListener(marker#{l.id}, 'click', function() {
 						infowindow#{l.id}.open(map,marker#{l.id});
+						pushEvent('Locations Selected', '#{l.shortname}', 'Home Page Map');
 					});
 		:plain
 				google.maps.event.addListenerOnce(map, 'idle', function() {
