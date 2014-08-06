@@ -2,7 +2,7 @@
 	if @booking.user.check_license
 		url = "http://#{HOSTNAME}/bookings/#{@booking.encoded_id}"
 	else
-		url = "http://#{HOSTNAME}/users/license"
+		url = "http://#{HOSTNAME}/users/license?step=5"
 	end
 %div.droid.size-14.grey.t-c
 	%br/

@@ -1,5 +1,5 @@
 .content
-	= render :partial => "/bookings/search_steps", locals: {step: 3}
+	= render :partial => "/bookings/search_steps", locals: {step: 5}
 	.wrapper
 		- render_flash
 		.main-content.fl.bg-w.bs-9
@@ -32,6 +32,6 @@
 								.col-sm-6
 									= submit_tag "Submit", :class => 'btn btn-default btn-lg'
 		.sidebar-fixed.fr
-			= render :partial => "/bookings/sidebar", locals: {step: 3}
+			= render :partial => "/bookings/sidebar", locals: {step: 5}
 		.fc
 		%br/
