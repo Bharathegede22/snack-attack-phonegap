@@ -587,6 +587,7 @@ function userLogin() {
 		placement: 'bottom'
 	});
 	$('#UserBar').popover('show');
+	pushEvent('Sign In', 'Successful Sign-in', 'Home Page (My Account)');
 	window.setTimeout(clearLogin, 3000);
 }
 

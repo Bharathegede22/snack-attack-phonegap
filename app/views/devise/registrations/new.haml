@@ -4,10 +4,10 @@
 		%table.m-auto
 			%tr
 				%td.p-5
-					%a.facebook{:href => "#{user_omniauth_authorize_path(:facebook)}"}
+					%a.facebook{:href => "#{user_omniauth_authorize_path(:facebook)}", :onclick => "pushEvent('Sign Up', 'Facebook', 'Home Page (My Account)');"}
 						.txt Sign up with Facebook
 				%td.p-5
-					%a.gplus{:href => "#{user_omniauth_authorize_path(:google_oauth2)}"}
+					%a.gplus{:href => "#{user_omniauth_authorize_path(:google_oauth2)}", :onclick => "pushEvent('Sign Up', 'Google', 'Home Page (My Account)');"}
 						.txt Sign up with Google+
 		%br/
 		OR
@@ -20,28 +20,28 @@
 					.col-sm-3.col-sm-offset-1.t-r
 						%label.control-label Email
 					.col-sm-6
-						%input#LoginEmail.validate-presence.form-control{name: 'user[email]', type: "text", value: resource.email}
+						%input#LoginEmail.validate-presence.form-control{name: 'user[email]', type: "text", value: resource.email, :onclick => "pushEvent('Sign Up', 'Email', 'Home Page (My Account)');"}
 						#LoginEmailError.error.t-l
 							= errortxt(@user.errors[:email].uniq.join(', '))
 				.row.form-group
 					.col-sm-3.col-sm-offset-1.t-r
 						%label.control-label Password
 					.col-sm-6
-						%input#LoginPass.validate-presence.form-control{name: "user[password]", type: "password", value: resource.password}
+						%input#LoginPass.validate-presence.form-control{name: "user[password]", type: "password", value: resource.password, :onclick => "pushEvent('Sign Up', 'Password', 'Home Page (My Account)');"}
 						#LoginPassError.error.t-l
 							= errortxt(@user.errors[:password].uniq.join(', '))
 				.row.form-group
 					.col-sm-3.col-sm-offset-1.t-r
 						%label.control-label Confirm Password
 					.col-sm-6
-						%input#LoginPassConfirm.validate-presence.form-control{name: "user[password_confirmation]", type: "password"}
+						%input#LoginPassConfirm.validate-presence.form-control{name: "user[password_confirmation]", type: "password", :onclick => "pushEvent('Sign Up', 'Confirm Password', 'Home Page (My Account)');"}
 						#LoginPassConfirmError.error.t-l
 							= errortxt(@user.errors[:password_confirmation].join(', '))
 				.row
 					.col-sm-3.col-sm-offset-1
 					.col-sm-6.t-l
 						#LoginSubmit
-							= submit_tag "Submit", :class => 'btn btn-default btn-lg'
+							= submit_tag "Submit", :class => 'btn btn-default btn-lg', :onclick => "pushEvent('Sign Up', 'Sign-up Submit', 'Home Page (My Account)');"
 						#LoginWait.p-5.hide
 							.wait
 		.p-t20

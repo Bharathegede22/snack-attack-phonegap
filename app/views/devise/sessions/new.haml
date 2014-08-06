@@ -4,10 +4,10 @@
 		%table.m-auto
 			%tr
 				%td.p-5
-					%a.facebook{:href => "#{user_omniauth_authorize_path(:facebook)}"}
+					%a.facebook{:href => "#{user_omniauth_authorize_path(:facebook)}", :onclick => "pushEvent('Sign In', 'Facebook', 'Home Page (My Account)');"}
 						.txt Sign in with Facebook
 				%td.p-5
-					%a.gplus{:href => "#{user_omniauth_authorize_path(:google_oauth2)}"}
+					%a.gplus{:href => "#{user_omniauth_authorize_path(:google_oauth2)}", :onclick => "pushEvent('Sign In', 'Google', 'Home Page (My Account)');"}
 						.txt Sign in with Google+
 		%br/
 		OR
@@ -20,14 +20,14 @@
 					.col-sm-2.col-sm-offset-2.t-r
 						%label.control-label Email
 					.col-sm-6
-						%input#LoginEmail.validate-presence.form-control{name: 'user[email]', type: "text", value: @user.email}
+						%input#LoginEmail.validate-presence.form-control{name: 'user[email]', type: "text", value: @user.email, :onclick => "pushEvent('Sign In', 'Email', 'Home Page (My Account)');"}
 						#LoginEmailError.error.t-l
 							= errortxt(@user.errors[:email].uniq.join(', '))
 				.row.form-group
 					.col-sm-2.col-sm-offset-2.t-r
 						%label.control-label Password
 					.col-sm-6
-						%input#LoginPass.validate-presence.form-control{name: "user[password]", type: "password"}
+						%input#LoginPass.validate-presence.form-control{name: "user[password]", type: "password", :onclick => "pushEvent('Sign In', 'Password', 'Home Page (My Account)');"}
 						#LoginPassError.error.t-l
 							= errortxt(@user.errors[:password].uniq.join(', '))
 				- if devise_mapping.rememberable?
@@ -39,7 +39,7 @@
 					.col-sm-2.col-sm-offset-2
 					.col-sm-6.t-l
 						#LoginSubmit
-							= submit_tag "Submit", :class => 'btn btn-default btn-lg'
+							= submit_tag "Submit", :class => 'btn btn-default btn-lg', :onclick => "pushEvent('Sign In', 'Sign in Submit', 'Home Page (My Account)');"
 						#LoginWait.p-5.hide
 							.wait
 		.p-t20
