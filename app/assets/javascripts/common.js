@@ -654,12 +654,10 @@ function TrackEventsForPageScroll(isDuplicate) {
 		}
 		//70% is the mark where map occupies major part of the screen - middle part of page visually
 		if(percentage >= 70 && isDuplicate < 1) {
-			alert("Page Scrolled to 70% in " + document.location.href);
 			pushEvent('Home Page Scroll', 'Middle');
 			isDuplicate = 1;
 		}
 		else if(percentage >= 100 && isDuplicate < 2) {
-			alert("Page Scrolled to 100% in " + document.location.href);
 			pushEvent('Home Page Scroll', 'Bottom');
 			isDuplicate = 2;
 		}

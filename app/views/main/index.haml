@@ -98,11 +98,9 @@
 :javascript
 	function checkJquery() {
 		if(window.jQuery) {
-			alert('ready');
 			TrackEventsForPageScroll(0);
 		}
 		else {
-			alert('waiting');
 			window.setTimeout(checkJquery, 1000);
 		}
 	}
