@@ -216,12 +216,14 @@ function initializeDatePicker() {
 		minView: 2, 
 		autoclose: true
 	});
+	var dropdownCheck = 0;
 	$(".datetimebox").click(function() {
 		var id = $(this).attr("id");
 		$('#' + id + 'ValError').hide();
 		$('#' + id + 'Val').removeClass('field_with_errors');
 		$('#' + id + 'Val').datetimepicker('show');
 		if(id.search('Start') != -1) {
+			dropdownCheck = 0;
 			if($('#' + id + 'Val').hasClass('starts-home')) {
 				pushEvent('Homepage Search', 'Starts');
 			} else if($('#' + id + 'Val').hasClass('starts-nav')) {
@@ -234,6 +236,7 @@ function initializeDatePicker() {
 				pushEvent('Rescheduler', 'New Starts');
 			}
 		} else if(id.search('End') != -1) {
+			dropdownCheck = 1;
 			var pid = id.replace('End','Start');
 			if($('#' + pid + 'Val').val() != $('#' + pid + 'Val').attr('dummy-title')) {
 				$('#' + id + 'Val').datetimepicker('show');
@@ -255,6 +258,34 @@ function initializeDatePicker() {
 			}
 		}
 	});
+	$('.datetimepicker-days').click(function(){
+		if(dropdownCheck==0) {
+			pushEvent('Search Bar', 'Pickup Date');
+		}
+		else {
+			pushEvent('Search Bar', 'Drop Date');
+		}
+	});
+
+	$('.datetimepicker-hours').click(function(){
+		if(dropdownCheck==0) {
+			pushEvent('Search Bar', 'Pickup Hour');
+		}
+		else {
+			pushEvent('Search Bar', 'Drop Hour');
+		}
+	});
+
+	$('.datetimepicker-minutes').click(function(){
+		if(dropdownCheck==0) {
+			pushEvent('Search Bar', 'Pickup Minute');
+			dropdownCheck = 1;
+		}
+		else {
+			pushEvent('Search Bar', 'Drop Minute');
+		}
+	});
+
 	$('.datetime').datetimepicker().on('hide', function(ev) {
 		if(ev.date.valueOf() < jQuery.now().valueOf()) {
 			$('#' + ev.currentTarget.id).val($('#' + ev.currentTarget.id).attr('dummy-title'));
@@ -570,7 +601,7 @@ function SubmitForm(frm,url,divId){
   return false;
 } 
 
-function TrackEventsForPageScroll(isDuplicate) {
+function trackEventsForPageScroll(isDuplicate) {
 	$(window).scroll(function(){
 		var bottom = $(window).height() + $(window).scrollTop();
 		var height = $(document).height();
