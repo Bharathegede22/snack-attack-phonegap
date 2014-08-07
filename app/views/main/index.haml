@@ -62,7 +62,7 @@
 				#BubbleAllIn.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>No Hidden Costs</b><br/>Here at Zoom, you will get what you pay for. Following items are standard in all our cars.", :onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'NoHiddenCosts');"}
 					.p-10
 						.all-in
-				#BubbleFuel.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Fuel is Ours</b><br/>All Zoom reservations comes with unlimited fuel as part of the tariff. If you need more fuel, just fill up the tank, keep the receipt and <b><u><i>we will refund the amount!</i></u></b>.", :onmouseover => "pushEvent('TAdditional Benefits ( Home Page )', 'fuel');"}
+				#BubbleFuel.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Fuel is Ours</b><br/>All Zoom reservations comes with unlimited fuel as part of the tariff. If you need more fuel, just fill up the tank, keep the receipt and <b><u><i>we will refund the amount!</i></u></b>.", :onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'fuel');"}
 					.p-10
 						.fuel
 				#BubbleInsurance.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>No Worries, You're All Covered</b><br/>All Zoom reservations are covered with full comprehensive insurance, as long as a Zoom member is driving the car. <b><u><i>Maximum liability</i></u> for any damage for a Zoom member <u><i>is Rs.5000</i></u></b>.", :onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'Insurance');"}
@@ -94,3 +94,16 @@
 = render :partial => '/main/locations'
 = render :partial => '/main/reviews'
 = render :partial => '/main/press'
+
+:javascript
+	function checkJquery() {
+		if(window.jQuery) {
+			alert('ready');
+			TrackEventsForPageScroll(0);
+		}
+		else {
+			alert('waiting');
+			window.setTimeout(checkJquery, 1000);
+		}
+	}
+	checkJquery();

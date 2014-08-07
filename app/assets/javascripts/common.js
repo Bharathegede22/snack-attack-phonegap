@@ -642,3 +642,26 @@ $(function () {
   		$(this).tab('show');
 	})
 });
+
+function TrackEventsForPageScroll(isDuplicate) {
+	$(window).scroll(function(){
+		var bottom = $(window).height() + $(window).scrollTop();
+		var height = $(document).height();
+		var percentage = Math.round(100*bottom/height);
+
+		if(isDuplicate == 0) {
+			pushEvent('Home Page Scroll', 'Top');
+		}
+		//70% is the mark where map occupies major part of the screen - middle part of page visually
+		if(percentage >= 70 && isDuplicate < 1) {
+			alert("Page Scrolled to 70% in " + document.location.href);
+			pushEvent('Home Page Scroll', 'Middle');
+			isDuplicate = 1;
+		}
+		else if(percentage >= 100 && isDuplicate < 2) {
+			alert("Page Scrolled to 100% in " + document.location.href);
+			pushEvent('Home Page Scroll', 'Bottom');
+			isDuplicate = 2;
+		}
+	});
+}
