@@ -70,7 +70,7 @@ function changeCar(id,name,dom,action) {
 	if(action == 'home') {
 		pushEvent('Homepage Search', 'Car', name);
 	} else if(action == 'nav') {
-		pushEvent('Navigation Search', 'Car', name);
+		pushEvent('Cars Selected', name, 'Search Bar');
 	} else if(action == 'cal') {
 		pushEvent('Calculator', 'Car', name);
 	} else if(action == 'recal') {
@@ -86,7 +86,7 @@ function changeLocation(id,name,action) {
 	if(action == 'home') {
 		pushEvent('Homepage Search', 'Location', name);
 	} else if(action == 'nav') {
-		pushEvent('Navigation Search', 'Location', name);
+		pushEvent('Locations Selected', name, 'Search Bar');
 	}
 }
 
@@ -225,9 +225,9 @@ function initializeDatePicker() {
 			if($('#' + id + 'Val').hasClass('starts-home')) {
 				pushEvent('Homepage Search', 'Starts');
 			} else if($('#' + id + 'Val').hasClass('starts-nav')) {
-				pushEvent('Navigation Search', 'Starts');
+				pushEvent('Search Bar', 'Pickup Dropdown');
 			} else if($('#' + id + 'Val').hasClass('starts-cal')) {
-				pushEvent('Calculator', 'Starts');
+				pushEvent('Calculator', 'Starts', 'Tariff Page');
 			} else if($('#' + id + 'Val').hasClass('starts-recal')) {
 				pushEvent('Rescheduler', 'Org Starts');
 			} else if($('#' + id + 'Val').hasClass('newstarts-recal')) {
@@ -240,9 +240,9 @@ function initializeDatePicker() {
 				if($('#' + id + 'Val').hasClass('ends-home')) {
 					pushEvent('Homepage Search', 'Ends');
 				} else if($('#' + id + 'Val').hasClass('ends-nav')) {
-					pushEvent('Navigation Search', 'Ends');
+					pushEvent('Search Bar', 'Drop Dropdown');
 				} else if($('#' + id + 'Val').hasClass('ends-cal')) {
-					pushEvent('Calculator', 'Ends');
+					pushEvent('Calculator', 'Ends', 'Tariff Page');
 				} else if($('#' + id + 'Val').hasClass('ends-recal')) {
 					pushEvent('Rescheduler', 'Org Ends');
 				} else if($('#' + id + 'Val').hasClass('newends-recal')) {
@@ -570,6 +570,27 @@ function SubmitForm(frm,url,divId){
   return false;
 } 
 
+function TrackEventsForPageScroll(isDuplicate) {
+	$(window).scroll(function(){
+		var bottom = $(window).height() + $(window).scrollTop();
+		var height = $(document).height();
+		var percentage = Math.round(100*bottom/height);
+
+		if(isDuplicate == 0) {
+			pushEvent('Home Page Scroll', 'Top');
+		}
+		//70% is the mark where map occupies major part of the screen - middle part of page visually
+		if(percentage >= 70 && isDuplicate < 1) {
+			pushEvent('Home Page Scroll', 'Middle');
+			isDuplicate = 1;
+		}
+		else if(percentage >= 100 && isDuplicate < 2) {
+			pushEvent('Home Page Scroll', 'Bottom');
+			isDuplicate = 2;
+		}
+	});
+}
+
 function userActive() {
 	$('#UserBar').popover({
 		title: 'Signup',
@@ -642,24 +663,3 @@ $(function () {
   		$(this).tab('show');
 	})
 });
-
-function TrackEventsForPageScroll(isDuplicate) {
-	$(window).scroll(function(){
-		var bottom = $(window).height() + $(window).scrollTop();
-		var height = $(document).height();
-		var percentage = Math.round(100*bottom/height);
-
-		if(isDuplicate == 0) {
-			pushEvent('Home Page Scroll', 'Top');
-		}
-		//70% is the mark where map occupies major part of the screen - middle part of page visually
-		if(percentage >= 70 && isDuplicate < 1) {
-			pushEvent('Home Page Scroll', 'Middle');
-			isDuplicate = 1;
-		}
-		else if(percentage >= 100 && isDuplicate < 2) {
-			pushEvent('Home Page Scroll', 'Bottom');
-			isDuplicate = 2;
-		}
-	});
-}
