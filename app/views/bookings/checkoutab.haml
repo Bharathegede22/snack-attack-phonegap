@@ -53,11 +53,11 @@
 					.fc
 
 				.summary-cell.fl.border-r-c
-					.p-t5.p-b5.p-r20.p-l10.size-16
-						.fl.m-l15.colored
+					.p-t5.p-b5.t-c.size-16
+						.inline-block.colored
 							.m-auto{:class => 'car' + @booking.cargroup_id.to_s}
-						.fl.p-t15.p-l10
-							.size-20.f-b.zoom-b
+						.inline-block.p-l5.t-l.position-r{style: "top: -20px;"}
+							.size-18.f-b.zoom-b
 								= cargroup.display_name
 								- if !cargroup.disclaimer.blank?
 									%span.red.size-12.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => cargroup.disclaimer.html_safe}
@@ -65,7 +65,6 @@
 							.size-14.m-t5.lgrey
 								= cargroup.seating
 								Seater
-						.fc
 
 				.summary-cell.fl.border-r-c.t-c
 					.p-t8.p-b8.border-b-c
@@ -86,20 +85,18 @@
 							Pickup Location
 						.zoom-b.f-b.size-12
 							= location.shortname
+							%span.size-11.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "View Map", onclick: "showModal('#{location.shortname}', '/map?lat=#{location.lat}&lng=#{location.lng}&title=#{location.shortname}');"}
+								[?]
 							- if !location.disclaimer.blank?
 								- if location.id == 10 or location.id == 8
 									%div.red.size-11.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => location.disclaimer.html_safe}
-										[not a resident?]
+										(not a resident?)
 								- elsif location.id == 11
 									%span.red.size-11.help.pointer.f-n{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => location.disclaimer.html_safe}
-										[not an employee?]
+										(not an employee?)
 								- else
 									%span.red.size-12.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => location.disclaimer.html_safe}
 										[?]
-
-
-						.size-11.help.pointer{onclick: "showModal('#{location.shortname}', '/map?lat=#{location.lat}&lng=#{location.lng}&title=#{location.shortname}');"}
-							(view map)
 
 				.summary-cell.fl.p-15
 					#duration.p-t10.p-b10.p-l5.p-r5.icon
