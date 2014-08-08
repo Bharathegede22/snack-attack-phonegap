@@ -334,6 +334,18 @@ function mapZoom(map,newVal) {
 	return false;
 }
 
+function newUserSessionEvent(path, category, action) {
+	if(path=='/bangalore'||path=='/pune') {
+		pushEvent(category, action, 'Home Page (My Account)');
+	}
+	else if(path=='/bookings/login') {
+		pushEvent(category, action, 'Login Process');
+	}
+	else {
+		pushEvent(category, action, 'Misc');
+	}
+}
+
 function populateLocations(cityId, zoom, divId) {
 	$("#"+divId+'Wait').show();
 	$("#"+divId).html('');
