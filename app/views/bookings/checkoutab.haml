@@ -87,8 +87,16 @@
 						.zoom-b.f-b.size-12
 							= location.shortname
 							- if !location.disclaimer.blank?
-								%span.red.size-12.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => location.disclaimer.html_safe}
-									[?]
+								- if location.id == 10 or location.id == 8
+									%div.red.size-11.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => location.disclaimer.html_safe}
+										[not a resident?]
+								- elsif location.id == 11
+									%span.red.size-11.help.pointer.f-n{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => location.disclaimer.html_safe}
+										[not an employee?]
+								- else
+									%span.red.size-12.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => location.disclaimer.html_safe}
+										[?]
+
 
 						.size-11.help.pointer{onclick: "showModal('#{location.shortname}', '/map?lat=#{location.lat}&lng=#{location.lng}&title=#{location.shortname}');"}
 							(view map)
