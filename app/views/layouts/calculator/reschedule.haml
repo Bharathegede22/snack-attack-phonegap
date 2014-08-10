@@ -108,7 +108,7 @@
 				#NewEndDateValError.error
 		.t-c
 			#ReschSubmit
-				= submit_tag "Calculate", :class => 'button size-12 m-auto'
+				= submit_tag "Calculate", :class => 'button size-12 m-auto', :onclick => "pushEvent('Trip Modification Estimator ( Tariff Page )', 'Trip Modification');"
 			#ReschWait.p-t15.p-b5{:style => 'display:none;'}
 				.wait
 - if !@tariff.blank?
