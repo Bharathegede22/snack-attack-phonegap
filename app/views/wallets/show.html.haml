@@ -1,0 +1,21 @@
+.panel.panel-default
+	.panel-heading
+		%h3.panel-title Your Deposit Wallet
+	.panel-body
+		%h3 Total: #{current_user.wallet_total_amount}
+		%h3 Available: #{current_user.wallet_total_amount}
+		%h3 Fronzen: #{current_user.wallet_frozen_amount}
+		= form_tag 'refundDeposit' do
+			= text_field_tag 'amount'
+			= submit_tag 'Refund'
+
+		%h3 Wallet Snapshot
+		%table.table
+			%th Date
+			%th Available For Refund
+			%th Booking
+			-current_user.wallet_snapshot.each do |snap|
+				%tr
+					%td= #{snap.key}
+					%td= #{snap.value.fetch :amount}
+					%td= #{snap.value.fetch :booking}

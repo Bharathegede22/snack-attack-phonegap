@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
   has_one :image, :as => :imageable, dependent: :destroy
   has_many :bookings
   has_many :credits
+  has_many :wallets
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable 
   devise :database_authenticatable, :registerable, :confirmable, 
@@ -56,6 +57,7 @@ class User < ActiveRecord::Base
   	when 'completed' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND ends < '#{Time.zone.now.to_s(:db)}' AND status < 8", 'id DESC']
   	when 'cancelled' then ["status > 8", 'id DESC']
   	when 'unfinished' then ["jsi IS NULL AND status = 0", 'id DESC']
+  	when 'wallet_frozen' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND starts <= '#{(Time.zone.now+CommonHelper::WALLET_FREEZE_START.hours).to_s(:db)}' AND ends >= '#{(Time.zone.now+CommonHelper::WALLET_FREEZE_END.hours).to_s(:db)}' AND status < 8", 'starts ASC']
   	end
   	
   	if Rails.env == 'production'
@@ -229,8 +231,6 @@ class User < ActiveRecord::Base
 		end
 	end
 
-  private
-  
   def before_create_tasks
   	#self.confirmed_at = Time.now + 2.hours
   end
@@ -251,4 +251,32 @@ class User < ActiveRecord::Base
   	otp_valid_till && otp_valid_till > Time.now
   end
 
+	def wallet_total_amount
+		wallets.collect{|wallet| wallet.credit ? wallet.amount : -wallet.amount}.sum
+	end
+  	
+  	def wallet_frozen_bookings
+  		[]
+  	end
+
+  	def wallet_frozen_amount
+  		wallet_frozen_bookings.each do |booking|
+  			#booking.
+  		end
+  		return 0
+	end
+
+	def wallet_available_amount
+		wallet_total_amount - wallet_frozen_amount
+	end
+
+	def wallet_snapshot(snap_start= Time.now, snap_end= snap_start+CommonHelper::WALLET_SNAPSHOT.days)
+		snapshot = {snap_start => {available: wallet_available_amount, total: wallet_total_amount}}
+		bookings.each do |booking|
+			#booking.starts=
+		end
+		{}
+	end 
+	
+	private :before_create_tasks, :before_validation_tasks, :valid_otp_length?
 end

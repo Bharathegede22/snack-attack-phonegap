@@ -49,6 +49,12 @@ class Booking < ActiveRecord::Base
 		charge.save
 	end
 
+	def add_security_deposit_to_wallet
+		if !security_charge.nil? && security_refund.nil?
+			Wallet.create!(amount: security_amount, user_id: self.id, credit: true, charge_id: security_charge.id)
+		end
+	end
+
 	def cancellation_charge
 		total = Charge.find_by_booking_id_and_activity(self.id, 'cancellation_charge')
 		if total
@@ -475,8 +481,20 @@ class Booking < ActiveRecord::Base
 		#Utilization.manage(id)
 	end
 
+	def security_amount
+		pricing.mode::SECURITY rescue 0
+	end
+
 	def security_amount_deferred?
-		pricing.mode::SECURITY > 0 && !charges.where(activity: 'security_deposit', :active=>true).any?
+		pricing.mode::SECURITY > 0 && !security_charge.nil?
+	end
+
+	def security_charge
+		charges.where(activity: 'security_deposit', :active=>true).first
+	end
+	
+	def security_refund
+		charges.where(activity: 'security_deposit', :active=>true).first
 	end
 
 	def sendsms(action, amount)
@@ -673,6 +691,7 @@ class Booking < ActiveRecord::Base
 			self.notes = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs." + self.total.to_i.to_s + " - Booking Charges."
 			self.notes += self.starts.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
 		else
+			add_security_deposit_to_wallet if self.outstanding==0
 			self.total = self.revenue
 			self.balance = self.outstanding
 		end

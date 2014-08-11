@@ -16,22 +16,26 @@ module CommonHelper
   	"How was the Pick-Up location?", 
   	"How was the fleet executive's behaviour?"
   ]
-  RATINGS = [["Terrible", 1], ["Bad", 2], ["Average", 3], ["Good", 4], ["Excellent", 5]]
-  
-	CUSTOMER_CARE = "080-33013371"
+	RATINGS             = [["Terrible", 1], ["Bad", 2], ["Average", 3], ["Good", 4], ["Excellent", 5]]
+	
+	CUSTOMER_CARE       = "080-33013371"
 	CUSTOMER_CARE_EMAIL = "contact@zoomcar.in"
-	LIABILITY = '5,000'
-	ALLOTMENT = 90
-	WEEKDAY_DISCOUNT = 40
-	BOOKING_WINDOW = 60
-	MIN_AGE = 21
+	LIABILITY           = '5,000'
+	ALLOTMENT           = 90
+	WEEKDAY_DISCOUNT    = 40
+	BOOKING_WINDOW      = 60
+	MIN_AGE             = 21
 	
-	JIT_DEPOSIT_CANCEL = 24
-	JIT_DEPOSIT_ALLOW = 24
-	JIT_DEPOSIT_ALERT = 48
+	JIT_DEPOSIT_CANCEL  = 24
+	JIT_DEPOSIT_ALLOW   = 24
+	JIT_DEPOSIT_ALERT   = 48
 	
-  BLACKLISTED_STATUS = 1
-  BOOKING_WINDOW = 60
+	WALLET_SNAPSHOT     = 30
+	WALLET_FREEZE_START = 24
+	WALLET_FREEZE_END   = 6
+	
+	BLACKLISTED_STATUS  = 1
+	BOOKING_WINDOW      = 60
   
 	ENCODING_ARRAY = ["7", "c", "i", "j", "o", "k", "z", "l", "q", "r", "m", "8", "h", "u", "g", "w", "3", "1", "y", "p", "5", "s", "0", "d", "a", "e", "v", "t", "2", "4", "f", "b", "x", "6", "n", "9"]
   
