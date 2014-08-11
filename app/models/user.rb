@@ -57,9 +57,10 @@ class User < ActiveRecord::Base
   	when 'completed' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND ends < '#{Time.zone.now.to_s(:db)}' AND status < 8", 'id DESC']
   	when 'cancelled' then ["status > 8", 'id DESC']
   	when 'unfinished' then ["jsi IS NULL AND status = 0", 'id DESC']
-  	when 'wallet_frozen' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND starts <= '#{(Time.zone.now+CommonHelper::WALLET_FREEZE_START.hours).to_s(:db)}' AND ends >= '#{(Time.zone.now+CommonHelper::WALLET_FREEZE_END.hours).to_s(:db)}' AND status < 8", 'starts ASC']
+  	when 'wallet_frozen' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND ((starts >= '#{Time.zone.now.to_s(:db)}' AND starts <= '#{(Time.zone.now+CommonHelper::WALLET_FREEZE_START.hours).to_s(:db)}') OR (ends < '#{Time.zone.now.to_s(:db)}' AND ends >= '#{(Time.zone.now-CommonHelper::WALLET_FREEZE_END.hours).to_s(:db)}')) AND status < 8", 'starts ASC']
+  	when 'wallet_snapshot' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND ends >= '#{(Time.zone.now-CommonHelper::WALLET_FREEZE_END.hours).to_s(:db)}' AND ends <= '#{(Time.zone.now-(Commonhelper::WALLET_SNAPSHOT.days+CommonHelper::WALLET_FREEZE_START.hours)).to_s(:db)}' AND status > 0", 'ends ASC']
   	end
-  	
+
   	if Rails.env == 'production'
   		return Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND #{sql} ORDER BY #{order} LIMIT 10 OFFSET #{page*10}")
   	else
@@ -256,14 +257,11 @@ class User < ActiveRecord::Base
 	end
   	
   	def wallet_frozen_bookings
-  		[]
+  		get_bookings('live') | get_bookings('wallet_frozen')
   	end
 
   	def wallet_frozen_amount
-  		wallet_frozen_bookings.each do |booking|
-  			#booking.
-  		end
-  		return 0
+  		wallet_frozen_bookings.collect(&:security_amount).sum
 	end
 
 	def wallet_available_amount
@@ -271,11 +269,10 @@ class User < ActiveRecord::Base
 	end
 
 	def wallet_snapshot(snap_start= Time.now, snap_end= snap_start+CommonHelper::WALLET_SNAPSHOT.days)
-		snapshot = {snap_start => {available: wallet_available_amount, total: wallet_total_amount}}
-		bookings.each do |booking|
-			#booking.starts=
+		snapshot = [snap_start, {available: wallet_available_amount, total: wallet_total_amount}]
+		get_bookings('wallet_snapshot').each do |booking|
+			snapshot << booking.wallet_impact
 		end
-		{}
 	end 
 	
 	private :before_create_tasks, :before_validation_tasks, :valid_otp_length?

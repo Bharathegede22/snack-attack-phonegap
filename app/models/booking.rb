@@ -661,6 +661,11 @@ class Booking < ActiveRecord::Base
 		self.user_mobile = user.phone
 	end
 	
+	def wallet_impact
+		[[(starts-CommonHelper::WALLET_FREEZE_START.hours), {booking: self.confirmation_key, amount: -security_amount],
+		 [(ends+CommonHelper::WALLET_FREEZE_END.hours), {booking: self.confirmation_key, amount: security_amount}]]
+	end
+
 	protected
 	
 	def after_create_tasks
