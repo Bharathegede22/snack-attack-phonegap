@@ -51,7 +51,7 @@ class Booking < ActiveRecord::Base
 
 	def add_security_deposit_to_wallet
 		if Wallet.find_by(charge_id: security_charge.id).nil? && security_refund.nil?
-			Wallet.create!(amount: security_amount, user_id: self.user_id, credit: true, charge_id: security_charge.id)
+			Wallet.create!(amount: security_amount, user_id: self.user_id, status: 1, credit: true, charge_id: security_charge.id)
 		end
 	end
 
@@ -490,7 +490,7 @@ class Booking < ActiveRecord::Base
 	end
 
 	def security_amount_deferred?
-		pricing.mode::SECURITY > 0 && !security_charge.nil?
+		pricing.mode::SECURITY > 0 && security_charge.nil?
 	end
 
 	def security_charge
@@ -498,7 +498,7 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def security_refund
-		charges.where(activity: 'security_deposit', :active=>true).first
+		charges.where(activity: 'security_deposit_refund', :active=>true).first
 	end
 
 	def sendsms(action, amount)
@@ -702,7 +702,6 @@ class Booking < ActiveRecord::Base
 			self.notes = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs." + self.total.to_i.to_s + " - Booking Charges."
 			self.notes += self.starts.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
 		else
-			add_security_deposit_to_wallet if !security_amount_deferred? && self.outstanding==0
 			self.total = self.revenue
 			self.balance = self.outstanding
 		end

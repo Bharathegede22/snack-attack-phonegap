@@ -163,6 +163,7 @@ class Payment < ActiveRecord::Base
 				b.save(:validate => false)
 				Booking.recalculate(b.id)
 			end
+			b.add_security_deposit_to_wallet if !b.security_amount_deferred? && b.outstanding==0
 		end
 	end
 	
