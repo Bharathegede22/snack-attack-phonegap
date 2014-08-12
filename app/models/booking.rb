@@ -50,8 +50,8 @@ class Booking < ActiveRecord::Base
 	end
 
 	def add_security_deposit_to_wallet
-		if !security_charge.nil? && security_refund.nil?
-			Wallet.create!(amount: security_amount, user_id: self.id, credit: true, charge_id: security_charge.id)
+		if Wallet.find_by(charge_id: security_charge.id).nil? && security_refund.nil?
+			Wallet.create!(amount: security_amount, user_id: self.user_id, credit: true, charge_id: security_charge.id)
 		end
 	end
 
@@ -364,6 +364,10 @@ class Booking < ActiveRecord::Base
 		return "Pricing#{self.pricing.version}".constantize.check(self)
 	end
 	
+	def hold_security?
+		self.hold == true
+	end
+	
 	def link
 		return "http://" + HOSTNAME + "/bookings/" + self.encoded_id
 	end
@@ -662,21 +666,23 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def wallet_impact
-		[[(starts-CommonHelper::WALLET_FREEZE_START.hours), {booking: self.confirmation_key, amount: -security_amount],
-		 [(ends+CommonHelper::WALLET_FREEZE_END.hours), {booking: self.confirmation_key, amount: security_amount}]]
+		{starts: (starts-CommonHelper::WALLET_FREEZE_START.hours),
+		 booking: self.confirmation_key,
+		 amount: hold_security? ? 0 : -security_amount,
+		 ends: (ends+CommonHelper::WALLET_FREEZE_END.hours)}
 	end
 
 	protected
 	
 	def after_create_tasks
-		charge 													= Charge.new(:booking_id => self.id, :activity => 'booking_fee')
-		charge.hours 										= self.hours
-		charge.billed_total_hours 			= self.hours
-		charge.billed_discounted_hours 	= self.discounted_hours
-		charge.billed_standard_hours 		= self.normal_hours
-		charge.estimate 								= self.estimate
-		charge.discount 								= self.discount
-		charge.amount 									= self.total_fare
+		charge                         = Charge.new(:booking_id => self.id, :activity => 'booking_fee')
+		charge.hours                   = self.hours
+		charge.billed_total_hours      = self.hours
+		charge.billed_discounted_hours = self.discounted_hours
+		charge.billed_standard_hours   = self.normal_hours
+		charge.estimate                = self.estimate
+		charge.discount                = self.discount
+		charge.amount                  = self.total_fare
 		charge.save
 		add_security_deposit_charge if self.defer_deposit.blank? && self.pricing.mode::SECURITY > 0
 		self.confirmation_key = self.encoded_id.upcase
@@ -696,7 +702,7 @@ class Booking < ActiveRecord::Base
 			self.notes = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs." + self.total.to_i.to_s + " - Booking Charges."
 			self.notes += self.starts.strftime(" %d/%m/%y %I:%M %p") + " -> " + self.ends.strftime("%d/%m/%y %I:%M %p") + "<br/>"
 		else
-			add_security_deposit_to_wallet if self.outstanding==0
+			add_security_deposit_to_wallet if !security_amount_deferred? && self.outstanding==0
 			self.total = self.revenue
 			self.balance = self.outstanding
 		end

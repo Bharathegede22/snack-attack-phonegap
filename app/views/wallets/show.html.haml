@@ -10,12 +10,9 @@
 			= submit_tag 'Refund'
 
 		%h3 Wallet Snapshot
-		%table.table
-			%th Date
-			%th Available For Refund
-			%th Booking
-			-current_user.wallet_snapshot.each do |snap|
-				%tr
-					%td= #{snap.key}
-					%td= #{snap.value.fetch :amount}
-					%td= #{snap.value.fetch :booking}
+		/ %table.table
+		/ 	-snap = current_user.wallet_snapshot
+		/ 	%tr
+		/ 		%td= #{snap.key}
+		/ 		%td= #{snap.value.fetch :amount}
+		/ 		%td= #{snap.value.fetch :booking}
