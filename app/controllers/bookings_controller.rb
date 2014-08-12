@@ -1,8 +1,8 @@
 class BookingsController < ApplicationController
 
 	before_filter :copy_params, :only => [:docreate]
-	before_filter :check_booking, :only => [:cancel, :complete, :dodeposit, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
-	before_filter :check_booking_user, :only => [:dodeposit, :cancel, :invoice, :payments, :reschedule, :feedback]
+	before_filter :check_booking, :only => [:holddeposit, :cancel, :complete, :dodeposit, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
+	before_filter :check_booking_user, :only => [:holddeposit, :dodeposit, :cancel, :invoice, :payments, :reschedule, :feedback]
 	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :notify, :userdetails]
 	before_filter :check_search_access, :only => [:credits, :docreate, :docreatenotify, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
@@ -222,6 +222,11 @@ class BookingsController < ApplicationController
 		@booking
 	end
 	
+	def holddeposit
+		@booking.update_attribute(:hold, true)
+		redirect_to '/mydeposits'
+	end
+
 	def index
 		render layout: 'users'
 	end

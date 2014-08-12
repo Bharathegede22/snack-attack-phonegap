@@ -13,6 +13,6 @@
 		%table.table
 			-current_user.wallet_snapshot[:bookings].each do |booking|
 				%tr
-					%td= link_to booking_path(booking[:booking])
+					%td= link_to booking[:booking], booking_path(booking[:booking])
 					%td= "#{booking[:starts]}"
 					%td= "#{booking[:ends]}"

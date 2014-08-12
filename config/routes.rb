@@ -58,6 +58,7 @@ Web::Application.routes.draw do
 			get 'payment'
 			get 'reschedule'
 			get 'feedback'
+			get 'holddeposit'
 			post 'feedback'
 
 			post 'cancel'

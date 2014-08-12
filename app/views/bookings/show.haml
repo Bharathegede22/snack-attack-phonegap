@@ -116,6 +116,9 @@
 						%a.btn.btn-default{href: "/bookings/#{@booking.encoded_id}/invoice", target: '_blank', role: "button"} Invoice
 					- if @booking.status_complete?
 						%a.btn.btn-default{href: "/bookings/#{@booking.encoded_id}/feedback", target: '_blank', role: "button"} Feedback
+				- if !@booking.hold && !@booking.security_charge.nil? && @booking.security_refund.nil?
+					.btn.btn-warning{onclick: "window.location= '/bookings/#{@booking.encoded_id}/holddeposit';"}
+						Hold Deposit
 		= render :partial => '/bookings/socialshare'
 	.col-md-4
 		= render :partial => '/bookings/summary', :locals => {:payments => true}
