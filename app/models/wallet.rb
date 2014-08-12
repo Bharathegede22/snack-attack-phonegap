@@ -6,7 +6,7 @@ class Wallet < ActiveRecord::Base
 
 	scope :credits, -> {where(credit: true)}
 	scope :debits, -> {where(credit: false)}
-	default_scope {where('status > 1')}
+	default_scope {where('status > 0')}
 
 	def destroy
 		status = 0

@@ -58,7 +58,7 @@ class User < ActiveRecord::Base
   	when 'cancelled' then ["status > 8", 'id DESC']
   	when 'unfinished' then ["jsi IS NULL AND status = 0", 'id DESC']
   	when 'wallet_frozen' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND ((starts >= '#{Time.zone.now.to_s(:db)}' AND starts <= '#{(Time.zone.now+CommonHelper::WALLET_FREEZE_START.hours).to_s(:db)}') OR (ends < '#{Time.zone.now.to_s(:db)}' AND ends >= '#{(Time.zone.now-CommonHelper::WALLET_FREEZE_END.hours).to_s(:db)}')) AND status < 8", 'starts ASC']
-  	when 'wallet_snapshot' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND ends >= '#{(Time.zone.now-CommonHelper::WALLET_FREEZE_END.hours).to_s(:db)}' AND ends <= '#{(Time.zone.now-(CommonHelper::WALLET_SNAPSHOT.days+CommonHelper::WALLET_FREEZE_START.hours)).to_s(:db)}' AND status > 0", 'ends ASC']
+  	when 'wallet_snapshot' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND ends >= '#{(Time.zone.now-CommonHelper::WALLET_FREEZE_END.hours).to_s(:db)}' AND ends <= '#{(Time.zone.now+(CommonHelper::WALLET_SNAPSHOT.days)).to_s(:db)}' AND status > 0", 'ends ASC']
   	end
 
   	if Rails.env == 'production'
@@ -271,7 +271,7 @@ class User < ActiveRecord::Base
 	def wallet_snapshot(snap_start= Time.now, snap_end= snap_start+CommonHelper::WALLET_SNAPSHOT.days)
 		snapshot={starts: snap_start, ends: snap_end, amount: wallet_total_amount, bookings: []}
 		get_bookings('wallet_snapshot').each do |booking|
-			snapshot[:get_bookings] << booking.wallet_impact
+			snapshot[:bookings] << booking.wallet_impact
 		end
 		snapshot
 	end 

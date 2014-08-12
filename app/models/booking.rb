@@ -50,6 +50,7 @@ class Booking < ActiveRecord::Base
 	end
 
 	def add_security_deposit_to_wallet
+		binding.pry
 		if Wallet.find_by(charge_id: security_charge.id).nil? && security_refund.nil?
 			Wallet.create!(amount: security_amount, user_id: self.user_id, status: 1, credit: true, charge_id: security_charge.id)
 		end

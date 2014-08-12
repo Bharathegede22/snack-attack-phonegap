@@ -10,9 +10,9 @@
 			= submit_tag 'Refund'
 
 		%h3 Wallet Snapshot
-		/ %table.table
-		/ 	-snap = current_user.wallet_snapshot
-		/ 	%tr
-		/ 		%td= #{snap.key}
-		/ 		%td= #{snap.value.fetch :amount}
-		/ 		%td= #{snap.value.fetch :booking}
+		%table.table
+			-current_user.wallet_snapshot[:bookings].each do |booking|
+				%tr
+					%td= link_to booking_path(booking[:booking])
+					%td= "#{booking[:starts]}"
+					%td= "#{booking[:ends]}"
