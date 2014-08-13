@@ -268,6 +268,11 @@ class User < ActiveRecord::Base
 		wallet_total_amount - wallet_frozen_amount
 	end
 
+	def wallet_refund(amount)
+		#TODO
+
+	end
+ 	
 	def wallet_snapshot(snap_start= Time.now, snap_end= snap_start+CommonHelper::WALLET_SNAPSHOT.days)
 		snapshot={starts: snap_start, ends: snap_end, amount: wallet_total_amount, bookings: []}
 		get_bookings('wallet_snapshot').each do |booking|

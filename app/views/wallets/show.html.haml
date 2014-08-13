@@ -3,16 +3,26 @@
 		%h3.panel-title Your Deposit Wallet
 	.panel-body
 		%h3 Total: #{current_user.wallet_total_amount}
-		%h3 Available: #{current_user.wallet_total_amount}
+		%h3 Available: #{current_user.wallet_available_amount}
 		%h3 Fronzen: #{current_user.wallet_frozen_amount}
-		= form_tag 'refundDeposit' do
+		= form_tag 'refunddeposit' do
 			= text_field_tag 'amount'
 			= submit_tag 'Refund'
 
-		%h3 Wallet Snapshot
+		%h3 Upcoming Bookings
 		%table.table
-			-current_user.wallet_snapshot[:bookings].each do |booking|
+			%th Booking ID
+			%th Vehicle & Location
+			%th Duration
+			%th Outstanding
+			%th Deposit
+			-current_user.get_bookings('wallet_snapshot').each do |booking|
 				%tr
-					%td= link_to booking[:booking], booking_path(booking[:booking])
-					%td= "#{booking[:starts]}"
-					%td= "#{booking[:ends]}"
+					%td= link_to booking.confirmation_key, booking_path(booking.confirmation_key)
+					%td= booking.cargroup.name
+					%td 
+						= "#{booking.starts}"
+						%br
+						= "#{booking.ends}"
+					%td= booking.outstanding
+					%td= "#{booking.deposit_status} #{booking.hold ? '(Hold)' : ''}" 

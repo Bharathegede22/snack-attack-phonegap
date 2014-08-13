@@ -4,9 +4,17 @@ class WalletsController < ApplicationController
   end
 
   def refund
+	flash[:notice] = current_user.wallet_refund(refund_params)
+	redirect_to :back
   end
 
   def show
   	
+  end
+
+  private
+
+  def refund_params
+  	params.require(:amount)
   end
 end

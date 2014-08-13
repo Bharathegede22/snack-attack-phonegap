@@ -667,7 +667,7 @@ class Booking < ActiveRecord::Base
 	
 	def wallet_impact
 		{starts: (starts-CommonHelper::WALLET_FREEZE_START.hours),
-		 booking: self.confirmation_key,
+		 booking: self,
 		 amount: hold_security? ? 0 : -security_amount,
 		 ends: (ends+CommonHelper::WALLET_FREEZE_END.hours)}
 	end
