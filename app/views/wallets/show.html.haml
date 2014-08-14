@@ -1,22 +1,39 @@
+- render_flash
+:ruby 
+	wallet_snap = current_user.wallet_snapshot
+	bookings = wallet_snap[:bookings]
+	scale = 0.001
+	wallet_amounts = [[((bookings.shift[:ends].to_i rescue wallet_snap[:ends].to_i)- wallet_snap[:starts].to_i)*scale, wallet_snap[:amount]]]
+	bookings.each do |booking|
+		wallet_amounts << [(booking[:ends].to_i - wallet_snap[:starts].to_i)*scale, (wallet_amounts.last.last - wallet_snap[:amount])]
+	end
+		
 .panel.panel-default
 	.panel-heading
-		%h3.panel-title Your Deposit Wallet
+		%h3.panel-title My Wallet
 	.panel-body
 		%h3 Total: #{current_user.wallet_total_amount}
 		%h3 Available: #{current_user.wallet_available_amount}
-		%h3 Fronzen: #{current_user.wallet_frozen_amount}
+		%h3 Frozen: #{current_user.wallet_frozen_amount}
 		= form_tag 'refunddeposit' do
 			= text_field_tag 'amount'
 			= submit_tag 'Refund'
-
+		%h3 Wallet Snapshot
+		%table.table
+			%th Width
+			%th Amount
+			- wallet_amounts.each do |wallet_amount|
+				%tr
+					%td= wallet_amount.first
+					%td= wallet_amount.last
 		%h3 Upcoming Bookings
 		%table.table
 			%th Booking ID
 			%th Vehicle & Location
-			%th Duration
+			%th.info Duration
 			%th Outstanding
 			%th Deposit
-			-current_user.get_bookings('wallet_snapshot').each do |booking|
+			-current_user.upcoming_bookings.each do |booking|
 				%tr
 					%td= link_to booking.confirmation_key, booking_path(booking.confirmation_key)
 					%td= booking.cargroup.name

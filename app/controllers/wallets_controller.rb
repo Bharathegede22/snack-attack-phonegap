@@ -9,7 +9,7 @@ class WalletsController < ApplicationController
   end
 
   def show
-  	
+  	render layout: 'users'
   end
 
   private

@@ -58,7 +58,6 @@ class User < ActiveRecord::Base
   	when 'cancelled' then ["status > 8", 'id DESC']
   	when 'unfinished' then ["jsi IS NULL AND status = 0", 'id DESC']
   	when 'wallet_frozen' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND ((starts >= '#{Time.zone.now.to_s(:db)}' AND starts <= '#{(Time.zone.now+CommonHelper::WALLET_FREEZE_START.hours).to_s(:db)}') OR (ends < '#{Time.zone.now.to_s(:db)}' AND ends >= '#{(Time.zone.now-CommonHelper::WALLET_FREEZE_END.hours).to_s(:db)}')) AND status < 8", 'starts ASC']
-  	when 'wallet_snapshot' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND ends >= '#{(Time.zone.now-CommonHelper::WALLET_FREEZE_END.hours).to_s(:db)}' AND ends <= '#{(Time.zone.now+(CommonHelper::WALLET_SNAPSHOT.days)).to_s(:db)}' AND status > 0", 'ends ASC']
   	end
 
   	if Rails.env == 'production'
@@ -252,6 +251,20 @@ class User < ActiveRecord::Base
   	otp_valid_till && otp_valid_till > Time.now
   end
 
+	def snapshot_end
+		Time.zone.now + CommonHelper::WALLET_SNAPSHOT.days
+	end
+
+	def snapshot_bookings
+		get_bookings('live') | upcoming_bookings
+	end
+
+	def upcoming_bookings
+		starting = "starts > '#{Time.zone.now.to_s(:db)}' AND starts < '#{(snapshot_end + CommonHelper::WALLET_FREEZE_START.hours).to_s(:db)}'AND status < 8"
+		ending = "ends > '#{(Time.zone.now - CommonHelper::WALLET_FREEZE_END.hours).to_s(:db)}' AND ends < '#{snapshot_end.to_s(:db)}'AND status < 8"
+		Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND (jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND (#{starting} OR #{ending}) ORDER BY ends ASC")
+	end
+
 	def wallet_total_amount
 		wallets.collect{|wallet| wallet.credit ? wallet.amount : -wallet.amount}.sum
 	end
@@ -275,7 +288,7 @@ class User < ActiveRecord::Base
  	
 	def wallet_snapshot(snap_start= Time.now, snap_end= snap_start+CommonHelper::WALLET_SNAPSHOT.days)
 		snapshot={starts: snap_start, ends: snap_end, amount: wallet_total_amount, bookings: []}
-		get_bookings('wallet_snapshot').each do |booking|
+		upcoming_bookings.each do |booking|
 			snapshot[:bookings] << booking.wallet_impact
 		end
 		snapshot
