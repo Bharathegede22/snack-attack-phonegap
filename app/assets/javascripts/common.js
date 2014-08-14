@@ -136,6 +136,16 @@ function doBookingNotify(carId, locId) {
 	window.location = "/bookings/do?car=" + carId + "&loc=" + locId + "&notify=true";
 }
 
+function getCookie(cname) {
+	var name = cname + "=";
+	var ca = document.cookie.split(';');
+	for(var i=0; i<ca.length; i++) {
+		var c = ca[i];
+		while (c.charAt(0)==' ') c = c.substring(1);
+		if (c.indexOf(name) != -1) return c.substring(name.length, c.length);
+	}
+}
+
 function getData(complete_url,divId,divAction,divWait) {
 	//checkajax = $("#AjaxActive").val();
   //if(checkajax == 1){
@@ -621,16 +631,15 @@ function trackEventsForPageScroll(isDuplicate) {
 
 		if(isDuplicate == 0) {
 			pushEvent('Home Page Scroll', 'Top');
-			isDuplicate = 1;
 		}
 		//70% is the mark where map occupies major part of the screen - middle part of page visually
-		if(percentage >= 70 && isDuplicate < 2) {
+		if(percentage >= 70 && isDuplicate < 1) {
 			pushEvent('Home Page Scroll', 'Middle');
-			isDuplicate = 2;
+			isDuplicate = 1;
 		}
-		else if(percentage >= 100 && isDuplicate < 3) {
+		else if(percentage >= 100 && isDuplicate < 2) {
 			pushEvent('Home Page Scroll', 'Bottom');
-			isDuplicate = 3;
+			isDuplicate = 2;
 		}
 	});
 }
