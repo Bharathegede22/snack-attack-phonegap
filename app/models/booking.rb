@@ -20,6 +20,7 @@ class Booking < ActiveRecord::Base
 	has_one :coupon_code
 	has_one	:review, :inverse_of => :booking, dependent: :destroy
 	has_one :debug, :as => :debugable, dependent: :destroy
+	has_one :wallet_payment
 	
 	has_paper_trail
 	
@@ -50,8 +51,14 @@ class Booking < ActiveRecord::Base
 	end
 
 	def add_security_deposit_to_wallet
-		if Wallet.find_by(charge_id: security_charge.id).nil? && security_refund.nil?
-			Wallet.create!(amount: security_amount, user_id: self.user_id, status: 1, credit: true, charge_id: security_charge.id)
+		if payments.select(&:wallet).empty? && security_refund.nil?
+			charge 			= Charge.new(:booking_id => self.id, :activity => 'wallet_topup')
+			charge.amount 	= self.pricing.mode::SECURITY
+			charge.estimate = self.pricing.mode::SECURITY
+			charge.refund = 1
+			charge.save
+			refund = Refund.create!(status: 1, booking_id: self.id, through: 'wallet', amount: security_amount)
+			Wallet.create!(amount: security_amount, user_id: self.user_id, status: 1, credit: true, transferable: refund)
 		end
 	end
 
@@ -195,10 +202,21 @@ class Booking < ActiveRecord::Base
 				self.notes += note
 			end
 			total -= deposit.amount.to_i
+			wallet_payment_amount = [deposit.amount, self.user.wallet_total_amount].min
+			if data[:penalty]>0
+				wpayment = Payment.create!(status: 1, booking_id: self.id, through: 'wallet', amount: wallet_payment_amount)
+				Wallet.create!(amount: wallet_payment_amount, user_id: self.user_id, status: 1, credit: false, transferable: wpayment)
+			end
+
+			wallet_refund_amount = [0, wallet_payment_amount - data[:penalty]].max 
+			if self.hold && wallet_refund_amount>0
+				refund = Refund.create!(status: 1, booking_id: self.id, through: 'wallet', amount: wallet_refund_amount)
+				Wallet.create!(amount: wallet_refund_amount, user_id: self.user_id, status: 1, credit: true, transferable: refund)
+			end
 		end
 		self.save(validate: false)
 		BookingMailer.cancel(self.id, total).deliver
-		sendsms('cancel', total)
+		sendsms('cancel', total) if Rails.env.production?
 		return data
 	end
 	

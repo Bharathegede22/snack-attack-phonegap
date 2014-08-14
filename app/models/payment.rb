@@ -1,11 +1,12 @@
 class Payment < ActiveRecord::Base
 	
 	belongs_to :booking
-	
+	has_one :wallet, as: :transferable
+
 	validates :booking_id, :through, :amount, presence: true
 	#validates :through, uniqueness: {scope: [:booking_id, :key]}
 	
-	default_scope where('(status < 5)')
+	default_scope {where('(status < 5)')}
 	
 	after_save :after_save_tasks
 	
