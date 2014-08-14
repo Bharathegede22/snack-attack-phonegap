@@ -24,14 +24,14 @@ class Users::OmniauthController < Devise::OmniauthCallbacksController
 		 		redirect_to "/" and return
 		 	else
 		 		session[:social_signup] = nil
-		 		redirect_to "/bookings/do" and return
+		 		redirect_to do_bookings_path(session[:city]) and return
 		 	end
 		else
 			flash[:error] = "Sorry, we could not access your email id from facebook. Please signup using normal procees."
 			if session[:book].blank?
 		 		redirect_to "/" and return
 		 	else
-		 		redirect_to "/bookings/do" and return
+		 		redirect_to do_bookings_path(session[:city]) and return
 		 	end
 		end
   end

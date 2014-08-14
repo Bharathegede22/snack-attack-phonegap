@@ -27,14 +27,14 @@ class BookingsController < ApplicationController
 	end
 	
 	def checkout
-		redirect_to "/bookings/do" and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
+		redirect_to do_bookings_path(session[:city]) and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		generic_meta
 		@header = 'booking'
 		render (abtest? ? :checkoutab : :checkout)
 	end
 
 	def checkoutab
-		redirect_to "/bookings/do" and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
+		redirect_to do_bookings_path(session[:city]) and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		generic_meta
 		@header = 'booking'
 	end
@@ -231,7 +231,7 @@ class BookingsController < ApplicationController
 	end
 	
 	def license
-		redirect_to "/bookings/do" and return if user_signed_in? && current_user.check_license
+		redirect_to do_bookings_path(session[:city]) and return if user_signed_in? && current_user.check_license
 		if request.post?
 			if !params[:image].blank?
 				image = Image.new(image_params)
@@ -244,14 +244,14 @@ class BookingsController < ApplicationController
 						current_user.save(validate: false)
 					end
 					flash[:notice] = 'Thanks for uploading your license image.'
-					redirect_to "/bookings/do" and return
+					redirect_to do_bookings_path(session[:city]) and return
 				else
 					if image.errors[:avatar_content_type].length > 0
 						flash[:error] = 'Please attach a valid license image. Only allow formats are jpg, jpeg, gif and png.'
 					else
 						flash[:error] = 'Please attach a valid license image. Maximum allowedd file size is 2 MB.'
 					end
-					redirect_to "/bookings/do" and return
+					redirect_to do_bookings_path(session[:city]) and return
 				end
 			else
 				flash[:error] = 'Please attach a license image'
@@ -262,7 +262,7 @@ class BookingsController < ApplicationController
 	end
 	
 	def login
-		redirect_to "/bookings/do" and return if user_signed_in?
+		redirect_to do_bookings_path(session[:city]) and return if user_signed_in?
 		generic_meta
 		@header = 'booking'
 		
@@ -472,7 +472,7 @@ class BookingsController < ApplicationController
 	end
 	
 	def userdetails
-		redirect_to "/bookings/do" and return if !user_signed_in? || (current_user && current_user.check_details)
+		redirect_to do_bookings_path(session[:city]) and return if !user_signed_in? || (current_user && current_user.check_details)
 		generic_meta
 		@header = 'booking'
 	end
@@ -557,7 +557,7 @@ class BookingsController < ApplicationController
 			if request.xhr?
 				render json: {html: "<div class='alert alert-danger' role='alert'>Bad Request!</div>"}
 			else
-				redirect_to '/search'
+				redirect_to search_path(session[:city])
 			end
 			return
 		end

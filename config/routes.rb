@@ -21,7 +21,6 @@ Web::Application.routes.draw do
 			get 'complete'
 			get 'corporate'
 			get 'details'
-			get 'do'
 			get 'docreate'
 			post 'docreate'
 			get 'docreatenotify'
@@ -81,6 +80,7 @@ Web::Application.routes.draw do
 			collection do
 				get 'checkout'
 				get 'checkoutab'
+				get 'do'
 				get 'login'
 				get 'userdetails'
 			end

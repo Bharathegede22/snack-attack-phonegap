@@ -129,11 +129,11 @@ function deltaX() {
 }
 
 function doBooking(carId, locId) {
-	window.location = "/bookings/do?car=" + carId + "&loc=" + locId;
+	window.location = "/" + getCookie('city') + "/bookings/do?car=" + carId + "&loc=" + locId;
 }
 
 function doBookingNotify(carId, locId) {
-	window.location = "/bookings/do?car=" + carId + "&loc=" + locId + "&notify=true";
+	window.location = "/" + getCookie('city') + "/bookings/do?car=" + carId + "&loc=" + locId + "&notify=true";
 }
 
 function getCookie(cname) {
