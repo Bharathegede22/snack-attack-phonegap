@@ -147,6 +147,7 @@ class Booking < ActiveRecord::Base
 	
 	def do_cancellation
 		return nil if self.status > 8
+		self.release_payment = true
 		self.status = 10
 		self.manage_inventory
 		data = self.get_fare
@@ -555,6 +556,7 @@ class Booking < ActiveRecord::Base
 			when 5 then 'Completed'
 			when 6 then 'No Inventory'
 			when 7 then 'No Car'
+			when 8 then 'Settled'
 			when 9 then 'No Show'
 			when 10 then 'Cancelled'
 			when 12 then 'Auto Cancelled'
@@ -568,6 +570,7 @@ class Booking < ActiveRecord::Base
 			when 5 then 'Completed'
 			when 6 then 'No Inventory'
 			when 7 then 'No Car'
+			when 8 then 'Settled'
 			when 9 then 'No Show'
 			when 10 then 'Cancelled'
 			when 12 then 'Auto Cancelled'
@@ -590,6 +593,7 @@ class Booking < ActiveRecord::Base
 		when 5 then 'Completed'
 		when 6 then 'No Inventory'
 		when 7 then 'No Car'
+		when 8 then 'Settled'
 		when 9 then 'No Show'
 		when 10 then 'Cancelled'
 		when 12 then 'Auto Cancelled'
