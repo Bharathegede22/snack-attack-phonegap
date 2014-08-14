@@ -18,8 +18,6 @@ Web::Application.routes.draw do
 
 	resources :bookings do
 		collection do
-			get 'checkout'
-			get 'checkoutab'
 			get 'complete'
 			get 'corporate'
 			get 'details'
@@ -30,14 +28,12 @@ Web::Application.routes.draw do
 			get 'donotify'
 			get 'failed'
 			get 'license'
-			get 'login'
 			get 'notify'
 			get 'outstanding'
 			get 'payment'
 			get 'payu'
 			get 'timeline'
 			get 'thanks'
-			get 'userdetails'
 			get 'widget'
 
 			post 'credits'
@@ -80,6 +76,17 @@ Web::Application.routes.draw do
 		end
 	end
 	
+	scope "/(:city)", constraints: {city: /bangalore|pune/} do
+		resources :bookings do
+			collection do
+				get 'checkout'
+				get 'checkoutab'
+				get 'login'
+				get 'userdetails'
+			end
+		end
+	end
+
 	post '/calculator/:id' => 'main#calculator'
 	get '/calculator/:id' => 'main#calculator'
 	

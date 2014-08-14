@@ -90,12 +90,12 @@ class BookingsController < ApplicationController
 			if session[:notify].present?
 				redirect_to "/bookings/notify"
 			elsif current_user.check_details
-				redirect_to "/bookings/checkout"
+				redirect_to checkout_bookings_path(session[:city])
 			else
-				redirect_to "/bookings/userdetails"
+				redirect_to userdetails_bookings_path(session[:city])
 			end
 		else
-			redirect_to "/bookings/login"
+			redirect_to login_bookings_path(session[:city])
 		end
 	end
 	
@@ -113,7 +113,7 @@ class BookingsController < ApplicationController
 		if !session[:credits].blank? && current_user.total_credits.to_i < session[:credits].to_i
 			session[:credits] = nil
 			flash[:error] = 'Insufficient credits, please try again!'
-			redirect_to "/bookings/checkout"
+			redirect_to checkout_bookings_path(session[:city])
 			return
 		end
 		
@@ -524,7 +524,7 @@ class BookingsController < ApplicationController
 	end
 	
   def check_blacklist
-    redirect_to "/bookings/checkout" if current_user && current_user.is_blacklisted? 
+    redirect_to checkout_bookings_path(session[:city]) if current_user && current_user.is_blacklisted?
   end
   
 	def check_inventory

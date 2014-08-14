@@ -11,7 +11,7 @@
 					.txt
 						Select Car
 				- cls = (step == 2 ? 'active' : (step > 2 ? 'complete' : 'normal'))
-				- onclick = (step > 2 ? "window.location = '/bookings/login';" : "")
+				- onclick = (step > 2 ? "window.location = '/' + getCookie('city') + '/bookings/login';" : "")
 				%td{class: cls, onclick: "#{onclick}"}
 					.step 
 						%p 2
