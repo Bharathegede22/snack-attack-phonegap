@@ -80,8 +80,6 @@ Web::Application.routes.draw do
 		end
 	end
 	
-	post '/search/:id' => 'bookings#search'
-	get '/search' => 'bookings#search'
 	post '/calculator/:id' => 'main#calculator'
 	get '/calculator/:id' => 'main#calculator'
 	
@@ -94,6 +92,8 @@ Web::Application.routes.draw do
  	get ':city/:id' => 'main#redirect', constraints: {city: /Pune|Bangalore/}
  	
 	scope "/(:city)", constraints: {city: /bangalore|pune/} do
+		post '/search/:id' => 'bookings#search'
+		get '/search' => 'bookings#search'
 		get '/' => 'main#index'
 		get '/attractions' => 'main#city'
 		get '/explore' => 'seo#explore'

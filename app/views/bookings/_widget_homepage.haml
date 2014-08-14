@@ -8,7 +8,7 @@
 			@booking.cargroup_id = session[:search][:car]
 		end
 	end
-%form{:id => "SearchForm", :onsubmit => "return SubmitForm(this,'/search/homepage','SearchFormDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+%form{:id => "SearchForm", :onsubmit => "return SubmitForm(this,'/' + getCookie('city') + '/search/homepage','SearchFormDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 	.item.fl
 		#StartDate.box.datetimebox
 			.cal
@@ -38,18 +38,19 @@
 			%input#LocationVal{name: 'loc', type: "text", value: @booking.location_id, readonly: 'true'}
 			%input#CarsVal{name: 'car', type: "text", value: @booking.cargroup_id, readonly: 'true'}
 		#SearchSubmit.button
-			= submit_tag "Book A Car", :class => 'inpt', :onclick => "pushEvent('Search Bar', 'Book A Car');"
+			= submit_tag "Book A Car", :class => 'inpt'
 		#SearchWait.p-5.t-c{style: 'display:none;'}
 			.wait
 	.fc
 - if request.post?
 	- if @booking && @booking.valid?
 		:javascript
-			pushEvent('Navigation Search', 'Submit');
-			window.location = "http://#{HOSTNAME}/search";
+			pushEvent('Search Bar', 'Book A Car');
+			// window.location = "http://#{HOSTNAME}/search";
+			window.location = "http://#{HOSTNAME}/" + getCookie('city') + "/search";
 	- else
 		:javascript
-			pushEvent('Navigation Search', 'Submit');
+			pushEvent('Search Bar', 'Book A Car');
 			initializeDatePicker();
 - else
 	:javascript

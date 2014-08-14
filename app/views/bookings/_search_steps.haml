@@ -3,7 +3,7 @@
 		%table.m-auto
 			%tr
 				- cls = (step > 1 ? 'complete' : 'active')
-				- onclick = (step > 1 ? "window.location = '/search';" : "")
+				- onclick = (step > 1 ? "window.location = '/' + getCookie('city') + '/search';" : "")
 				%td{class: cls, onclick: "#{onclick}"}
 					.step
 						%p 1
