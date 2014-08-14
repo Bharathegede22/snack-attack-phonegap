@@ -82,6 +82,14 @@
 			.col-md-9
 				.p-5
 					= @booking.ends.strftime("%d %b, %Y %I:%M %p")
+		- if !@booking.returned_at.blank?
+			.row
+				.col-md-3
+					.p-5
+						%b Return Time
+				.col-md-9
+					.p-5
+						= @booking.returned_at.strftime("%d %b, %Y %I:%M %p")
 		- if offer
 			.row
 				.col-md-3

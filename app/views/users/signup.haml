@@ -123,6 +123,9 @@
 			An email has been sent on 
 			%b #{current_user.email},
 			please follow instructions as mentioned in the email to activate your account.
+
+			:javascript
+				pushEvent('Sign Up', 'Successful Sign-up', 'Home Page (My Account)');
 			- if !session[:book].blank?
 				%br/
 				%br/

@@ -70,7 +70,7 @@ function changeCar(id,name,dom,action) {
 	if(action == 'home') {
 		pushEvent('Homepage Search', 'Car', name);
 	} else if(action == 'nav') {
-		pushEvent('Navigation Search', 'Car', name);
+		pushEvent('Cars Selected', name, 'Search Bar');
 	} else if(action == 'cal') {
 		pushEvent('Calculator', 'Car', name);
 	} else if(action == 'recal') {
@@ -86,7 +86,7 @@ function changeLocation(id,name,action) {
 	if(action == 'home') {
 		pushEvent('Homepage Search', 'Location', name);
 	} else if(action == 'nav') {
-		pushEvent('Navigation Search', 'Location', name);
+		pushEvent('Locations Selected', name, 'Search Bar');
 	}
 }
 
@@ -134,6 +134,16 @@ function doBooking(carId, locId) {
 
 function doBookingNotify(carId, locId) {
 	window.location = "/bookings/do?car=" + carId + "&loc=" + locId + "&notify=true";
+}
+
+function getCookie(cname) {
+	var name = cname + "=";
+	var ca = document.cookie.split(';');
+	for(var i=0; i<ca.length; i++) {
+		var c = ca[i];
+		while (c.charAt(0)==' ') c = c.substring(1);
+		if (c.indexOf(name) != -1) return c.substring(name.length, c.length);
+	}
 }
 
 function getData(complete_url,divId,divAction,divWait) {
@@ -216,33 +226,36 @@ function initializeDatePicker() {
 		minView: 2, 
 		autoclose: true
 	});
+	var dropdownCheck = 0;
 	$(".datetimebox").click(function() {
 		var id = $(this).attr("id");
 		$('#' + id + 'ValError').hide();
 		$('#' + id + 'Val').removeClass('field_with_errors');
 		$('#' + id + 'Val').datetimepicker('show');
 		if(id.search('Start') != -1) {
+			dropdownCheck = 0;
 			if($('#' + id + 'Val').hasClass('starts-home')) {
 				pushEvent('Homepage Search', 'Starts');
 			} else if($('#' + id + 'Val').hasClass('starts-nav')) {
-				pushEvent('Navigation Search', 'Starts');
+				pushEvent('Search Bar', 'Pickup Dropdown');
 			} else if($('#' + id + 'Val').hasClass('starts-cal')) {
-				pushEvent('Calculator', 'Starts');
+				pushEvent('Calculator', 'Starts', 'Tariff Page');
 			} else if($('#' + id + 'Val').hasClass('starts-recal')) {
 				pushEvent('Rescheduler', 'Org Starts');
 			} else if($('#' + id + 'Val').hasClass('newstarts-recal')) {
 				pushEvent('Rescheduler', 'New Starts');
 			}
 		} else if(id.search('End') != -1) {
+			dropdownCheck = 1;
 			var pid = id.replace('End','Start');
 			if($('#' + pid + 'Val').val() != $('#' + pid + 'Val').attr('dummy-title')) {
 				$('#' + id + 'Val').datetimepicker('show');
 				if($('#' + id + 'Val').hasClass('ends-home')) {
 					pushEvent('Homepage Search', 'Ends');
 				} else if($('#' + id + 'Val').hasClass('ends-nav')) {
-					pushEvent('Navigation Search', 'Ends');
+					pushEvent('Search Bar', 'Drop Dropdown');
 				} else if($('#' + id + 'Val').hasClass('ends-cal')) {
-					pushEvent('Calculator', 'Ends');
+					pushEvent('Calculator', 'Ends', 'Tariff Page');
 				} else if($('#' + id + 'Val').hasClass('ends-recal')) {
 					pushEvent('Rescheduler', 'Org Ends');
 				} else if($('#' + id + 'Val').hasClass('newends-recal')) {
@@ -255,6 +268,34 @@ function initializeDatePicker() {
 			}
 		}
 	});
+	$('.datetimepicker-days').click(function(){
+		if(dropdownCheck==0) {
+			pushEvent('Search Bar', 'Pickup Date');
+		}
+		else {
+			pushEvent('Search Bar', 'Drop Date');
+		}
+	});
+
+	$('.datetimepicker-hours').click(function(){
+		if(dropdownCheck==0) {
+			pushEvent('Search Bar', 'Pickup Hour');
+		}
+		else {
+			pushEvent('Search Bar', 'Drop Hour');
+		}
+	});
+
+	$('.datetimepicker-minutes').click(function(){
+		if(dropdownCheck==0) {
+			pushEvent('Search Bar', 'Pickup Minute');
+			dropdownCheck = 1;
+		}
+		else {
+			pushEvent('Search Bar', 'Drop Minute');
+		}
+	});
+
 	$('.datetime').datetimepicker().on('hide', function(ev) {
 		if(ev.date.valueOf() < jQuery.now().valueOf()) {
 			$('#' + ev.currentTarget.id).val($('#' + ev.currentTarget.id).attr('dummy-title'));
@@ -301,6 +342,18 @@ function mapZoom(map,newVal) {
 		$("#ZoomPlus").addClass('box-inactive');
 	}
 	return false;
+}
+
+function newUserSessionEvent(path, category, action) {
+	if(path=='/bangalore'||path=='/pune') {
+		pushEvent(category, action, 'Home Page (My Account)');
+	}
+	else if(path=='/bookings/login') {
+		pushEvent(category, action, 'Login Process');
+	}
+	else {
+		pushEvent(category, action, 'Misc');
+	}
 }
 
 function populateLocations(cityId, zoom, divId) {
@@ -570,6 +623,27 @@ function SubmitForm(frm,url,divId){
   return false;
 } 
 
+function trackEventsForPageScroll(isDuplicate) {
+	$(window).scroll(function(){
+		var bottom = $(window).height() + $(window).scrollTop();
+		var height = $(document).height();
+		var percentage = Math.round(100*bottom/height);
+
+		if(isDuplicate == 0) {
+			pushEvent('Home Page Scroll', 'Top');
+		}
+		//70% is the mark where map occupies major part of the screen - middle part of page visually
+		if(percentage >= 70 && isDuplicate < 1) {
+			pushEvent('Home Page Scroll', 'Middle');
+			isDuplicate = 1;
+		}
+		else if(percentage >= 100 && isDuplicate < 2) {
+			pushEvent('Home Page Scroll', 'Bottom');
+			isDuplicate = 2;
+		}
+	});
+}
+
 function userActive() {
 	$('#UserBar').popover({
 		title: 'Signup',
@@ -587,6 +661,7 @@ function userLogin() {
 		placement: 'bottom'
 	});
 	$('#UserBar').popover('show');
+	pushEvent('Sign In', 'Successful Sign-in', 'Home Page (My Account)');
 	window.setTimeout(clearLogin, 3000);
 }
 
