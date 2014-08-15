@@ -119,6 +119,10 @@
 					Taxes
 
 			.tariff-details.bg-w.bs-9.p-t20.m-auto
+				- if user.support?
+					.p-10
+						#CorporateDiv
+							= render :partial => 'corporate'
 				%table.position-r{width: '100%'}
 					%tr
 						%td.p-5.p-l20.size-12

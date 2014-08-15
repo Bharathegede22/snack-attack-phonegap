@@ -428,6 +428,7 @@ class BookingsController < ApplicationController
 				render json: {html: render_to_string('_widget.haml', layout: false)}
 			end
 		else
+			redirect_to '/' and return if session[:search].blank?
 			@booking = Booking.new
 			@booking.city_id = @city.id
 			@booking.starts = Time.zone.parse(session[:search][:starts]) if !session[:search].blank? && !session[:search][:starts].blank?
