@@ -66,19 +66,21 @@ class Car < ActiveRecord::Base
 		cargroup = self.cargroup
 		
 		# Check Carblock
-		if starts != starts_was || ends != ends_was
-			if starts < starts_was
+		if block
+			if starts != starts_was || ends != ends_was
+				if starts < starts_was
+					start_time = (starts - cargroup.wait_period.minutes)
+					check = 0 if Carblock.count(:conditions => ["car_id = ? AND ((starts <= ? AND ends > ?) OR (starts >= ? AND starts <= ?))", self.id, start_time, start_time, start_time, starts_was]) > 0
+				end
+				if check == 1 && ends > ends_was
+					end_time = (ends + cargroup.wait_period.minutes)
+					check = 0 if Carblock.count(:conditions => ["car_id = ? AND ((starts <= ? AND ends > ?) OR (starts >= ? AND starts <= ?))", self.id, ends_was, ends_was, ends_was, end_time]) > 0
+				end
+			else
 				start_time = (starts - cargroup.wait_period.minutes)
-				check = 0 if Carblock.count(:conditions => ["car_id = ? AND ((starts <= ? AND ends > ?) OR (starts >= ? AND starts <= ?))", self.id, start_time, start_time, start_time, starts_was]) > 0
-			end
-			if check == 1 && ends > ends_was
 				end_time = (ends + cargroup.wait_period.minutes)
-				check = 0 if Carblock.count(:conditions => ["car_id = ? AND ((starts <= ? AND ends > ?) OR (starts >= ? AND starts <= ?))", self.id, ends_was, ends_was, ends_was, end_time]) > 0
+				check = 0 if Carblock.count(:conditions => ["car_id = ? AND ((starts <= ? AND ends > ?) OR (starts >= ? AND starts <= ?))", self.id, start_time, start_time, start_time, end_time]) > 0
 			end
-		elsif block
-			start_time = (starts - cargroup.wait_period.minutes)
-			end_time = (ends + cargroup.wait_period.minutes)
-			check = 0 if Carblock.count(:conditions => ["car_id = ? AND ((starts <= ? AND ends > ?) OR (starts >= ? AND starts <= ?))", self.id, start_time, start_time, start_time, end_time]) > 0
 		end
 		
 		# Get Carmovements
