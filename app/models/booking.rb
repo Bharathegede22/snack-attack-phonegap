@@ -41,6 +41,11 @@ class Booking < ActiveRecord::Base
 	before_save :before_save_tasks
 	before_validation :before_validation_tasks
 	
+	# Return a scope for all interval overlapping the given interval, including the given interval itself
+	scope :overlapping, lambda { |interval| {
+	:conditions => ["(DATEDIFF(starts, ?) * DATEDIFF(?, ends)) >= 0", interval.ends, interval.starts]
+	}}
+	
 	def add_security_deposit_charge
 		return if !self.corporate_id.blank?
 		charge = Charge.where(["booking_id = ? AND activity = 'security_deposit'", self.id]).first
@@ -440,7 +445,17 @@ class Booking < ActiveRecord::Base
 	def outstanding_warning
 		return "Please pay any outstanding amount by <b>#{(self.starts - CommonHelper::JIT_DEPOSIT_CANCEL.hours).strftime('%d/%m/%y %I:%M %p')}</b> or your booking will get <u>cancelled</u>."
 	end
-	
+
+	# Check if a given interval overlaps this interval    
+	def overlaps?(other)
+	(starts - other.ends) * (other.starts - ends) >= 0
+	end
+
+	# Check if a given interval overlaps this interval    
+	def wallet_overlaps?(other)
+	((starts - CommonHelper::WALLET_FREEZE_START.hours) - (other.ends + CommonHelper::WALLET_FREEZE_END.hours)) * ((other.starts- CommonHelper::WALLET_FREEZE_START.hours) - (ends + - CommonHelper::WALLET_FREEZE_END.hours))>= 0
+	end
+
 	def refund_amount
 		total = 0
 		self.charges.each do |c|

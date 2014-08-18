@@ -4,8 +4,13 @@ class WalletsController < ApplicationController
   end
 
   def refund
-	flash[:notice] = current_user.wallet_refund(refund_params)
+	flash[:notice] = current_user.wallet_refund(wallet_params)
 	redirect_to :back
+  end
+
+  def refund
+  flash[:notice] = current_user.wallet_topup(wallet_params)
+  redirect_to :back
   end
 
   def show
@@ -14,7 +19,7 @@ class WalletsController < ApplicationController
 
   private
 
-  def refund_params
+  def wallet_params
   	params.require(:amount)
   end
 end

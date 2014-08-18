@@ -2,6 +2,7 @@ Web::Application.routes.draw do
 	
   #post "wallets#topup"
   post 'refunddeposit' => "wallets#refund"
+  post 'topupdeposit' => "wallets#topup"
   get 'mydeposits' => "wallets#show"
 	devise_for :users, 
 		:controllers => {
