@@ -2,10 +2,11 @@
 :ruby 
 	wallet_snap = current_user.wallet_snapshot
 	bookings = wallet_snap[:bookings]
-	scale = 0.001
+	wallet_amount = wallet_snap[:amount]
+	scale = 1
 	wallet_amounts = [[((bookings.shift[:ends].to_i rescue wallet_snap[:ends].to_i)- wallet_snap[:starts].to_i)*scale, wallet_snap[:amount]]]
 	bookings.each do |booking|
-		wallet_amounts << [(booking[:ends].to_i - wallet_snap[:starts].to_i)*scale, (wallet_amounts.last.last - wallet_snap[:amount])]
+		wallet_amounts << [(booking[:ends].to_i - wallet_snap[:starts].to_i)*scale, (wallet_amounts.last.last + booking[:amount])]
 	end
 
 
@@ -14,33 +15,21 @@
 		My Wallet
 	.solid.border-c
 		.p-10.size-22.f-b.t-c.border-b-c
-			Rs. 8,000
+			= "Rs. " + number_with_delimiter(wallet_amount)
 		%a.block.p-10.black.border-b-c{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/refund');"}
-			Available for refund: Rs. 5,000
+			= "Available for refund: Rs. " + number_with_delimiter(current_user.wallet_available_amount)
 		%a.block.p-10.black.border-b-c{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/history');"}
 			Show Transaction History
 
 #wallet-graph.position-r.fr
 	#y-axis.position-a.t-r
-		#y-axis-1.position-a
-			15,000 -
-		#y-axis-2.position-a
-			10,000 -
-		#y-axis-3.position-a
-			5,000 -
-		#y-axis-4.position-a
-			0 -
+		- (1..4).each do |n|
+			.position-a{:id => "y-axis-#{n}"}
+				= number_with_delimiter(0 + (4 - n)*CommonHelper::SECURITY_DEPOSIT) + " -"
 	#x-axis.position-a.t-c
-		#x-axis-1.position-a
-			Today
-		#x-axis-2.position-a
-			Aug 18
-		#x-axis-3.position-a
-			Aug 25
-		#x-axis-4.position-a
-			Sep 1
-		#x-axis-5.position-a
-			Sep 8
+		- (1..5).each do |n|
+			.position-a{:id => "x-axis-#{n}"}
+				= (Date.today + (7*(n-1)).days).strftime("%b %d")
 
 	#legend.position-a
 		#indicator-1.inline-block
@@ -55,6 +44,8 @@
 			&nbsp;
 		Unsafe Booking
 
+	- if wallet_snap[:amount] != 0
+		- 
 	.money.position-a{style: "width: 100px; height: 20px; bottom: 0; left: 0;"}
 		&nbsp;
 
@@ -84,92 +75,25 @@
 				%span.help.pointer{'data-placement' => "top", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "TopUp or pay your Security Deposit through the Booking Summary page, which you can reach by clicking on the relevant booking"}
 					[?]
 
-		%tr.clickable-row.pointer{'id' => "rowJPS6E4UBE",  'href' => "#"}
-			%td.t-c
-				.p-t15.size-16
-					JPS6E4UBE
-			%td.t-c
-				.inline-block.colored
-					.m-auto{:class => 'small-car1'}
-				.inline-block.p-l10.position-r.t-l{style: "top: -15px"}
-					Ford Figo
-					%br/
-					Ejipura (Ejipura Main Road)
-			%td.t-c
-				.p-t10
-					19 Aug, 2014 09:00 AM
-					%br/
-					22 Aug, 2014 09:00 AM
-			%td.t-c
-				.p-t15.size-16
-					0
-
-		%tr.clickable-row.pointer{'id' => "rowJPS6E4UBF",  'href' => "#"}
-			%td.t-c
-				.p-t15.size-16
-					JPS6E4UBE
-			%td.t-c
-				.inline-block.colored
-					.m-auto{:class => 'small-car1'}
-				.inline-block.p-l10.position-r.t-l{style: "top: -15px"}
-					Ford Figo
-					%br/
-					Ejipura (Ejipura Main Road)
-			%td.t-c
-				.p-t10
-					19 Aug, 2014 09:00 AM
-					%br/
-					22 Aug, 2014 09:00 AM
-			%td.t-c
-				.p-t15.size-16
-					Rs. 2,000
-
-		-current_user.upcoming_bookings.each do |booking|
-			%tr
-				%td= link_to booking.confirmation_key, booking_path(booking.confirmation_key)
-				%td= booking.cargroup.name
-				%td 
-					= "#{booking.starts}"
-					%br
-					= "#{booking.ends}"
-				%td= booking.outstanding
-				%td= "#{booking.deposit_status} #{booking.hold ? '(Hold)' : ''}" 
-
-.panel.panel-default
-	.panel-heading
-		%h3.panel-title My Wallet
-	.panel-body
-		%h3 Total: #{current_user.wallet_total_amount}
-		%h3 Available: #{current_user.wallet_available_amount}
-		%h3 Frozen: #{current_user.wallet_frozen_amount}
-		= form_tag 'refunddeposit' do
-			= text_field_tag 'amount'
-			= submit_tag 'Refund'
-		= form_tag 'topupdeposit' do
-			= text_field_tag 'amount'
-			= submit_tag 'TopUp'
-		%h3 Wallet Snapshot
-		%table.table
-			%th Width
-			%th Amount
-			- wallet_amounts.each do |wallet_amount|
-				%tr
-					%td= wallet_amount.first
-					%td= wallet_amount.last
-		%h3 Upcoming Bookings
-		%table.table
-			%th Booking ID
-			%th Vehicle & Location
-			%th.info Duration
-			%th Outstanding
-			%th Deposit
-			-current_user.upcoming_bookings.each do |booking|
-				%tr
-					%td= link_to booking.confirmation_key, booking_path(booking.confirmation_key)
-					%td= booking.cargroup.name
-					%td 
-						= "#{booking.starts}"
-						%br
-						= "#{booking.ends}"
-					%td= booking.outstanding
-					%td= "#{booking.deposit_status} #{booking.hold ? '(Hold)' : ''}" 
+		- n = 0
+		- bookings.each do |booking|
+			%tr.clickable-row.pointer{'id' => "row#{booking[:booking].confirmation_key}",  'href' => "#"}
+				%td.t-c
+					.p-t15.size-16
+						= booking[:booking].confirmation_key
+				%td.t-c
+					.inline-block.colored
+						.m-auto{:class => 'small-car1'}
+					.inline-block.p-l10.position-r.t-l{style: "top: -15px"}
+						= booking[:booking].cargroup.name
+						%br/
+						= booking[:booking].location.name
+				%td.t-c
+					.p-t10
+						= booking[:booking].starts.strftime("%d %b, %Y %H:%M %p")
+						%br/
+						= booking[:booking].ends.strftime("%d %b, %Y %H:%M %p")
+				%td.t-c
+					.p-t15.size-16
+						= "Rs. " + number_with_delimiter(((CommonHelper::SECURITY_DEPOSIT - wallet_amounts[n].last) < 0) ? 0 : (CommonHelper::SECURITY_DEPOSIT - ((wallet_amounts[n].last < 0) ? 0 : wallet_amounts[n].last.to_i)))
+						- n += 1

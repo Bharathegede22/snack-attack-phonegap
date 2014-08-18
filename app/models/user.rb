@@ -278,7 +278,7 @@ class User < ActiveRecord::Base
 	end
 
 	def wallet_available_amount
-		wallet_total_amount - wallet_frozen_amount
+		(wallet_total_amount - wallet_frozen_amount) < 0 ? 0 : (wallet_total_amount - wallet_frozen_amount)
 	end
 
 	def wallet_refund(amount)

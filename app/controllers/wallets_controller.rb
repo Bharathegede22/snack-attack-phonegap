@@ -14,7 +14,7 @@ class WalletsController < ApplicationController
   end
 
   def show
-  	render layout: 'users'
+    render layout: 'users'
   end
 
   private
