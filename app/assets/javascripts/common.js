@@ -641,3 +641,17 @@ $(function () {
   		$(this).tab('show');
 	})
 });
+
+$(".clickable-row").click(function() {
+	window.document.location = $(this).attr("href");
+});
+$('.pop').popover();
+
+$('.safe-booking, .unsafe-booking').click(function(){
+	var title = $(this).attr('data-original-title');
+	var el = $('#row'+title);
+	if (el.hasClass('highlight'))
+		el.removeClass('highlight');
+	else
+		el.addClass('highlight');
+});

@@ -1066,6 +1066,103 @@ a {
 	background-position:-1000px 0px;
 }
 
+
+.small-car1, .small-car2, .small-car3, .small-car4, .small-car5, 
+	.small-car6, .small-car7, .small-car8, .small-car9, .small-car10, .small-car11 {
+	background:url(<%= asset_path 'cars/small-strip.jpg' %>) no-repeat;
+	width:70px;
+	height:56px;
+}
+
+.small-car1 {
+	background-position:0px 0px;
+}
+
+.small-car2 {
+	background-position:-70px 0px;
+}
+
+.small-car3 {
+	background-position:-140px 0px;
+}
+
+.small-car4 {
+	background-position:-210px 0px;
+}
+
+.small-car5 {
+	background-position:-280px 0px;
+}
+
+.small-car6 {
+	background-position:-350px 0px;
+}
+
+.small-car7 {
+	background-position:-420px 0px;
+}
+
+.small-car8 {
+	background-position:-490px 0px;
+}
+
+.small-car9 {
+	background-position:-560px 0px;
+}
+
+.small-car10 {
+	background-position:-630px 0px;
+}
+
+.small-car11 {
+	background-position:-700px 0px;
+}
+
+
+.colored .small-car1 {
+	background-position:0px -56px;
+}
+
+.colored .small-car2 {
+	background-position:-70px -56px;
+}
+
+.colored .small-car3 {
+	background-position:-140px -56px;
+}
+
+.colored .small-car4 {
+	background-position:-210px -56px;
+}
+
+.colored .small-car5 {
+	background-position:-280px -56px;
+}
+
+.colored .small-car6 {
+	background-position:-350px -56px;
+}
+
+.colored .small-car7 {
+	background-position:-420px -56px;
+}
+
+.colored .small-car8 {
+	background-position:-490px -56px;
+}
+
+.colored .small-car9 {
+	background-position:-560px -56px;
+}
+
+.colored .small-car10 {
+	background-position:-630px -56px;
+}
+
+.colored .small-car11 {
+	background-position:-700px -56px;
+}
+
 .search-item:hover .car1, .colored .car1 {
 	background-position:0px -80px;
 }
@@ -1949,3 +2046,88 @@ a {
 .mobile-app .android {background-position: 0px -126px;}
 .mobile-app .iphone:hover {background-position: -22px -103px;}
 .mobile-app .android:hover {background-position: 0px -103px;}
+
+#wallet-info {
+	width: 200px;
+}
+#wallet-graph {
+	width: 604px;
+	height: 104px;
+	background: #f9f9f9;
+	border-left: 4px solid #EEE;
+	border-bottom: 4px solid #EEE;
+}
+#y-axis {
+	width: 100px;
+	left: -104px;
+}
+#y-axis-1, #y-axis-2, #y-axis-3, #y-axis-4 {
+	right: 0;
+}
+#y-axis-1 { top: 3px; }
+#y-axis-2 { top: 33px; }
+#y-axis-3 { top: 63px; }
+#y-axis-4 { top: 93px; }
+
+#x-axis {
+	width: 600px;
+	left: 4px;
+	top: 110px;
+}
+
+#x-axis-1, #x-axis-2, #x-axis-3, #x-axis-4, #x-axis-5 {
+	width: 100px;
+}
+#x-axis-1 { left: -50px; }
+#x-axis-2 { left: 90px; }
+#x-axis-3 { left: 230px; }
+#x-axis-4 { left: 370px; }
+#x-axis-5 { left: 510px; }
+
+#legend {
+	top: 135px;
+	right: 0;
+}
+#indicator-1, #indicator-2, #indicator-3 {
+	width: 14px;
+	height: 14px;
+	margin-left: 16px;
+}
+#indicator-1 { background: #96D05E; }
+#indicator-2 { background: url(<%= asset_path 'safe.png' %>); }
+#indicator-3 { background: url(<%= asset_path 'unsafe.png' %>); }
+
+.money {
+	background: #96D05E;
+}
+
+.safe-booking, .unsafe-booking {
+	cursor: pointer;
+	opacity: 0.8;
+	padding: 10px 0;
+}
+.safe-booking:hover, .unsafe-booking:hover {
+	opacity: 0.9;
+}
+.safe-booking {
+	border-left: 20px solid #5CA315;
+	border-right: 5px solid #5CA315;
+	background: url(<%= asset_path 'safe.png' %>);
+	overflow: hidden;
+}
+.unsafe-booking {
+	border-left: 20px solid #A31515;
+	border-right: 5px solid #A31515;
+	background: url(<%= asset_path 'unsafe.png' %>);
+	overflow: hidden;
+}
+.wallet-car {
+	width: 25px;
+	height: 10px;
+	margin: 0 auto;
+	background: url(<%= asset_path 'wallet-car.png' %>);
+}
+
+.highlight {
+	background: #E2FFC5;
+}

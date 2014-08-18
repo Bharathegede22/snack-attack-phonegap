@@ -7,7 +7,134 @@
 	bookings.each do |booking|
 		wallet_amounts << [(booking[:ends].to_i - wallet_snap[:starts].to_i)*scale, (wallet_amounts.last.last - wallet_snap[:amount])]
 	end
-		
+
+
+#wallet-info.bs-g.fl
+	.p-10.bg-zoomb.white.t-c.f-b
+		My Wallet
+	.solid.border-c
+		.p-10.size-22.f-b.t-c.border-b-c
+			Rs. 8,000
+		%a.block.p-10.black.border-b-c{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/refund');"}
+			Available for refund: Rs. 5,000
+		%a.block.p-10.black.border-b-c{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/history');"}
+			Show Transaction History
+
+#wallet-graph.position-r.fr
+	#y-axis.position-a.t-r
+		#y-axis-1.position-a
+			15,000 -
+		#y-axis-2.position-a
+			10,000 -
+		#y-axis-3.position-a
+			5,000 -
+		#y-axis-4.position-a
+			0 -
+	#x-axis.position-a.t-c
+		#x-axis-1.position-a
+			Today
+		#x-axis-2.position-a
+			Aug 18
+		#x-axis-3.position-a
+			Aug 25
+		#x-axis-4.position-a
+			Sep 1
+		#x-axis-5.position-a
+			Sep 8
+
+	#legend.position-a
+		#indicator-1.inline-block
+			&nbsp;
+		Money in Wallet
+
+		#indicator-2.inline-block
+			&nbsp;
+		Safe Booking
+
+		#indicator-3.inline-block
+			&nbsp;
+		Unsafe Booking
+
+	.money.position-a{style: "width: 100px; height: 20px; bottom: 0; left: 0;"}
+		&nbsp;
+
+	.money.position-a{style: "width: 500px; height: 50px; bottom: 0; left: 100px;"}
+		&nbsp;
+
+	.safe-booking.position-a.pop{'style' => "width: 45px; height: 30px; bottom: 30px; left: 50px;", 'data-toggle' => "popover", 'title' => "JPS6E4UBE", 'data-html' => "true", 'data-content' => "Ford Figo at Ejipura<br/>19 Aug, 2014 - 09:00 AM<br/>21 Aug, 2014 - 09:00 AM"}
+		.wallet-car
+
+	.unsafe-booking.position-a.pop{'style' => "width: 60px; height: 30px; bottom: 0px; left: 0px;", 'data-toggle' => "popover", 'title' => "JPS6E4UBF", 'data-html' => "true", 'data-content' => "Ford Figo at Ejipura<br/>19 Aug, 2014 - 09:00 AM<br/>21 Aug, 2014 - 09:00 AM"}
+		.wallet-car
+
+.fc
+
+%br/
+
+.bs-g
+	.p-10.bg-zoomb.white.f-b
+		Upcoming Bookings
+	%table.table-condensed.table-hover.table
+		%tr.active
+			%th.t-c Booking ID
+			%th.t-c Vehicle & Location
+			%th.t-c Duration
+			%th.t-c 
+				Deposit or Top Up Due 
+				%span.help.pointer{'data-placement' => "top", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "TopUp or pay your Security Deposit through the Booking Summary page, which you can reach by clicking on the relevant booking"}
+					[?]
+
+		%tr.clickable-row.pointer{'id' => "rowJPS6E4UBE",  'href' => "#"}
+			%td.t-c
+				.p-t15.size-16
+					JPS6E4UBE
+			%td.t-c
+				.inline-block.colored
+					.m-auto{:class => 'small-car1'}
+				.inline-block.p-l10.position-r.t-l{style: "top: -15px"}
+					Ford Figo
+					%br/
+					Ejipura (Ejipura Main Road)
+			%td.t-c
+				.p-t10
+					19 Aug, 2014 09:00 AM
+					%br/
+					22 Aug, 2014 09:00 AM
+			%td.t-c
+				.p-t15.size-16
+					0
+
+		%tr.clickable-row.pointer{'id' => "rowJPS6E4UBF",  'href' => "#"}
+			%td.t-c
+				.p-t15.size-16
+					JPS6E4UBE
+			%td.t-c
+				.inline-block.colored
+					.m-auto{:class => 'small-car1'}
+				.inline-block.p-l10.position-r.t-l{style: "top: -15px"}
+					Ford Figo
+					%br/
+					Ejipura (Ejipura Main Road)
+			%td.t-c
+				.p-t10
+					19 Aug, 2014 09:00 AM
+					%br/
+					22 Aug, 2014 09:00 AM
+			%td.t-c
+				.p-t15.size-16
+					Rs. 2,000
+
+		-current_user.upcoming_bookings.each do |booking|
+			%tr
+				%td= link_to booking.confirmation_key, booking_path(booking.confirmation_key)
+				%td= booking.cargroup.name
+				%td 
+					= "#{booking.starts}"
+					%br
+					= "#{booking.ends}"
+				%td= booking.outstanding
+				%td= "#{booking.deposit_status} #{booking.hold ? '(Hold)' : ''}" 
+
 .panel.panel-default
 	.panel-heading
 		%h3.panel-title My Wallet
