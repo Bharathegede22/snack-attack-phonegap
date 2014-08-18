@@ -18,12 +18,10 @@ Web::Application.routes.draw do
 
 	resources :bookings do
 		collection do
-			get 'complete'
 			get 'corporate'
 			get 'details'
 			get 'docreatenotify'
 			get 'donotify'
-			get 'failed'
 			get 'license'
 			get 'notify'
 			get 'outstanding'
@@ -77,9 +75,11 @@ Web::Application.routes.draw do
 			collection do
 				get 'checkout'
 				get 'checkoutab'
+				get 'complete'
 				get 'do'
 				get 'docreate'
 				post 'docreate'
+				get 'failed'
 				get 'login'
 				get 'payment'
 				get 'userdetails'

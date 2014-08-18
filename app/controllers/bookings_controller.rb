@@ -296,21 +296,21 @@ class BookingsController < ApplicationController
 				  else
 				  	flash[:notice] = "Thanks for the payment. Please upload your license to complete the reservation."
 				  end
-		  		redirect_to "/bookings/complete"
+		  		redirect_to "/#{@city.name.downcase}/bookings/complete" #complete_bookings_path(@city.name.downcase)
 		  	else
 		  		flash[:notice] = "Thanks for the payment. Please continue."
-		  		redirect_to "/bookings/thanks"
+		  		redirect_to thanks_bookings_path
 		  	end
 		  elsif @payment.status == 3
 		    flash[:error] = "Your transaction is subject to manual approval by the payment gateway. We will keep you updated about the same through email."
 		  	if @booking.confirmed_payments.length == 0
-		  		redirect_to "/bookings/complete"
+		  		redirect_to "/#{@city.name.downcase}/bookings/complete" #complete_bookings_path(session[:city])
 		  	else
-		  		redirect_to "/bookings/thanks"
+		  		redirect_to thanks_bookings_path
 		  	end
 		  else
 		    flash[:error] = "Your transaction has failed. Please do a fresh transaction."
-		  	redirect_to "/bookings/failed"
+		  	redirect_to failed_bookings_path(session[:city]) #"/bookings/failed"
 		  end
 		else
 			redirect_to '/' and return
