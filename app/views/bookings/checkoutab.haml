@@ -119,6 +119,10 @@
 					Taxes
 
 			.tariff-details.bg-w.bs-9.p-t20.m-auto
+				- if user.support?
+					.p-10
+						#CorporateDiv
+							= render :partial => 'corporate'
 				%table.position-r{width: '100%'}
 					%tr
 						%td.p-5.p-l20.size-12
@@ -223,7 +227,7 @@
 			.t-c
 				.m-auto.p-20{style: "width:400px;"}
 					- if @available == 1 && user && !user.is_blacklisted?
-						%form{:action => "/bookings/docreate", :id => "CheckoutForm", :method => "post"}
+						%form{:action => "/#{@city.name.downcase}/bookings/docreate", :id => "CheckoutForm", :method => "post"}
 							.hide
 								%input{name: "starts", type: "hidden", value: session[:book][:starts]}
 								%input{name: "ends", type: "hidden", value: session[:book][:ends]}

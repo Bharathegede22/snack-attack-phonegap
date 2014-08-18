@@ -9,6 +9,18 @@ class Payment < ActiveRecord::Base
 	
 	after_save :after_save_tasks
 	
+	def change_mode(params)
+		if !params['mode'].blank?
+			mode = case params['mode'].downcase
+			when 'cc' then 0
+			when 'dc' then 1
+			when 'nb' then 2
+			else nil
+			end
+			self.update_column(:mode, mode) if mode
+		end
+	end
+	
 	def change_status(params)
 		if !params['status'].blank? && !params['amt'].blank?
 			if params['amt'].to_i == self.amount.to_i
@@ -63,12 +75,38 @@ class Payment < ActiveRecord::Base
 		return count
 	end
 	
+	def self.check_mode
+		Payment.find(:all, :conditions => "status = 1 AND through = 'payu' AND mode IS NULL").each do |p|
+			resp = Payu.check_status(p.encoded_id)
+			if resp && resp['status'] == 1
+      	resp['transaction_details'].each do |k,v|
+	    		str,id = CommonHelper.decode(k.downcase)
+	    		if !str.blank? && str == 'payment'
+						payment = Payment.find(id)
+						payment.change_mode(v) if payment
+					end
+				end
+      end
+		end
+	end
+	
 	def self.check_status
 		Payment.find(:all, :conditions => ["status != 1 AND created_at >= ? AND created_at < ?", Time.now - 1.hours, Time.now - 15.minutes]).each do |p|
-			Payu.check_status(p.encoded_id)
+			resp = Payu.check_status(p.encoded_id)
+			if resp && resp['status'] == 1
+      	resp['transaction_details'].each do |k,v|
+	    		str,id = CommonHelper.decode(k.downcase)
+	    		if !str.blank? && str == 'payment'
+						payment = Payment.find(id)
+						payment.change_status(v) if payment
+					end
+				end
+      end
 		end
 		Payment.check_mismatch
+		#Payment.check_mode
 	end
+	
 	
 	def self.do_create(params)
 		if !params['status'].blank? && 

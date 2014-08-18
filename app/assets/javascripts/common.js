@@ -103,9 +103,9 @@ function checkJail() {
 function checkout(data) {
 	$("#CheckoutWait").show();
 	if(typeof(data) === 'undefined'){
-		window.location = "/bookings/docreate";	
+		window.location = "/#{@city.name.downcase}/bookings/docreate";	
 	} else {
-		window.location = '/bookings/docreate?starts=' + data.starts + '&ends=' + data.ends + '&loc=' + data.loc + '&car=' + data.car;
+		window.location = '/#{@city.name.downcase}/bookings/docreate?starts=' + data.starts + '&ends=' + data.ends + '&loc=' + data.loc + '&car=' + data.car;
 	}
 }
 
@@ -129,11 +129,11 @@ function deltaX() {
 }
 
 function doBooking(carId, locId) {
-	window.location = "/" + getCookie('city') + "/bookings/do?car=" + carId + "&loc=" + locId;
+	window.location = "bookings/do?car=" + carId + "&loc=" + locId;
 }
 
 function doBookingNotify(carId, locId) {
-	window.location = "/" + getCookie('city') + "/bookings/do?car=" + carId + "&loc=" + locId + "&notify=true";
+	window.location = "/#{@city.name.downcase}/bookings/do?car=" + carId + "&loc=" + locId + "&notify=true";
 }
 
 function getCookie(cname) {

@@ -171,7 +171,7 @@ class BookingsController < ApplicationController
 				session[:booking_id] = nil
 		  	redirect_to "/bookings/#{@booking.encoded_id}"
 			elsif @booking.outstanding > 0
-				redirect_to "/bookings/payment"
+				redirect_to payment_bookings_path(session[:city])
 			else
 				u = @booking.user
 				if u.check_license
@@ -192,7 +192,7 @@ class BookingsController < ApplicationController
   	
 	def dopayment
 		session[:booking_id] = @booking.encoded_id
-		redirect_to "/bookings/payment"
+		redirect_to payment_bookings_path(session[:city])
 	end
 	
 	def failed
@@ -428,6 +428,7 @@ class BookingsController < ApplicationController
 				render json: {html: render_to_string('_widget.haml', layout: false)}
 			end
 		else
+			redirect_to '/' and return if session[:search].blank?
 			@booking = Booking.new
 			@booking.city_id = @city.id
 			@booking.starts = Time.zone.parse(session[:search][:starts]) if !session[:search].blank? && !session[:search][:starts].blank?
