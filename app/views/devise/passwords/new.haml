@@ -7,11 +7,11 @@
 		%form{:id => "ForgotForm", :onsubmit => "return SubmitForm(this,'#{password_path(:user)}','ModalContent');", :action => "javascript:void(0)", "data-ajax" => "false"}
 			.form-inline
 				.form-group
-					%input#ForgotEmail.validate-presence.form-control{name: 'user[email]', type: "text", value: @user.email}
+					%input#ForgotEmail.validate-presence.form-control{name: 'user[email]', type: "text", value: @user.email, :onclick => "newUserSessionEvent(window.location.pathname, 'Forgot Password', 'Email');"}
 					#ForgotEmailError.error.t-l
 						= errortxt(@user.errors[:email].uniq.join(', '))
 			#ForgotSubmit.p-5
-				= submit_tag "Submit", :class => 'btn btn-default btn-lg'
+				= submit_tag "Submit", :class => 'btn btn-default btn-lg', :onclick => "newUserSessionEvent(window.location.pathname, 'Forgot Password', 'Submit');"
 			#ForgotWait.p-5.hide
 				.wait
 		.p-t20

@@ -7,10 +7,10 @@
 	#tariff-header.tariff-header
 		- @cargroup.each_with_index do |cargroup, index|
 			- if index == 0
-				%a.block.active{:href => "#car#{cargroup.id}", 'data-toggle' => "tab"}
+				%a.block.active{:href => "#car#{cargroup.id}", 'data-toggle' => "tab", :onclick => "pushEvent('Cars Selected', '#{cargroup.shortname}', 'Tariff Page');"}
 					#{cargroup.display_name}
 			- else
-				%a.block{:href => "#car#{cargroup.id}", 'data-toggle' => "tab"}
+				%a.block{:href => "#car#{cargroup.id}", 'data-toggle' => "tab", :onclick => "pushEvent('Cars Selected', '#{cargroup.shortname}', 'Tariff Page');"}
 					#{cargroup.display_name}
 		.fc
 	#tariff-body.p-10.t-c.tab-content.solid.border-c
@@ -190,5 +190,5 @@
 	/ %br/
 
 .mod-calculator-box
-	.mod-calculator.r-tl-10.r-tr-10.ts-0{:onclick => "showModal('Tariff Calculator', '/calculator/tariff'); return false;"}
+	.mod-calculator.r-tl-10.r-tr-10.ts-0{:onclick => "showModal('Tariff Calculator', '/calculator/tariff');"}
 		Tariff Calculator

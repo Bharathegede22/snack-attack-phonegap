@@ -97,6 +97,7 @@
 					});
 					google.maps.event.addListener(marker#{l.id}, 'click', function() {
 						infowindow#{l.id}.open(map,marker#{l.id});
+						pushEvent('Locations Selected', '#{l.shortname}', 'Search Page Map');
 					});
 		:plain
 			}
