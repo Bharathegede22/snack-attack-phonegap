@@ -697,6 +697,14 @@ class Booking < ActiveRecord::Base
 		self.user_email = user.email
 		self.user_mobile = user.phone
 	end
+
+	def wallet_available_amount
+		wallet_amount = user.wallet_available_amount
+		user.upcoming_bookings(self.ends).each do |booking|
+			wallet_amount -= booking.pricing.mode::SECURITY unless booking.hold?
+		end
+		return (wallet_amount < 0) ? 0 : wallet_amount
+	end
 	
 	def wallet_impact
 		{starts: (starts-CommonHelper::WALLET_FREEZE_START.hours),

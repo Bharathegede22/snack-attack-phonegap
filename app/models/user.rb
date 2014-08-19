@@ -259,9 +259,9 @@ class User < ActiveRecord::Base
 		get_bookings('live') | upcoming_bookings
 	end
 
-	def upcoming_bookings
-		starting = "starts > '#{Time.zone.now.to_s(:db)}' AND starts < '#{(snapshot_end + CommonHelper::WALLET_FREEZE_START.hours).to_s(:db)}'AND status < 8"
-		ending = "ends > '#{(Time.zone.now - CommonHelper::WALLET_FREEZE_END.hours).to_s(:db)}' AND ends < '#{snapshot_end.to_s(:db)}'AND status < 8"
+	def upcoming_bookings(end_time=snapshot_end)
+		starting = "starts > '#{Time.zone.now.to_s(:db)}' AND starts < '#{(end_time + CommonHelper::WALLET_FREEZE_START.hours).to_s(:db)}'AND status < 8"
+		ending = "ends > '#{(Time.zone.now - CommonHelper::WALLET_FREEZE_END.hours).to_s(:db)}' AND ends < '#{end_time.to_s(:db)}'AND status < 8"
 		Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND (jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND (#{starting} OR #{ending}) ORDER BY ends ASC")
 	end
 
@@ -278,7 +278,7 @@ class User < ActiveRecord::Base
 	end
 
 	def wallet_available_amount
-		(wallet_total_amount - wallet_frozen_amount) < 0 ? 0 : (wallet_total_amount - wallet_frozen_amount)
+		(wallet_total_amount + wallet_frozen_amount) < 0 ? 0 : (wallet_total_amount + wallet_frozen_amount)
 	end
 
 	def wallet_refund(amount)
