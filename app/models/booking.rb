@@ -454,7 +454,7 @@ class Booking < ActiveRecord::Base
 
 	# Check if a given interval overlaps this interval    
 	def wallet_overlaps?(other)
-	((starts - CommonHelper::WALLET_FREEZE_START.hours) - (other.ends + CommonHelper::WALLET_FREEZE_END.hours)) * ((other.starts- CommonHelper::WALLET_FREEZE_START.hours) - (ends + - CommonHelper::WALLET_FREEZE_END.hours))>= 0
+	((starts - CommonHelper::WALLET_FREEZE_START.hours) - (other.ends + CommonHelper::WALLET_FREEZE_END.hours)) * ((other.starts- CommonHelper::WALLET_FREEZE_START.hours) - (ends + CommonHelper::WALLET_FREEZE_END.hours))>= 0
 	end
 
 	def refund_amount

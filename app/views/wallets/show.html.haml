@@ -1,15 +1,20 @@
 - render_flash
 :ruby 
 	wallet_snap = current_user.wallet_snapshot
-	bookings = wallet_snap[:bookings]
+	bookings = wallet_snap[:bookings].dup
 	wallet_amount = wallet_snap[:amount]
-	scale = 1
+	scale =  0.000164117
 	wallet_amounts = [[((bookings.shift[:ends].to_i rescue wallet_snap[:ends].to_i)- wallet_snap[:starts].to_i)*scale, wallet_snap[:amount]]]
 	bookings.each do |booking|
 		wallet_amounts << [(booking[:ends].to_i - wallet_snap[:starts].to_i)*scale, (wallet_amounts.last.last + booking[:amount])]
 	end
 
-
+	def get_level(booking, levels)
+		levels.each_with_index do |level, index|
+			return index if level.include? booking
+		end
+		return 0
+	end
 #wallet-info.bs-g.fl
 	.p-10.bg-zoomb.white.t-c.f-b
 		My Wallet
@@ -17,7 +22,7 @@
 		.p-10.size-22.f-b.t-c.border-b-c
 			= "Rs. " + number_with_delimiter(wallet_amount)
 		%a.block.p-10.black.border-b-c{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/refund');"}
-			= "Available for refund: Rs. " + number_with_delimiter(current_user.wallet_available_amount)
+			= "Frozen amount: Rs. " + number_with_delimiter(current_user.wallet_frozen_amount)
 		%a.block.p-10.black.border-b-c{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/history');"}
 			Show Transaction History
 
@@ -43,24 +48,30 @@
 		#indicator-3.inline-block
 			&nbsp;
 		Unsafe Booking
-
-	- if wallet_snap[:amount] != 0
-		- 
-	.money.position-a{style: "width: 100px; height: 20px; bottom: 0; left: 0;"}
+	-offset = 0
+	- wallet_amounts.each do |wa|
+		.money.position-a{style: "width: #{wa.first}px; height: #{30*wa.last/5000}px; bottom: 0; left: #{offset}px;"}
 		&nbsp;
-
-	.money.position-a{style: "width: 500px; height: 50px; bottom: 0; left: 100px;"}
+		- offset = wa.first
+	- all_levels =[]
+	- tries = 0
+	- levels = []
+	- remaining = wallet_snap[:bookings].dup
+	- while remaining.any? && tries<wallet_snap[:bookings].count
+		- (remaining).each do |booking|
+			- levels << booking unless levels.select{|b2| b2[:booking].wallet_overlaps? booking[:booking]}.any?
+		- remaining = remaining - levels
+		- all_levels << levels
+		- levels = []
+		-tries+=1
+	.money.position-a{style: "width: #{600-offset}px; height: #{30*wallet_amounts.last.last/5000}px; bottom: 0; left: #{offset}px;"}
 		&nbsp;
-
-	.safe-booking.position-a.pop{'style' => "width: 45px; height: 30px; bottom: 30px; left: 50px;", 'data-toggle' => "popover", 'title' => "JPS6E4UBE", 'data-html' => "true", 'data-content' => "Ford Figo at Ejipura<br/>19 Aug, 2014 - 09:00 AM<br/>21 Aug, 2014 - 09:00 AM"}
-		.wallet-car
-
-	.unsafe-booking.position-a.pop{'style' => "width: 60px; height: 30px; bottom: 0px; left: 0px;", 'data-toggle' => "popover", 'title' => "JPS6E4UBF", 'data-html' => "true", 'data-content' => "Ford Figo at Ejipura<br/>19 Aug, 2014 - 09:00 AM<br/>21 Aug, 2014 - 09:00 AM"}
+	- wallet_snap[:bookings].each do |booking|
+		- offset = (booking[:starts] - wallet_snap[:starts])*scale
+		.position-a.pop{class: "#{current_user.unsafe_booking?(booking[:booking]) ? 'unsafe-booking' : 'safe-booking'}", 'style' => "width: #{25+ (booking[:booking].ends- booking[:booking].starts)*scale}px; height: 30px; bottom: #{30*get_level(booking, all_levels)}px; left: #{offset}px;", 'data-toggle' => "popover", 'title' => "#{booking[:booking].confirmation_key}", 'data-html' => "true", 'data-content' => "#{booking[:booking].cargroup.name}<br/>#{booking[:booking].starts.to_s}<br/>#{booking[:booking].ends.to_s}"}
 		.wallet-car
 
 .fc
-
-%br/
 
 .bs-g
 	.p-10.bg-zoomb.white.f-b
@@ -76,7 +87,7 @@
 					[?]
 
 		- n = 0
-		- bookings.each do |booking|
+		- wallet_snap[:bookings].each do |booking|
 			%tr.clickable-row.pointer{'id' => "row#{booking[:booking].confirmation_key}",  'href' => "#"}
 				%td.t-c
 					.p-t15.size-16

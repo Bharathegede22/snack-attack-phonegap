@@ -262,7 +262,7 @@ class User < ActiveRecord::Base
 	def upcoming_bookings(end_time=snapshot_end)
 		starting = "starts > '#{Time.zone.now.to_s(:db)}' AND starts < '#{(end_time + CommonHelper::WALLET_FREEZE_START.hours).to_s(:db)}'AND status < 8"
 		ending = "ends > '#{(Time.zone.now - CommonHelper::WALLET_FREEZE_END.hours).to_s(:db)}' AND ends < '#{end_time.to_s(:db)}'AND status < 8"
-		Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND (jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND (#{starting} OR #{ending}) ORDER BY ends ASC")
+		Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND (jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND ((#{starting}) OR (#{ending})) ORDER BY ends ASC")
 	end
 
 	def wallet_total_amount
@@ -287,6 +287,10 @@ class User < ActiveRecord::Base
 			wallet_amount -= booking.pricing.mode::SECURITY unless booking.hold?
 		end
 		return (wallet_amount < 0) ? 0 : wallet_amount
+	end
+
+	def unsafe_booking?(booking)
+		wallet_available_on_time(booking.starts - 24.hours) < booking.security_amount
 	end
 
 	def wallet_refund(amount)
