@@ -136,7 +136,11 @@
 					%span
 						%input{id: "securityDeposit", name: "deposit", type: "checkbox", value: "yes"}
 					%span
-						%b Pay ₹#{show_currency(@pricing.mode::SECURITY)} Security Deposit
+						- amount = (@pricing.mode::SECURITY - (@booking.user.wallet_available_on_time(@booking.starts))%(@pricing.mode::SECURITY)).to_i
+						- if amount == @pricing.mode::SECURITY
+							%b Pay ₹#{show_currency(amount)} Security Deposit
+						- else
+							%b Pay ₹#{show_currency(@pricing.mode::SECURITY - amount)} Security Deposit(₹#{show_currency(amount)} already in wallet)
 					%span.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => @booking.deposit_help}
 						%u (?)
 					#DepositMessage.red.p-t5
@@ -167,7 +171,11 @@
 					checkJquery();
 			- elsif @total == 0
 				.p-b10.size-14
-					%b Pay ₹#{show_currency(@pricing.mode::SECURITY)} Security Deposit
+					- amount = (@pricing.mode::SECURITY - (@booking.user.wallet_available_on_time(@booking.starts))%(@pricing.mode::SECURITY)).to_i
+					- if amount == @pricing.mode::SECURITY
+						%b Pay ₹#{show_currency(amount)} Security Deposit
+					- else
+						%b Pay ₹#{show_currency(@pricing.mode::SECURITY - amount)} Security Deposit(₹#{show_currency(amount)} already in wallet)
 				%a.btn.btn-default.btn-lg{href: "/bookings/#{@booking.encoded_id}/dodeposit", role: "button"} Proceed to Payment
 		- elsif @total > 0
 			%a.btn.btn-default.btn-lg{href: "/bookings/#{@booking.encoded_id}/dopayment", role: "button"} Proceed to Payment
