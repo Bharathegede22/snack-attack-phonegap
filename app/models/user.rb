@@ -281,6 +281,14 @@ class User < ActiveRecord::Base
 		(wallet_total_amount + wallet_frozen_amount)
 	end
 
+	def wallet_available_on_time(ends)
+		wallet_amount = wallet_available_amount
+		upcoming_bookings(ends).each do |booking|
+			wallet_amount -= booking.pricing.mode::SECURITY unless booking.hold?
+		end
+		return (wallet_amount < 0) ? 0 : wallet_amount
+	end
+
 	def wallet_refund(amount)
 		#TODO
 
