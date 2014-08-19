@@ -262,7 +262,7 @@ class User < ActiveRecord::Base
 	def upcoming_bookings
 		starting = "starts > '#{Time.zone.now.to_s(:db)}' AND starts < '#{(snapshot_end + CommonHelper::WALLET_FREEZE_START.hours).to_s(:db)}'AND status < 8"
 		ending = "ends > '#{(Time.zone.now - CommonHelper::WALLET_FREEZE_END.hours).to_s(:db)}' AND ends < '#{snapshot_end.to_s(:db)}'AND status < 8"
-		Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND (jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND (#{starting} OR #{ending}) ORDER BY ends ASC")
+		Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND (jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND ((#{starting}) OR (#{ending})) ORDER BY ends ASC")
 	end
 
 	def wallet_total_amount
