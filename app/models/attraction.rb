@@ -19,14 +19,18 @@ class Attraction < ActiveRecord::Base
 	end
 	
 	def meta_description(city=nil)
-    return "Rent a car on self drive from #{self.city.name} to #{self.name} by Zoomcar. "
+		if(self.seo_description.present?)
+			self.seo_description
+		else
+    	return "Rent a car on self drive from #{self.city.name} to #{self.name} by Zoomcar. "
+    end
 	end
 	
 	def meta_keywords(city=nil)
 		if(self.seo_keywords.present?)
-			@meta_keywords = self.seo_keywords
+			self.seo_keywords
 		else
-			@meta_keywords = "self drive car #{self.name.downcase}, self drive car rental, renting a car, self drive cars, zoomcar"
+			"self drive car #{self.name.downcase}, self drive car rental, renting a car, self drive cars, zoomcar"
 		end
 	end
 	

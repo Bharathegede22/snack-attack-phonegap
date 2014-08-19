@@ -52,14 +52,18 @@ class Cargroup < ActiveRecord::Base
   end
   
   def meta_description(city)
-		return "Self drive #{self.name.downcase} car on rent by the hour, daily, weekly and monthly basis at affordable price in #{city.name}"
+  	if(self.seo_description.present?)
+			self.seo_description
+		else
+			return "Self drive #{self.name.downcase} car on rent by the hour, daily, weekly and monthly basis at affordable price in #{city.name}"
+		end
 	end
 	
 	def meta_keywords(city)
 		if(self.seo_title.present?)
-			@meta_keywords = self.seo_title
+			self.seo_title
 		else
-			@meta_keywords = "self drive car #{self.name.downcase} #{city.name.downcase}, zoomcar"
+			"self drive car #{self.name.downcase} #{city.name.downcase}, zoomcar"
 		end
 	end
 	
