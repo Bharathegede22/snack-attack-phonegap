@@ -28,7 +28,7 @@ class Offer < ActiveRecord::Base
 		coupon = nil
 		text = ''
 		# Promo
-		offer = Offer.find_by(:promo_code => code)
+		offer = Offer.where("promo_code = '#{code}' OR promo_code LIKE '%#{code},%' OR promo_code LIKE '%#{code}'").first
 		# Coupon
 		if offer.blank?
 			coupon = CouponCode.find_by(:code => code)

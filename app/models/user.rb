@@ -52,9 +52,9 @@ class User < ActiveRecord::Base
 	
 	def get_bookings(action, page=0)
   	sql, order = case action
-  	when 'live' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND starts <= '#{Time.zone.now.to_s(:db)}' AND ends >= '#{Time.zone.now.to_s(:db)}' AND status < 8", 'starts ASC']
+  	when 'live' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND starts <= '#{Time.zone.now.to_s(:db)}' AND returned_at IS NULL AND ends >= '#{Time.zone.now.to_s(:db)}' AND status < 8", 'starts ASC']
   	when 'future' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND starts > '#{Time.zone.now.to_s(:db)}' AND status < 8", 'starts ASC']
-  	when 'completed' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND ends < '#{Time.zone.now.to_s(:db)}' AND status < 8", 'id DESC']
+  	when 'completed' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND returned_at IS NOT NULL AND returned_at < '#{Time.zone.now.to_s(:db)}' AND status < 8", 'id DESC']
   	when 'cancelled' then ["status > 8", 'id DESC']
   	when 'unfinished' then ["jsi IS NULL AND status = 0", 'id DESC']
   	when 'wallet_frozen' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND ((starts >= '#{Time.zone.now.to_s(:db)}' AND starts <= '#{(Time.zone.now+CommonHelper::WALLET_FREEZE_START.hours).to_s(:db)}') OR (ends < '#{Time.zone.now.to_s(:db)}' AND ends >= '#{(Time.zone.now-CommonHelper::WALLET_FREEZE_END.hours).to_s(:db)}')) AND status < 8", 'starts ASC']
@@ -278,7 +278,7 @@ class User < ActiveRecord::Base
 	end
 
 	def wallet_available_amount
-		(wallet_total_amount + wallet_frozen_amount) < 0 ? 0 : (wallet_total_amount + wallet_frozen_amount)
+		(wallet_total_amount + wallet_frozen_amount)
 	end
 
 	def wallet_refund(amount)

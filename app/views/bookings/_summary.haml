@@ -41,14 +41,13 @@
 						₹#{show_currency(c.amount)}
 						- tmp += c.amount
 	- if !deposit
-		- deposit = @pricing.mode::SECURITY
-		- if deposit > 0
-			%tr
-				%td
-					Refundable Deposit
-				%td.t-r
-					#Deposit.t-s
-						₹#{show_currency(deposit)}
+		- deposit = @booking.status < 9 ? @pricing.mode::SECURITY : 0
+		%tr
+			%td
+				Refundable Deposit
+			%td.t-r
+				#Deposit.t-s
+					₹#{show_currency(deposit)}
 	%tr.f-b.bg-c
 		%td
 			Total Amount

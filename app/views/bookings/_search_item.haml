@@ -112,7 +112,7 @@
 						- if h < 4
 							%sup.size-14 *
 					- if locs[0][1] == 1
-						.button{id: 'ButtonYes' + car.id.to_s, onclick: "doBooking(#{car.id}, #{locs[0][0].id});"}
+						.button{id: 'ButtonYes' + car.id.to_s, onclick: "doBooking(#{car.id}, #{locs[0][0].id}); pushEvent('Cars Selected', '#{car.shortname}', 'Search Page Listing');"}
 							Book
 					
 						.button-dis{id: 'ButtonNo' + car.id.to_s, style: 'display:none;'}

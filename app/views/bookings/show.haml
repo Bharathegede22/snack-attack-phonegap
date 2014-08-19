@@ -23,7 +23,7 @@
 					%b Status
 			.col-md-9
 				.p-5
-					- if @booking.security_amount_deferred?
+					- if @booking.security_amount_deferred? && @booking.status < 9
 						.red
 							Security Deposit Unpaid
 					.size-20
@@ -82,6 +82,14 @@
 			.col-md-9
 				.p-5
 					= @booking.ends.strftime("%d %b, %Y %I:%M %p")
+		- if !@booking.returned_at.blank?
+			.row
+				.col-md-3
+					.p-5
+						%b Return Time
+				.col-md-9
+					.p-5
+						= @booking.returned_at.strftime("%d %b, %Y %I:%M %p")
 		- if offer
 			.row
 				.col-md-3
@@ -112,7 +120,7 @@
 					.btn.btn-danger{onclick: "showModal('Cancel Your Booking', '/bookings/#{@booking.encoded_id}/cancel');"}
 						Cancel
 				- else
-					- if @booking.total_payments > 0
+					- if @booking.total_payments > 0 && @booking.balance == 0
 						%a.btn.btn-default{href: "/bookings/#{@booking.encoded_id}/invoice", target: '_blank', role: "button"} Invoice
 					- if @booking.status_complete?
 						%a.btn.btn-default{href: "/bookings/#{@booking.encoded_id}/feedback", target: '_blank', role: "button"} Feedback
@@ -157,7 +165,7 @@
 						}
 					}
 					checkJquery();
-			- else
+			- elsif @total == 0
 				.p-b10.size-14
 					%b Pay ₹#{show_currency(@pricing.mode::SECURITY)} Security Deposit
 				%a.btn.btn-default.btn-lg{href: "/bookings/#{@booking.encoded_id}/dodeposit", role: "button"} Proceed to Payment

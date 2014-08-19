@@ -38,7 +38,7 @@
 			%input#LocationVal{name: 'loc', type: "text", value: @booking.location_id, readonly: 'true'}
 			%input#CarsVal{name: 'car', type: "text", value: @booking.cargroup_id, readonly: 'true'}
 		#SearchSubmit.button
-			= submit_tag "Book A Car", :class => 'inpt'
+			= submit_tag "Book A Car", :class => 'inpt', :onclick => "pushEvent('Search Bar', 'Book A Car');"
 		#SearchWait.p-5.t-c{style: 'display:none;'}
 			.wait
 	.fc
