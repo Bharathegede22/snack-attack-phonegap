@@ -22,7 +22,11 @@ class Cargroup < ActiveRecord::Base
 	end
 	
 	def h1(city)
-		return "Rent #{self.name}"
+		if(self.seo_h1.present?)
+			return self.seo_h1
+		else
+			return "Rent #{self.name}"
+		end
 	end
 	
 	def link(city)
@@ -52,11 +56,19 @@ class Cargroup < ActiveRecord::Base
 	end
 	
 	def meta_keywords(city)
-		@meta_keywords = "self drive car #{self.name.downcase} #{city.name.downcase}, zoomcar"
+		if(self.seo_title.present?)
+			@meta_keywords = self.seo_title
+		else
+			@meta_keywords = "self drive car #{self.name.downcase} #{city.name.downcase}, zoomcar"
+		end
 	end
 	
 	def meta_title(city)
-		return "#{self.name} Car On Self Drive In #{city.name} | Zoomcar"
+		if(self.seo_title.present?)
+			return self.seo_title
+		else
+			return "#{self.name} Car On Self Drive In #{city.name} | Zoomcar"
+		end
 	end
 	
 	def self.list(city)

@@ -7,7 +7,11 @@ class Attraction < ActiveRecord::Base
 	end
 	
 	def h1(city=nil)
-		return "Self Drive Car From #{self.city.name} to #{self.name} "
+		if(self.seo_h1.present?)
+			return self.seo_h1
+		else
+			return "Self Drive Car From #{self.city.name} to #{self.name} "
+		end
 	end
 	
 	def link(city=nil)
@@ -19,11 +23,19 @@ class Attraction < ActiveRecord::Base
 	end
 	
 	def meta_keywords(city=nil)
-		@meta_keywords = "self drive car #{self.name.downcase}, self drive car rental, renting a car, self drive cars, zoomcar"
+		if(self.seo_keywords.present?)
+			@meta_keywords = self.seo_keywords
+		else
+			@meta_keywords = "self drive car #{self.name.downcase}, self drive car rental, renting a car, self drive cars, zoomcar"
+		end
 	end
 	
 	def meta_title(city=nil)
-    return "Self Drive Cars On Rent From #{self.city.name} To #{self.name} | Zoomcar"
+		if(self.seo_title.present?)
+			return self.seo_title
+		else
+    	return "Self Drive Cars On Rent From #{self.city.name} To #{self.name} | Zoomcar"
+    end
 	end
 	
 end
