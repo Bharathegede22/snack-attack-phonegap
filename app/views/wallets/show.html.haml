@@ -9,6 +9,12 @@
 		wallet_amounts << [(booking[:ends].to_i - wallet_snap[:starts].to_i)*scale, (wallet_amounts.last.last + booking[:amount])]
 	end
 
+	def get_level(booking, levels)
+		levels.each_with_index do |level, index|
+			return index if level.include? booking
+		end
+		return 0
+	end
 #wallet-info.bs-g.fl
 	.p-10.bg-zoomb.white.t-c.f-b
 		My Wallet
@@ -47,13 +53,23 @@
 		.money.position-a{style: "width: #{wa.first}px; height: #{30*wa.last/5000}px; bottom: 0; left: #{offset}px;"}
 		&nbsp;
 		- offset = wa.first
+	- all_levels =[]
+	- tries = 0
+	- levels = []
+	- remaining = wallet_snap[:bookings].dup
+	- while remaining.any? && tries<wallet_snap[:bookings].count
+		- (remaining).each do |booking|
+			- levels << booking unless levels.select{|b2| b2[:booking].wallet_overlaps? booking[:booking]}.any?
+		- remaining = remaining - levels
+		- all_levels << levels
+		- levels = []
+		-tries+=1
 	.money.position-a{style: "width: #{600-offset}px; height: #{30*wallet_amounts.last.last/5000}px; bottom: 0; left: #{offset}px;"}
 		&nbsp;
 	- wallet_snap[:bookings].each do |booking|
 		- offset = (booking[:starts] - wallet_snap[:starts])*scale
-		.safe-booking.position-a.pop{'style' => "width: 45px; height: 30px; bottom: 30px; left: #{offset}px;", 'data-toggle' => "popover", 'title' => "#{booking[:booking].confirmation_key}", 'data-html' => "true", 'data-content' => "#{booking[:booking].cargroup.name}<br/>#{booking[:booking].starts.to_s}<br/>#{booking[:booking].ends.to_s}"}
+		.position-a.pop{class: "#{current_user.unsafe_booking?(booking[:booking]) ? 'unsafe-booking' : 'safe-booking'}", 'style' => "width: #{25+ (booking[:booking].ends- booking[:booking].starts)*scale}px; height: 30px; bottom: #{30*get_level(booking, all_levels)}px; left: #{offset}px;", 'data-toggle' => "popover", 'title' => "#{booking[:booking].confirmation_key}", 'data-html' => "true", 'data-content' => "#{booking[:booking].cargroup.name}<br/>#{booking[:booking].starts.to_s}<br/>#{booking[:booking].ends.to_s}"}
 		.wallet-car
-
 
 .fc
 

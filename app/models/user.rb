@@ -289,6 +289,10 @@ class User < ActiveRecord::Base
 		return (wallet_amount < 0) ? 0 : wallet_amount
 	end
 
+	def unsafe_booking?(booking)
+		wallet_available_on_time(booking.starts - 24.hours) < booking.security_amount
+	end
+
 	def wallet_refund(amount)
 		#TODO
 
