@@ -136,7 +136,7 @@
 					%span
 						%input{id: "securityDeposit", name: "deposit", type: "checkbox", value: "yes"}
 					%span
-						- amount = (@booking.user.wallet_available_on_time(@booking.starts - CommonHelper::WALLET_FREEZE_START) >= 5000) ? 5000 : (@pricing.mode::SECURITY - (@booking.user.wallet_available_on_time(@booking.starts - CommonHelper::WALLET_FREEZE_START))%(@pricing.mode::SECURITY)).to_i
+						- amount = (@booking.user.wallet_available_on_time(@booking.starts - CommonHelper::WALLET_FREEZE_START.hours) >= 5000) ? 5000 : (@pricing.mode::SECURITY - (@booking.user.wallet_available_on_time(@booking.starts - CommonHelper::WALLET_FREEZE_START.hours))%(@pricing.mode::SECURITY)).to_i
 						- if amount == @pricing.mode::SECURITY
 							%b Pay ₹#{show_currency(amount)} Security Deposit
 						- else
@@ -171,7 +171,7 @@
 					checkJquery();
 			- elsif @total == 0
 				.p-b10.size-14
-					- amount = (@booking.user.wallet_available_on_time(@booking.starts - CommonHelper::WALLET_FREEZE_START) >= 5000) ? 5000 : (@pricing.mode::SECURITY - (@booking.user.wallet_available_on_time(@booking.starts - CommonHelper::WALLET_FREEZE_START))%(@pricing.mode::SECURITY)).to_i
+					- amount = (@booking.user.wallet_available_on_time(@booking.starts - CommonHelper::WALLET_FREEZE_START.hours) >= 5000) ? 5000 : (@pricing.mode::SECURITY - (@booking.user.wallet_available_on_time(@booking.starts - CommonHelper::WALLET_FREEZE_START.hours))%(@pricing.mode::SECURITY)).to_i
 					- if amount == @pricing.mode::SECURITY
 						%b Pay ₹#{show_currency(amount)} Security Deposit
 					- else
