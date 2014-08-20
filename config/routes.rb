@@ -4,6 +4,8 @@ Web::Application.routes.draw do
   post 'refunddeposit' => "wallets#refund"
   post 'topupdeposit' => "wallets#topup"
   get 'mydeposits' => "wallets#show"
+  get 'wallets/refund' => "wallets#show_refund"
+  
 	devise_for :users, 
 		:controllers => {
 			:confirmations => "users/confirmations", 

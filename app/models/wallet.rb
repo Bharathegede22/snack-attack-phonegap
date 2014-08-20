@@ -2,7 +2,7 @@ class Wallet < ActiveRecord::Base
 	belongs_to :user
 	belongs_to :transferable, polymorphic: true
 
-	validates :amount, :user_id, :transferable_id, :transferable_type,	presence: true
+	validates :amount, :user_id,	presence: true
 
 	scope :credits, -> {where(credit: true)}
 	scope :debits, -> {where(credit: false)}
