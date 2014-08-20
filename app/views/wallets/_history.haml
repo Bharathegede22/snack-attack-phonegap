@@ -1,0 +1,21 @@
+Transaction History
+%br
+= "Currently in Wallet: Rs. #{number_with_delimiter(current_user.wallet_total_amount)}"
+%table
+	%thead
+		%tr
+			%th
+				Date
+			%th
+				Booking
+			%th
+				Amount
+	%tbody
+		- @history.each do |wallet|
+			%tr
+				%th
+					= wallet.created_at.to_date.strftime("%d %b %Y")
+				%th
+					= "##{wallet.transferable.booking.confirmation_key}" unless wallet.transferable.blank?
+				%th
+					= "#{wallet.credit ? "+" : "-"} Rs. #{number_with_delimiter(wallet.amount.to_i)}" 
