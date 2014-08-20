@@ -86,6 +86,12 @@ Web::Application.routes.draw do
 			post 'update'
 		end
 	end
+
+	resources :wallets do
+		collection do
+			get 'history'
+		end
+	end
 	
 	post '/search/:id' => 'bookings#search'
 	get '/search' => 'bookings#search'
