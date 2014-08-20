@@ -514,6 +514,7 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def setup
+		self.actual_cargroup_id = self.cargroup_id
 		self.actual_starts = self.starts
 		self.actual_ends = self.ends
 		self.ends_last = self.ends_was

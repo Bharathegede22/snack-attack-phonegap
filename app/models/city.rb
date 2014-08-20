@@ -33,9 +33,24 @@ class City < ActiveRecord::Base
 	def meta_description(action=nil) 
     return case action
     when 'attractions' then "Zoomcar Pick up points of your favourite cars on self drive rental in #{self.name}. Explore and beyond #{self.name} on your own drive"
-    when 'inside' then "Find Self Drive Car Rental Locations In #{self.name} | Zoomcar"
-    when 'outside' then "Self drive car rental for exploring around #{self.name}. All-inclusive tariff covers fuel, insurance & taxes"
-    else "Book a self-drive car online for #{self.name.downcase} & around. Self driving car rental made easy like never before, simply join us for renting a car by the hour, day, week or month. Our tariff includes fuel, insurance & taxes."
+    when 'inside' then 
+    	if(self.seo_inside_description.present?)
+				self.seo_inside_description
+			else
+				"Find Self Drive Car Rental Locations In #{self.name} | Zoomcar"
+			end
+    when 'outside' then 
+    	if(self.seo_outside_description.present?)
+				self.seo_outside_description
+			else
+				"Self drive car rental for exploring around #{self.name}. All-inclusive tariff covers fuel, insurance & taxes"
+			end
+    else 
+    	if(self.seo_description.present?)
+				self.seo_description
+			else
+				"Book a self-drive car online for #{self.name.downcase} & around. Self driving car rental made easy like never before, simply join us for renting a car by the hour, day, week or month. Our tariff includes fuel, insurance & taxes."
+			end
     end
 	end
 	

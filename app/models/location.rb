@@ -55,14 +55,18 @@ class Location < ActiveRecord::Base
 	end
 	
 	def meta_description(city=nil)
-		return "Rent a car on self drive in #{self.city.name.downcase}. Pick up the car at #{self.name.downcase}"
+		if(self.seo_description.present?)
+			return self.seo_description
+		else
+			return "Rent a car on self drive in #{self.city.name.downcase}. Pick up the car at #{self.name.downcase}"
+		end
 	end
 	
 	def meta_keywords(city=nil)
 		if(self.seo_keywords.present?)
-			@meta_keywords = self.seo_keywords
+			self.seo_keywords
 		else
-			@meta_keywords = "self drive car #{self.name.downcase} #{self.city.name.downcase}, self drive car rental, renting a car, self drive cars, zoomcar"
+			"self drive car #{self.name.downcase} #{self.city.name.downcase}, self drive car rental, renting a car, self drive cars, zoomcar"
 		end
 	end
 	
@@ -70,7 +74,6 @@ class Location < ActiveRecord::Base
 		if(self.seo_title.present?)
 			return seo_title
 		else
-			return "Self Drive Car Rent at #{self.name}, #{self.city.name} | Zoomcar.in"
 			return "Self Drive Cars On Rent At #{self.name}, #{self.city.name} | Zoomcar"
 		end
 	end
