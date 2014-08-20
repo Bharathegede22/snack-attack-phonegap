@@ -1,10 +1,6 @@
 Web::Application.routes.draw do
-	
-  #post "wallets#topup"
-  post 'refunddeposit' => "wallets#refund"
-  post 'topupdeposit' => "wallets#topup"
-  get 'mydeposits' => "wallets#show"
-  get 'wallets/refund' => "wallets#show_refund"
+
+	get 'mydeposits' => "wallets#show"
   
 	devise_for :users, 
 		:controllers => {
@@ -87,9 +83,13 @@ Web::Application.routes.draw do
 		end
 	end
 
-	resources :wallets do
+	resources :wallets, :only => [] do
 		collection do
 			get 'history'
+  			get 'show_refund'
+			#post "wallets#topup"
+  			post 'refund'
+  			post 'topup'
 		end
 	end
 	

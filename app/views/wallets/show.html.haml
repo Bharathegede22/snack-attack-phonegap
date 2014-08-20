@@ -21,7 +21,7 @@
 	.solid.border-c
 		.p-10.size-22.f-b.t-c.border-b-c
 			= "Rs. " + number_with_delimiter(wallet_amount)
-		%a.block.p-10.black.border-b-c{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/refund');"}
+		%a.block.p-10.black.border-b-c{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/show_refund');"}
 			= "Frozen amount: Rs. " + number_with_delimiter(current_user.wallet_frozen_amount)
 		%a.block.p-10.black.border-b-c{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/history');"}
 			Show Transaction History
