@@ -16,6 +16,6 @@ Transaction History
 				%th
 					= wallet.created_at.to_date.strftime("%d %b %Y")
 				%th
-					= "##{wallet.transferable.booking.confirmation_key}" unless wallet.transferable.blank?
+					= wallet.transferable.blank? ? "Pending Refund" : "##{wallet.transferable.booking.confirmation_key}" 
 				%th
 					= "#{wallet.credit ? "+" : "-"} Rs. #{number_with_delimiter(wallet.amount.to_i)}" 
