@@ -4,7 +4,7 @@
 	bookings = wallet_snap[:bookings].dup
 	wallet_amount = wallet_snap[:amount]
 	scale =  0.000164117
-	wallet_amounts = [[((bookings.shift[:ends].to_i rescue wallet_snap[:ends].to_i)- wallet_snap[:starts].to_i)*scale, wallet_snap[:amount]]]
+	wallet_amounts = [[((bookings.first[:ends].to_i rescue wallet_snap[:ends].to_i)- wallet_snap[:starts].to_i)*scale, wallet_snap[:amount]]]
 	bookings.each do |booking|
 		wallet_amounts << [(booking[:ends].to_i - wallet_snap[:starts].to_i)*scale, (wallet_amounts.last.last + booking[:amount])]
 	end
@@ -69,7 +69,7 @@
 	- wallet_snap[:bookings].each do |booking|
 		- offset = (booking[:starts] - wallet_snap[:starts])*scale
 		.position-a.pop{class: "#{current_user.unsafe_booking?(booking[:booking]) ? 'unsafe-booking' : 'safe-booking'}", 'style' => "width: #{25+ (booking[:booking].ends- booking[:booking].starts)*scale}px; height: 30px; bottom: #{30*get_level(booking, all_levels)}px; left: #{offset}px;", 'data-toggle' => "popover", 'title' => "#{booking[:booking].confirmation_key}", 'data-html' => "true", 'data-content' => "#{booking[:booking].cargroup.name}<br/>#{booking[:booking].starts.to_s}<br/>#{booking[:booking].ends.to_s}"}
-		.wallet-car
+			.wallet-car
 
 .fc
 
