@@ -717,9 +717,11 @@ $(function () {
 	})
 });
 
+
 $(".clickable-row").click(function() {
 	window.document.location = $(this).attr("href");
 });
+
 $('.pop').popover();
 
 $('.safe-booking, .unsafe-booking').click(function(){
@@ -729,4 +731,8 @@ $('.safe-booking, .unsafe-booking').click(function(){
 		el.removeClass('highlight');
 	else
 		el.addClass('highlight');
+});
+
+$('#resume_header').click(function(){
+	$('#resume_body').slideToggle();
 });
