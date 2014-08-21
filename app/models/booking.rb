@@ -24,7 +24,6 @@ class Booking < ActiveRecord::Base
 	
 	has_paper_trail
 	
-	attr_accessor :defer_deposit
 	attr_accessor :ends_last
 	attr_accessor :pricing_mode_last
 	attr_accessor :starts_last
@@ -53,12 +52,9 @@ class Booking < ActiveRecord::Base
 		charge.save
 	end
 
-	def add_security_deposit_to_wallet
-		return if security_charge.nil? || Time.now > (starts - CommonHelper::WALLET_FREEZE_START.hours)
-		if security_charge.destroy
-			refund = Refund.create!(status: 1, booking_id: self.id, through: 'wallet', amount: security_amount)
-			Wallet.create!(amount: security_amount, user_id: self.user_id, status: 1, credit: true, transferable: refund)
-		end	
+	def add_security_deposit_to_wallet(amount= security_amount)
+		refund = Refund.create!(status: 1, booking_id: self.id, through: 'wallet', amount: amount)
+		Wallet.create!(amount: amount, user_id: self.user_id, status: 1, credit: true, transferable: refund)
 	end
 
 	def cancellation_charge
@@ -94,7 +90,7 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def check_payment
-		total = self.outstanding
+		total = defer_deposit ? self.outstanding : self.outstanding_with_security
 		if total > 0
 			payment = Payment.create!(booking_id: self.id, through: 'payu', amount: total)
 		else
@@ -436,6 +432,10 @@ class Booking < ActiveRecord::Base
 		total += self.total_refunds
 		return total.to_i
 	end
+
+	def outstanding_with_security
+		outstanding + security_amount_remaining
+	end
 	
 	def outstanding_warning
 		return "Please pay any outstanding amount by <b>#{(self.starts - CommonHelper::JIT_DEPOSIT_CANCEL.hours).strftime('%d/%m/%y %I:%M %p')}</b> or your booking will get <u>cancelled</u>."
@@ -520,7 +520,12 @@ class Booking < ActiveRecord::Base
 	end
 
 	def security_amount_deferred?
-		pricing.mode::SECURITY > 0 && security_charge.nil?
+		pricing.mode::SECURITY > 0 && security_amount_remining > 0
+	end
+
+	def security_amount_remaining
+		amount = security_amount - user.wallet_available_on_time(self.starts.advance(hours: -CommonHelper::WALLET_FREEZE_START), self)
+		(amount < 0) ? 0 : amount
 	end
 
 	def security_charge
@@ -546,7 +551,7 @@ class Booking < ActiveRecord::Base
 			end
 		end
 		message << "#{self.city.contact_phone} : Zoom Support."
-		SmsSender.perform_async(self.user_mobile, message, self.id)
+		SmsSender.perform_async(self.user_mobile, message, self.id) if Rails.env.production?
 	end
 	
 	def set_fare
@@ -718,7 +723,6 @@ class Booking < ActiveRecord::Base
 		charge.discount                = self.discount
 		charge.amount                  = self.total_fare
 		charge.save
-		add_security_deposit_charge if self.defer_deposit.blank? && self.pricing.mode::SECURITY > 0
 		self.confirmation_key = self.encoded_id.upcase
 		self.save(validate: false)
 	end

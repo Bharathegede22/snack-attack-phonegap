@@ -27,6 +27,7 @@ class BookingsController < ApplicationController
 	end
 	
 	def checkout
+		@booking.user = current_user
 		redirect_to "/bookings/do" and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		generic_meta
 		@header = 'booking'
