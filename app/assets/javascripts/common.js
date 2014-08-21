@@ -717,3 +717,7 @@ $(function () {
   		$(this).tab('show');
 	})
 });
+
+$('#resume_header').click(function(){
+	$('#resume_body').slideToggle();
+});
