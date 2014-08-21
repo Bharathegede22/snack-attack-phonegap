@@ -47,15 +47,14 @@ class Booking < ActiveRecord::Base
 	}}
 	
 	def add_security_deposit_charge
-		return if !self.corporate_id.blank?
-		return if security_charge
-		charge 					= Charge.new(:booking_id => self.id, :activity => 'security_deposit')
+		return if !self.corporate_id.blank? || !security_charge.nil?
+		charge 			= Charge.new(:booking_id => self.id, :activity => 'security_deposit')
 		charge.amount 	= self.pricing.mode::SECURITY
 		charge.save
 	end
 
 	def add_security_deposit_to_wallet
-		return if security_charge.nil? || Time.now > (starts - CommonHelper.WALLET_FREEZE_START.hours)
+		return if security_charge.nil? || Time.now > (starts - CommonHelper::WALLET_FREEZE_START.hours)
 		if security_charge.destroy
 			refund = Refund.create!(status: 1, booking_id: self.id, through: 'wallet', amount: security_amount)
 			Wallet.create!(amount: security_amount, user_id: self.user_id, status: 1, credit: true, transferable: refund)
