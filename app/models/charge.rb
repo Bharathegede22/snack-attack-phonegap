@@ -15,8 +15,11 @@ class Charge < ActiveRecord::Base
 		return self.activity.split('_').map{|x| x.capitalize}.join(' ')
 	end
 	
-	protected
-	
+	def destroy
+		active=false
+		save!
+	end
+
 	protected
 	
 	def after_create_tasks
