@@ -281,16 +281,16 @@ class User < ActiveRecord::Base
 		(wallet_total_amount + wallet_frozen_amount)
 	end
 
-	def wallet_available_on_time(ends)
+	def wallet_available_on_time(ends,req_booking)
 		wallet_amount = wallet_available_amount
 		upcoming_bookings(ends).each do |booking|
-			wallet_amount -= booking.pricing.mode::SECURITY unless booking.hold?
+			wallet_amount -= booking.pricing.mode::SECURITY if !booking.hold? || req_booking.wallet_overlaps?
 		end
 		return (wallet_amount < 0) ? 0 : wallet_amount
 	end
 
 	def unsafe_booking?(booking)
-		wallet_available_on_time(booking.starts - 24.hours) < booking.security_amount
+		wallet_available_on_time(booking.starts - 24.hours,booking) < booking.security_amount
 	end
 
 	def wallet_refund(amount)
