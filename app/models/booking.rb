@@ -48,23 +48,18 @@ class Booking < ActiveRecord::Base
 	
 	def add_security_deposit_charge
 		return if !self.corporate_id.blank?
-		charge = Charge.where(["booking_id = ? AND activity = 'security_deposit'", self.id]).first
-		return if charge
+		return if security_charge
 		charge 					= Charge.new(:booking_id => self.id, :activity => 'security_deposit')
 		charge.amount 	= self.pricing.mode::SECURITY
 		charge.save
 	end
 
 	def add_security_deposit_to_wallet
-		if payments.select(&:wallet).empty? && security_refund.nil?
-			charge 			= Charge.new(:booking_id => self.id, :activity => 'wallet_topup')
-			charge.amount 	= self.pricing.mode::SECURITY
-			charge.estimate = self.pricing.mode::SECURITY
-			charge.refund = 1
-			charge.save
+		return if security_charge.nil? || Time.now > (starts - CommonHelper.WALLET_FREEZE_START.hours)
+		if security_charge.destroy
 			refund = Refund.create!(status: 1, booking_id: self.id, through: 'wallet', amount: security_amount)
 			Wallet.create!(amount: security_amount, user_id: self.user_id, status: 1, credit: true, transferable: refund)
-		end
+		end	
 	end
 
 	def cancellation_charge
@@ -449,12 +444,14 @@ class Booking < ActiveRecord::Base
 
 	# Check if a given interval overlaps this interval    
 	def overlaps?(other)
-	(starts - other.ends) * (other.starts - ends) >= 0
+		return false if other.nil?
+		(starts - other.ends) * (other.starts - ends) >= 0
 	end
 
 	# Check if a given interval overlaps this interval    
 	def wallet_overlaps?(other)
-	((starts - CommonHelper::WALLET_FREEZE_START.hours) - (other.ends + CommonHelper::WALLET_FREEZE_END.hours)) * ((other.starts- CommonHelper::WALLET_FREEZE_START.hours) - (ends + CommonHelper::WALLET_FREEZE_END.hours))>= 0
+		return false if other.nil?
+		((starts - CommonHelper::WALLET_FREEZE_START.hours) - (other.ends + CommonHelper::WALLET_FREEZE_END.hours)) * ((other.starts- CommonHelper::WALLET_FREEZE_START.hours) - (ends + CommonHelper::WALLET_FREEZE_END.hours))>= 0
 	end
 
 	def refund_amount
