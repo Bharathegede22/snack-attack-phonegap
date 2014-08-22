@@ -255,8 +255,8 @@ class User < ActiveRecord::Base
 		Time.zone.now + CommonHelper::WALLET_SNAPSHOT.days
 	end
 
-	def snapshot_bookings
-		get_bookings('live') | upcoming_bookings
+	def snapshot_bookings(time=snapshot_end)
+		get_bookings('live') | upcoming_bookings(time)
 	end
 
 	def upcoming_bookings(end_time=snapshot_end)
@@ -283,7 +283,7 @@ class User < ActiveRecord::Base
 
 	def wallet_available_on_time(ends,req_booking)
 		wallet_amount = wallet_available_amount
-		(upcoming_bookings(ends) | get_bookings('live')).each do |booking|
+		snapshot_bookings(ends).each do |booking|
 			wallet_amount -= booking.pricing.mode::SECURITY if !booking.hold? || req_booking.wallet_overlaps?(booking)
 		end
 		return (wallet_amount < 0) ? 0 : wallet_amount

@@ -200,8 +200,7 @@ class Booking < ActiveRecord::Base
 			total -= deposit.amount.to_i
 			wallet_payment_amount = [deposit.amount, self.user.wallet_total_amount].min
 			if data[:penalty]>0
-				wpayment = Payment.create!(status: 1, booking_id: self.id, through: 'wallet', amount: wallet_payment_amount)
-				Wallet.create!(amount: wallet_payment_amount, user_id: self.user_id, status: 1, credit: false, transferable: wpayment)
+				make_payment_from_wallet(wallet_payment_amount)
 			end
 
 			wallet_refund_amount = [0, wallet_payment_amount - data[:penalty]].max 
@@ -385,6 +384,11 @@ class Booking < ActiveRecord::Base
 	def link
 		return "http://" + HOSTNAME + "/bookings/" + self.encoded_id
 	end
+
+	def make_payment_from_wallet(amount)
+		wpayment = Payment.create!(status: 1, booking_id: self.id, through: 'wallet', amount: (amount > self.pricing.mode::SECURITY) ? (self.pricing.mode::SECURITY) : amount)
+		Wallet.create!(amount: amount, user_id: self.user_id, status: 1, credit: false, transferable: wpayment)
+	end
 	
 	def manage_inventory
 		check = 1
@@ -520,7 +524,7 @@ class Booking < ActiveRecord::Base
 	end
 
 	def security_amount_deferred?
-		pricing.mode::SECURITY > 0 && security_amount_remining > 0
+		pricing.mode::SECURITY > 0 && security_amount_remaining > 0
 	end
 
 	def security_amount_remaining
