@@ -42,9 +42,13 @@ class Booking < ActiveRecord::Base
 	
 	# Return a scope for all interval overlapping the given interval, including the given interval itself
 	scope :overlapping, lambda { |interval| {
-	:conditions => ["(DATEDIFF(starts, ?) * DATEDIFF(?, ends)) >= 0", interval.ends, interval.starts]
+	:conditions => ["(DATEDIFF(starts, ?) * DATEDIFF(?, ends)) >= 0 AND user_id = ? AND status > 0 AND status < 5", interval.ends, interval.starts, interval.user_id]
 	}}
 	
+	scope :overlapping_deposit, lambda { |interval| {
+	:conditions => ["(DATEDIFF(starts, ?) * DATEDIFF(?, ends)) >= 0 AND user_id = ? AND status > 0 AND status < 5", interval.ends + CommonHelper::WALLET_FREEZE_END.hours, interval.starts - CommonHelper::WALLET_FREEZE_START.hours, interval.user_id]
+	}}
+
 	def add_security_deposit_charge
 		return if !self.corporate_id.blank? || !security_charge.nil?
 		charge 			= Charge.new(:booking_id => self.id, :activity => 'security_deposit')
@@ -528,7 +532,7 @@ class Booking < ActiveRecord::Base
 	end
 
 	def security_amount_remaining
-		amount = security_amount - user.wallet_available_on_time(self.starts.advance(hours: -CommonHelper::WALLET_FREEZE_START), self)
+		amount = (security_amount)*(Booking.overlapping_deposit(self).count + (self.new_record? ? 1 : 0)) - user.wallet_available_on_time(self.starts.advance(hours: -CommonHelper::WALLET_FREEZE_START), self)
 		(amount < 0) ? 0 : amount
 	end
 

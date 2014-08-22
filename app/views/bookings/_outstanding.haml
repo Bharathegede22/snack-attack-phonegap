@@ -35,7 +35,7 @@
 					%td.p-5.t-r
 						- if @booking.defer_allowed?
 							#Deposit
-								₹#{show_currency @booking.security_amount_remaining}
+								₹#{show_currency @booking.outstanding_with_security}
 			- if @booking.defer_allowed?
 				%tr#DepositMessage.red.t-c{style: 'display:none;'}
 					%td.p-5{colspan: '3'}
