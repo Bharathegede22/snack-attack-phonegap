@@ -1,15 +1,48 @@
-Transaction History
-%br
-= "Currently in Wallet: Rs. #{number_with_delimiter(current_user.wallet_total_amount)}"
-%table
-	%thead
-		%tr
-			%th
-				Date
-			%th
-				Booking
-			%th
-				Amount
+.size-18.t-c
+	Currently in Wallet: 
+	%span.f-b Rs. #{number_with_delimiter(current_user.wallet_total_amount)}
+
+%br/
+
+%table.m-0{style: "width: 100%;", cellspacing: 0, cellpadding: 0}
+	%tr.size-13
+		%th.p-b10.p-t10.bg-e.t-c
+			Date
+		%th.p-b10.p-t10.bg-e.t-c
+			Booking
+		%th.p-b10.p-t10.bg-e.t-c
+			Amount
+		%th.p-b10.p-t10.bg-e.t-c
+			Description
+
+	%tr
+		%td.t-c.bg-w.p-t10.p-b10.border-b-e
+			sdfsdf
+		%td.t-c.bg-w.p-t10.p-b10.border-b-e
+			sfsdfsdf
+		%td.t-c.bg-w.p-t10.p-b10.border-b-e
+			sfdsfdsf
+		%td.t-c.bg-w.p-t10.p-b10.border-b-e
+			description
+
+	%tr
+		%td.t-c.bg-w.p-t10.p-b10.border-b-e
+			sdfsdf
+		%td.t-c.bg-w.p-t10.p-b10.border-b-e
+			sfsdfsdf
+		%td.t-c.bg-w.p-t10.p-b10.border-b-e
+			sfdsfdsf
+		%td.t-c.bg-w.p-t10.p-b10.border-b-e
+			description
+	%tr
+		%td.t-c.bg-w.p-t10.p-b10.border-b-e
+			sdfsdf
+		%td.t-c.bg-w.p-t10.p-b10.border-b-e
+			sfsdfsdf
+		%td.t-c.bg-w.p-t10.p-b10.border-b-e
+			sfdsfdsf
+		%td.t-c.bg-w.p-t10.p-b10.border-b-e
+			description
 	%tbody
 		- @history.each do |wallet|
 			%tr

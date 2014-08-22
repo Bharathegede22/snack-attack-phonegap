@@ -1,3 +1,16 @@
+.size-18.t-c
+	You can refund up to: 
+	%span.f-b Rs. #{number_with_delimiter(current_user.wallet_total_amount)}
+
+%br/
+%br/
+
 =form_tag '/wallets/refund' do
-	=text_field_tag 'amount', current_user.wallet_total_amount
-	=submit_tag "Refund"
+	
+	.t-c.size-18
+		Enter amount
+
+		%input{name: "amount"}
+	
+	.t-c
+		%input.button.m-t15{style: "width:120px;", type: "submit", value: "Refund"}

@@ -23,7 +23,7 @@
 			= "Rs. " + number_with_delimiter(wallet_amount)
 		%a.block.p-10.black.border-b-c{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/show_refund');"}
 			= "Frozen amount: Rs. " + number_with_delimiter(current_user.wallet_frozen_amount)
-		%a.block.p-10.black.border-b-c{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/history');"}
+		%a.block.p-10.black.border-b-c{href: "javascript:void(0)", onclick: "showModal('Transaction History', '/wallets/history');"}
 			Show Transaction History
 
 #wallet-graph.position-r.fr
@@ -43,11 +43,11 @@
 
 		#indicator-2.inline-block
 			&nbsp;
-		Safe Booking
+		No Deposit Due
 
 		#indicator-3.inline-block
 			&nbsp;
-		Unsafe Booking
+		Deposit Due
 	-offset = 0
 	- wallet_amounts.each do |wa|
 		.money.position-a{style: "width: #{wa.first}px; height: #{30*wa.last/5000}px; bottom: 0; left: #{offset}px;"}
@@ -73,7 +73,7 @@
 
 .fc
 
-.bs-g
+.bs-g.m-t20
 	.p-10.bg-zoomb.white.f-b
 		Upcoming Bookings
 	%table.table-condensed.table-hover.table
@@ -81,9 +81,10 @@
 			%th.t-c Booking ID
 			%th.t-c Vehicle & Location
 			%th.t-c Duration
+			%th.t-c Outstanding
 			%th.t-c 
-				Deposit or Top Up Due 
-				%span.help.pointer{'data-placement' => "top", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "TopUp or pay your Security Deposit through the Booking Summary page, which you can reach by clicking on the relevant booking"}
+				Security Deposit Due 
+				%span.help.pointer{'data-placement' => "top", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Pay your Security Deposit through the Booking Summary page, which you can reach by clicking on the relevant booking."}
 					[?]
 
 		- n = 0
@@ -105,6 +106,74 @@
 						%br/
 						= booking[:booking].ends.strftime("%d %b, %Y %H:%M %p")
 				%td.t-c
+					.p-t10
+						Rs. 300
+				%td.t-c
 					.p-t15.size-16
 						= "Rs. " + number_with_delimiter(((CommonHelper::SECURITY_DEPOSIT - wallet_amounts[n].last) < 0) ? 0 : (CommonHelper::SECURITY_DEPOSIT - ((wallet_amounts[n].last < 0) ? 0 : wallet_amounts[n].last.to_i)))
 						- n += 1
+
+
+.bs-g.m-t20
+	.p-10.bg-zoomb.white.f-b
+		Completed Bookings
+	%table.table-condensed.table-hover.table
+		%tr.active
+			%th.t-c Booking ID
+			%th.t-c Vehicle & Location
+			%th.t-c Duration
+			%th.t-c Outstanding
+
+		- n = 0
+		- wallet_snap[:bookings].each do |booking|
+			%tr.clickable-row.pointer{'id' => "row#{booking[:booking].confirmation_key}",  'href' => "#"}
+				%td.t-c
+					.p-t15.size-16
+						= booking[:booking].confirmation_key
+				%td.t-c
+					.inline-block.colored
+						.m-auto{:class => 'small-car1'}
+					.inline-block.p-l10.position-r.t-l{style: "top: -15px"}
+						= booking[:booking].cargroup.name
+						%br/
+						= booking[:booking].location.name
+				%td.t-c
+					.p-t10
+						= booking[:booking].starts.strftime("%d %b, %Y %H:%M %p")
+						%br/
+						= booking[:booking].ends.strftime("%d %b, %Y %H:%M %p")
+				%td.t-c
+					.p-t10
+						Rs. 300
+
+.bs-g.m-t20
+	.p-10.bg-zoomb.white.f-b
+		Cancelled Bookings
+	%table.table-condensed.table-hover.table
+		%tr.active
+			%th.t-c Booking ID
+			%th.t-c Vehicle & Location
+			%th.t-c Duration
+			%th.t-c Outstanding
+
+		- n = 0
+		- wallet_snap[:bookings].each do |booking|
+			%tr.clickable-row.pointer{'id' => "row#{booking[:booking].confirmation_key}",  'href' => "#"}
+				%td.t-c
+					.p-t15.size-16
+						= booking[:booking].confirmation_key
+				%td.t-c
+					.inline-block.colored
+						.m-auto{:class => 'small-car1'}
+					.inline-block.p-l10.position-r.t-l{style: "top: -15px"}
+						= booking[:booking].cargroup.name
+						%br/
+						= booking[:booking].location.name
+				%td.t-c
+					.p-t10
+						= booking[:booking].starts.strftime("%d %b, %Y %H:%M %p")
+						%br/
+						= booking[:booking].ends.strftime("%d %b, %Y %H:%M %p")
+				%td.t-c
+					.p-t10
+						Rs. 300
