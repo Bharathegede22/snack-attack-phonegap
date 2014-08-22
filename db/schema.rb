@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140818065510) do
+ActiveRecord::Schema.define(version: 20140819194803) do
 
   create_table "accidents", force: true do |t|
     t.boolean  "active",                                                            default: true
@@ -88,79 +88,80 @@ ActiveRecord::Schema.define(version: 20140818065510) do
   end
 
   create_table "bookings", force: true do |t|
-    t.integer  "car_id",           limit: 2
-    t.integer  "location_id",      limit: 2
+    t.integer  "car_id",             limit: 2
+    t.integer  "location_id",        limit: 2
     t.integer  "user_id"
     t.integer  "booked_by"
     t.integer  "cancelled_by"
     t.string   "comment"
-    t.integer  "days",             limit: 1
+    t.integer  "days",               limit: 1
     t.integer  "hours"
-    t.decimal  "estimate",                    precision: 8, scale: 2
-    t.decimal  "discount",                    precision: 8, scale: 2
-    t.decimal  "total",                       precision: 8, scale: 2
+    t.decimal  "estimate",                      precision: 8, scale: 2
+    t.decimal  "discount",                      precision: 8, scale: 2
+    t.decimal  "total",                         precision: 8, scale: 2
     t.datetime "starts"
     t.datetime "ends"
     t.datetime "cancelled_at"
     t.datetime "returned_at"
     t.string   "ip"
-    t.integer  "status",           limit: 1,                          default: 0
-    t.string   "jsi",              limit: 10
+    t.integer  "status",             limit: 1,                          default: 0
+    t.string   "jsi",                limit: 10
     t.string   "user_name"
     t.string   "user_email"
     t.string   "user_mobile"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "start_km",         limit: 10
-    t.string   "end_km",           limit: 10
-    t.integer  "normal_days",      limit: 1,                          default: 0
-    t.integer  "normal_hours",                                        default: 0
-    t.integer  "discounted_days",  limit: 1,                          default: 0
-    t.integer  "discounted_hours",                                    default: 0
+    t.string   "start_km",           limit: 10
+    t.string   "end_km",             limit: 10
+    t.integer  "normal_days",        limit: 1,                          default: 0
+    t.integer  "normal_hours",                                          default: 0
+    t.integer  "discounted_days",    limit: 1,                          default: 0
+    t.integer  "discounted_hours",                                      default: 0
     t.datetime "actual_starts"
     t.datetime "actual_ends"
     t.datetime "last_starts"
     t.datetime "last_ends"
-    t.boolean  "early",                                               default: false
-    t.boolean  "late",                                                default: false
-    t.boolean  "extended",                                            default: false
-    t.boolean  "rescheduled",                                         default: false
-    t.integer  "fuel_starts",      limit: 1
-    t.integer  "fuel_ends",        limit: 1
-    t.integer  "daily_fare",       limit: 2
-    t.integer  "hourly_fare",      limit: 2
-    t.integer  "hourly_km_limit",  limit: 2
-    t.integer  "daily_km_limit",   limit: 2
-    t.integer  "excess_kms",       limit: 2,                          default: 0
+    t.boolean  "early",                                                 default: false
+    t.boolean  "late",                                                  default: false
+    t.boolean  "extended",                                              default: false
+    t.boolean  "rescheduled",                                           default: false
+    t.integer  "fuel_starts",        limit: 1
+    t.integer  "fuel_ends",          limit: 1
+    t.integer  "daily_fare",         limit: 2
+    t.integer  "hourly_fare",        limit: 2
+    t.integer  "hourly_km_limit",    limit: 2
+    t.integer  "daily_km_limit",     limit: 2
+    t.integer  "excess_kms",         limit: 2,                          default: 0
     t.text     "notes"
-    t.integer  "cargroup_id",      limit: 2
-    t.integer  "fleet_id_start",   limit: 3
-    t.integer  "fleet_id_end",     limit: 3
-    t.integer  "individual_start", limit: 1
-    t.integer  "individual_end",   limit: 1
-    t.integer  "transport",        limit: 1
+    t.integer  "cargroup_id",        limit: 2
+    t.integer  "fleet_id_start",     limit: 3
+    t.integer  "fleet_id_end",       limit: 3
+    t.integer  "individual_start",   limit: 1
+    t.integer  "individual_end",     limit: 1
+    t.integer  "transport",          limit: 1
     t.datetime "unblocks"
-    t.boolean  "outstation",                                          default: false
+    t.boolean  "outstation",                                            default: false
     t.datetime "checkout"
-    t.string   "confirmation_key", limit: 20
+    t.string   "confirmation_key",   limit: 20
     t.integer  "balance"
     t.string   "ref_initial"
     t.string   "ref_immediate"
     t.string   "promo"
-    t.integer  "credit_status",                                       default: 0
+    t.integer  "credit_status",                                         default: 0
     t.integer  "offer_id"
     t.integer  "pricing_id"
     t.integer  "corporate_id"
-    t.integer  "city_id",          limit: 2
-    t.string   "pricing_mode",     limit: 2
-    t.string   "medium",           limit: 12
-    t.boolean  "shortened",                                           default: false
+    t.integer  "city_id",            limit: 2
+    t.string   "pricing_mode",       limit: 2
+    t.string   "medium",             limit: 12
+    t.boolean  "shortened",                                             default: false
     t.integer  "total_fare"
-    t.integer  "deposit_status",   limit: 1,                          default: 0
-    t.boolean  "carry",                                               default: false
-    t.boolean  "hold",                                                default: false
-    t.boolean  "release_payment",                                     default: false
-    t.boolean  "settled",                                             default: false
+    t.integer  "deposit_status",     limit: 1,                          default: 0
+    t.boolean  "carry",                                                 default: false
+    t.boolean  "hold",                                                  default: false
+    t.boolean  "release_payment",                                       default: false
+    t.boolean  "settled",                                               default: false
+    t.integer  "actual_cargroup_id", limit: 2
   end
 
   add_index "bookings", ["car_id"], name: "index_bookings_on_car_id", using: :btree
@@ -898,13 +899,14 @@ ActiveRecord::Schema.define(version: 20140818065510) do
   add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
 
   create_table "wallets", force: true do |t|
-    t.integer  "charge_id"
     t.integer  "user_id"
-    t.decimal  "amount",               precision: 8, scale: 2, default: 0.0
+    t.decimal  "amount",                      precision: 8, scale: 2, default: 0.0
     t.boolean  "credit"
-    t.integer  "status",     limit: 1,                         default: 0
+    t.integer  "status",            limit: 1,                         default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "transferable_id"
+    t.string   "transferable_type"
   end
 
   create_table "zones", force: true do |t|
