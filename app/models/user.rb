@@ -283,7 +283,7 @@ class User < ActiveRecord::Base
 
 	def wallet_available_on_time(ends,req_booking)
 		wallet_amount = wallet_available_amount
-		upcoming_bookings(ends).each do |booking|
+		(upcoming_bookings(ends) | get_bookings('live')).each do |booking|
 			wallet_amount -= booking.pricing.mode::SECURITY if !booking.hold? || req_booking.wallet_overlaps?(booking)
 		end
 		return (wallet_amount < 0) ? 0 : wallet_amount
