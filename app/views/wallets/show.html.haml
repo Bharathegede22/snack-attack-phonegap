@@ -114,7 +114,7 @@
 						= booking[:booking].ends.strftime("%d %b, %Y %H:%M %p")
 				%td.t-c
 					.p-t10
-						Rs. 300
+						= "Rs. " + number_with_delimiter(booking[:booking].outstanding_with_security)
 				%td.t-c
 					.p-t15.size-16
 						= "Rs. " + number_with_delimiter(((CommonHelper::SECURITY_DEPOSIT - wallet_amounts[n].last) < 0) ? 0 : (CommonHelper::SECURITY_DEPOSIT - ((wallet_amounts[n].last < 0) ? 0 : wallet_amounts[n].last.to_i)))
@@ -151,7 +151,7 @@
 						= booking[:booking].ends.strftime("%d %b, %Y %H:%M %p")
 				%td.t-c
 					.p-t10
-						Rs. 300
+						= "Rs. " + number_with_delimiter(booking[:booking].outstanding_with_security)
 
 .bs-g.m-t20
 	.p-10.bg-zoomb.white.f-b
@@ -183,4 +183,4 @@
 						= booking[:booking].ends.strftime("%d %b, %Y %H:%M %p")
 				%td.t-c
 					.p-t10
-						Rs. 300
+						= "Rs. " + number_with_delimiter(booking[:booking].outstanding_with_security)
