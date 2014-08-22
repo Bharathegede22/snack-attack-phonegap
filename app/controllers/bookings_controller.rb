@@ -172,7 +172,7 @@ class BookingsController < ApplicationController
 				session[:corporate_id] = nil
 				session[:booking_id] = nil
 		  	redirect_to "/bookings/#{@booking.encoded_id}"
-			elsif @booking.outstanding > 0
+			elsif @booking.outstanding_with_security > 0
 				redirect_to "/bookings/payment"
 			else
 				u = @booking.user
