@@ -188,10 +188,11 @@ class BookingsController < ApplicationController
 	end
 	
 	def dodeposit
+		session[:book][:deposit] == 0
 		if !@booking.defer_allowed?
 			@booking.add_security_deposit_charge
 			amount = @booking.user.wallet_available_on_time(@booking.starts - CommonHelper::WALLET_FREEZE_START.hours,@booking)
-			@booking.make_payment_from_wallet(amount) if amount > 0
+			@booking.make_payment_from_wallet(amount) if amount > 0			
 		end
 		redirect_to "/bookings/#{@booking.encoded_id}/dopayment"
 	end

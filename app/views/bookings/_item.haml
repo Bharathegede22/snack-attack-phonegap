@@ -37,7 +37,7 @@
 					- else
 						#{b.returned_at.strftime("%d %b, %Y %I:%M %p")}
 				%td #{b.status_text}
-				%td #{b.security_amount_deferred? ? (b.outstanding + b.pricing.mode::SECURITY) : b.outstanding }
+				%td #{b.outstanding_with_security }
 				- if false
 					- if (defined? show_credits_us)
 						%td 

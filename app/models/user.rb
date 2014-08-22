@@ -265,10 +265,15 @@ class User < ActiveRecord::Base
 		Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND (jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND ((#{starting}) OR (#{ending})) ORDER BY ends ASC")
 	end
 
-	def wallet_total_amount
-		wallets.collect{|wallet| wallet.credit ? wallet.amount : -wallet.amount}.sum
+	def calculate_wallet_total_amount
+		self.update_column(:wallet_total_amount, wallets.collect{|wallet| wallet.credit ? wallet.amount : -wallet.amount}.sum)
 	end
   	
+  	def wallet_total_amount
+  		calculate_wallet_total_amount if read_attribute(:wallet_total_amount).nil?
+  		read_attribute(:wallet_total_amount).to_i
+  	end
+
   	def wallet_frozen_bookings
   		get_bookings('live') | get_bookings('wallet_frozen')
   	end
