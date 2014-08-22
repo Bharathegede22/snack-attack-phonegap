@@ -3,10 +3,17 @@
 	wallet_snap = current_user.wallet_snapshot
 	bookings = wallet_snap[:bookings].dup
 	wallet_amount = wallet_snap[:amount]
-	scale =  0.000164117
+	scale = 0.0002314814814814815
 	wallet_amounts = [[((bookings.first[:ends].to_i rescue wallet_snap[:ends].to_i)- wallet_snap[:starts].to_i)*scale, wallet_snap[:amount]]]
-	bookings.each do |booking|
-		wallet_amounts << [(booking[:ends].to_i - wallet_snap[:starts].to_i)*scale, (wallet_amounts.last.last + booking[:amount])]
+	bookings.each_with_index do |booking, index|
+		next if index == 0
+		wallet_amounts << [(booking[:ends].to_i - wallet_snap[:starts].to_i)*scale, (wallet_amounts.last.last + bookings[index-1][:amount])]
+	end
+	booking = bookings.last
+	unless booking.blank?
+		wallet_amounts << [(wallet_snap[:ends].to_i-wallet_snap[:starts].to_i)*scale, 
+		(booking[:booking].hold) ? (wallet_amounts.last.last) : (wallet_amounts.last.last + booking[:amount])]
+>>>>>>> Stashed changes
 	end
 
 	def get_level(booking, levels)
@@ -52,7 +59,7 @@
 		Deposit Due
 	-offset = 0
 	- wallet_amounts.each do |wa|
-		.money.position-a{style: "width: #{wa.first}px; height: #{30*wa.last/5000}px; bottom: 0; left: #{offset}px;"}
+		.money.position-a{style: "width: #{wa.first}px; height: #{30*wa.last/5000}px; bottom: 0;"}
 		&nbsp;
 		- offset = wa.first
 	- all_levels =[]
@@ -66,11 +73,14 @@
 		- all_levels << levels
 		- levels = []
 		-tries+=1
-	.money.position-a{style: "width: #{600-offset}px; height: #{30*wallet_amounts.last.last/5000}px; bottom: 0; left: #{offset}px;"}
-		&nbsp;
+
 	- wallet_snap[:bookings].each do |booking|
 		- offset = (booking[:starts] - wallet_snap[:starts])*scale
+<<<<<<< Updated upstream
 		.position-a.pop{class: "#{current_user.unsafe_booking?(booking[:booking]) ? 'unsafe-booking' : 'safe-booking'}", 'style' => "width: #{25+ (booking[:booking].ends- booking[:booking].starts)*scale}px; height: 30px; bottom: #{30*get_level(booking, all_levels)}px; left: #{offset}px;", 'data-toggle' => "popover", 'title' => "#{booking[:booking].confirmation_key}", 'data-html' => "true", 'data-content' => "#{booking[:booking].cargroup.name}<br/>#{booking[:booking].starts.to_s}<br/>#{booking[:booking].ends.to_s}"}
+=======
+		.position-a.pop{class: "#{current_user.unsafe_booking?(booking[:booking]) ? 'unsafe-booking' : 'safe-booking'}", 'style' => "width: #{25+ (booking[:booking].ends- booking[:booking].starts)*scale}px; height: 30px; bottom: #{30*get_level(booking, all_levels)}px; left: #{offset}px;", 'data-toggle' => "popover", 'title' => "#{booking[:booking].confirmation_key}", 'data-html' => "true", 'data-content' => "#{booking[:booking].cargroup.name}<br/>#{booking[:booking].starts.strftime('%d/%m/%y %I:%M %p')}<br/>#{booking[:booking].ends.strftime('%d/%m/%y %I:%M %p')}"}
+>>>>>>> Stashed changes
 			.wallet-car
 
 .fc
