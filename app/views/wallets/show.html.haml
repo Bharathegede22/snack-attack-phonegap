@@ -19,6 +19,8 @@
 	.p-10.bg-zoomb.white.t-c.f-b
 		My Wallet
 	.solid.border-c
+		.p-t5.size-11.t-c
+			Security Desposit in Wallet
 		.p-10.size-22.f-b.t-c.border-b-c
 			= "Rs. " + number_with_delimiter(wallet_amount)
 		%a.block.p-10.black.border-b-c{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/show_refund');"}
