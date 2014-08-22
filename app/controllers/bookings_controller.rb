@@ -188,7 +188,7 @@ class BookingsController < ApplicationController
 	end
 	
 	def dodeposit
-		session[:book][:deposit] == 0
+		@booking.update_column(:defer_deposit, false)
 		if !@booking.defer_allowed?
 			@booking.add_security_deposit_charge
 			amount = @booking.user.wallet_available_on_time(@booking.starts - CommonHelper::WALLET_FREEZE_START.hours,@booking)

@@ -536,7 +536,7 @@ class Booking < ActiveRecord::Base
 		charges.where(activity: 'security_deposit', :active=>true).first
 	end
 	
-	def security_refund
+	def security_refund_charge
 		charges.where(activity: 'security_deposit_refund', :active=>true).first
 	end
 
