@@ -12,43 +12,14 @@
 			Booking
 		%th.p-b10.p-t10.bg-e.t-c
 			Amount
-		%th.p-b10.p-t10.bg-e.t-c
-			Description
 
-	%tr
-		%td.t-c.bg-w.p-t10.p-b10.border-b-e
-			sdfsdf
-		%td.t-c.bg-w.p-t10.p-b10.border-b-e
-			sfsdfsdf
-		%td.t-c.bg-w.p-t10.p-b10.border-b-e
-			sfdsfdsf
-		%td.t-c.bg-w.p-t10.p-b10.border-b-e
-			description
-
-	%tr
-		%td.t-c.bg-w.p-t10.p-b10.border-b-e
-			sdfsdf
-		%td.t-c.bg-w.p-t10.p-b10.border-b-e
-			sfsdfsdf
-		%td.t-c.bg-w.p-t10.p-b10.border-b-e
-			sfdsfdsf
-		%td.t-c.bg-w.p-t10.p-b10.border-b-e
-			description
-	%tr
-		%td.t-c.bg-w.p-t10.p-b10.border-b-e
-			sdfsdf
-		%td.t-c.bg-w.p-t10.p-b10.border-b-e
-			sfsdfsdf
-		%td.t-c.bg-w.p-t10.p-b10.border-b-e
-			sfdsfdsf
-		%td.t-c.bg-w.p-t10.p-b10.border-b-e
-			description
 	%tbody
 		- @history.each do |wallet|
 			%tr
-				%th
+				%td.t-c.bg-w.p-t10.p-b10.border-b-e
 					= wallet.created_at.to_date.strftime("%d %b %Y")
-				%th
+				%td.t-c.bg-w.p-t10.p-b10.border-b-e
 					= wallet.transferable.blank? ? "Pending Refund" : "##{wallet.transferable.booking.confirmation_key}" 
-				%th
+				%td.t-c.bg-w.p-t10.p-b10.border-b-e
 					= "#{wallet.credit ? "+" : "-"} Rs. #{number_with_delimiter(wallet.amount.to_i)}" 
+					
