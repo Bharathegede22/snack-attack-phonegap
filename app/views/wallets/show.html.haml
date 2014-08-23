@@ -21,6 +21,10 @@
 		end
 		return 0
 	end
+	live_upcoming_bookings = current_user.get_bookings('live')
+	live_upcoming_bookings << current_user.get_bookings('future')
+	completed_bookings = current_user.get_bookings('completed')
+	cancelled_bookings = current_user.get_bookings('cancelled')
 #wallet-info.bs-g.fl
 	.p-10.bg-zoomb.white.t-c.f-b
 		My Wallet
@@ -82,7 +86,7 @@
 
 .bs-g.m-t20
 	.p-10.bg-zoomb.white.f-b
-		Upcoming Bookings
+		Live and Upcoming Bookings
 	%table.table-condensed.table-hover.table
 		%tr.active
 			%th.t-c Booking ID
@@ -95,26 +99,26 @@
 					[?]
 
 		- n = 0
-		- wallet_snap[:bookings].each do |booking|
-			%tr.clickable-row.pointer{'id' => "row#{booking[:booking].confirmation_key}",  'href' => "#"}
+		- live_upcoming_bookings.flatten.each do |booking|
+			%tr.clickable-row.pointer{'id' => "row#{booking.confirmation_key}",  'href' => "#"}
 				%td.t-c
 					.p-t15.size-16
-						= booking[:booking].confirmation_key
+						= link_to booking.confirmation_key, '/bookings/'+ booking.confirmation_key
 				%td.t-c
 					.inline-block.colored
 						.m-auto{:class => 'small-car1'}
 					.inline-block.p-l10.position-r.t-l{style: "top: -15px"}
-						= booking[:booking].cargroup.name
+						= booking.cargroup.name
 						%br/
-						= booking[:booking].location.name
+						= booking.location.name
 				%td.t-c
 					.p-t10
-						= booking[:booking].starts.strftime("%d %b, %Y %H:%M %p")
+						= booking.starts.strftime("%d %b, %Y %H:%M %p")
 						%br/
-						= booking[:booking].ends.strftime("%d %b, %Y %H:%M %p")
+						= booking.ends.strftime("%d %b, %Y %H:%M %p")
 				%td.t-c
 					.p-t10
-						= "Rs. " + number_with_delimiter(booking[:booking].outstanding_with_security)
+						= "Rs. " + number_with_delimiter(booking.outstanding_with_security)
 				%td.t-c
 					.p-t15.size-16
 						= "Rs. " + number_with_delimiter(((CommonHelper::SECURITY_DEPOSIT - wallet_amounts[n].last) < 0) ? 0 : (CommonHelper::SECURITY_DEPOSIT - ((wallet_amounts[n].last < 0) ? 0 : wallet_amounts[n].last.to_i)))
@@ -132,26 +136,26 @@
 			%th.t-c Outstanding
 
 		- n = 0
-		- wallet_snap[:bookings].each do |booking|
-			%tr.clickable-row.pointer{'id' => "row#{booking[:booking].confirmation_key}",  'href' => "#"}
+		- completed_bookings.each do |booking|
+			%tr.clickable-row.pointer{'id' => "row#{booking.confirmation_key}",  'href' => "#"}
 				%td.t-c
 					.p-t15.size-16
-						= booking[:booking].confirmation_key
+						= link_to booking.confirmation_key, '/bookings/'+ booking.confirmation_key
 				%td.t-c
 					.inline-block.colored
 						.m-auto{:class => 'small-car1'}
 					.inline-block.p-l10.position-r.t-l{style: "top: -15px"}
-						= booking[:booking].cargroup.name
+						= booking.cargroup.name
 						%br/
-						= booking[:booking].location.name
+						= booking.location.name
 				%td.t-c
 					.p-t10
-						= booking[:booking].starts.strftime("%d %b, %Y %H:%M %p")
+						= booking.starts.strftime("%d %b, %Y %H:%M %p")
 						%br/
-						= booking[:booking].ends.strftime("%d %b, %Y %H:%M %p")
+						= booking.ends.strftime("%d %b, %Y %H:%M %p")
 				%td.t-c
 					.p-t10
-						= "Rs. " + number_with_delimiter(booking[:booking].outstanding_with_security)
+						= "Rs. " + number_with_delimiter(booking.outstanding_with_security)
 
 .bs-g.m-t20
 	.p-10.bg-zoomb.white.f-b
@@ -164,23 +168,23 @@
 			%th.t-c Outstanding
 
 		- n = 0
-		- wallet_snap[:bookings].each do |booking|
-			%tr.clickable-row.pointer{'id' => "row#{booking[:booking].confirmation_key}",  'href' => "#"}
+		- cancelled_bookings.each do |booking|
+			%tr.clickable-row.pointer{'id' => "row#{booking.confirmation_key}",  'href' => "#"}
 				%td.t-c
 					.p-t15.size-16
-						= booking[:booking].confirmation_key
+						= link_to booking.confirmation_key, '/bookings/'+ booking.confirmation_key
 				%td.t-c
 					.inline-block.colored
 						.m-auto{:class => 'small-car1'}
 					.inline-block.p-l10.position-r.t-l{style: "top: -15px"}
-						= booking[:booking].cargroup.name
+						= booking.cargroup.name
 						%br/
-						= booking[:booking].location.name
+						= booking.location.name
 				%td.t-c
 					.p-t10
-						= booking[:booking].starts.strftime("%d %b, %Y %H:%M %p")
+						= booking.starts.strftime("%d %b, %Y %H:%M %p")
 						%br/
-						= booking[:booking].ends.strftime("%d %b, %Y %H:%M %p")
+						= booking.ends.strftime("%d %b, %Y %H:%M %p")
 				%td.t-c
 					.p-t10
-						= "Rs. " + number_with_delimiter(booking[:booking].outstanding_with_security)
+						= "Rs. " + number_with_delimiter(booking.outstanding_with_security)

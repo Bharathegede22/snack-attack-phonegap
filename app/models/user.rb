@@ -308,7 +308,7 @@ class User < ActiveRecord::Base
 	end
 
 	def wallet_snapshot(snap_start= Time.now, snap_end= snap_start+CommonHelper::WALLET_SNAPSHOT.days)
-		snapshot={starts: snap_start, ends: snap_end, amount: wallet_total_amount, bookings: []}
+		snapshot={starts: snap_start, ends: snap_end, amount: wallet_available_amount, bookings: []}
 		upcoming_bookings.each do |booking|
 			snapshot[:bookings] << booking.wallet_impact
 		end
