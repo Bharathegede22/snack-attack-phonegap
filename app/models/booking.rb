@@ -53,6 +53,7 @@ class Booking < ActiveRecord::Base
 	end
 
 	def add_security_deposit_to_wallet(amount= security_amount)
+		return if (amount.to_i <= 0)
 		refund = Refund.create!(status: 1, booking_id: self.id, through: 'wallet', amount: amount)
 		Wallet.create!(amount: amount, user_id: self.user_id, status: 1, credit: true, transferable: refund)
 	end
@@ -198,15 +199,8 @@ class Booking < ActiveRecord::Base
 				self.notes += note
 			end
 			total -= deposit.amount.to_i
-			wallet_payment_amount = [deposit.amount, self.user.wallet_total_amount].min
-			if data[:penalty]>0
-				make_payment_from_wallet(wallet_payment_amount)
-			end
-
-			wallet_refund_amount = [0, wallet_payment_amount - data[:penalty]].max 
-			if self.hold && wallet_refund_amount>0
-				refund = Refund.create!(status: 1, booking_id: self.id, through: 'wallet', amount: wallet_refund_amount)
-				Wallet.create!(amount: wallet_refund_amount, user_id: self.user_id, status: 1, credit: true, transferable: refund)
+			if self.hold && deposit.amount.to_i>0
+				add_security_deposit_to_wallet(deposit.amount)
 			end
 		end
 		self.save(validate: false)
@@ -385,7 +379,9 @@ class Booking < ActiveRecord::Base
 		return "http://" + HOSTNAME + "/bookings/" + self.encoded_id
 	end
 
-	def make_payment_from_wallet(amount)
+	def make_payment_from_wallet(amount= security_amount)
+		amount = [amount.to_i, user.wallet_total_amount.to_i].min
+		return if (amount.to_i <= 0)
 		wpayment = Payment.create!(status: 1, booking_id: self.id, through: 'wallet', amount: (amount > self.pricing.mode::SECURITY) ? (self.pricing.mode::SECURITY) : amount)
 		Wallet.create!(amount: amount, user_id: self.user_id, status: 1, credit: false, transferable: wpayment)
 	end
@@ -728,6 +724,10 @@ class Booking < ActiveRecord::Base
 		charge.amount                  = self.total_fare
 		charge.save
 		self.confirmation_key = self.encoded_id.upcase
+		if !defer_allowed? && security_charge.nil?
+			self.add_security_deposit_charge
+			self.make_payment_from_wallet
+		end
 		self.save(validate: false)
 	end
 

@@ -203,7 +203,7 @@ class Payment < ActiveRecord::Base
 				b.notes += "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs." + self.amount.to_s + " - Payment Received through <u>" + self.through_text + "</u>.<br/>"
 				b.save(:validate => false)
 				Booking.recalculate(b.id)
-				b.add_security_deposit_to_wallet(-b.outstanding.to_i) if b.outstanding.to_i != 0
+				b.add_security_deposit_to_wallet(b.outstanding.to_i.abs) if b.outstanding.to_i != 0
 			end
 
 		end
