@@ -188,7 +188,7 @@ class Booking < ActiveRecord::Base
 			end
 		end
 		total = 0 - data[:refund] + data[:penalty]
-		# Deposit Refund
+		
 		deposit = Charge.where(["booking_id = ? AND activity = 'security_deposit'", self.id]).first
 		if deposit
 			charge = Charge.where(["booking_id = ? AND activity = 'security_deposit_refund'", self.id]).first
@@ -206,7 +206,10 @@ class Booking < ActiveRecord::Base
 			if self.hold && deposit.amount.to_i>0
 				add_security_deposit_to_wallet(deposit.amount)
 			end
+		# elsif !self.hold && refunds.where(through: 'wallet').any?
+		# 	make_payment_from_wallet(refunds.where(through: 'wallet').first.amount)
 		end
+			
 		self.save(validate: false)
 		BookingMailer.cancel(self.id, total).deliver
 		sendsms('cancel', total) if Rails.env.production?
