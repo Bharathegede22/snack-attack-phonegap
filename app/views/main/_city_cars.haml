@@ -1,3 +1,5 @@
+:ruby
+	pricing = tmp.active_pricing(@city.id)
 .panel.panel-default
 	.panel-heading
 		.panel-title
@@ -13,12 +15,10 @@
 					%th Hourly
 					%th Daily
 					%th Weekly
-					%th Monthly
 				%tr
-					%td Rs.#{tmp.hourly_fare}
-					%td Rs.#{tmp.daily_fare}
-					%td Rs.#{tmp.weekly_fare}
-					%td Rs.#{tmp.monthly_fare}
+					%td ₹ #{show_currency(pricing.hourly_fare)}
+					%td ₹ #{show_currency(pricing.daily_fare)}
+					%td ₹ #{show_currency(pricing.weekly_fare)}
 			%b Available At
 			%br/
 			- locs.uniq.each do |l|
