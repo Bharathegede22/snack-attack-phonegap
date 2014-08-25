@@ -531,7 +531,7 @@ class Booking < ActiveRecord::Base
 	end
 
 	def security_amount_remaining
-		amount = (security_amount)*(Booking.overlapping_deposit(self).count + (self.new_record? ? 1 : 0)) - user.wallet_available_on_time(self.starts.advance(hours: -CommonHelper::WALLET_FREEZE_START), self)
+		amount = (security_amount)*(Booking.overlapping_deposit(self).count + ((self.new_record? || self.status == 0) ? 1 : 0)) - user.wallet_available_on_time(self.starts.advance(hours: -CommonHelper::WALLET_FREEZE_START), self)
 		(amount < 0) ? 0 : amount
 		[amount, security_amount].min
 	end
