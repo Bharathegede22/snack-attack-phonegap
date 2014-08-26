@@ -100,8 +100,7 @@
 				%span.help.pointer{'data-placement' => "top", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Pay your Security Deposit through the Booking Summary page, which you can reach by clicking on the relevant booking."}
 					[?]
 
-		- n = 0
-		- live_upcoming_bookings.flatten.each do |booking|
+		- live_upcoming_bookings.flatten.each_with_index do |booking, n|
 			%tr.clickable-row.pointer{'id' => "row#{booking.confirmation_key}",  'href' => "#"}
 				%td.t-c
 					.p-t15.size-16
@@ -120,11 +119,11 @@
 						= booking.ends.strftime("%d %b, %Y %H:%M %p")
 				%td.t-c
 					.p-t10
-						= "Rs. " + number_with_delimiter(booking.outstanding_with_security)
+						= "Rs. " + number_with_delimiter(booking.outstanding)
 				%td.t-c
 					.p-t15.size-16
-						= "Rs. " + number_with_delimiter(((CommonHelper::SECURITY_DEPOSIT - wallet_amounts[n].last) < 0) ? 0 : (CommonHelper::SECURITY_DEPOSIT - ((wallet_amounts[n].last < 0) ? 0 : wallet_amounts[n].last.to_i)))
-						- n += 1
+						= "Rs. " + number_with_delimiter(booking.security_amount_remaining)
+						/= "Rs. " + number_with_delimiter(((CommonHelper::SECURITY_DEPOSIT - wallet_amounts[n].last) < 0) ? 0 : (CommonHelper::SECURITY_DEPOSIT - ((wallet_amounts[n].last < 0) ? 0 : wallet_amounts[n].last.to_i)))
 
 
 .bs-g.m-t20
@@ -157,7 +156,7 @@
 						= booking.ends.strftime("%d %b, %Y %H:%M %p")
 				%td.t-c
 					.p-t10
-						= "Rs. " + number_with_delimiter(booking.outstanding_with_security)
+						= "Rs. " + number_with_delimiter(booking.outstanding)
 
 .bs-g.m-t20
 	.p-10.bg-zoomb.white.f-b
@@ -189,4 +188,4 @@
 						= booking.ends.strftime("%d %b, %Y %H:%M %p")
 				%td.t-c
 					.p-t10
-						= "Rs. " + number_with_delimiter(booking.outstanding_with_security)
+						= "Rs. " + number_with_delimiter(booking.outstanding)

@@ -49,11 +49,12 @@ class Booking < ActiveRecord::Base
 	:conditions => ["(DATEDIFF(starts, ?) * DATEDIFF(?, ends)) >= 0 AND user_id = ? AND status > 0 AND status < 5", interval.ends + CommonHelper::WALLET_FREEZE_END.hours, interval.starts - CommonHelper::WALLET_FREEZE_START.hours, interval.user_id]
 	}}
 
-	def add_security_deposit_charge
+	def add_security_deposit_charge(pay_wallet= false)
 		return if !self.corporate_id.blank? || !security_charge.nil?
 		charge 			= Charge.new(:booking_id => self.id, :activity => 'security_deposit')
 		charge.amount 	= self.pricing.mode::SECURITY
 		charge.save
+		make_payment_from_wallet if pay_wallet
 	end
 
 	def add_security_deposit_to_wallet(amount= security_amount)
@@ -732,10 +733,6 @@ class Booking < ActiveRecord::Base
 		charge.amount                  = self.total_fare
 		charge.save
 		self.confirmation_key = self.encoded_id.upcase
-		if !defer_allowed? && security_charge.nil?
-			self.add_security_deposit_charge
-			self.make_payment_from_wallet
-		end
 		self.save(validate: false)
 	end
 
