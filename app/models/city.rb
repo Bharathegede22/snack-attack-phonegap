@@ -59,19 +59,19 @@ class City < ActiveRecord::Base
 		when 'attractions' then "zoomcar, self drive car, self drive car rental, renting a car, self drive cars"
 		when 'inside' then
 			if(seo_inside_keywords.present?)
-				seo_inside_keywords
+				self.seo_inside_keywords
 			else
 				"zoomcar, self drive car, self drive car rental, renting a car, self drive cars"
 			end
 		when 'outside' then
 			if(seo_outside_keywords.present?)
-				seo_outside_keywords
+				self.seo_outside_keywords
 			else
 				"zoomcar, self drive car, self drive car rental, renting a car, self drive cars"
 			end
 		else 
 			if(seo_keywords.present?)
-				seo_keywords
+				self.seo_keywords
 			else
 				"zoomcar, self drive car, self drive car rental, renting a car, self drive cars"
 			end
@@ -83,19 +83,19 @@ class City < ActiveRecord::Base
 		when 'attractions' then "Find Self Drive Car Rental Locations In #{self.name} | Zoomcar"
 		when 'inside' then 
 			if(self.seo_inside_title.present?)
-				seo_inside_title
+				self.seo_inside_title
 			else
 				"Self Drive Car Rental, Explore #{self.name} | Zoomcar.in"
 			end
 		when 'outside' then 
 			if(self.seo_outside_title.present?)
-				seo_outside_title
+				self.seo_outside_title
 			else
 				"Self Drive Car Rental, Explore Beyond #{self.name} | Zoomcar.in"
 			end
 		else
 			if(self.seo_title.present?)
-				seo_title
+				self.seo_title
 			else
 				"Self Drive Cars Rental In #{self.name} | Join Online, Book A Car & Drive | Zoomcar.in"
 			end

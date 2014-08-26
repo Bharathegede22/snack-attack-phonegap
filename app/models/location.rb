@@ -72,7 +72,7 @@ class Location < ActiveRecord::Base
 	
 	def meta_title(city=nil)
 		if(self.seo_title.present?)
-			return seo_title
+			return self.seo_title
 		else
 			return "Self Drive Cars On Rent At #{self.name}, #{self.city.name} | Zoomcar"
 		end

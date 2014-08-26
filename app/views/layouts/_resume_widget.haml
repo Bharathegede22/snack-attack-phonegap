@@ -1,4 +1,4 @@
-- if !(session[:book].blank? && session[:search].blank?) && !(['userdetails','search','login','checkout'].include?(action_name))
+- if !(session[:book].blank? && session[:search].blank?) && !(['userdetails','search','login','checkout','checkoutab'].include?(action_name))
 	- if !session[:search].blank? && session[:book].blank?
 		#resume_widget.fixed.solid.border-9
 			%a#resume_header.block.p-10.bg-zoomb.white.f-b{'href' => '#'}
