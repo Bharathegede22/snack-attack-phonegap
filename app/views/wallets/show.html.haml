@@ -32,7 +32,7 @@
 		.p-t5.size-11.t-c
 			Security Desposit in Wallet
 		.p-10.size-22.f-b.t-c.border-b-c
-			= "Rs. " + number_with_delimiter(wallet_amount)
+			= "Rs. " + number_with_delimiter(current_user.wallet_total_amount)
 		%a.block.p-10.black.border-b-c{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/show_refund');"}
 			= "Frozen amount: Rs. " + number_with_delimiter(current_user.wallet_frozen_amount)
 		%a.block.p-10.black.border-b-c{href: "javascript:void(0)", onclick: "showModal('Transaction History', '/wallets/history');"}
@@ -79,7 +79,10 @@
 
 	- wallet_snap[:bookings].each do |booking|
 		- offset = (booking[:starts] - wallet_snap[:starts])*scale
-		.position-a.pop{class: "#{current_user.unsafe_booking?(booking[:booking]) ? 'unsafe-booking' : 'safe-booking'}", 'style' => "width: #{25+ (booking[:booking].ends- booking[:booking].starts)*scale}px; height: 30px; bottom: #{30*get_level(booking, all_levels)}px; left: #{offset}px;", 'data-toggle' => "popover", 'title' => "#{booking[:booking].confirmation_key}", 'data-html' => "true", 'data-content' => "#{booking[:booking].cargroup.name}<br/>#{booking[:booking].starts.strftime('%d/%m/%y %I:%M %p')}<br/>#{booking[:booking].ends.strftime('%d/%m/%y %I:%M %p')}"}
+		- offset = offset < 0 ? -10 : offset
+		- width = 25+ (booking[:booking].ends- booking[:booking].starts)*scale
+		- width = (width+offset> 600) ? (620 - offset) : width
+		.position-a.pop{class: "#{current_user.unsafe_booking?(booking[:booking]) ? 'unsafe-booking' : 'safe-booking'}", 'style' => "width: #{width}px; height: 30px; bottom: #{30*get_level(booking, all_levels)}px; left: #{offset}px;", 'data-toggle' => "popover", 'title' => "#{booking[:booking].confirmation_key}", 'data-html' => "true", 'data-content' => "#{booking[:booking].cargroup.name}<br/>#{booking[:booking].starts.strftime('%d/%m/%y %I:%M %p')}<br/>#{booking[:booking].ends.strftime('%d/%m/%y %I:%M %p')}"}
 			.wallet-car
 
 .fc
