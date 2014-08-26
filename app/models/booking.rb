@@ -713,10 +713,10 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def wallet_impact
-		{starts: (starts-CommonHelper::WALLET_FREEZE_START.hours),
+		{starts: ([Time.now, starts-CommonHelper::WALLET_FREEZE_START.hours].max),
 		 booking: self,
 		 amount: hold_security? ? 0 : -security_amount,
-		 ends: (ends+CommonHelper::WALLET_FREEZE_END.hours)}
+		 ends: ([ends+CommonHelper::WALLET_FREEZE_END.hours, Time.now+CommonHelper::WALLET_SNAPSHOT.days].min)}
 	end
 
 	protected

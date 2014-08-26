@@ -79,9 +79,8 @@
 
 	- wallet_snap[:bookings].each do |booking|
 		- offset = (booking[:starts] - wallet_snap[:starts])*scale
-		- offset = offset < 0 ? -10 : offset
 		- width = 25+ (booking[:booking].ends- booking[:booking].starts)*scale
-		- width = (width+offset> 600) ? (620 - offset) : width
+		- width = (width+offset> 600) ? (600 - offset) : width
 		.position-a.pop{class: "#{current_user.unsafe_booking?(booking[:booking]) ? 'unsafe-booking' : 'safe-booking'}", 'style' => "width: #{width}px; height: 30px; bottom: #{30*get_level(booking, all_levels)}px; left: #{offset}px;", 'data-toggle' => "popover", 'title' => "#{booking[:booking].confirmation_key}", 'data-html' => "true", 'data-content' => "#{booking[:booking].cargroup.name}<br/>#{booking[:booking].starts.strftime('%d/%m/%y %I:%M %p')}<br/>#{booking[:booking].ends.strftime('%d/%m/%y %I:%M %p')}"}
 			.wallet-car
 
