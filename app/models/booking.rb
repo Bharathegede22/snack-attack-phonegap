@@ -204,9 +204,6 @@ class Booking < ActiveRecord::Base
 				self.notes += note
 			end
 			total -= deposit.amount.to_i
-			if self.hold && deposit.amount.to_i>0
-				add_security_deposit_to_wallet(deposit.amount)
-			end
 		# elsif !self.hold && refunds.where(through: 'wallet').any?
 		# 	make_payment_from_wallet(refunds.where(through: 'wallet').first.amount)
 		end
