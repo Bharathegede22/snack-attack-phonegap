@@ -7,180 +7,325 @@
 	offer = @booking.offer
 	@pricing = @booking.pricing
 - render_flash
-%h1.t-c
-	= "Booking # " + @booking.confirmation_key.upcase
-%br/
+
 - unless @booking.corporate_id.nil?										
 	.alert.alert-warning
 		.black
 			%b Corporate Booking : 
 			= @booking.corporate.name
-.row
-	.col-md-8
-		.row
-			.col-md-3
-				.p-5
-					%b Status
-			.col-md-9
-				.p-5
+
+.fl
+	.bg-w.bs-9{'style' => 'width: 530px'}
+		.bg-zoomb.white.p-10.size-18.p-l10.p-r10
+			.fl
+				= "Booking #" + @booking.confirmation_key.upcase
+			.fr.size-14
+				
+				- if @booking.paid?
+					- case @booking.status?
+					- when 'live'
+						%a.white.pointer.inline-block.m-l15{onclick: "showModal('Extend Your Booking', '/bookings/#{@booking.encoded_id}/reschedule');"}
+							Extend
+						%a.white.pointer.inline-block.m-l15{onclick: "showModal('Shorten Your Booking', '/bookings/#{@booking.encoded_id}/reschedule');"}
+							Shorten
+					- when 'near'
+						%a.white.pointer.inline-block.m-l15{onclick: "showModal('Change Your Booking', '/bookings/#{@booking.encoded_id}/reschedule');"}
+							Change
+						%a.white.pointer.inline-block.m-l15{onclick: "showModal('Cancel Your Booking', '/bookings/#{@booking.encoded_id}/cancel');"}
+							Cancel
+					- when 'future'
+						%a.white.pointer.inline-block.m-l15{onclick: "showModal('Change Your Booking', '/bookings/#{@booking.encoded_id}/reschedule');"}
+							Change
+						%a.white.pointer.inline-block.m-l15{onclick: "showModal('Cancel Your Booking', '/bookings/#{@booking.encoded_id}/cancel');"}
+							Cancel
+					- else
+						- if @booking.total_payments > 0 && @booking.balance == 0
+							%a.white.pointer.inline-block.m-l15{href: "/bookings/#{@booking.encoded_id}/invoice", target: '_blank', role: "button"} Invoice
+						- if @booking.status_complete?
+							%a.white.pointer.inline-block.m-l15{href: "/bookings/#{@booking.encoded_id}/feedback", target: '_blank', role: "button"} Feedback
+					- if !@booking.hold && @booking.security_refund_charge.nil? && (1..5).include?(@booking.status)
+						%a.white.pointer.inline-block.m-l15{onclick: "window.location= '/bookings/#{@booking.encoded_id}/holddeposit';"}
+							Hold Deposit
+
+			.fc
+
+		.border-b-c
+			.p-t5.p-b5.p-l20.p-r20.size-16
+				.inline-block.colored
+					.m-auto{:class => 'car' + @booking.cargroup_id.to_s}
+				.inline-block.p-l5.t-l.position-r{style: "top: -20px;"}
+					.size-18.f-b.zoom-b
+						- cargroup = @booking.cargroup
+						= cargroup.display_name
+					.size-14.m-t5.lgrey
+						- if @booking.paid?
+							- if !@booking.car_id.blank?
+								- car = @booking.car
+								%b #{car.name}
+								= "(" + car.license + ")" if !car.license.blank?
+							- elsif @booking.status < 6
+								.red
+									Your car will be allocated by 
+									%b
+										= (@booking.starts - CommonHelper::ALLOTMENT.minutes).strftime("%d %b, %Y %I:%M %p")
+							- else
+								\-
+
+		.border-b-c
+			.p-t10.p-b10.p-l20.p-r20
+				.text-up.size-11.m-b3
+					Status
+				.zoom-b.f-b.size-14
 					- if @booking.security_amount_deferred? && @booking.status < 9
 						.red
 							Security Deposit Unpaid
-					.size-20
-						= @booking.status_help
-		.row
-			.col-md-3
-				.p-5 
-					%b Car Type
-			.col-md-9
-				.p-5
-					- cargroup = @booking.cargroup
-					= cargroup.display_name
-					- if !cargroup.disclaimer.blank?
-						.red.size-10
-							= cargroup.disclaimer.html_safe
-		.row
-			.col-md-3
-				.p-5
-					%b Car Rented
-			.col-md-9
-				.p-5
-					- if @booking.paid?
-						- if !@booking.car_id.blank?
-							- car = @booking.car
-							%b #{car.name}
-							= "(" + car.license + ")" if !car.license.blank?
-						- elsif @booking.status < 6
-							.red
-								Your car will be allocated by 
-								%b
-									= (@booking.starts - CommonHelper::ALLOTMENT.minutes).strftime("%d %b, %Y %I:%M %p")
-						- else
-							\-
-		.row
-			.col-md-3 
-				.p-5
-					%b Rented From
-			.col-md-9
-				.p-5
+					= @booking.status_help
+
+		.border-b-c
+			.p-t10.p-b10.p-l20.p-r20
+				.text-up.size-11.m-b3
+					Location
+				.zoom-b.f-b.size-14
 					- location = @booking.location
 					= location.shortname
 					- if !location.disclaimer.blank?
 						.red.size-10
 							= location.disclaimer.html_safe
-		.row
-			.col-md-3
-				.p-5
-					%b Pickup Time
-			.col-md-9
-				.p-5
+		.border-b-c
+			.p-t10.p-b10.p-l20.p-r20
+				.text-up.size-11.m-b3
+					Pickup Time
+				.zoom-b.f-b.size-14
 					= @booking.starts.strftime("%d %b, %Y %I:%M %p")
-		.row
-			.col-md-3
-				.p-5
-					%b Dropoff Time
-			.col-md-9
-				.p-5
+
+		.border-b-c
+			.p-t10.p-b10.p-l20.p-r20
+				.text-up.size-11.m-b3
+					Dropoff Time
+				.zoom-b.f-b.size-14
 					= @booking.ends.strftime("%d %b, %Y %I:%M %p")
+
 		- if !@booking.returned_at.blank?
-			.row
-				.col-md-3
-					.p-5
-						%b Return Time
-				.col-md-9
-					.p-5
+			.border-b-c
+				.p-t10.p-b10.p-l20.p-r20
+					.text-up.size-11.m-b3
+						Return Time
+					.zoom-b.f-b.size-14
 						= @booking.returned_at.strftime("%d %b, %Y %I:%M %p")
+
 		- if offer
-			.row
-				.col-md-3
-					.p-5
-						%b Promo Code
-				.col-md-9
-					.p-5
-						%b
-							= @booking.promo
+			.border-b-c
+				.p-t10.p-b10.p-l20.p-r20
+					.text-up.size-11.m-b3
+						Promo Code
+					.zoom-b.f-b.size-14
+						= @booking.promo
 						%br/
 						= offer.summary.html_safe
-		- if @booking.paid?
-			.m-t20
-				- case @booking.status?
-				- when 'live'
-					.btn.btn-success{onclick: "showModal('Extend Your Booking', '/bookings/#{@booking.encoded_id}/reschedule');"}
-						Extend
-					.btn.btn-warning{onclick: "showModal('Shorten Your Booking', '/bookings/#{@booking.encoded_id}/reschedule');"}
-						Shorten
-				- when 'near'
-					.btn.btn-warning{onclick: "showModal('Change Your Booking', '/bookings/#{@booking.encoded_id}/reschedule');"}
-						Change
-					.btn.btn-danger{onclick: "showModal('Cancel Your Booking', '/bookings/#{@booking.encoded_id}/cancel');"}
-						Cancel
-				- when 'future'
-					.btn.btn-success{onclick: "showModal('Change Your Booking', '/bookings/#{@booking.encoded_id}/reschedule');"}
-						Change
-					.btn.btn-danger{onclick: "showModal('Cancel Your Booking', '/bookings/#{@booking.encoded_id}/cancel');"}
-						Cancel
-				- else
-					- if @booking.total_payments > 0 && @booking.balance == 0
-						%a.btn.btn-default{href: "/bookings/#{@booking.encoded_id}/invoice", target: '_blank', role: "button"} Invoice
-					- if @booking.status_complete?
-						%a.btn.btn-default{href: "/bookings/#{@booking.encoded_id}/feedback", target: '_blank', role: "button"} Feedback
-				- if !@booking.hold && @booking.security_refund_charge.nil? && (1..5).include?(@booking.status)
-					.btn.btn-warning{onclick: "window.location= '/bookings/#{@booking.encoded_id}/holddeposit';"}
-						Hold Deposit
-		= render :partial => '/bookings/socialshare'
-	.col-md-4
-		= render :partial => '/bookings/summary', :locals => {:payments => true}
-		- if @booking.security_amount_deferred?
-			- if @total > 0
-				.p-b10.size-14
-					%span
-						%input{id: "securityDeposit", name: "deposit", type: "checkbox", value: "yes"}
-					%span
-						- wallet_amount = @booking.user.wallet_available_on_time(@booking.starts - CommonHelper::WALLET_FREEZE_START.hours,@booking)
-						- amount = (wallet_amount >= 5000) ? 5000 : (@pricing.mode::SECURITY - (wallet_amount)%(@pricing.mode::SECURITY)).to_i
-						- if amount == @pricing.mode::SECURITY
-							%b Pay ₹#{show_currency(amount)} Security Deposit
-						- else
-							%b Pay ₹#{show_currency(amount)} Security Deposit(₹#{show_currency(@pricing.mode::SECURITY - amount)} already in wallet)
-					%span.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => @booking.deposit_help}
-						%u (?)
-					#DepositMessage.red.p-t5
-						%i
-							= @booking.deposit_warning.html_safe
-				%a.btn.btn-default.btn-lg{id: "ProceedPG", href: "/bookings/#{@booking.encoded_id}/dopayment", role: "button"} Proceed to Payment
-				:javascript
-					function checkJquery() {
-						if (window.jQuery) {
-							$('#securityDeposit').change(function() {
-								var $this = $(this);
-								if ($this.is(':checked')) {
-									$("#DepositMessage").hide();
-									$("#Deposit").removeClass('t-s');
-									$("#DepositFinal").html("₹#{show_currency(@total + amount)}");
-									$("#ProceedPG").attr("href","/bookings/#{@booking.encoded_id}/dodeposit");
-								} else {
-									$("#DepositMessage").show();
-									$("#Deposit").addClass('t-s');
-									$("#DepositFinal").html("₹#{show_currency(@total)}");
-									$("#ProceedPG").attr("href","/bookings/#{@booking.encoded_id}/dopayment");
-								}
-							});
-						} else {
-							window.setTimeout(checkJquery, 1000);
-						}
-					}
-					checkJquery();
-			- elsif @total == 0
-				.p-b10.size-14
+
+	= render :partial => '/bookings/socialshare'
+
+.fr
+	.bg-w.bs-9.m-b20{'style' => 'width: 360px'}
+		.bg-zoomb.white.p-10.f-b.size-18.p-l10.p-r10
+			Fare Breakdown
+
+		.fl.p-10.p-l20.size-12
+			.text-up
+				Tariff
+				- if 1 < 4
+					%span.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Minimum billing is 4 hours."}
+						[?]
+		.fr.p-10.t-r.p-r20.grey.f-b.size-16
+			₹ 2000
+		.fc
+
+
+		.fl.p-10.p-l20.size-12
+			.text-up
+				Refundable Deposit
+		.fr.p-10.t-r.p-r20.grey.f-b.size-16
+			₹ 5000
+		.fc
+
+		.border-t-c
+			.fl.p-t10.p-l20.size-18
+				.text-up
+					Total Amount
+			.fr.p-10.t-r.p-r20.zoom-b.f-b.size-20
+				₹ 7000
+			.fc
+
+
+
+	.bg-w.bs-9.m-b20{'style' => 'width: 360px'}
+		.bg-zoomb.white.p-10.f-b.size-18.p-l10.p-r10
+			Payments Received
+
+		.fl.p-10.p-l20.size-12
+			.text-up
+				Tariff
+				- if 1 < 4
+					%span.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Minimum billing is 4 hours."}
+						[?]
+		.fr.p-10.t-r.p-r20.grey.f-b.size-16
+			₹ 2000
+		.fc
+
+
+		.fl.p-10.p-l20.size-12
+			.text-up
+				Refundable Deposit
+		.fr.p-10.t-r.p-r20.grey.f-b.size-16
+			₹ 5000
+		.fc
+
+		.border-t-c
+			.fl.p-t10.p-l20.size-18
+				.text-up
+					Total Amount
+			.fr.p-10.t-r.p-r20.zoom-b.f-b.size-20
+				₹ 7000
+			.fc
+
+
+
+	.bg-w.bs-9.m-b20{'style' => 'width: 360px'}
+		.bg-zoomb.white.p-10.f-b.size-18.p-l10.p-r10
+			.fl
+				Zoomcar Wallet
+
+				%span.pointer.pop.size-12.white{'href' => '#', 'data-toggle' => "popover",  'data-placement' => "top", 'data-html' => "true", 'data-content' => "<div class='grey size-12 f-n'>Your ZoomCar Wallet is where your Security Deposit is kept. This allows you to use the same deposit across multiple bookings. <a href='#'>Learn more</a> in our FAQs.</div>"}
+					[?]
+			.fr
+				%a.white.size-12{href: "javascript:void(0)", onclick: "showModal('Transaction History', '/wallets/history');"}
+					Show Transaction History
+			.fc
+
+		.fl.p-10.p-l20.size-12
+			.text-up
+				Available in Wallet
+		.fr.p-10.t-r.p-r20.grey.f-b.size-16
+			₹ 5000
+		.fc
+
+
+		.fl.p-10.p-l20.size-12
+			.text-up
+				Added to Wallet
+		.fr.p-10.t-r.p-r20.grey.f-b.size-16
+			\- ₹ 5000
+		.fc
+
+		.border-t-c
+			.fl.p-t10.p-l20.size-18
+				.text-up
+					Total
+			.fr.p-10.t-r.p-r20.zoom-b.f-b.size-20
+				₹ 0
+			.fc
+
+
+	.bg-w.bs-9.m-b20{'style' => 'width: 360px'}
+		.bg-zoomb.white.p-10.f-b.size-18.p-l10.p-r10
+			Outstanding
+
+		.fl.p-10.p-l20.size-12
+			.text-up
+				Extension Fee
+		.fr.p-10.t-r.p-r20.grey.f-b.size-16
+			₹ 500
+		.fc
+
+
+		.fl.p-10.p-l20.size-12
+			.text-up
+				Deposit Due
+
+			%span
+				%input{checked: "checked", id: "changeDeposit", name: "securityDeposit", type: "checkbox", value: "yes"}
+			%label{style: 'font-weight: normal; margin: 0;', for: 'changeDeposit'}
+				Pay this now
+			%span.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => @booking.deposit_help}
+				[?]
+		.fr.p-10.t-r.p-r20.grey.f-b.size-16
+			₹ 5000
+		.fc
+
+
+.fc
+
+
+.fixed.fixed-footer.border-t-c.p-b10.bg-f6
+	.wrapper
+		.fr.border-t-z-4.m-r20.t-r{'style' => 'width: 360px'}
+			.fl.p-t10.p-l20.size-18
+				.text-up
+					Payable Amount
+			.fr.p-10.t-r.p-r20.zoom.f-b.size-20
+				₹ 2000
+			.fc
+			%input.button.m-auto{style: "width:200px;", type: "submit", value: "Proceed to Payment"}
+		.fc
+
+
+
+.col-md-4
+	= render :partial => '/bookings/summary', :locals => {:payments => true}
+	- if @booking.security_amount_deferred?
+		- if @total > 0
+			.p-b10.size-14
+				%span
+					%input{id: "securityDeposit", name: "deposit", type: "checkbox", value: "yes"}
+				%span
 					- wallet_amount = @booking.user.wallet_available_on_time(@booking.starts - CommonHelper::WALLET_FREEZE_START.hours,@booking)
 					- amount = (wallet_amount >= 5000) ? 5000 : (@pricing.mode::SECURITY - (wallet_amount)%(@pricing.mode::SECURITY)).to_i
 					- if amount == @pricing.mode::SECURITY
 						%b Pay ₹#{show_currency(amount)} Security Deposit
 					- else
 						%b Pay ₹#{show_currency(amount)} Security Deposit(₹#{show_currency(@pricing.mode::SECURITY - amount)} already in wallet)
-				%a.btn.btn-default.btn-lg{href: "/bookings/#{@booking.encoded_id}/dodeposit", role: "button"} Proceed to Payment
-		- elsif @total > 0
-			%a.btn.btn-default.btn-lg{href: "/bookings/#{@booking.encoded_id}/dopayment", role: "button"} Proceed to Payment
+				%span.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => @booking.deposit_help}
+					%u (?)
+				#DepositMessage.red.p-t5
+					%i
+						= @booking.deposit_warning.html_safe
+			%a.btn.btn-default.btn-lg{id: "ProceedPG", href: "/bookings/#{@booking.encoded_id}/dopayment", role: "button"} Proceed to Payment
+			:javascript
+				function checkJquery() {
+					if (window.jQuery) {
+						$('#securityDeposit').change(function() {
+							var $this = $(this);
+							if ($this.is(':checked')) {
+								$("#DepositMessage").hide();
+								$("#Deposit").removeClass('t-s');
+								$("#DepositFinal").html("₹#{show_currency(@total + amount)}");
+								$("#ProceedPG").attr("href","/bookings/#{@booking.encoded_id}/dodeposit");
+							} else {
+								$("#DepositMessage").show();
+								$("#Deposit").addClass('t-s');
+								$("#DepositFinal").html("₹#{show_currency(@total)}");
+								$("#ProceedPG").attr("href","/bookings/#{@booking.encoded_id}/dopayment");
+							}
+						});
+					} else {
+						window.setTimeout(checkJquery, 1000);
+					}
+				}
+				checkJquery();
+		- elsif @total == 0
+			.p-b10.size-14
+				- wallet_amount = @booking.user.wallet_available_on_time(@booking.starts - CommonHelper::WALLET_FREEZE_START.hours,@booking)
+				- amount = (wallet_amount >= 5000) ? 5000 : (@pricing.mode::SECURITY - (wallet_amount)%(@pricing.mode::SECURITY)).to_i
+				- if amount == @pricing.mode::SECURITY
+					%b Pay ₹#{show_currency(amount)} Security Deposit
+				- else
+					%b Pay ₹#{show_currency(amount)} Security Deposit(₹#{show_currency(@pricing.mode::SECURITY - amount)} already in wallet)
+			%a.btn.btn-default.btn-lg{href: "/bookings/#{@booking.encoded_id}/dodeposit", role: "button"} Proceed to Payment
+	- elsif @total > 0
+		%a.btn.btn-default.btn-lg{href: "/bookings/#{@booking.encoded_id}/dopayment", role: "button"} Proceed to Payment
+
+.fc
+
 - if survey
 	:javascript
 		var _kiq = _kiq || [];
