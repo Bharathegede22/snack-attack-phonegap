@@ -191,14 +191,14 @@
 									Money in Wallet
 								.fc
 							%td.p-10.t-r.p-r20.lgrey.f-b.size-16
-								\- ₹ 3,000
+								\- ₹ #{show_currency @wallet_available}
 
 						%tr.bg-e
 							%td.p-10.p-l20.size-12
 								.fl.text-up
 									Deposit Due
 								
-								- if @booking.defer_allowed?
+								- if @booking.defer_allowed? && !(@wallet_available>= @booking.security_amount)
 									.fl.p-l20
 										%span
 											%input{checked: "checked", id: "changeDeposit", name: "securityDeposit", type: "checkbox", value: "yes"}
@@ -208,7 +208,7 @@
 											[?]
 								.fc
 							%td.p-10.t-r.p-r20.zoom-b.f-b.size-16
-								₹ 2,000
+								₹ #{show_currency(@booking.security_amount-@wallet_available)}
 
 					- if @booking.defer_allowed?
 						%tr#DepositMessage{style: "display: none"}
@@ -227,7 +227,7 @@
 									total = fare[:total]
 								end
 							#DepositFinal
-								₹ #{show_currency(total + pricing.mode::SECURITY)}
+								₹ #{show_currency(total + @booking.security_amount - @wallet_available)}
 
 					%tr
 						%td.p-5.p-l20.p-t10.size-12
@@ -320,7 +320,7 @@
 					$('#checkoutDeposit').val("1");
 					$('#DepositMessage').hide();
 					$("#Deposit").removeClass('t-s');
-					$("#DepositFinal").html("₹ #{show_currency(total + pricing.mode::SECURITY)}");
+					$("#DepositFinal").html("₹ #{show_currency(total + @booking.security_amount - @wallet_available)}");
 				} else {
 					$('#checkoutDeposit').val("0");
 					$('#DepositMessage').show();
