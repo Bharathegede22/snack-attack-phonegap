@@ -28,10 +28,11 @@ class BookingsController < ApplicationController
 	
 	def checkout
 		@booking.user = current_user
+		@wallet_available = @booking.security_amount - @booking.security_amount_remaining
 		redirect_to "/bookings/do" and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		generic_meta
 		@header = 'booking'
-		render (abtest? ? :checkoutab : :checkout)
+		render :checkoutab
 	end
 
 	def checkoutab
