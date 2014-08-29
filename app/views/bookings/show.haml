@@ -128,7 +128,7 @@
 	.col-md-4
 		= render :partial => '/bookings/summary', :locals => {:payments => true}
 		- if @booking.security_amount_deferred?
-			- if @total > 0
+			- if @total+@pricing.mode::SECURITY > 0
 				.p-b10.size-14
 					%span
 						%input{id: "securityDeposit", name: "deposit", type: "checkbox", value: "yes"}

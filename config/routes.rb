@@ -61,6 +61,7 @@ Web::Application.routes.draw do
 			post 'reschedule'
 		end
 	end
+	get '/resume' => 'bookings#resume_booking'
 
 	resources :users do
 		collection do

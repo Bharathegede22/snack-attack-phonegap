@@ -30,7 +30,9 @@ class BookingsController < ApplicationController
 		redirect_to "/bookings/do" and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		generic_meta
 		@header = 'booking'
-		render (abtest? ? :checkoutab : :checkout)
+		@abtest = abtest?
+		# render (abtest? ? :checkoutab : :checkout)
+		render :checkoutab
 	end
 
 	def checkoutab
@@ -70,6 +72,7 @@ class BookingsController < ApplicationController
 			if params[:notify].present?
 				session[:notify] = true
 			end
+			
 			if user_signed_in?
 				#if current_user.check_details
 				#	if current_user.check_license
@@ -406,6 +409,18 @@ class BookingsController < ApplicationController
 			end
 		end
 		render json: {html: render_to_string('_reschedule.haml', layout: false)}
+	end
+
+	def resume_booking
+		if !session[:book].blank?
+			redirect_to '/bookings/do'
+		elsif !session[:search].blank?
+			redirect_to '/search'
+		elsif !session[:booking_id].blank? && session[:book].blank? && session[:search].blank?
+			redirect_to "/bookings/" + session[:booking_id]
+		elsif session[:book].blank? && session[:search].blank?
+			redirect_to '/'
+		end
 	end
 	
 	def search
