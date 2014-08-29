@@ -26,7 +26,6 @@
 		function initializeMap() {
 			var myLatlng = new google.maps.LatLng(#{@city.lat}, #{@city.lng});
 			var mapOptions = {
-				zoom: 6,
 				center: myLatlng,
 				mapTypeId: google.maps.MapTypeId.ROADMAP
 			}
@@ -35,26 +34,32 @@
 				position: myLatlng,
 				map: map,
 				animation: google.maps.Animation.DROP,
-				title:"#{@city.name}",
-				icon:"#{asset_path 'map/blue.png'}"
+				title:"#{@city.name}"
 			});
+			bounds = new google.maps.LatLngBounds ();
+			bounds.extend (myLatlng);
 	- outside.each do |a|
 		:plain
 			var infowindow#{a.id} = new google.maps.InfoWindow({
 				content: "#{a.name}"
 			});
 			var myLatlng#{a.id} = new google.maps.LatLng(#{a.lat.to_f}, #{a.lng.to_f});
+			bounds.extend (myLatlng#{a.id});
 			var marker#{a.id} = new google.maps.Marker({
 				position: myLatlng#{a.id},
 				map: map,
 				animation: google.maps.Animation.DROP,
 				title:"#{a.name}",
-				icon:"#{asset_path 'map/red.png'}"
+				icon:"#{asset_path 'map/zoom.png'}"
 			});
 			google.maps.event.addListener(marker#{a.id}, 'click', function() {
 				infowindow#{a.id}.open(map,marker#{a.id});
 			});
-	:plain		
+	:plain
+			google.maps.event.addListenerOnce(map, 'idle', function() {
+				google.maps.event.trigger(map, 'resize');
+				map.fitBounds(bounds);
+			});
 		}
 		function checkJquery() {
 			if (window.jQuery) {

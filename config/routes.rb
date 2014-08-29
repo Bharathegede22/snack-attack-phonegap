@@ -87,6 +87,7 @@ Web::Application.routes.draw do
 	get '/calculator/:id' => 'main#calculator'
 	
 	get '/job/:id' => 'main#job'
+	get '/get_locations_map/:id' => 'main#get_locations_map'
  	get ':action' => 'main', constraints: {action: /about|careers|contact|eligibility|handover|holidays|howitworks|howtozoom|map|member|outstation|reva|privacy/}
  	
  	# Redirect
