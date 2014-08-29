@@ -14,7 +14,7 @@ class Inventory < ActiveRecord::Base
 		else
 			opr = "total = (total-1)"
 		end
-		Rails.logger.warn "Inventory_block_cg_#{cargroup}_loc_#{location}: starts #{(starts).to_s(:db)}, ends #{(ends).to_s(:db)}"
+		INVENTORY_LOGGER.error "Inventory_block_cg_#{cargroup}_loc_#{location}: starts #{(starts).to_s(:db)}, ends #{(ends).to_s(:db)}"
 		ActiveRecord::Base.connection.execute("UPDATE inventories SET #{opr} WHERE 
 			cargroup_id = #{cargroup} AND 
 			location_id = #{location} AND 
@@ -109,7 +109,7 @@ class Inventory < ActiveRecord::Base
 		else
 			opr = "total = (total+1)"
 		end
-		Rails.logger.warn "Inventory_release_cg_#{cargroup}_loc_#{location}: starts #{(starts).to_s(:db)}, ends #{(ends).to_s(:db)}"
+		INVENTORY_LOGGER.error "Inventory_release_cg_#{cargroup}_loc_#{location}: starts #{(starts).to_s(:db)}, ends #{(ends).to_s(:db)}"
 		ActiveRecord::Base.connection.execute("UPDATE inventories SET #{opr} WHERE 
 			cargroup_id = #{cargroup} AND 
 			location_id = #{location} AND 
