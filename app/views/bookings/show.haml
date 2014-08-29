@@ -141,11 +141,29 @@
 		.fc
 
 
+		.fr.p-10.t-r.p-r20.grey.f-b.size-16
+			₹ 5000
+
 		.fl.p-10.p-l20.size-12
 			.text-up
 				Refundable Deposit
-		.fr.p-10.t-r.p-r20.grey.f-b.size-16
-			₹ 5000
+
+		.fl.p-l20.p-r10.p-b10
+			%input{id: "holdDeposit", name: "holdDeposit", type: "checkbox", value: "yes"}
+			%label#holdDepositLabel{style: 'font-weight: normal; margin: 0;', for: 'holdDeposit'}
+				Hold This Security Deposit
+
+				%span.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Planning on making another booking soon? Hold the Security Deposit in your Zoomcar wallet. The same deposit will be used for the next booking so your money will not be stuck in multiple deposits or refund processes."}
+					[?]
+			#holdDepositHelp{'style' => 'display: none;'}
+				.f-i.size-11.p-t5
+					You can refund this money any time 24 hours before or 6 hours after a booking through My Bookings.
+				
+				%input.button.m-t5.size-12{style: "width:100px;", type: "submit", id: "holdDepositApply", value: "Apply"}
+
+				#holdSuccess.alert.alert-success{'style' => 'display: none;'} 
+					Hold Successful
+
 		.fc
 
 		.border-t-c
@@ -325,6 +343,34 @@
 		%a.btn.btn-default.btn-lg{href: "/bookings/#{@booking.encoded_id}/dopayment", role: "button"} Proceed to Payment
 
 .fc
+
+:javascript
+	function checkJquery() {
+		if (window.jQuery) {
+			$('#holdDeposit').change(function() {
+				var $this = $(this);
+				if ($this.is(':checked')) {
+					$("#holdDepositHelp").show();
+				} else {
+					$("#holdDepositHelp").hide();
+				}
+			});
+
+			$('#holdDepositApply').click(function() {
+				var $this = $(this);
+				$this.fadeOut(function(){
+					$('#holdSuccess').fadeIn().delay(1000).fadeOut(function(){
+						$('#holdDepositLabel, #holdDepositHelp').addClass('lgrey');
+						$('#holdDeposit').attr('disabled', 'disabled');
+					});
+				});
+			});
+		} else {
+			window.setTimeout(checkJquery, 1000);
+		}
+	}
+	checkJquery();
+
 
 - if survey
 	:javascript
