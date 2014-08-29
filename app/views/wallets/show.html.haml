@@ -51,7 +51,7 @@
 	#legend.position-a
 		#indicator-1.inline-block
 			&nbsp;
-		Money in Wallet
+		Security Deposit Available in Wallet
 
 		#indicator-2.inline-block
 			&nbsp;
@@ -101,11 +101,11 @@
 					[?]
 
 		- live_upcoming_bookings.flatten.each_with_index do |booking, n|
-			%tr.clickable-row.pointer{'id' => "row#{booking.confirmation_key}",  'href' => "#"}
+			%tr.clickable-row.pointer.unsafe-booking-entry{'id' => "row#{booking.confirmation_key}",  'href' => '/bookings/'+ booking.confirmation_key}
 				%td.t-c
 					.p-t15.size-16
 						= link_to booking.confirmation_key, '/bookings/'+ booking.confirmation_key
-				%td.t-c
+				%td
 					.inline-block.colored
 						.m-auto{:class => 'small-car1'}
 					.inline-block.p-l10.position-r.t-l{style: "top: -15px"}
@@ -138,11 +138,11 @@
 
 		- n = 0
 		- completed_bookings.each do |booking|
-			%tr.clickable-row.pointer{'id' => "row#{booking.confirmation_key}",  'href' => "#"}
+			%tr.clickable-row.pointer{'id' => "row#{booking.confirmation_key}",  'href' => '/bookings/'+ booking.confirmation_key}
 				%td.t-c
 					.p-t15.size-16
 						= link_to booking.confirmation_key, '/bookings/'+ booking.confirmation_key
-				%td.t-c
+				%td
 					.inline-block.colored
 						.m-auto{:class => 'small-car1'}
 					.inline-block.p-l10.position-r.t-l{style: "top: -15px"}
@@ -170,11 +170,11 @@
 
 		- n = 0
 		- cancelled_bookings.each do |booking|
-			%tr.clickable-row.pointer{'id' => "row#{booking.confirmation_key}",  'href' => "#"}
+			%tr.clickable-row.pointer{'id' => "row#{booking.confirmation_key}",  'href' => '/bookings/'+ booking.confirmation_key}
 				%td.t-c
 					.p-t15.size-16
 						= link_to booking.confirmation_key, '/bookings/'+ booking.confirmation_key
-				%td.t-c
+				%td
 					.inline-block.colored
 						.m-auto{:class => 'small-car1'}
 					.inline-block.p-l10.position-r.t-l{style: "top: -15px"}
