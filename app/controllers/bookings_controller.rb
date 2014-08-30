@@ -229,7 +229,7 @@ class BookingsController < ApplicationController
 		@booking.update_attribute(:hold, true)
 		respond_to do |format|
 			format.json {render :json =>{:error=>'', :messag=> 'Hold Successful'}}
-			format.html {redirect_to '/mydeposits'}
+			format.html {redirect_to '/bookings'}
 		end
 	end
 

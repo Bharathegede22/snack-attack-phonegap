@@ -1,7 +1,7 @@
 Web::Application.routes.draw do
 
 	get 'mydeposits' => "wallets#show"
-  
+  	get 'bookings'  => "wallets#show"
 	devise_for :users, 
 		:controllers => {
 			:confirmations => "users/confirmations", 
@@ -18,7 +18,7 @@ Web::Application.routes.draw do
 		end
 	end
 
-	resources :bookings do
+	resources :bookings, :except => [:index, :delete] do
 		collection do
 			get 'checkout'
 			get 'complete'

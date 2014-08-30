@@ -181,17 +181,16 @@
 										Can I Use One Security Deposit For Multiple Bookings?
 								.fc
 							%td.p-10.t-r.p-r20.lgrey.f-b.size-16.securityTotal
-								- if @booking.defer_allowed?
-									#Deposit
-										₹ #{show_currency pricing.mode::SECURITY}
-
-						%tr
-							%td.p-10.p-l20.size-12
-								.fl.text-up
-									Money in Wallet
-								.fc
-							%td.p-10.t-r.p-r20.lgrey.f-b.size-16
-								\- ₹ #{show_currency @wallet_available}
+								#Deposit
+									₹ #{show_currency pricing.mode::SECURITY}
+						- unless @wallet_available==0
+							%tr
+								%td.p-10.p-l20.size-12
+									.fl.text-up
+										Money in Wallet
+									.fc
+								%td.p-10.t-r.p-r20.lgrey.f-b.size-16
+									\- ₹ #{show_currency @wallet_available}
 
 						%tr.bg-e
 							%td.p-10.p-l20.size-12
