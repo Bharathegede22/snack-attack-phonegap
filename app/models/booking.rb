@@ -61,6 +61,7 @@ class Booking < ActiveRecord::Base
 		return if (amount.to_i <= 0)
 		refund = Refund.create!(status: 1, booking_id: self.id, through: 'wallet', amount: amount)
 		Wallet.create!(amount: amount, user_id: self.user_id, status: 1, credit: true, transferable: refund)
+		self.update_column(:hold, false) if amount.to_i >= 5000
 	end
 
 	def cancellation_charge
@@ -732,6 +733,7 @@ class Booking < ActiveRecord::Base
 		charge.amount                  = self.total_fare
 		charge.save
 		self.confirmation_key = self.encoded_id.upcase
+		self.hold = true
 		self.save(validate: false)
 	end
 
