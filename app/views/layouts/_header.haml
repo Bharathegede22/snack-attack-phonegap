@@ -25,8 +25,9 @@
 				%a.iphone.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "Get ZoomCar iPhone App", href: "https://itunes.apple.com/us/app/zoomcar-self-drive-cars/id889910218?mt=8&utm_source=home%20page&utm_medium=header%20links&utm_content=iOS&utm_campaign=installs"}
 				.fc
 		.info
-			%a.wallet-alert.fr.ts-3.f-b.pointer.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "You have an upcoming booking with Security Deposit due", href: "/bookings"}
-				!
+			- if current_user && current_user.unsafe_bookings.any?
+				%a.wallet-alert.fr.ts-3.f-b.pointer.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "You have an upcoming booking with Security Deposit due", href: "/bookings"}
+					!
 			.broadcast.fr
 				#UserBar.dropdown.fr
 					%a.dropdown-toggle.p-r10.p-l10{href: "javascript:void(0)", 'data-toggle' => "dropdown"}

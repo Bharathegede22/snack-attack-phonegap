@@ -279,7 +279,7 @@ class User < ActiveRecord::Base
   	end
 
   	def wallet_frozen_amount
-  		wallet_frozen_bookings.collect(&:security_amount).sum
+  		wallet_frozen_bookings.reject{|b| b.security_charge.nil?}.collect(&:security_amount).sum
 	end
 
 	def wallet_available_amount
@@ -287,6 +287,7 @@ class User < ActiveRecord::Base
 	end
 
 	def wallet_available_on_time(ends,req_booking)
+		return wallet_available_amount if ends <= Time.now
 		wallet_amount = wallet_available_amount
 		snapshot_bookings(ends).each do |booking|
 			wallet_amount -= booking.pricing.mode::SECURITY if !booking.hold? || req_booking.wallet_overlaps?(booking)
@@ -295,22 +296,25 @@ class User < ActiveRecord::Base
 	end
 
 	def unsafe_booking?(booking)
-		wallet_available_on_time(booking.starts - 24.hours,booking) < booking.security_amount
+		if booking.defer_allowed? || booking.security_charge.nil?
+			return wallet_available_on_time(booking.starts - 24.hours,booking) < booking.security_amount
+		else
+			return !booking.insufficient_deposit
+		end
 	end
 
-	def wallet_refund(amount)
-		#TODO
-
-	end
- 	
- 	def wallet_topup(amount)
-		#TODO
+	def unsafe_bookings
+		wallet_snapshot[:unsafe].select{|b| b.starts>Time.now}	
 	end
 
 	def wallet_snapshot(snap_start= Time.now, snap_end= snap_start+CommonHelper::WALLET_SNAPSHOT.days)
-		snapshot={starts: snap_start, ends: snap_end, amount: wallet_available_amount, bookings: []}
+		amount = wallet_available_amount
+		snapshot={starts: snap_start, ends: snap_end, amount: amount, bookings: [], unsafe: []}
 		upcoming_bookings.each do |booking|
-			snapshot[:bookings] << booking.wallet_impact
+			impact = booking.wallet_impact
+			snapshot[:unsafe] << impact[:booking] if amount<booking.security_amount
+			amount += impact[:amount]
+			snapshot[:bookings] << impact
 		end
 		snapshot
 	end 

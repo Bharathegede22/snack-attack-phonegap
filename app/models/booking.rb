@@ -439,7 +439,8 @@ class Booking < ActiveRecord::Base
 	end
 
 	def outstanding_with_security
-		outstanding + security_amount_remaining
+		total = self.outstanding
+		total<=0 ? security_amount_remaining : (total + security_amount_remaining)
 	end
 	
 	def outstanding_warning

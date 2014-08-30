@@ -34,12 +34,6 @@ class BookingsController < ApplicationController
 		@header = 'booking'
 		render :checkoutab
 	end
-
-	def checkoutab
-		redirect_to "/bookings/do" and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
-		generic_meta
-		@header = 'booking'
-	end
 	
 	def complete
 		render layout: 'plain'
@@ -189,7 +183,7 @@ class BookingsController < ApplicationController
 	end
 	
 	def dodeposit
-		@booking.update_column(:defer_deposit, false)
+		@booking.update_column(:defer_deposit, false) if params[:checkoutDeposit]=="1"
 		if !@booking.defer_allowed?
 			@booking.add_security_deposit_charge
 			#amount = @booking.user.wallet_available_on_time(@booking.starts - CommonHelper::WALLET_FREEZE_START.hours,@booking) 
@@ -233,7 +227,10 @@ class BookingsController < ApplicationController
 	
 	def holddeposit
 		@booking.update_attribute(:hold, true)
-		redirect_to '/mydeposits'
+		respond_to do |format|
+			format.json {render :json =>{:error=>'', :messag=> 'Hold Successful'}}
+			format.html {redirect_to '/mydeposits'}
+		end
 	end
 
 	def index
@@ -372,6 +369,7 @@ class BookingsController < ApplicationController
 
   def reschedule
 		@confirm = !params[:confirm].blank?
+		@wallet_available = @booking.security_amount - @booking.security_amount_remaining
 		if request.post?
 			if @confirm
 				@booking.starts = Time.zone.parse(params[:starts]) if !params[:starts].blank?
@@ -397,7 +395,7 @@ class BookingsController < ApplicationController
 							tmp << h.to_s + " hours"
 						end
 						flash[:notice] = "Your booking successfully <b>" + @string.downcase.gsub('ing', 'ed') + "</b> by " + tmp.chomp(', ')
-						@booking.add_security_deposit_charge if !params[:deposit].blank? && params[:deposit].to_i == 1
+						@booking.update_column(:defer_deposit, false) if !params[:deposit].blank? && params[:deposit].to_i == 1
 						@success = true
 						@confirm = @string = @fare = nil
 					end
