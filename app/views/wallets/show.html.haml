@@ -192,3 +192,34 @@
 				%td.t-c
 					.p-t15.size-16
 						= "Rs. " + number_with_delimiter(booking.outstanding)
+.bs-g.m-t20
+	.p-10.bg-zoomb.white.f-b
+		Unfinished Bookings
+	%table.table-condensed.table-hover.table
+		%tr.active
+			%th.t-c Booking ID
+			%th.t-c Vehicle & Location
+			%th.t-c Duration
+			%th.t-c Outstanding
+
+		- n = 0
+		- current_user.get_bookings('unfinished').each do |booking|
+			%tr.clickable-row.pointer{'id' => "row#{booking.confirmation_key}",  'href' => '/bookings/'+ booking.confirmation_key}
+				%td.t-c
+					.p-t15.size-16
+						= link_to booking.confirmation_key, '/bookings/'+ booking.confirmation_key
+				%td
+					.inline-block.colored
+						.m-auto{:class => 'small-car1'}
+					.inline-block.p-l10.position-r.t-l{style: "top: -15px"}
+						= booking.cargroup.name
+						%br/
+						= booking.location.name
+				%td.t-c
+					.p-t10
+						= booking.starts.strftime("%d %b, %Y %H:%M %p")
+						%br/
+						= booking.ends.strftime("%d %b, %Y %H:%M %p")
+				%td.t-c
+					.p-t10
+						= "Rs. " + number_with_delimiter(booking.outstanding_with_security)
