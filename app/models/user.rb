@@ -56,7 +56,7 @@ class User < ActiveRecord::Base
   	when 'future' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND starts > '#{Time.zone.now.to_s(:db)}' AND status < 8", 'starts ASC']
   	when 'completed' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND returned_at IS NOT NULL AND returned_at < '#{Time.zone.now.to_s(:db)}' AND status < 8", 'id DESC']
   	when 'cancelled' then ["status > 8", 'id DESC']
-  	when 'unfinished' then ["jsi IS NULL AND status = 0", 'id DESC']
+  	when 'unfinished' then ["jsi IS NULL AND status = 0 AND starts > '#{Time.zone.now.to_s(:db)}'", 'id DESC']
   	when 'wallet_frozen' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND ((starts >= '#{Time.zone.now.to_s(:db)}' AND starts <= '#{(Time.zone.now+CommonHelper::WALLET_FREEZE_START.hours).to_s(:db)}') OR (ends < '#{Time.zone.now.to_s(:db)}' AND ends >= '#{(Time.zone.now-CommonHelper::WALLET_FREEZE_END.hours).to_s(:db)}')) AND status < 8", 'starts ASC']
   	end
 
@@ -299,7 +299,7 @@ class User < ActiveRecord::Base
 		if booking.defer_allowed? || booking.security_charge.nil?
 			return wallet_available_on_time(booking.starts - 24.hours,booking) < booking.security_amount
 		else
-			return !booking.insufficient_deposit
+			return booking.insufficient_deposit
 		end
 	end
 

@@ -3,7 +3,11 @@ class WalletsController < ApplicationController
   include WalletsHelper
 
   def refund
-  flash[:notice] = create_refund(wallet_params) ? "Amount will reflect in your account within 3-4 days"  : "Unable to refund"
+    if create_refund(wallet_params)
+      flash[:notice] = "Your refund has been initiated and it should reach you in 4-5 days"
+    else
+      flash[:error] = "Unable to refund."
+    end
   redirect_to :back
   end
 
