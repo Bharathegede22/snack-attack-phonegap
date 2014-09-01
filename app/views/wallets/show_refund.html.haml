@@ -20,5 +20,5 @@
 			%input.button.m-t15{style: "width:120px;", type: "submit", value: "Refund"}
 	- _15_day_booking = current_user.upcoming_bookings.select{|u| u.starts > Time.now && u.starts<Time.now.advance(days: 15)}
 	- if _15_day_booking.any?
-		.p-10.p-l20.p-r20.size-11.position-r{style: "top: -10px", colspan: '2'}
+		.p-10.p-l20.p-r20.size-11.position-r{colspan: '2'}
 			%i You have an upcoming booking for which this amount can be used. Keep in mind that it takes 4-5 days before the amount reaches you. Are you sure you want to refund now?	
