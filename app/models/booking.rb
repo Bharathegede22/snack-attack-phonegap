@@ -65,11 +65,17 @@ class Booking < ActiveRecord::Base
 			Inventory.connection.clear_query_cache
 			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
 			if self.starts != self.starts_last || self.ends != self.ends_last
-				if self.starts < self.starts_last
-					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
-				end
-				 if check == 1 && self.ends > self.ends_last
-					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, self.ends_last, (self.ends + cargroup.wait_period.minutes))
+				if self.starts > self.ends_last + cargroup.wait_period.minutes || self.ends < self.starts_last - cargroup.wait_period.minutes
+					# Non Overlapping Reschedule
+					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
+				else
+					# Overlapping Reschedule
+					if self.starts < self.starts_last
+						check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
+					end
+					if check == 1 && self.ends > self.ends_last
+						check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, self.ends_last, (self.ends + cargroup.wait_period.minutes))
+					end
 				end
 			else
 				check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
@@ -369,24 +375,21 @@ class Booking < ActiveRecord::Base
 		if self.car_id.blank?
 			Inventory.connection.clear_query_cache
 			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
-			if !self.starts_last.blank? && (self.starts != self.starts_last || self.ends != self.ends_last)
-				if self.starts < self.starts_last
-					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
-				end
-				if self.ends > self.ends_last
-					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, self.ends_last, (self.ends + cargroup.wait_period.minutes)) if check == 1
+			if !self.starts_last.blank?
+				if self.starts > self.ends_last + cargroup.wait_period.minutes || self.ends < self.starts_last - cargroup.wait_period.minutes
+					# Non Overlapping Reschedule
+					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
+				elsif (self.starts != self.starts_last || self.ends != self.ends_last)
+					if self.starts < self.starts_last
+						check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
+					end
+					if self.ends > self.ends_last && check == 1
+						check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, self.ends_last, (self.ends + cargroup.wait_period.minutes))
+					end
 				end
 				if check == 1
-					if self.starts < self.starts_last
-						Inventory.block(self.cargroup_id, self.location_id, self.starts, self.starts_last)
-					elsif self.starts > self.starts_last
-						Inventory.release(self.cargroup_id, self.location_id, self.starts_last, self.starts)
-					end
-					if self.ends > self.ends_last
-						Inventory.block(self.cargroup_id, self.location_id, self.ends_last, self.ends)
-					elsif self.ends < self.ends_last
-						Inventory.release(self.cargroup_id, self.location_id, self.ends, self.ends_last)
-					end
+					Inventory.release(self.cargroup_id, self.location_id, self.starts_last, self.ends_last)
+					Inventory.block(self.cargroup_id, self.location_id, self.starts, self.ends)
 				end
 			else
 				if self.status < 9
