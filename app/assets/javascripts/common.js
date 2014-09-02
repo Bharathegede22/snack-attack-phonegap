@@ -709,7 +709,7 @@ checkUser();
 
 /* Tariff Details& FAQ Tabs */
 $(function () {
-	$('#tariff-header a, #faq-tabs a, #fee-tabs a').click(function (e) {
+	$('#tariff-header a, #faqs-tabs a, #fee-tabs a').click(function (e) {
   		e.preventDefault();
   		$(this).siblings().removeClass('active');
   		$(this).addClass('active');
@@ -735,4 +735,16 @@ $('.safe-booking, .unsafe-booking').click(function(){
 
 $('#resume_header').click(function(){
 	$('#resume_body').slideToggle();
+	return false;
 });
+
+
+var url = document.location.toString();
+if (url.match('#')) {
+	var anchor = url.split('#')[1];
+	if(anchor == 'faq-41')
+	{
+		$('#faqs-tabs a[href=#faqs-6]').tab('show').addClass('active').siblings().removeClass('active');
+	    $(document).scrollTop($('#faq-41').offset().top);
+	}
+}

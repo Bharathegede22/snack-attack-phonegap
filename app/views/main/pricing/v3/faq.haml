@@ -6,23 +6,23 @@
 .static
 	%h1 Frequently Asked Questions
 
-	#faq-tabs.solid.border-c
-		%a.block.fl.active{:href => "#faq-1", 'data-toggle' => "tab"}
+	#faqs-tabs.solid.border-c
+		%a.block.fl.active{:href => "#faqs-1", 'data-toggle' => "tab"}
 			Basics
-		%a.block.fl{:href => "#faq-2", 'data-toggle' => "tab"}
+		%a.block.fl{:href => "#faqs-2", 'data-toggle' => "tab"}
 			Becoming a Member
-		%a.block.fl{:href => "#faq-3", 'data-toggle' => "tab"}
+		%a.block.fl{:href => "#faqs-3", 'data-toggle' => "tab"}
 			Booking
-		%a.block.fl{:href => "#faq-4", 'data-toggle' => "tab"}
+		%a.block.fl{:href => "#faqs-4", 'data-toggle' => "tab"}
 			Billing
-		%a.block.fl{:href => "#faq-5", 'data-toggle' => "tab"}
+		%a.block.fl{:href => "#faqs-5", 'data-toggle' => "tab"}
 			Your Trip
-		%a.block.fl{:href => "#faq-6", 'data-toggle' => "tab"}
+		%a.block.fl{:href => "#faqs-6", 'data-toggle' => "tab"}
 			What's Included
 		.fc
 
-	#faq-body.tab-content
-		#faq-1.tab-pane.fade.in.active
+	#faqs-body.tab-content
+		#faqs-1.tab-pane.fade.in.active
 			.f-b.zoom.size-16.m-b5 #{count+=1}) What is Zoom?
 			%p
 				Zoom is India's first membership-based, self-drive car rental service which allows individuals to hire cars by the hour or by the day. Reservations are made through the website.
@@ -45,7 +45,7 @@
 			%p
 				The Figos, Ventos, Scorpios, Ecosport, Honda City, Mahindra XUV W6 have manual transmission. The BMWs and Revas have automatic transmission.
 
-		#faq-2.tab-pane.fade
+		#faqs-2.tab-pane.fade
 			.f-b.zoom.size-16.m-b5 #{count+=1}) How do I become a member?
 			%p
 				Becoming a member is easy! Go to the website
@@ -65,7 +65,7 @@
 			%p
 				It takes less than 2 minutes to become a Zoom member. Driving on the same day you sign up is allowed and in fact, we encourage it!
 
-		#faq-3.tab-pane.fade
+		#faqs-3.tab-pane.fade
 			.f-b.zoom.size-16.m-b5 #{count+=1}) How do I book a vehicle?
 			%p
 				It's simple on our online reservation system! Just select the type of car you want, the location you want to pick it up from, and the start and end time for your reservation. Then enter your payment details (credit or debit card) and you are ready to Zoom!
@@ -102,7 +102,7 @@
 				%br/
 				b) Free KMs will be given only for the hours for which you did not get credit.
 
-		#faq-4.tab-pane.fade
+		#faqs-4.tab-pane.fade
 			.f-b.zoom.size-16.m-b5 #{count+=1}) What modes of payments are accepted?
 			%p
 				Zoom accepts payments by credit cards, debit cards and netbanking. All payments are made in advance through our website or mobile app. Sorry, we do not accept cash.
@@ -119,7 +119,7 @@
 			%p
 				We process refunds immediately, however it will take 4-5 business days before it reflects in your account.
 
-		#faq-5.tab-pane.fade
+		#faqs-5.tab-pane.fade
 			.f-b.zoom.size-16.m-b5 #{count+=1}) What documents do I need to bring when I pick up my Zoom vehicle?
 			%p
 				Please bring your original driver's license and a valid credit or debit card for any incidentals charges (e.g. excess kms, extended reservation, etc.)
@@ -133,7 +133,7 @@
 			%p
 				Immediately notify Zoom by calling #{CommonHelper::CUSTOMER_CARE} and we will guide you through the entire process with the help of our Call Center and Fleet Executive team. Each vehicle also has a 24x7 road-side support hotline number. Zoom will coordinate everything with this road-side assistance provider. Don't leave the scene of the breakdown until proper support has arrived.
 
-		#faq-6.tab-pane.fade
+		#faqs-6.tab-pane.fade
 			.f-b.zoom.size-16.m-b5 #{count+=1}) Who pays for fuel?
 			%p
 				Unlike other car hire services, Zoom always pays for the fuel, regardless of whether the vehicle is a diesel or petrol variant. Zoom refuels the vehicles regularly. If you are driving a long distance and you need to refuel the vehicle, just give your fuel receipt to the Fleet Executive after your reservation and Zoom will happily reimburse you the full amount. 
@@ -169,7 +169,7 @@
 			.f-b.zoom.size-16.m-b5 #{count+=1}) Can I delay paying the refundable security deposit?
 			%p
 				Of course you can! Because of high demand for vehicles, a substantial chunk of our users make bookings weeks in advance. We’re not a bank, and the ZoomCar team really doesn’t want your money stuck in a security deposit for that entire period. So, at the time of checkout you can choose to delay your deposit payment to 24 hours before your booking starting. However, do remember to pay the deposit by then or your booking will get cancelled.
-			.f-b.zoom.size-16.m-b5 #{count+=1}) I have already paid a Security Deposit, can I use it for other bookings?
+			.f-b.zoom.size-16.m-b5{'id' =>  'faq-'+(count+1).to_s } #{count+=1}) I have already paid a Security Deposit, can I use it for other bookings?
 			%p
 				Yes, you can stretch one Security Deposit over multiple bookings! Our most active community members make multiple bookings close to one another. With banks taking 4-5 business days to refund your account, this meant that you could have multiple security deposits stuck in refund processes. Instead you can use the same deposit over multiple bookings through your Zoomcar Wallet. 
 			%p
