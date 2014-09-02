@@ -1,7 +1,7 @@
 .content
-	-if @step == '5'
-		= render :partial => "/bookings/search_steps", locals: {step: 5} 
-	= form_for(current_user, :url => "/users/license", :html => { :method => :post, :multipart => true }) do |f|
+	-if @step == '5' || @step == '6'
+		= render :partial => "/bookings/search_steps", locals: {step: @step.to_i} 
+	= form_for(current_user, :url => "/users/license?step=5", :html => { :method => :post, :multipart => true }) do |f|
 		- render_flash
 		.panel.panel-default
 			.panel-heading
@@ -43,7 +43,6 @@
 										driving license
 							.col-sm-4
 								- license = current_user.license_pic
-								- binding.pry
 								- if license
 									%a{href: license.avatar.url(:profile), target: '_blank'}
 										= image_tag license.avatar.url(:thumb)

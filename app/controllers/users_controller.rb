@@ -31,6 +31,7 @@ class UsersController < ApplicationController
 				if @image.valid?
 					BookingMailer.delay.license_update(current_user.id)
 					flash[:notice] = 'Thanks for uploading your driving license image.'
+					@step = (params[:step].to_i + 1).to_s if !params[:step].blank?
 				else
 					if @image.errors[:avatar_content_type].length > 0
 						flash[:error] = 'Please attach a valid license image. Only allow formats are jpg, jpeg, gif and png.'
@@ -42,7 +43,6 @@ class UsersController < ApplicationController
 				flash[:error] = 'Please attach a license image'
 			end
 		else
-			binding.pry
 			@step = params[:step]
 		end
 	end
