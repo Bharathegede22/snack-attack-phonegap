@@ -182,7 +182,7 @@
 		- @booking.payments.where('status>0').select{|p| p.through=='payu'}.each do |payment|
 			.fl.p-10.p-l20.size-12
 				.text-up
-					= payment.through.upcase
+					Amount Paid (#{payment.created_at.strftime('%Y-%m-%d')})
 			.fr.p-10.t-r.p-r20.grey.f-b.size-16
 				₹ #{show_currency payment.amount.tap{|p| total_payment+=p}}
 			.fc
@@ -202,7 +202,7 @@
 		- @booking.refunds.where('status>0').select{|p| p.through=='payu'}.each do |refund|
 			.fl.p-10.p-l20.size-12
 				.text-up
-					= refund.through.upcase
+					Amount Refunded (#{refund.created_at.strftime('%Y-%m-%d')})
 			.fr.p-10.t-r.p-r20.grey.f-b.size-16
 				₹ #{show_currency refund.amount.tap{|p| total_refund+=p}}
 			.fc
@@ -232,21 +232,21 @@
 				.text-up
 					Available in Wallet
 			.fr.p-10.t-r.p-r20.grey.f-b.size-16
-				₹ #{show_currency (@booking.security_amount - security_remaining).tap{|a| total-=a}}
+				\- ₹ #{show_currency (@booking.security_amount - security_remaining).tap{|a| total-=a}}
 			.fc
 		-elsif !@booking.insufficient_deposit
 			.fl.p-10.p-l20.size-12
 				.text-up
-					Paid from Wallet
+					Paid from Wallet (#{wallet.created_at.strftime('%Y-%m-%d')})
 			.fr.p-10.t-r.p-r20.grey.f-b.size-16
-				₹ #{show_currency @booking.security_charge.amount.tap{|a| total-=a}}
+				\- ₹ #{show_currency @booking.security_charge.amount.tap{|a| total-=a}}
 			.fc
 		- @booking.refunds.select{|r| r.through=='wallet'}.each do |wallet|
 			.fl.p-10.p-l20.size-12
 				.text-up
-					Added to Wallet
+					Added to Wallet (#{wallet.created_at.strftime('%Y-%m-%d')})
 			.fr.p-10.t-r.p-r20.grey.f-b.size-16
-				\- ₹ #{show_currency wallet.amount.tap{|a| total+=a}}
+				₹ #{show_currency wallet.amount.tap{|a| total+=a}}
 			.fc
 
 		.border-t-c
