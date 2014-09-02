@@ -194,26 +194,26 @@
 			.fr.p-10.t-r.p-r20.zoom-b.f-b.size-20
 				₹ #{show_currency total_payment}
 			.fc
+	- if @booking.refunds.where('status>0').select{|p| p.through=='payu'}.any?
+		.bg-w.bs-9.m-b20{'style' => 'width: 360px'}
+			.bg-zoomb.white.p-10.f-b.size-18.p-l10.p-r10
+				Refunds Issued
+			- total_refund=0
+			- @booking.refunds.where('status>0').select{|p| p.through=='payu'}.each do |refund|
+				.fl.p-10.p-l20.size-12
+					.text-up
+						Amount Refunded (#{refund.created_at.strftime('%Y-%m-%d')})
+				.fr.p-10.t-r.p-r20.grey.f-b.size-16
+					₹ #{show_currency refund.amount.tap{|p| total_refund+=p}}
+				.fc
 
-	.bg-w.bs-9.m-b20{'style' => 'width: 360px'}
-		.bg-zoomb.white.p-10.f-b.size-18.p-l10.p-r10
-			Refunds Issued
-		- total_refund=0
-		- @booking.refunds.where('status>0').select{|p| p.through=='payu'}.each do |refund|
-			.fl.p-10.p-l20.size-12
-				.text-up
-					Amount Refunded (#{refund.created_at.strftime('%Y-%m-%d')})
-			.fr.p-10.t-r.p-r20.grey.f-b.size-16
-				₹ #{show_currency refund.amount.tap{|p| total_refund+=p}}
-			.fc
-
-		.border-t-c
-			.fl.p-t10.p-l20.size-18
-				.text-up
-					Total Amount
-			.fr.p-10.t-r.p-r20.zoom-b.f-b.size-20
-				₹ #{show_currency total_refund}
-			.fc
+			.border-t-c
+				.fl.p-t10.p-l20.size-18
+					.text-up
+						Total Amount
+				.fr.p-10.t-r.p-r20.zoom-b.f-b.size-20
+					₹ #{show_currency total_refund}
+				.fc
 
 	.bg-w.bs-9.m-b20{'style' => 'width: 360px'}
 		.bg-zoomb.white.p-10.f-b.size-18.p-l10.p-r10
@@ -237,7 +237,7 @@
 		-elsif !@booking.insufficient_deposit
 			.fl.p-10.p-l20.size-12
 				.text-up
-					Paid from Wallet (#{wallet.created_at.strftime('%Y-%m-%d')})
+					Paid from Wallet 
 			.fr.p-10.t-r.p-r20.grey.f-b.size-16
 				\- ₹ #{show_currency @booking.security_charge.amount.tap{|a| total-=a}}
 			.fc
