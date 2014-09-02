@@ -25,6 +25,7 @@ class UsersController < ApplicationController
 					@image.save
 				end
 				if @image.valid?
+					current_user.update_attribute(:license_status, 1)
 					BookingMailer.delay.license_update(current_user.id)
 					flash[:notice] = 'Thanks for uploading your driving license image.'
 				else
