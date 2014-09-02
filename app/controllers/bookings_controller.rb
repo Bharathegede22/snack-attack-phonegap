@@ -10,7 +10,7 @@ class BookingsController < ApplicationController
 	before_filter :check_promo,		:only => [:checkout]
 
 	def cancel
-		if @booking.security_amount_deferred?
+		if @booking.hold
 			@security = 0
 		else
 			@security = @booking.pricing.mode::SECURITY

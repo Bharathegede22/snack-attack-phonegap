@@ -12,14 +12,18 @@
 			Booking
 		%th.p-b10.p-t10.bg-e.t-c
 			Amount
+		%th.p-b10.p-t10.bg-e.t-c
+			Description
 
 	%tbody
 		- @history.each do |wallet|
 			%tr
 				%td.t-c.bg-w.p-t10.p-b10.border-b-e
-					= wallet.created_at.to_date.strftime("%d %b %Y")
+					= wallet[:date]
 				%td.t-c.bg-w.p-t10.p-b10.border-b-e
-					= wallet.transferable.blank? ? "Pending Refund" : "##{wallet.transferable.booking.confirmation_key}" 
+					= wallet[:booking] 
 				%td.t-c.bg-w.p-t10.p-b10.border-b-e
-					= "#{wallet.credit ? "+" : "-"} Rs. #{number_with_delimiter(wallet.amount.to_i)}" 
+					= wallet[:amount]
+				%td.t-c.bg-w.p-t10.p-b10.border-b-e
+					= wallet[:description] 
 					

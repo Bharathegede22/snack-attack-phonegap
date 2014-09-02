@@ -20,7 +20,20 @@ class WalletsController < ApplicationController
   end
 
   def history
-    @history = current_user.wallets.order('created_at DESC').limit(5)
+    @history = []
+    Wallet.unscoped.where(user_id: current_user.id).order('created_at DESC').limit(20).each do |w|
+      if w.transferable_id.nil?
+        @history << {booking: "N/A", amount: -w.amount, date: "#{w.created_at.strftime('%Y-%m-%d')}", description: (w.status==0 ? "Refund Issued" : "Refund Pending")}
+      elsif w.transferable.through== 'wallet_widget'
+        next
+      elsif w.credit
+        @history << {booking: CommonHelper.encode('booking', w.transferable.booking_id), amount: "+ #{w.amount}", date: "#{w.created_at.strftime('%Y-%m-%d')}",
+         description: "Added to wallet"}
+      else
+        @history << {booking: CommonHelper.encode('booking', w.transferable.booking_id), amount: "- #{w.amount}", date: "#{w.created_at.strftime('%Y-%m-%d')}",
+         description: "Used from wallet"}
+      end
+    end
     render json: {html: render_to_string('_history.haml', layout: false)}
   end
 
