@@ -297,7 +297,7 @@ class User < ActiveRecord::Base
 
 	def unsafe_booking?(booking)
 		if booking.defer_allowed? || booking.security_charge.nil?
-			return wallet_available_on_time(booking.starts - 24.hours,booking) < booking.security_amount
+			return booking.security_amount_remaining > 0
 		else
 			return booking.insufficient_deposit
 		end

@@ -532,7 +532,8 @@ class Booking < ActiveRecord::Base
 
 	def security_amount_remaining
 		return 0 if ((status > 1) || (!defer_allowed? && security_charge.present?))
-		amount = security_amount - user.wallet_available_on_time(self.starts.advance(hours: -CommonHelper::WALLET_FREEZE_START), self)
+		count = Booking.select(:id).where('user_id = ? and starts = ? and created_at < ? and status < 8 and status > 0', self.user_id, self.starts, self.created_at.blank? ? Time.now : self.created_at).count # for exactly overlaping booking
+		amount = security_amount*(count+1) - user.wallet_available_on_time(self.starts.advance(hours: -CommonHelper::WALLET_FREEZE_START), self)
 		amount = (amount < 0) ? 0 : amount
 		[amount, security_amount].min
 	end
