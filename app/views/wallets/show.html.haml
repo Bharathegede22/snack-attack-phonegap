@@ -33,9 +33,12 @@
 			Security Desposit in Wallet
 		.p-10.size-22.f-b.t-c.border-b-c
 			= "Rs. " + number_with_delimiter(wallet_amount)
-		%a.block.p-10.black.border-b-c{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/show_refund');"}
-			= "Available for refund: Rs. " + number_with_delimiter(current_user.wallet_total_amount)
-		%a.block.p-10.black.border-b-c{href: "javascript:void(0)", onclick: "showModal('Transaction History', '/wallets/history');"}
+		%a.block.p-10.black.border-b-c.t-n{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/show_refund');"}
+			Available for refund: 
+			%span.zoom.f-b
+				= "Rs. " + number_with_delimiter(current_user.wallet_total_amount)
+		%a.block.p-10.black.border-b-c.t-n{href: "javascript:void(0)", onclick: "showModal('Transaction History', '/wallets/history');"}
+			%span.glyphicon.glyphicon-list
 			Show Transaction History
 
 #wallet-graph.position-r.fr
@@ -81,8 +84,9 @@
 		- offset = (booking[:starts] - wallet_snap[:starts])*scale
 		- width = 25+ (booking[:booking].ends- booking[:booking].starts)*scale
 		- width = (width+offset> 600) ? (600 - offset) : width
-		.position-a.pop{class: "#{current_user.unsafe_booking?(booking[:booking]) ? 'unsafe-booking' : 'safe-booking'}", 'style' => "width: #{width}px; height: 30px; bottom: #{30*get_level(booking, all_levels)}px; left: #{offset}px;", 'data-toggle' => "popover", 'title' => "#{booking[:booking].confirmation_key}", 'data-html' => "true", 'data-content' => "#{booking[:booking].cargroup.name}<br/>#{booking[:booking].starts.strftime('%d/%m/%y %I:%M %p')}<br/>#{booking[:booking].ends.strftime('%d/%m/%y %I:%M %p')}"}
-			.wallet-car
+		- car_offset = ((width/2).to_i - 33) < -20 ? -20 : (width/2).to_i - 33
+		.position-a.pop{class: "#{current_user.unsafe_booking?(booking[:booking]) ? 'unsafe-booking' : 'safe-booking'}", 'style' => "width: #{width}px; height: 30px; bottom: #{30*get_level(booking, all_levels)}px; left: #{offset}px;", 'tabindex' => '0', 'data-toggle' => "popover", 'data-trigger' => 'focus', 'title' => "#{booking[:booking].confirmation_key}", 'data-html' => "true", 'data-content' => "#{booking[:booking].cargroup.name}<br/>#{booking[:booking].starts.strftime('%d/%m/%y %I:%M %p')}<br/>#{booking[:booking].ends.strftime('%d/%m/%y %I:%M %p')}"}
+			.wallet-car{style: "left: #{car_offset}px"}	
 
 .fc
 
@@ -101,13 +105,13 @@
 					[?]
 
 		- live_upcoming_bookings.flatten.each_with_index do |booking, n|
-			%tr.clickable-row.pointer.unsafe-booking-entry{'id' => "row#{booking.confirmation_key}",  'href' => '/bookings/'+ booking.confirmation_key}
+			%tr.clickable-row.pointer{'id' => "row#{booking.confirmation_key}",  'href' => '/bookings/'+ booking.confirmation_key, class: "#{booking.security_amount_remaining > 0 ? 'unsafe-booking-entry' : ''}"}
 				%td.t-c
 					.p-t15.size-16
 						= link_to booking.confirmation_key, '/bookings/'+ booking.confirmation_key
 				%td
 					.inline-block.colored
-						.m-auto{:class => 'small-car1'}
+						.m-auto{:class => 'small-car' + booking.cargroup_id.to_s}
 					.inline-block.p-l10.position-r.t-l{style: "top: -15px"}
 						= booking.cargroup.name
 						%br/
@@ -118,10 +122,10 @@
 						%br/
 						= booking.ends.strftime("%d %b, %Y %H:%M %p")
 				%td.t-c
-					.p-t10
+					.p-t15.size-16
 						= "Rs. " + number_with_delimiter(booking.outstanding)
 				%td.t-c
-					.p-t15.size-16
+					.p-t15.size-16{class: "#{booking.security_amount_remaining > 0 ? 'red' : ''}"}
 						= "Rs. " + number_with_delimiter(booking.security_amount_remaining)
 						/= "Rs. " + number_with_delimiter(((CommonHelper::SECURITY_DEPOSIT - wallet_amounts[n].last) < 0) ? 0 : (CommonHelper::SECURITY_DEPOSIT - ((wallet_amounts[n].last < 0) ? 0 : wallet_amounts[n].last.to_i)))
 
@@ -144,7 +148,7 @@
 						= link_to booking.confirmation_key, '/bookings/'+ booking.confirmation_key
 				%td
 					.inline-block.colored
-						.m-auto{:class => 'small-car1'}
+						.m-auto{:class => 'small-car' + booking.cargroup_id.to_s}
 					.inline-block.p-l10.position-r.t-l{style: "top: -15px"}
 						= booking.cargroup.name
 						%br/
@@ -155,7 +159,7 @@
 						%br/
 						= booking.ends.strftime("%d %b, %Y %H:%M %p")
 				%td.t-c
-					.p-t10
+					.p-t15.size-16
 						= "Rs. " + number_with_delimiter(booking.outstanding)
 
 .bs-g.m-t20
@@ -176,7 +180,7 @@
 						= link_to booking.confirmation_key, '/bookings/'+ booking.confirmation_key
 				%td
 					.inline-block.colored
-						.m-auto{:class => 'small-car1'}
+						.m-auto{:class => 'small-car' + booking.cargroup_id.to_s}
 					.inline-block.p-l10.position-r.t-l{style: "top: -15px"}
 						= booking.cargroup.name
 						%br/
@@ -187,7 +191,7 @@
 						%br/
 						= booking.ends.strftime("%d %b, %Y %H:%M %p")
 				%td.t-c
-					.p-t10
+					.p-t15.size-16
 						= "Rs. " + number_with_delimiter(booking.outstanding)
 .bs-g.m-t20
 	.p-10.bg-zoomb.white.f-b
