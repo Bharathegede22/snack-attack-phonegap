@@ -12,8 +12,8 @@ class Booking < ActiveRecord::Base
 	has_many	:charges, :inverse_of => :booking, dependent: :destroy
 	has_many	:payments, :inverse_of => :booking, dependent: :destroy
 	has_many	:refunds, :inverse_of => :booking, dependent: :destroy
-	has_many	:confirmed_payments, -> { where "status = 1" }, class_name: "Payment"
-	has_many	:confirmed_refunds, -> { where "status = 1" }, class_name: "Refund"
+	has_many	:confirmed_payments, -> { where "status = 1 and through != 'wallet_widget'" }, class_name: "Payment"
+	has_many	:confirmed_refunds, -> { where "status = 1 and through != 'wallet_widget'" }, class_name: "Refund"
 	has_many 	:credit, :as => :creditable , dependent: :destroy
 	has_many	:utilizations, -> {where "minutes > 0"}, dependent: :destroy
 	
@@ -702,7 +702,6 @@ class Booking < ActiveRecord::Base
 	def total_refunds
 		total = 0
 		self.confirmed_refunds.each do |r|
-			next if r.through == 'wallet_widget'
 			total += r.amount if !r.through.include?('early_return')
 		end		
 		return total.to_i
