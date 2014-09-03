@@ -104,7 +104,7 @@ Please review the details of your reservation:
 	%b{style: "color:red; font-style:italic;"} IMPORTANT!
 	%br/
 	%p{style: "margin:5px 0 0 0; padding:0;"}
-		\- Please remember to pay any outstanding amount by 
+		\- Please ensure you have no Deposit due by
 		%b
 			= (@booking.starts - CommonHelper::JIT_DEPOSIT_CANCEL.hours).strftime("%d/%m/%y %I:%M %p")
 		or your booking will get cancelled.
