@@ -10,11 +10,7 @@ class BookingsController < ApplicationController
 	before_filter :check_promo,		:only => [:checkout]
 
 	def cancel
-		if @booking.hold
-			@security = 0
-		else
-			@security = @booking.pricing.mode::SECURITY
-		end
+		@security = (@booking.hold) ? 0 : (@booking.pricing.mode::SECURITY - @booking.security_amount_remaining)
 		if request.post?
 			@booking.valid?
 			fare = @booking.do_cancellation

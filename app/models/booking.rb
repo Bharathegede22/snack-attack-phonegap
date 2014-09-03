@@ -156,8 +156,8 @@ class Booking < ActiveRecord::Base
 		return "ZoomCar allows you to delay paying the Security Deposit. We really don’t want your money stuck in a deposit if your booking starts days from now."
 	end
 	
-	def deposit_warning
-		return "Please pay the deposit by <b>#{(self.starts - CommonHelper::JIT_DEPOSIT_CANCEL.hours).strftime('%d/%m/%y %I:%M %p')}</b> or your booking will get <u>cancelled</u>."
+	def deposit_warning(remaining='')
+		return "Please pay the #{remaining}deposit by <b>#{(self.starts - CommonHelper::JIT_DEPOSIT_CANCEL.hours).strftime('%d/%m/%y %I:%M %p')}</b> or your booking will get <u>cancelled</u>."
 	end
 	
 	def do_cancellation
@@ -702,6 +702,7 @@ class Booking < ActiveRecord::Base
 	def total_refunds
 		total = 0
 		self.confirmed_refunds.each do |r|
+			next if r.through == 'wallet_widget'
 			total += r.amount if !r.through.include?('early_return')
 		end		
 		return total.to_i

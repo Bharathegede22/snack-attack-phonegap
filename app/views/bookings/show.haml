@@ -129,7 +129,9 @@
 	.bg-w.bs-9.m-b20{'style' => 'width: 360px'}
 		.bg-zoomb.white.p-10.f-b.size-18.p-l10.p-r10
 			Fare Breakdown
+		- total_charge = 0
 		- @booking.charges.each do |charge|
+			- total_charge += charge.refund==0 ? charge.amount : -charge.amount
 			-unless charge.activity == 'security_deposit'
 				.fl.p-10.p-l20.size-12
 					.text-up
@@ -170,7 +172,7 @@
 				.text-up
 					Total Amount
 			.fr.p-10.t-r.p-r20.zoom-b.f-b.size-20
-				₹ #{show_currency @booking.charges.collect{|c| c.refund==0 ? c.amount : -c.amount}.sum + (@booking.defer_allowed? ? @booking.security_amount : 0)}
+				₹ #{show_currency (total_charge + (@booking.security_charge.nil? ? @booking.security_amount : 0))}
 			.fc
 
 
@@ -179,7 +181,7 @@
 		.bg-zoomb.white.p-10.f-b.size-18.p-l10.p-r10
 			Payments Received
 		- total_payment=0
-		- @booking.payments.where('status>0').select{|p| p.through=='payu'}.each do |payment|
+		- @booking.confirmed_payments.select{|p| p.through=='payu'}.each do |payment|
 			.fl.p-10.p-l20.size-12
 				.text-up
 					Amount Paid (#{payment.created_at.strftime('%Y-%m-%d')})
@@ -194,12 +196,12 @@
 			.fr.p-10.t-r.p-r20.zoom-b.f-b.size-20
 				₹ #{show_currency total_payment}
 			.fc
-	- if @booking.refunds.where('status>0').select{|p| p.through=='payu'}.any?
+	- if @booking.confirmed_refunds.select{|p| p.through=='payu'}.any?
 		.bg-w.bs-9.m-b20{'style' => 'width: 360px'}
 			.bg-zoomb.white.p-10.f-b.size-18.p-l10.p-r10
 				Refunds Issued
 			- total_refund=0
-			- @booking.refunds.where('status>0').select{|p| p.through=='payu'}.each do |refund|
+			- @booking.confirmed_refunds.select{|p| p.through=='payu'}.each do |refund|
 				.fl.p-10.p-l20.size-12
 					.text-up
 						Amount Refunded (#{refund.created_at.strftime('%Y-%m-%d')})
@@ -234,14 +236,14 @@
 			.fr.p-10.t-r.p-r20.grey.f-b.size-16
 				\- ₹ #{show_currency (@booking.security_amount - security_remaining).tap{|a| total-=a}}
 			.fc
-		-elsif !@booking.insufficient_deposit
+		-elsif !@booking.insufficient_deposit && @booking.confirmed_payments.where(through: 'wallet').any?
 			.fl.p-10.p-l20.size-12
 				.text-up
 					Paid from Wallet 
 			.fr.p-10.t-r.p-r20.grey.f-b.size-16
 				\- ₹ #{show_currency @booking.security_charge.amount.tap{|a| total-=a}}
 			.fc
-		- @booking.refunds.select{|r| r.through=='wallet'}.each do |wallet|
+		- @booking.confirmed_refunds.select{|r| r.through=='wallet'}.each do |wallet|
 			.fl.p-10.p-l20.size-12
 				.text-up
 					Added to Wallet (#{wallet.created_at.strftime('%Y-%m-%d')})

@@ -213,7 +213,7 @@
 						%tr#DepositMessage{style: "display: none"}
 							%td.p-10.p-l20.p-r20.size-11.position-r{style: "top: -10px", colspan: '2'}
 								%i
-									= @booking.deposit_warning.html_safe
+									= @booking.deposit_warning(@wallet_available>0 ? "remaining " : '').html_safe
 
 					%tr.bg-6.white.bg-zoom.ribbon
 						%td.p-10.p-l20.text-up.size-16.f-b
