@@ -205,7 +205,7 @@ class Payment < ActiveRecord::Base
 				Booking.recalculate(b.id)
 				wallet_amount = b.total_charges>=0 ? b.outstanding.to_i.abs : self.amount
 				b.add_security_deposit_to_wallet(wallet_amount) if wallet_amount != 0
-				self.update_column(:refunded_amount, self.amount - wallet_amount)
+				self.update_column(:deposit_available_for_refund, wallet_amount)
 				if !b.defer_allowed? && b.security_charge.nil?
 					b.add_security_deposit_charge(true)
 				end

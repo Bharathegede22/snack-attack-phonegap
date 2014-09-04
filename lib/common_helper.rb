@@ -10,7 +10,7 @@ module CommonHelper
 	CAR_TYPE = [['Hatchback', 1], ['SUV', 2], ['Sedan', 3], ['Coupe2D', 4]]
   DRIVE = [['Front Wheel', 1], ['Rear Wheel Drive', 2]]
   FUEL = [['Diesel', 1], ['Electric', 2]]
-  
+  UPCOMING_STATUSES = [1,2,6,7]
   RATINGS_QUESTION = ["How was your booking experience?", 
   	"How was the car condition?", 
   	"How was the Pick-Up location?", 

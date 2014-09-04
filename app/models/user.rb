@@ -312,7 +312,7 @@ class User < ActiveRecord::Base
 		snapshot={starts: snap_start, ends: snap_end, amount: amount, bookings: [], unsafe: []}
 		upcoming_bookings.each do |booking|
 			#TODO handle no car case
-			next if ![1,2].include?(booking.status)
+			next if !CommonHelper::UPCOMING_STATUSES.include?(booking.status)
 			impact = booking.wallet_impact
 			snapshot[:unsafe] << impact[:booking] if (booking.wallet_security_payment.nil? && amount<booking.security_amount)
 			amount += impact[:amount]
