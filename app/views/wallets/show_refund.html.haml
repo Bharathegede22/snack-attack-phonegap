@@ -1,24 +1,33 @@
-- if current_user.wallet_total_amount<=0
-	.size-18.t-c
-		Your Wallet currently has no amount available for refund.
-- else	
-	.size-18.t-c
-		You can refund up to: 
-		%span.f-b Rs. #{number_with_delimiter(current_user.wallet_total_amount)}
+- render_flash
+- if @refunded
+	:javascript
+		var auto = setTimeout(function(){ submitRedirect(); }, 3000);
+		function submitRedirect() {
+			clearTimeout(auto);
+			location.reload();
+		}
+- else
+	- if current_user.wallet_total_amount<=0
+		.size-18.t-c
+			Your Wallet currently has no amount available for refund.
+	- else	
+		.size-18.t-c
+			You can refund up to: 
+			%span.f-b Rs. #{number_with_delimiter(current_user.wallet_total_amount)}
 
-	%br/
-	%br/
+		%br/
+		%br/
 
-	=form_tag '/wallets/refund' do
-		
-		.t-c.size-18
-			Enter amount
+		%form{:id => "SearchForm", :onsubmit => "return SubmitForm(this,'/wallets/refund','ModalContent');", :action => "javascript:void(0)", "data-ajax" => "false"}
+			
+			.t-c.size-18
+				Enter amount
 
-			%input{name: "amount"}
-		
-		.t-c
-			%input.button.m-t15{style: "width:120px;", type: "submit", value: "Refund"}
-	- _15_day_booking = current_user.upcoming_bookings.select{|u| u.starts > Time.now && u.starts<Time.now.advance(days: 15)}
-	- if _15_day_booking.any?
-		.p-10.p-l20.p-r20.size-11.position-r{colspan: '2'}
-			%i Are you sure you want to refund now? You have an upcoming booking which is using the Security Deposit in the Wallet. Keep in mind that it takes 4-5 business days for the amount to reach you.
+				%input{name: "amount"}
+			
+			.t-c
+				%input.button.m-t15{style: "width:120px;", type: "submit", value: "Refund"}
+		- _15_day_booking = current_user.upcoming_bookings.select{|u| u.starts > Time.now && u.starts<Time.now.advance(days: 15)}
+		- if _15_day_booking.any?
+			.p-10.p-l20.p-r20.size-11.position-r{colspan: '2'}
+				%i Are you sure you want to refund now? You have an upcoming booking which is using the Security Deposit in the Wallet. Keep in mind that it takes 4-5 business days for the amount to reach you.
