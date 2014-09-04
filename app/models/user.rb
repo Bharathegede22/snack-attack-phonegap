@@ -287,7 +287,7 @@ class User < ActiveRecord::Base
 	end
 
 	def wallet_available_on_time(ends,req_booking)
-		return wallet_available_amount if ends <= Time.now
+		return wallet_total_amount if ends <= Time.now
 		wallet_amount = wallet_available_amount
 		snapshot_bookings(ends).each do |booking|
 			wallet_amount -= booking.pricing.mode::SECURITY if !booking.hold? || req_booking.wallet_overlaps?(booking)
