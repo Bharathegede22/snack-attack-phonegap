@@ -385,9 +385,12 @@ class Booking < ActiveRecord::Base
 		return "http://" + HOSTNAME + "/bookings/" + self.encoded_id
 	end
 
-	def make_payment_from_wallet(amount= security_amount)
+	def make_payment_from_wallet(amount= security_amount, insufficient_flag=true)
 		amount = [amount.to_i, user.wallet_total_amount.to_i].min
-		return if (amount.to_i <= 0)
+		if (amount < security_amount) && insufficient_flag
+			self.update_column(:insufficient_deposit,true) and return
+		end 
+		return if amount.to_i <= 0
 		wpayment = Payment.create!(status: 1, booking_id: self.id, through: 'wallet', amount: (amount > self.pricing.mode::SECURITY) ? (self.pricing.mode::SECURITY) : amount)
 		Wallet.create!(amount: amount, user_id: self.user_id, status: 1, credit: false, transferable: wpayment)
 	end
@@ -531,7 +534,7 @@ class Booking < ActiveRecord::Base
 	end
 
 	def security_amount_remaining
-		return 0 if ((status > 1) || (!defer_allowed? && security_charge.present?))
+		return 0 if ((status > 1) || wallet_security_payment.present?)
 		count = Booking.select(:id).where('user_id = ? and starts = ? and created_at < ? and status < 8 and status > 0', self.user_id, self.starts, self.created_at.blank? ? Time.now : self.created_at).count # for exactly overlaping booking
 		amount = security_amount*(count+1) - user.wallet_available_on_time(self.starts.advance(hours: -CommonHelper::WALLET_FREEZE_START), self)
 		amount = (amount < 0) ? 0 : amount
@@ -544,6 +547,10 @@ class Booking < ActiveRecord::Base
 	
 	def security_refund_charge
 		charges.where(activity: 'security_deposit_refund', :active=>true).first
+	end
+	
+	def wallet_security_payment
+		payments.where(through: 'wallet', :status=>1).first
 	end
 
 	def sendsms(action, amount)
