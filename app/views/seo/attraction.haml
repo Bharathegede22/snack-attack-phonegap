@@ -22,11 +22,12 @@
 	function initializeMap() {
 		var myLatlng = new google.maps.LatLng(#{@object.lat}, #{@object.lng});
 		var mapOptions = {
-			zoom: 7,
 			center: myLatlng,
 			mapTypeId: google.maps.MapTypeId.ROADMAP
 		}
 		var map = new google.maps.Map(document.getElementById("Gmap"), mapOptions);
+		bounds = new google.maps.LatLngBounds ();
+		bounds.extend (myLatlng);
 		var marker = new google.maps.Marker({
 			position: myLatlng,
 			map: map,
@@ -34,11 +35,16 @@
 			title:"#{@object.name}"
 		});
 		var myLatlng = new google.maps.LatLng(#{@object.city.lat}, #{@object.city.lng});
+		bounds.extend (myLatlng);
 		var marker = new google.maps.Marker({
 			position: myLatlng,
 			map: map,
 			animation: google.maps.Animation.DROP,
 			title:"#{@object.city.name}"
+		});
+		google.maps.event.addListenerOnce(map, 'idle', function() {
+			google.maps.event.trigger(map, 'resize');
+			map.fitBounds(bounds);
 		});
 	}
 	function checkJquery() {

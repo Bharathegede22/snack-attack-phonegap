@@ -514,7 +514,6 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def setup
-		self.actual_cargroup_id = self.cargroup_id
 		self.actual_starts = self.starts
 		self.actual_ends = self.ends
 		self.ends_last = self.ends_was
@@ -672,6 +671,7 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def before_save_tasks
+		self.actual_cargroup_id = self.cargroup_id if self.cargroup_id_changed?
 		if self.id.blank?
 			setup
 			set_fare

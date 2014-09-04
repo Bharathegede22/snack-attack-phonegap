@@ -136,7 +136,7 @@ class Car < ActiveRecord::Base
 		end
 			
 		if check == 1
-			carmovements_m.each do |ar|
+			carmovements_m.uniq.each do |ar|
 				starts_tmp = ar[1]
 				ends_tmp = ar[2]
 				ar[0].each do |cm|

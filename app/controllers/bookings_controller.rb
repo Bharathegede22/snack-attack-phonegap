@@ -30,7 +30,9 @@ class BookingsController < ApplicationController
 		redirect_to do_bookings_path(@city.name.downcase) and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		generic_meta
 		@header = 'booking'
-		render (abtest? ? :checkoutab : :checkout)
+		@abtest = abtest?
+		# render (abtest? ? :checkoutab : :checkout)
+		render :checkoutab
 	end
 
 	def checkoutab

@@ -1,5 +1,6 @@
 :ruby
 	locs = @object.locations(@city)
+	pricing = @object.active_pricing(@city.id)
 .static
 	%h1
 		= @object.h1(@city)
@@ -49,23 +50,18 @@
 				%tr
 					%td 
 						%b Hourly
-					%td Rs.#{@object.hourly_fare} / hour
-					%td #{@object.hourly_km_limit} Kms / hour. Max #{@object.daily_km_limit} Kms
+					%td ₹#{show_currency(pricing.hourly_discounted)} / hour
+					%td #{pricing.hourly_kms} Kms / hour
 				%tr
 					%td 
 						%b Daily
-					%td Rs.#{@object.daily_fare} / day
-					%td #{@object.daily_km_limit} Kms / day
+					%td ₹#{show_currency(pricing.daily_discounted)} / day
+					%td #{pricing.daily_kms} Kms / day
 				%tr
 					%td 
 						%b Weekly
-					%td Rs.#{@object.weekly_fare} / week
-					%td #{@object.weekly_km_limit} Kms / week
-				%tr
-					%td 
-						%b Monthly
-					%td Rs.#{@object.monthly_fare} / month
-					%td #{@object.monthly_km_limit} Kms / month
+					%td ₹#{show_currency(pricing.weekly_fare)} / week
+					%td #{pricing.weekly_kms} Kms / week
 		.left
 			#Gmap.map{style: 'height: 600px;'}
 		.fc
@@ -74,28 +70,34 @@
 		function initializeMap() {
 			var myLatlng = new google.maps.LatLng(#{@city.lat}, #{@city.lng});
 			var mapOptions = {
-				zoom: 10,
 				center: myLatlng,
 				mapTypeId: google.maps.MapTypeId.ROADMAP
 			}
 			var map = new google.maps.Map(document.getElementById("Gmap"), mapOptions);
+			bounds = new google.maps.LatLngBounds ();
+			bounds.extend (myLatlng);
 	- locs.each do |a|
 		:plain
 			var infowindow#{a.id} = new google.maps.InfoWindow({
 				content: "#{a.mapcontent}"
 			});
 			var myLatlng#{a.id} = new google.maps.LatLng(#{a.lat}, #{a.lng});
+			bounds.extend (myLatlng#{a.id});
 			var marker#{a.id} = new google.maps.Marker({
 				position: myLatlng#{a.id},
 				map: map,
 				animation: google.maps.Animation.DROP,
 				title:"#{a.shortname}",
-				icon:"#{asset_path 'map/red.png'}"
+				icon:"#{asset_path 'map/zoom.png'}"
 			});
 			google.maps.event.addListener(marker#{a.id}, 'click', function() {
 				infowindow#{a.id}.open(map,marker#{a.id});
 			});
-	:plain		
+	:plain
+			google.maps.event.addListenerOnce(map, 'idle', function() {
+				google.maps.event.trigger(map, 'resize');
+				map.fitBounds(bounds);
+			});
 		}
 		function checkJquery() {
 			if (window.jQuery) {

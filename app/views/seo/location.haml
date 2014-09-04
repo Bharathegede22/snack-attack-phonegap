@@ -1,6 +1,10 @@
 :ruby
 	cars = @object.live
 	width = 100/(cars.length+1)
+	pricing = {}
+	cars.each do |cg|
+		pricing[cg.id.to_s] = cg.active_pricing(@object.city_id)
+	end
 .landing
 	:ruby
 		if @object.name.downcase.include?('airport')
@@ -119,22 +123,19 @@
 						%b.zoom HOURLY
 					- cars.each do |cg|
 						%td{width: "#{width}%"}
-							₹#{show_currency(cg.hourly_fare)}
+							₹#{show_currency(pricing[cg.id.to_s].hourly_discounted)}
 				%tr
 					%td.t-r
 						%b.zoom DAILY
 					- cars.each do |cg|
-						%td ₹#{show_currency(cg.daily_fare)}
+						%td 
+							₹#{show_currency(pricing[cg.id.to_s].daily_discounted)}
 				%tr
 					%td.t-r
 						%b.zoom WEEKLY
 					- cars.each do |cg|
-						%td ₹#{show_currency(cg.weekly_fare)}
-				%tr
-					%td.t-r
-						%b.zoom MONTHLY
-					- cars.each do |cg|
-						%td ₹#{show_currency(cg.monthly_fare)}
+						%td 
+							₹#{show_currency(pricing[cg.id.to_s].weekly_fare)}
 			.bg-e.r-5.p-5
 				.f-b.zoom-b.t-c.f-i.size-16.p-5
 					our tariff includes
@@ -220,7 +221,7 @@
 				map: map,
 				animation: google.maps.Animation.DROP,
 				title:"#{@object.shortname}",
-				icon:"#{asset_path 'map/red.png'}"
+				icon:"#{asset_path 'map/zoom.png'}"
 			});
 			google.maps.event.addListener(marker#{@object.id}, 'click', function() {
 				infowindow#{@object.id}.open(map,marker#{@object.id});
