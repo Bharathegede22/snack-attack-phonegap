@@ -279,7 +279,7 @@ class User < ActiveRecord::Base
   	end
 
   	def wallet_frozen_amount
-  		wallet_frozen_bookings.reject{|b| b.security_charge.nil?}.collect(&:security_amount).sum
+  		wallet_frozen_bookings.reject{|b| b.wallet_security_payment.nil?}.collect(&:security_amount).sum
 	end
 
 	def wallet_available_amount
@@ -312,9 +312,9 @@ class User < ActiveRecord::Base
 		snapshot={starts: snap_start, ends: snap_end, amount: amount, bookings: [], unsafe: []}
 		upcoming_bookings.each do |booking|
 			#TODO handle no car case
-			next if (![1,2].include?(booking.status) || booking.wallet_security_payment.present?)
+			next if ![1,2].include?(booking.status)
 			impact = booking.wallet_impact
-			snapshot[:unsafe] << impact[:booking] if amount<booking.security_amount
+			snapshot[:unsafe] << impact[:booking] if (!booking.wallet_security_payment.nil? || amount<booking.security_amount)
 			amount += impact[:amount]
 			snapshot[:bookings] << impact
 		end
