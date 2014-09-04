@@ -314,7 +314,7 @@ class User < ActiveRecord::Base
 			#TODO handle no car case
 			next if ![1,2].include?(booking.status)
 			impact = booking.wallet_impact
-			snapshot[:unsafe] << impact[:booking] if (!booking.wallet_security_payment.nil? || amount<booking.security_amount)
+			snapshot[:unsafe] << impact[:booking] if (booking.wallet_security_payment.nil? && amount<booking.security_amount)
 			amount += impact[:amount]
 			snapshot[:bookings] << impact
 		end
