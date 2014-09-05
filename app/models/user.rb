@@ -57,7 +57,7 @@ class User < ActiveRecord::Base
   	when 'completed' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND returned_at IS NOT NULL AND returned_at < '#{Time.zone.now.to_s(:db)}' AND status < 8", 'id DESC']
   	when 'cancelled' then ["status > 8", 'id DESC']
   	when 'unfinished' then ["jsi IS NULL AND status = 0 AND starts > '#{Time.zone.now.to_s(:db)}'", 'id DESC']
-  	when 'wallet_frozen' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND ((starts >= '#{Time.zone.now.to_s(:db)}' AND starts <= '#{(Time.zone.now+CommonHelper::WALLET_FREEZE_START.hours).to_s(:db)}') OR (ends < '#{Time.zone.now.to_s(:db)}' AND ends >= '#{(Time.zone.now-CommonHelper::WALLET_FREEZE_END.hours).to_s(:db)}')) AND status < 8", 'starts ASC']
+  	when 'wallet_frozen' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND ((starts >= '#{Time.zone.now.to_s(:db)}' AND starts <= '#{(Time.zone.now+CommonHelper::WALLET_FREEZE_START.hours).to_s(:db)}') OR (ends < '#{Time.zone.now.to_s(:db)}' AND ends >= '#{(Time.zone.now-CommonHelper::WALLET_FREEZE_END.hours).to_s(:db)}')) AND status < 8 and settled!=1", 'starts ASC']
   	end
 
   	if Rails.env == 'production'
@@ -287,7 +287,7 @@ class User < ActiveRecord::Base
 	end
 
 	def wallet_available_on_time(ends,req_booking)
-		return wallet_available_amount if ends <= Time.now
+		return wallet_total_amount if ends <= Time.now
 		wallet_amount = wallet_available_amount
 		snapshot_bookings(ends).each do |booking|
 			wallet_amount -= booking.pricing.mode::SECURITY if !booking.hold? || req_booking.wallet_overlaps?(booking)
