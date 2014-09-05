@@ -204,7 +204,16 @@ class Booking < ActiveRecord::Base
 				note += data[:penalty].to_s + " - Security Deposit Refund.<br/>"
 				self.notes += note
 			end
-			total -= deposit.amount.to_i
+			#total -= deposit.amount.to_i
+			total = self.outstanding_without_deposit
+			if !self.hold
+				if self.insufficient_deposit || self.security_charge.nil?
+					amount = [self.security_amount.to_i, self.user.wallet_total_amount.to_i].min	
+					total -= amount if amount > 0
+				else
+					total = self.outstanding
+				end
+			end
 		# elsif !self.hold && refunds.where(through: 'wallet').any?
 		# 	make_payment_from_wallet(refunds.where(through: 'wallet').first.amount)
 		end
@@ -576,7 +585,7 @@ class Booking < ActiveRecord::Base
 	def sendsms(action, amount)
 		message =  case action 
 		when 'change' then "Zoom booking (#{self.confirmation_key}) is changed. #{self.cargroup.display_name} from #{self.starts.strftime('%I:%M %p, %d %b')} till #{self.ends.strftime('%I:%M %p, %d %b')} at #{self.location.shortname}. "
-		when 'cancel' then "Zoom booking (#{self.confirmation_key}) is cancelled. Rs.#{amount} will be refunded back to your account in 4 days. "
+		when 'cancel' then "Hi! Your Zoomcar booking (#{self.confirmation_key}) has been cancelled. We have initiated a refund of Rs.#{amount}, it should reach your account in 5 business days. If you have opted to hold your deposit in your Zoomcar Wallet, the remainder has been moved there."
 		end
 		if action != 'cancel'
 			if amount == 0
@@ -587,7 +596,7 @@ class Booking < ActiveRecord::Base
 				message << "Rs.#{amount.to_i} is outstanding. "
 			end
 		end
-		message << "#{self.city.contact_phone} : Zoom Support."
+		message << "#{self.city.contact_phone} : Zoom Support." if action != 'cancel'
 		SmsSender.perform_async(self.user_mobile, message, self.id) if Rails.env.production?
 	end
 	
