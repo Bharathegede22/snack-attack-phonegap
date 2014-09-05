@@ -23,3 +23,5 @@ config/rapns/*.yml
 GeoLiteCity.dat
 public/assets/
 emails
+.powenv
+.powrc
