@@ -1,0 +1,50 @@
+!!!
+%head
+	%title Zoomcar - Self Drive Car Rentals | Zoomcar.in
+	= stylesheet_link_tag "application"
+	%meta{content: "width=device-width, user-scalable=no", name: "viewport"}/
+	= javascript_include_tag "application", "data-turbolinks-track" => false
+%body.p-0.m-auto.bg-zoom{style: 'min-width: 0'}	
+	
+	:ruby
+		device = 'android'
+
+	.p-15.bg-w
+		.fl
+			.app-icon
+		.fl.m-l10
+			.f-b.size-16
+				Zoomcar
+			.f-i
+				Travel
+			.app-stars
+		.fr.zoom.f-b.m-t5
+			Free
+		.fc
+	
+		.t-c.m-t10
+			- if device == 'ios'
+				%a.button.inline-block.m-r10{href: 'https://itunes.apple.com/us/app/zoomcar-self-drive-cars/id889910218?mt=8&utm_source=homepage&utm_medium=banner&utm_content=iOS&utm_campaign=mobile%20site%20redirect', style: 'width: 45%;'}
+					Install App
+				/ %a.button-dis.inline-block{href: '#', style: 'width: 45%;'}
+				/ 	Open App
+			- elsif device == 'android'
+				%a.button.inline-block.m-r10{href: 'https://play.google.com/store/apps/details?id=com.zoomcar&referrer=utm_source%3Dhomepage%26utm_medium%3Dbanner%26utm_content%3Dandroid%26utm_campaign%3Dmobile%2520site%2520redirect', style: 'width: 45%;'}
+					Install App
+				/ %a.button-dis.inline-block{href: '#', style: 'width: 45%;'}
+				/ 	Open App
+
+	.t-c.white.m-t10
+		.size-20
+			Rent Self-Drive Cars
+		.size-18.m-b10
+			now, on the go
+
+
+		- if device == 'ios'
+			.iphone-app.m-auto
+		- elsif device == 'android'
+			.android-app.m-auto
+
+	%a.fixed.bg-w.p-10.t-c.grey{href: '/', style: 'left: 0; right: 0; bottom: 0'}
+		Continue to mobile site &rarr;
