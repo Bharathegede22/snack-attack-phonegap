@@ -446,6 +446,26 @@ class Booking < ActiveRecord::Base
 		total = self.outstanding
 		total<=0 ? security_amount_remaining : (total + security_amount_remaining)
 	end
+
+	def outstanding_without_deposit
+  		total = 0
+		self.charges.each do |c|
+			if !c.activity.include?('early_return') || !c.activity.include?('security_deposit')
+				if c.refund > 0
+					total -= c.amount.to_i
+				else
+					total += c.amount.to_i
+				end
+			end
+		end
+		self.confirmed_payments.where(:through => "payu").each do |p|
+			total -= p.amount.to_i
+		end
+		self.confirmed_refunds.each do |r|
+			total += r.amount.to_i if !r.through.include?('early_return')
+		end
+		return total.to_i	
+  	end
 	
 	def outstanding_warning
 		return "Please pay any outstanding amount by <b>#{(self.starts - CommonHelper::JIT_DEPOSIT_CANCEL.hours).strftime('%d/%m/%y %I:%M %p')}</b> or your booking will get <u>cancelled</u>."

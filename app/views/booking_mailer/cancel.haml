@@ -2,7 +2,15 @@
 	city = @booking.city
 	cargroup = @booking.cargroup
 	location = @booking.location
-	outstanding = @booking.outstanding
+	outstanding = @booking.outstanding_without_deposit
+	if !@booking.hold
+		if @booking.insufficient_deposit
+			amount = [@booking.security_amount.to_i, @booking.user.wallet_total_amount.to_i].min	
+			outstanding += amount if amount > 0
+		else
+			outstanding = @booking.outstanding
+		end
+	end
 %br/
 Hi #{@user.name},
 %br/
