@@ -8,7 +8,7 @@ class WalletsController < ApplicationController
     else
       flash[:error] = "Unable to refund."
     end
-  redirect_to :back
+  render json: {html: render_to_string('show_refund.html.haml', layout: false)}
   end
 
   def show_refund

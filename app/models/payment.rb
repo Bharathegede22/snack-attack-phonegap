@@ -203,11 +203,15 @@ class Payment < ActiveRecord::Base
 				b.notes += "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs." + self.amount.to_s + " - Payment Received through <u>" + self.through_text + "</u>.<br/>"
 				b.save(:validate => false)
 				Booking.recalculate(b.id)
-				wallet_amount = b.total_charges>=0 ? b.outstanding.to_i.abs : self.amount
+				wallet_amount = (b.outstanding_without_deposit + self.amount)>=0 ? b.outstanding_without_deposit.abs : self.amount
 				b.add_security_deposit_to_wallet(wallet_amount) if wallet_amount != 0
 				self.update_column(:deposit_available_for_refund, wallet_amount)
 				if !b.defer_allowed? && b.security_charge.nil?
-					b.add_security_deposit_charge(true)
+					b.add_security_deposit_charge
+				end
+				if !b.defer_allowed? && b.wallet_security_payment.nil?
+					b.update_column(:insufficient_deposit, false)
+					b.make_payment_from_wallet
 				end
 			end
 

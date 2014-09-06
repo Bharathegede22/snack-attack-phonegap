@@ -365,7 +365,6 @@ class BookingsController < ApplicationController
 
   def reschedule
 		@confirm = !params[:confirm].blank?
-		@wallet_available = @booking.security_amount - @booking.security_amount_remaining
 		if request.post?
 			if @confirm
 				@booking.starts = Time.zone.parse(params[:starts]) if !params[:starts].blank?
@@ -413,6 +412,7 @@ class BookingsController < ApplicationController
 				end
 			end
 		end
+		@wallet_available = @booking.security_amount - @booking.security_amount_remaining
 		render json: {html: render_to_string('_reschedule.haml', layout: false)}
 	end
 

@@ -97,7 +97,7 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def check_payment
-		total = defer_deposit ? self.outstanding : self.outstanding_with_security
+		total = defer_deposit ? self.outstanding_without_deposit : self.outstanding_with_security
 		if total > 0
 			payment = Payment.create!(booking_id: self.id, through: 'payu', amount: total)
 		else
@@ -443,14 +443,14 @@ class Booking < ActiveRecord::Base
 	end
 
 	def outstanding_with_security
-		total = self.outstanding
+		total = self.outstanding_without_deposit 
 		total<=0 ? security_amount_remaining : (total + security_amount_remaining)
 	end
 
 	def outstanding_without_deposit
   		total = 0
 		self.charges.each do |c|
-			if !c.activity.include?('early_return') || !c.activity.include?('security_deposit')
+			unless c.activity.include?('early_return') || c.activity.include?('security_deposit')
 				if c.refund > 0
 					total -= c.amount.to_i
 				else

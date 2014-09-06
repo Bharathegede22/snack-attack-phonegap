@@ -6,7 +6,7 @@
 	end
 	offer = @booking.offer
 	@pricing = @booking.pricing
-	outstanding_amount = @booking.outstanding
+	outstanding_amount = @booking.outstanding_without_deposit
 	security_remaining = @booking.security_amount_remaining
 	payable_amount = outstanding_amount>=0 ? (outstanding_amount + security_remaining) : security_remaining
 - render_flash
@@ -276,7 +276,7 @@
 			.text-up
 				Deposit Due
 
-			- if security_remaining > 0
+			- if @booking.defer_allowed? && security_remaining > 0
 				%span
 					%input{checked: "checked", id: "changeDeposit", name: "securityDeposit", type: "checkbox", value: "yes"}
 				%label{style: 'font-weight: normal; margin: 0;', for: 'changeDeposit'}
