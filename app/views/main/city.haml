@@ -41,28 +41,34 @@
 		function initializeMap() {
 			var myLatlng = new google.maps.LatLng(#{@city.lat}, #{@city.lng});
 			var mapOptions = {
-				zoom: 10,
 				center: myLatlng,
 				mapTypeId: google.maps.MapTypeId.ROADMAP
 			}
 			var map = new google.maps.Map(document.getElementById("Gmap"), mapOptions);
+			bounds = new google.maps.LatLngBounds ();
+			bounds.extend (myLatlng);
 	- Location.live(@city).each do |a|
 		:plain
 			var infowindow#{a.id} = new google.maps.InfoWindow({
 				content: "#{a.mapcontent}"
 			});
 			var myLatlng#{a.id} = new google.maps.LatLng(#{a.lat}, #{a.lng});
+			bounds.extend (myLatlng#{a.id});
 			var marker#{a.id} = new google.maps.Marker({
 				position: myLatlng#{a.id},
 				map: map,
 				animation: google.maps.Animation.DROP,
 				title:"#{a.shortname}",
-				icon:"#{asset_path 'map/red.png'}"
+				icon:"#{asset_path 'map/zoom.png'}"
 			});
 			google.maps.event.addListener(marker#{a.id}, 'click', function() {
 				infowindow#{a.id}.open(map,marker#{a.id});
 			});
-	:plain		
+	:plain
+			google.maps.event.addListenerOnce(map, 'idle', function() {
+				google.maps.event.trigger(map, 'resize');
+				map.fitBounds(bounds);
+			});
 		}
 		function checkJquery() {
 			if (window.jQuery) {

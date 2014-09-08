@@ -1,8 +1,13 @@
 = render :partial => '/bookings/pg/thanks'
-- if !session[:ref_immediate].blank?
-	- if session[:ref_immediate].downcase.include?('af_tt_')
-		.hide
+.hide
+	- if !session[:ref_immediate].blank?
+		- if session[:ref_immediate].downcase.include?('af_tt_')
 			%iframe{src: "http://trootrac.in/p.ashx?o=10364&p=1&t=#{@booking.confirmation_key}", height:"1", width:"1", frameborder:"0"}
+		- elsif session[:ref_immediate].downcase.include?('af_ic_')
+			- if session[:city] == 'bangalore'
+				%iframe{src: "https://icubes.go2cloud.org/SLwt?adv_sub=#{@booking.confirmation_key}&amount=#{@booking.total_fare}", scrolling:"no", frameborder:"0", width:"1", height:"1"}
+			- elsif session[:city] == 'pune'
+				%iframe{src: "https://icubes.go2cloud.org/SLwr?adv_sub=#{@booking.confirmation_key}&amount=#{@booking.total_fare}", scrolling:"no", frameborder:"0", width:"1", height:"1"}
 :ruby
 	cargroup = @booking.cargroup
 	location = @booking.location

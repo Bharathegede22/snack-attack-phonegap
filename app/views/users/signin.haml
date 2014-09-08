@@ -23,5 +23,5 @@
 		var auto = setTimeout(function(){ submitRedirect(); }, 1000);
 		function submitRedirect() {
 			clearTimeout(auto);
-			window.location = "/bookings/do";
+			window.location = "/#{@city.name.downcase}/bookings/do";
 		}

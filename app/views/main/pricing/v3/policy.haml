@@ -121,7 +121,7 @@
 								13 hours are billed at Mon-Thu price.
 		#fee-2.tab-pane.fade
 			%p
-				All Zoom reservation comes with free driving kms, which are calculated based on vehicle type and reservation duration. Any kms in excess of these limits will be charged at the appropriate rates. For weekly/monthly reservations, free kms will be given on pro-rated basis using weekly/monthly limit. For daily reservation, free kms can comprise of the daily and hourly free kms.
+				All Zoom reservation comes with free driving kms, which are calculated based on vehicle type and reservation duration. Any kms in excess of these limits will be charged at the appropriate rates. For weekly reservations, free kms will be given on pro-rated basis using weekly limit. For daily reservation, free kms can comprise of the daily and hourly free kms.
 				%b Free Kms are always calculated based on the last scheduled reservation end time and actual vehicle return time (for completed bookings), whichever is bigger.
 				See the below table for the use cases
 				%br/
@@ -333,6 +333,8 @@
 		%ol
 			%li
 				Members are responsible for paying all tolls at the time they are due.
+				- if @city.id == 2
+					Users driving in Pune should be aware that cars with self-drive license plates are required to pay the Rs 15 Cantonment toll.
 			%li
 				Zoom vehicles are registered with an All India Permit, allowing the vehicle to enter any state in the country.
 			%li

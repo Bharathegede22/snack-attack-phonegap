@@ -91,7 +91,7 @@
 								- if location.id == 10 or location.id == 8
 									%div.red.size-11.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => location.disclaimer.html_safe}
 										(not a resident?)
-								- elsif location.id == 11
+								- elsif location.id == 11 or location.id == 33
 									%span.red.size-11.help.pointer.f-n{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => location.disclaimer.html_safe}
 										(not an employee?)
 								- else
@@ -107,16 +107,17 @@
 
 				.fc
 
-			.booking-includes.bg-w.bs-g.p-t20.p-r20.p-b10.p-l20.m-auto.position-r.z-2.t-c
-				Your Booking Includes:
-				#inc-fuel.included.m-l10.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Fuel is Ours</b><br/>All Zoom reservations comes with unlimited fuel as part of the tariff. If you need more fuel, just fill up the tank, keep the receipt and <b><u><i>we will refund the amount!</i></u></b>."}
-					Fuel
-				#inc-insurance.included.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>No Worries, You're All Covered</b><br/>All Zoom reservations are covered with full comprehensive insurance, as long as a Zoom member is driving the car. <b><u><i>Maximum liability</i></u> for any damage for a Zoom member <u><i>is Rs.5000</i></u></b>."}
-					Insurance
-				#inc-gps.included.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Zip Zap Zoom</b><br/>All Zoom cars are fitted with a 3G enabled tablet to guide you on your journey."}
-					GPS
-				#inc-taxes.included.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>We Get Govt. Off Your Back</b><br/>Tariff includes all taxes, except the relevant tolls/taxes one has to pay while visiting another state."}
-					Taxes
+			- if @abtest
+				.booking-includes.bg-w.bs-g.p-t20.p-r20.p-b10.p-l20.m-auto.position-r.z-2.t-c
+					Your Booking Includes:
+					#inc-fuel.included.m-l10.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Fuel is Ours</b><br/>All Zoom reservations comes with unlimited fuel as part of the tariff. If you need more fuel, just fill up the tank, keep the receipt and <b><u><i>we will refund the amount!</i></u></b>."}
+						Fuel
+					#inc-insurance.included.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>No Worries, You're All Covered</b><br/>All Zoom reservations are covered with full comprehensive insurance, as long as a Zoom member is driving the car. <b><u><i>Maximum liability</i></u> for any damage for a Zoom member <u><i>is Rs.5000</i></u></b>."}
+						Insurance
+					#inc-gps.included.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Zip Zap Zoom</b><br/>All Zoom cars are fitted with a 3G enabled tablet to guide you on your journey."}
+						GPS
+					#inc-taxes.included.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>We Get Govt. Off Your Back</b><br/>Tariff includes all taxes, except the relevant tolls/taxes one has to pay while visiting another state."}
+						Taxes
 
 			.tariff-details.bg-w.bs-9.p-t20.m-auto
 				- if user.support?
@@ -154,11 +155,12 @@
 					/ 	%td.p-5.t-r.p-r20.zoom-b.f-b.size-16
 					/ 		\ ₹ 0
 
-					/ %tr
-					/ 	%td.p-5.p-l20.p-b10.text-up.size-12
-					/ 		Fuel, GPS, Insurance & Taxes
-					/ 	%td.p-5.t-r.p-r20.p-b10.zoom.f-b.size-16
-					/ 		Free
+					- if !@abtest
+						%tr
+							%td.p-10.p-l20.p-b10.text-up.size-12
+								Fuel, GPS, Insurance & Taxes
+							%td.p-10.t-r.p-r20.p-b10.zoom.f-b.size-16
+								Free
 
 					/ %tr.bg-e
 					/ 	%td.p-10.p-l20.size-12
@@ -248,7 +250,7 @@
 			.t-c
 				.m-auto.p-20{style: "width:400px;"}
 					- if @available == 1 && user && !user.is_blacklisted?
-						%form{:action => "/bookings/docreate", :id => "CheckoutForm", :method => "post"}
+						%form{:action => "/#{@city.name.downcase}/bookings/docreate", :id => "CheckoutForm", :method => "post"}
 							.hide
 								%input{name: "starts", type: "hidden", value: session[:book][:starts]}
 								%input{name: "ends", type: "hidden", value: session[:book][:ends]}

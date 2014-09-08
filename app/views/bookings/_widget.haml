@@ -9,7 +9,7 @@
 		end
 	end
 .wrapper
-	%form{:id => "SearchForm", :onsubmit => "return SubmitForm(this,'/search/nav','SearchFormDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+	%form{:id => "SearchForm", :onsubmit => "return SubmitForm(this,'/#{@city.name.downcase}/search/nav','SearchFormDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 		.item
 			#StartDate.box.datetimebox
 				.cal
@@ -100,7 +100,8 @@
 	- if @booking && @booking.valid?
 		:javascript
 			pushEvent('Navigation Search', 'Submit');
-			window.location = "http://#{HOSTNAME}/search";
+			// window.location = "http://#{HOSTNAME}/search";
+			window.location = "http://#{HOSTNAME}/#{@city.name.downcase}/search";
 	- else
 		:javascript
 			pushEvent('Navigation Search', 'Submit');
