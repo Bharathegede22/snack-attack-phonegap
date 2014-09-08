@@ -1,59 +1,45 @@
-.content
-	-if @step == '5' || @step == '6'
-		= render :partial => "/bookings/search_steps", locals: {step: @step.to_i} 
-	= form_for(current_user, :url => "/users/license?step=5", :html => { :method => :post, :multipart => true }) do |f|
-		- render_flash
-		.panel.panel-default
-			.panel-heading
-				%h3.panel-title Your Driving License
-			.panel-body
-				.t-c.p-10.bg-e.r-10.size-16
-					.f-b.size-20
-						Your 
-						%u OWN
-						driving license is required before you can take a Zoomcar.
-					%br/
-					Zoom will manually check the validity of your license. 
-					%br/
-					%i Any discrepancy will lead to immediate cancellation and blocking of account.
+= form_for(current_user, :url => "/users/license", :html => { :method => :post, :multipart => true }) do |f|
+	- render_flash
+	.panel.panel-default
+		.panel-heading
+			%h3.panel-title Your Driving License
+		.panel-body
+			.t-c.p-10.bg-e.r-10.size-16
+				.f-b.size-20
+					Your 
+					%u OWN
+					driving license is required before you can take a Zoomcar.
 				%br/
+				Zoom will manually check the validity of your license.
 				%br/
-				.form-horizontal
-					.row.form-group
-						%label.col-sm-2.control-label License Image
-						.col-sm-10
-							.col-sm-8
-								%input{type: "file", name: "image[avatar]", accept: "image/*"}
-								- if @image && !@image.valid?
-									.error
-										- if @image.errors[:avatar_content_type].length > 0
-											= errortxt('is invalid, allow formats are jpg, jpeg, gif and png.')
-										- else
-											= errortxt('is invalid, maximum allowed file size is 2 MB.')
-								.help-block
-									maximum file size is 2 MB
-									%br/
-									allowed format : jpg, jpeg, gif, png
-									%br/
-								= submit_tag "Submit", :class => 'btn btn-default btn-lg'
-								.p-t10
-									%b 
-										You can upload a scan or picture (using camera or mobile) of your 
-										%u OWN
-										driving license
-							.col-sm-4
-								- license = current_user.license_pic
-								- if license
-									%a{href: license.avatar.url(:profile), target: '_blank'}
-										= image_tag license.avatar.url(:thumb)
-									.license-status.p-t5.p-b5.t-c
-										Status:
-										- if current_user.license_status == 1
-											%span.license-status-0.f-b
-												Pending
-										- elsif current_user.license_status == 2
-											%span.license-status-1.f-b
-												Approved
-										- elsif current_user.license_status == 3
-											%span.license-status-2.f-b
-												Declined
+				%i Any discrepancy will lead to immediate cancellation and blocking of account.
+			%br/
+			%br/
+			.form-horizontal
+				.row.form-group
+					%label.col-sm-2.control-label License Image
+					.col-sm-10
+						.col-sm-8
+							%input{type: "file", name: "image[avatar]", accept: "image/*"}
+							- if @image && !@image.valid?
+								.error
+									- if @image.errors[:avatar_content_type].length > 0
+										= errortxt('is invalid, allow formats are jpg, jpeg, gif and png.')
+									- else
+										= errortxt('is invalid, maximum allowed file size is 2 MB.')
+							.help-block
+								maximum file size is 2 MB
+								%br/
+								allowed format : jpg, jpeg, gif, png
+								%br/
+							= submit_tag "Submit", :class => 'btn btn-default btn-lg'
+							.p-t10
+								%b 
+									You can upload a scan or picture (using camera or mobile) of your 
+									%u OWN
+									driving license
+						.col-sm-4
+							- license = current_user.license_pic
+							- if license
+								%a{href: license.avatar.url(:profile), target: '_blank'}
+									= image_tag license.avatar.url(:thumb)
