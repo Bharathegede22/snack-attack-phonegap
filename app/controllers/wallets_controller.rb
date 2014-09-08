@@ -3,6 +3,7 @@ class WalletsController < ApplicationController
   include WalletsHelper
 
   def refund
+    @refunded = true
     if create_refund(wallet_params)
       flash[:notice] = "Your refund has been initiated and it should reach you in 4-5 days"
     else
