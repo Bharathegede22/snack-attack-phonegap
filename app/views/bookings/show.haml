@@ -148,7 +148,7 @@
 		.fr.p-10.t-r.p-r20.grey.f-b.size-16
 			₹ #{show_currency @booking.security_amount}
 		.fc
-		- if @booking.hold!=true && (@booking.status >= 1 && !@booking.settled)
+		- if @booking.status >= 1 && !@booking.settled
 			.fl.p-l20.p-r10.p-b10
 				%input{id: "holdDeposit", name: "holdDeposit", type: "checkbox", value: "yes"}
 				%label#holdDepositLabel{style: 'font-weight: normal; margin: 0;', for: 'holdDeposit'}
@@ -320,12 +320,10 @@
 
 			$('#holdDepositApply').click(function() {
 				$.get( "#{@booking.encoded_id}/holddeposit.json", function( data ) {
-					$('#holdDeposit').fadeOut(function(){
-						$('#holdSuccess').fadeIn().delay(1000).fadeOut(function(){
-							$('#holdDepositLabel, #holdDepositHelp').addClass('lgrey');
-							$('#holdDeposit').attr('disabled', 'disabled');
-							$('#holdDepositApply').hide();
-						});
+					$('#holdSuccess').fadeIn().delay(1000).fadeOut(function(){
+						$('#holdDepositLabel, #holdDepositHelp').addClass('lgrey');
+						$('#holdDeposit').attr('disabled', 'disabled');
+						$('#holdDepositApply').hide();
 					});
 				});
 			});

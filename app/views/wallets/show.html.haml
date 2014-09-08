@@ -88,6 +88,9 @@
 		.position-a.pop{class: "#{current_user.unsafe_booking?(booking[:booking]) ? 'unsafe-booking' : 'safe-booking'}", 'style' => "width: #{width}px; height: 30px; bottom: #{30*get_level(booking, all_levels)}px; left: #{offset}px;", 'tabindex' => '0', 'data-toggle' => "popover", 'data-trigger' => 'focus', 'title' => "#{booking[:booking].confirmation_key}", 'data-html' => "true", 'data-content' => "#{booking[:booking].cargroup.name}<br/>#{booking[:booking].starts.strftime('%d/%m/%y %I:%M %p')}<br/>#{booking[:booking].ends.strftime('%d/%m/%y %I:%M %p')}"}
 			.wallet-car{style: "left: #{car_offset}px"}	
 
+
+	.position-a.pop{class: "unsafe-booking", 'style' => "width: 150px; height: 30px; bottom: 0px; left: 100px;", 'tabindex' => '0', 'data-toggle' => "popover", 'data-trigger' => 'focus', 'title' => "JPS6E4S4J", 'data-html' => "true", 'data-content' => "sdfsdf"}
+		.wallet-car{style: "left: 20px"}	
 .fc
 
 .bs-g.m-t20
@@ -96,7 +99,7 @@
 	%table.table-condensed.table-hover.table
 		%tr.active
 			%th.t-c Booking ID
-			%th.t-c Vehicle & Location
+			%th.t-c{style: "width: 400px"} Vehicle & Location
 			%th.t-c Duration
 			%th.t-c Outstanding
 			%th.t-c 
@@ -136,7 +139,7 @@
 	%table.table-condensed.table-hover.table
 		%tr.active
 			%th.t-c Booking ID
-			%th.t-c Vehicle & Location
+			%th.t-c{style: "width: 400px"} Vehicle & Location
 			%th.t-c Duration
 			%th.t-c Outstanding
 
@@ -168,7 +171,7 @@
 	%table.table-condensed.table-hover.table
 		%tr.active
 			%th.t-c Booking ID
-			%th.t-c Vehicle & Location
+			%th.t-c{style: "width: 400px"} Vehicle & Location
 			%th.t-c Duration
 			%th.t-c Outstanding
 
@@ -199,7 +202,7 @@
 	%table.table-condensed.table-hover.table
 		%tr.active
 			%th.t-c Booking ID
-			%th.t-c Vehicle & Location
+			%th.t-c{style: "width: 400px"} Vehicle & Location
 			%th.t-c Duration
 			%th.t-c Outstanding
 
@@ -224,3 +227,12 @@
 				%td.t-c
 					.p-t10
 						= "Rs. " + number_with_delimiter(booking.outstanding_with_security)
+.bs-g.m-t20
+	.p-10.bg-zoomb.white.f-b
+		Unfinished Bookings
+	%table.table-condensed.table-hover.table
+		%tr.active
+			%th.t-c Booking ID
+			%th.t-c{style: "width: 400px"} Vehicle & Location
+			%th.t-c Duration
+			%th.t-c Outstanding
