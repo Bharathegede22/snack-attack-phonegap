@@ -724,13 +724,16 @@ $(".clickable-row").click(function() {
 
 $('.pop').popover();
 
-$('.safe-booking, .unsafe-booking').click(function(){
+$('.safe-booking, .unsafe-booking').on('hide.bs.popover', function(){
 	var title = $(this).attr('data-original-title');
 	var el = $('#row'+title);
-	if (el.hasClass('highlight'))
-		el.removeClass('highlight');
-	else
-		el.addClass('highlight');
+	el.removeClass('highlight');
+});
+
+$('.safe-booking, .unsafe-booking').on('show.bs.popover', function(){
+	var title = $(this).attr('data-original-title');
+	var el = $('#row'+title);
+	el.addClass('highlight');
 });
 
 $('#resume_header').click(function(){
