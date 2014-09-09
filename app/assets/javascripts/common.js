@@ -103,9 +103,9 @@ function checkJail() {
 function checkout(data) {
 	$("#CheckoutWait").show();
 	if(typeof(data) === 'undefined'){
-		window.location = "/bookings/docreate";	
+		window.location = "/#{@city.name.downcase}/bookings/docreate";	
 	} else {
-		window.location = '/bookings/docreate?starts=' + data.starts + '&ends=' + data.ends + '&loc=' + data.loc + '&car=' + data.car;
+		window.location = '/#{@city.name.downcase}/bookings/docreate?starts=' + data.starts + '&ends=' + data.ends + '&loc=' + data.loc + '&car=' + data.car;
 	}
 }
 
@@ -129,11 +129,11 @@ function deltaX() {
 }
 
 function doBooking(carId, locId) {
-	window.location = "/bookings/do?car=" + carId + "&loc=" + locId;
+	window.location = "bookings/do?car=" + carId + "&loc=" + locId;
 }
 
 function doBookingNotify(carId, locId) {
-	window.location = "/bookings/do?car=" + carId + "&loc=" + locId + "&notify=true";
+	window.location = "/#{@city.name.downcase}/bookings/do?car=" + carId + "&loc=" + locId + "&notify=true";
 }
 
 function getCookie(cname) {
@@ -631,15 +631,16 @@ function trackEventsForPageScroll(isDuplicate) {
 
 		if(isDuplicate == 0) {
 			pushEvent('Home Page Scroll', 'Top');
-		}
-		//70% is the mark where map occupies major part of the screen - middle part of page visually
-		if(percentage >= 70 && isDuplicate < 1) {
-			pushEvent('Home Page Scroll', 'Middle');
 			isDuplicate = 1;
 		}
-		else if(percentage >= 100 && isDuplicate < 2) {
-			pushEvent('Home Page Scroll', 'Bottom');
+		//70% is the mark where map occupies major part of the screen - middle part of page visually
+		if(percentage >= 70 && isDuplicate < 2) {
+			pushEvent('Home Page Scroll', 'Middle');
 			isDuplicate = 2;
+		}
+		else if(percentage >= 100 && isDuplicate < 3) {
+			pushEvent('Home Page Scroll', 'Bottom');
+			isDuplicate = 3;
 		}
 	});
 }

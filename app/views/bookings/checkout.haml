@@ -62,7 +62,7 @@
 					.t-c
 						.m-auto.p-20{style: "width:200px;"}
 							- if @available == 1 && user && !user.is_blacklisted?
-								%form{:action => "/bookings/docreate", :id => "CheckoutForm", :method => "post"}
+								%form{:action => "/#{@city.name.downcase}/bookings/docreate", :id => "CheckoutForm", :method => "post"}
 									.hide
 										%input{name: "starts", type: "hidden", value: session[:book][:starts]}
 										%input{name: "ends", type: "hidden", value: session[:book][:ends]}

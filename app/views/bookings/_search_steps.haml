@@ -3,7 +3,7 @@
 		%table.m-auto
 			%tr
 				- cls = (step > 1 ? 'complete' : 'active')
-				- onclick = (step > 1 ? "window.location = '/search';" : "")
+				- onclick = (step > 1 ? "window.location = '/#{@city.name.downcase}/search';" : "")
 				%td{class: cls, onclick: "#{onclick}"}
 					.step
 						%p 1
@@ -11,27 +11,37 @@
 					.txt
 						Select Car
 				- cls = (step == 2 ? 'active' : (step > 2 ? 'complete' : 'normal'))
-				- onclick = (step > 2 ? "window.location = '/bookings/login';" : "")
+				- onclick = (step > 2 ? "window.location = '/#{@city.name.downcase}/bookings/login';" : "")
 				%td{class: cls, onclick: "#{onclick}"}
 					.step 
 						%p 2
 				%td{class: cls, onclick: "#{onclick}"}
 					.txt
 						Register or Signin
+				- if false
+					- cls = (step == 3 ? 'active' : (step > 3 ? 'complete' : 'normal'))
+					- onclick = (step > 3 ? "window.location = '/bookings/license';" : "")
+					%td{class: cls, onclick: "#{onclick}"}
+						.step 
+							%p 3
+					%td{class: cls, onclick: "#{onclick}"}
+						.txt
+							License Details
+				- cls = (step == 4 ? 'active' : 'normal')
 				
-				- cls = (step == 4 ? 'active' : (step > 4 ? 'complete' : 'normal'))
+				/ - cls = (step == 4 ? 'active' : (step > 4 ? 'complete' : 'normal'))
 				%td{class: cls}
 					.step
 						%p 3
 				%td{class: cls}
 					.txt
 						Checkout
-				- if true
-					- cls = (step == 5 ? 'active' : (step > 5 ? 'complete' : 'normal'))
-					- onclick = (step > 5 ? "window.location = '/bookings/license';" : "")
-					%td{class: cls, onclick: "#{onclick}"}
-						.step 
-							%p 4
-					%td{class: cls, onclick: "#{onclick}"}
-						.txt
-							License Details
+				/ - if true
+				/ 	- cls = (step == 5 ? 'active' : (step > 5 ? 'complete' : 'normal'))
+				/ 	- onclick = (step > 5 ? "window.location = '/bookings/license';" : "")
+				/ 	%td{class: cls, onclick: "#{onclick}"}
+				/ 		.step 
+				/ 			%p 4
+				/ 	%td{class: cls, onclick: "#{onclick}"}
+				/ 		.txt
+				/ 			License Details

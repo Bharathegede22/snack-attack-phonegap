@@ -296,5 +296,13 @@ class MainController < ApplicationController
 		@header = 'tariff'
 		render "/main/pricing/#{@city.pricing_mode}/tariff"
 	end
-	
+
+	def mobile_redirect
+		@meta_title = "ZoomCar Rental Tariffs In #{@city.name} | Zoomcar.in"
+		@meta_description = "ZoomCar offers the simplest, easiest car-rental tariff in #{@city.name}. Find out what all is included"
+		@meta_keywords = "zoomcar hire tariffs"
+		@canonical = "http://www.zoomcar.in/mobile_redirect"
+		@header = 'mobile_redirect'
+		render '/main/mobile_redirect', layout: false
+	end
 end

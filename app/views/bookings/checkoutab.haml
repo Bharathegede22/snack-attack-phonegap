@@ -91,7 +91,7 @@
 								- if location.id == 10 or location.id == 8
 									%div.red.size-11.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => location.disclaimer.html_safe}
 										(not a resident?)
-								- elsif location.id == 11
+								- elsif location.id == 11 or location.id == 33
 									%span.red.size-11.help.pointer.f-n{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => location.disclaimer.html_safe}
 										(not an employee?)
 								- else
@@ -229,7 +229,7 @@
 			.t-c
 				.m-auto.p-20{style: "width:400px;"}
 					- if @available == 1 && user && !user.is_blacklisted?
-						%form{:action => "/bookings/docreate", :id => "CheckoutForm", :method => "post"}
+						%form{:action => "/#{@city.name.downcase}/bookings/docreate", :id => "CheckoutForm", :method => "post"}
 							.hide
 								%input{name: "starts", type: "hidden", value: session[:book][:starts]}
 								%input{name: "ends", type: "hidden", value: session[:book][:ends]}
