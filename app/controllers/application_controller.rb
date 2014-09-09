@@ -1,3 +1,4 @@
+require "browser"
 class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -5,7 +6,7 @@ class ApplicationController < ActionController::Base
   #protect_from_forgery with: :exception
   
   before_filter :check_city
-  before_filter :check_mobile
+  #before_filter :check_mobile
   before_filter :check_ref
   
   def abtest?
@@ -55,7 +56,7 @@ class ApplicationController < ActionController::Base
   	session[:web_layout] = 1 if !params[:web].blank? && params[:web].to_i == 1
   	return if !session[:web_layout].blank? && session[:web_layout] == 1
   	# Checking mobile browsers
-  	if !session[:web_layout] && !request.user_agent.blank?
+  	if !request.user_agent.blank?
   		browser = Browser.new(:ua => request.user_agent, :accept_language => "en-us")
   		if browser.mobile? || browser.tablet?
   			if browser.mac?
