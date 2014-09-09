@@ -32,6 +32,7 @@ GEM
       nokogiri (>= 1.4.4)
       uuidtools (~> 2.1)
     bcrypt-ruby (3.1.2)
+    browser (0.6.0)
     builder (3.1.4)
     capistrano (2.15.5)
       highline
@@ -345,6 +346,7 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk
+  browser
   capistrano
   coffee-rails (~> 4.0.0)
   countries
