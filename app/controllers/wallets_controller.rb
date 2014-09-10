@@ -5,7 +5,7 @@ class WalletsController < ApplicationController
   def refund
     @refunded = true
     if create_refund(wallet_params)
-      flash[:notice] = "Your refund has been initiated and it should reach you in 4-5 days"
+      flash[:notice] = "Your refund has been initiated and it should reach you in 4-5 business days"
     else
       flash[:error] = "Unable to refund."
     end

@@ -320,10 +320,10 @@
 
 			$('#holdDepositApply').click(function() {
 				$.get( "#{@booking.encoded_id}/holddeposit.json", function( data ) {
+					$('#holdDepositApply').hide();
 					$('#holdSuccess').fadeIn().delay(1000).fadeOut(function(){
 						$('#holdDepositLabel, #holdDepositHelp').addClass('lgrey');
 						$('#holdDeposit').attr('disabled', 'disabled');
-						$('#holdDepositApply').hide();
 					});
 				});
 			});
