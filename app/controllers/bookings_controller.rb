@@ -1,8 +1,8 @@
 class BookingsController < ApplicationController
 
 	before_filter :copy_params, :only => [:docreate]
-	before_filter :check_booking, :only => [:cancel, :complete, :dodeposit, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
-	before_filter :check_booking_user, :only => [:dodeposit, :cancel, :invoice, :payments, :reschedule, :feedback]
+	before_filter :check_booking, :only => [:holddeposit, :cancel, :complete, :dodeposit, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
+	before_filter :check_booking_user, :only => [:holddeposit, :dodeposit, :cancel, :invoice, :payments, :reschedule, :feedback]
 	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :notify, :userdetails]
 	before_filter :check_search_access, :only => [:credits, :docreate, :docreatenotify, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
@@ -10,11 +10,7 @@ class BookingsController < ApplicationController
 	before_filter :check_promo,		:only => [:checkout]
 
 	def cancel
-		if @booking.security_amount_deferred?
-			@security = 0
-		else
-			@security = @booking.pricing.mode::SECURITY
-		end
+		@security = (@booking.hold) ? 0 : (@booking.pricing.mode::SECURITY - @booking.security_amount_remaining)
 		if request.post?
 			@booking.valid?
 			fare = @booking.do_cancellation
@@ -27,18 +23,13 @@ class BookingsController < ApplicationController
 	end
 	
 	def checkout
-		redirect_to do_bookings_path(@city.name.downcase) and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
-		generic_meta
-		@header = 'booking'
-		@abtest = abtest?
-		# render (abtest? ? :checkoutab : :checkout)
-		render :checkoutab
-	end
 
-	def checkoutab
+		@booking.user = current_user
+		@wallet_available = @booking.security_amount - @booking.security_amount_remaining
 		redirect_to do_bookings_path(@city.name.downcase) and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		generic_meta
 		@header = 'booking'
+		render :checkoutab
 	end
 	
 	def complete
@@ -173,7 +164,7 @@ class BookingsController < ApplicationController
 				session[:corporate_id] = nil
 				session[:booking_id] = nil
 		  	redirect_to "/bookings/#{@booking.encoded_id}"
-			elsif @booking.outstanding > 0
+			elsif @booking.outstanding_with_security > 0
 				redirect_to payment_bookings_path(@city.name.downcase)
 			else
 				u = @booking.user
@@ -189,7 +180,13 @@ class BookingsController < ApplicationController
 	end
 	
 	def dodeposit
-		@booking.add_security_deposit_charge
+		@booking.update_column(:defer_deposit, false) if params[:checkoutDeposit]=="1"
+		if !@booking.defer_allowed?
+			@booking.add_security_deposit_charge
+			#amount = @booking.user.wallet_available_on_time(@booking.starts - CommonHelper::WALLET_FREEZE_START.hours,@booking) 
+			##@Abhas it'll calculate past amount as already within 24 hours
+			@booking.make_payment_from_wallet		
+		end
 		redirect_to "/bookings/#{@booking.encoded_id}/dopayment"
 	end
   	
@@ -225,6 +222,14 @@ class BookingsController < ApplicationController
 		@booking
 	end
 	
+	def holddeposit
+		@booking.update_attribute(:hold, true)
+		respond_to do |format|
+			format.json {render :json =>{:error=>'', :messag=> 'Hold Successful'}}
+			format.html {redirect_to '/bookings'}
+		end
+	end
+
 	def index
 		render layout: 'users'
 	end
@@ -386,7 +391,7 @@ class BookingsController < ApplicationController
 							tmp << h.to_s + " hours"
 						end
 						flash[:notice] = "Your booking successfully <b>" + @string.downcase.gsub('ing', 'ed') + "</b> by " + tmp.chomp(', ')
-						@booking.add_security_deposit_charge if !params[:deposit].blank? && params[:deposit].to_i == 1
+						@booking.update_column(:defer_deposit, false) if !params[:deposit].blank? && params[:deposit].to_i == 1
 						@success = true
 						@confirm = @string = @fare = nil
 					end
@@ -408,6 +413,7 @@ class BookingsController < ApplicationController
 				end
 			end
 		end
+		@wallet_available = @booking.security_amount - @booking.security_amount_remaining
 		render json: {html: render_to_string('_reschedule.haml', layout: false)}
 	end
 
@@ -601,4 +607,7 @@ class BookingsController < ApplicationController
 		params.require(:review).permit(:comment, :rating_tech, :rating_friendly, :rating_condition, :rating_location)
 	end
 	
+	def payu_test_params(amount, key )
+		{"mihpayid"=>"4039937155099#{10000 + rand(99999)}", "mode"=>"CC", "status"=>"success", "unmappedstatus"=>"captured", "key"=>"C0Dr8m", "txnid"=>"1bdfe", "amount"=>"6500.00", "discount"=>"0.00", "net_amount_debit"=>"6500", "addedon"=>"2014-08-26 16:13:57", "productinfo"=>"Figo", "firstname"=>"fdsf", "lastname"=>"", "address1"=>"", "address2"=>"", "city"=>"", "state"=>"", "country"=>"", "zipcode"=>"", "email"=>"amit@zoomcar.in", "phone"=>"9686432937", "udf1"=>"", "udf2"=>"", "udf3"=>"", "udf4"=>"", "udf5"=>"", "udf6"=>"", "udf7"=>"", "udf8"=>"", "udf9"=>"", "udf10"=>"", "hash"=>"5332219dcb4c07661a85d31e4a3da055cf4a63bea9c40c3e3866780bb424238464661868dfb8724816d89937e57867c8f47a2c13f32106078e0b1e50b42d0ed4", "field1"=>"187269", "field2"=>"423820564675", "field3"=>"20140826", "field4"=>"MC", "field5"=>"564675", "field6"=>"00", "field7"=>"0", "field8"=>"3DS", "field9"=>" Successful Verification of Secure Hash:  -- Approved -- Transaction Successful -- Unable to be determined--E219", "payment_source"=>"payu", "PG_TYPE"=>"AXIS", "bank_ref_num"=>"187269", "bankcode"=>"CC", "error"=>"E000", "error_Message"=>"No Error", "name_on_card"=>"ksdfh", "cardnum"=>"512345XXXXXX2346", "cardhash"=>"This field is no longer supported in postback params."}
+	end
 end

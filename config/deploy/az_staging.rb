@@ -10,8 +10,8 @@ set :domain_name, "test.zoomcartest.com"
 
 default_run_options[:pty] = true
 set :scm, :git
-set :repository, "git@bitbucket.org:zoomcar/web.git"
-set :branch, "master"
+set :repository, "git@github.com:ZoomCar/web.git"
+set :branch, "DepositWallet"
 set :deploy_via, :remote_cache
 ssh_options[:forward_agent] = true
 

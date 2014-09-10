@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
   has_one :image, :as => :imageable, dependent: :destroy
   has_many :bookings
   has_many :credits
+  has_many :wallets
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable 
   devise :database_authenticatable, :registerable, 
@@ -55,9 +56,12 @@ class User < ActiveRecord::Base
   	when 'future' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND starts > '#{Time.zone.now.to_s(:db)}' AND status < 8", 'starts ASC']
   	when 'completed' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND returned_at IS NOT NULL AND returned_at < '#{Time.zone.now.to_s(:db)}' AND status < 8", 'id DESC']
   	when 'cancelled' then ["status > 8", 'id DESC']
-  	when 'unfinished' then ["jsi IS NULL AND status = 0", 'id DESC']
+  	when 'unfinished' then ["jsi IS NULL AND status = 0 AND starts > '#{Time.zone.now.to_s(:db)}'", 'id DESC']
+  	when 'wallet_frozen' then ["(jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND 
+  		((starts >= '#{Time.zone.now.to_s(:db)}' AND starts <= '#{(Time.zone.now+CommonHelper::WALLET_FREEZE_START.hours).to_s(:db)}') OR (ends < '#{Time.zone.now.to_s(:db)}' AND ends >= '#{(Time.zone.now-CommonHelper::WALLET_FREEZE_END.hours).to_s(:db)}')) 
+  		AND status < 8 and settled!=1 and insufficient_deposit!=1", 'starts ASC']
   	end
-  	
+
   	if Rails.env == 'production'
   		return Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND #{sql} ORDER BY #{order} LIMIT 10 OFFSET #{page*10}")
   	else
@@ -229,8 +233,6 @@ class User < ActiveRecord::Base
 		end
 	end
 
-  private
-  
   def before_create_tasks
   	#self.confirmed_at = Time.now + 2.hours
   end
@@ -251,4 +253,75 @@ class User < ActiveRecord::Base
   	otp_valid_till && otp_valid_till > Time.now
   end
 
+	def snapshot_end
+		Time.zone.now + CommonHelper::WALLET_SNAPSHOT.days
+	end
+
+	def snapshot_bookings(time=snapshot_end)
+		get_bookings('live') | upcoming_bookings(time)
+	end
+
+	def upcoming_bookings(end_time=snapshot_end)
+		starting = "starts > '#{Time.zone.now.to_s(:db)}' AND starts < '#{(end_time + CommonHelper::WALLET_FREEZE_START.hours).to_s(:db)}'AND status < 8"
+		ending = "ends > '#{(Time.zone.now - CommonHelper::WALLET_FREEZE_END.hours).to_s(:db)}' AND ends < '#{end_time.to_s(:db)}'AND status < 8"
+		Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND (jsi IS NOT NULL OR (jsi IS NULL AND status > 0)) AND ((#{starting}) OR (#{ending})) ORDER BY ends ASC")
+	end
+
+	def calculate_wallet_total_amount
+		self.update_column(:wallet_total_amount, wallets.collect{|wallet| wallet.credit ? wallet.amount : -wallet.amount}.sum)
+	end
+  	
+  	def wallet_total_amount
+  		calculate_wallet_total_amount if read_attribute(:wallet_total_amount).nil?
+  		read_attribute(:wallet_total_amount).to_i
+  	end
+
+  	def wallet_frozen_bookings
+  		get_bookings('live') | get_bookings('wallet_frozen')
+  	end
+
+  	def wallet_frozen_amount
+  		wallet_frozen_bookings.reject{|b| b.wallet_security_payment.nil?}.collect(&:security_amount).sum
+	end
+
+	def wallet_available_amount
+		(wallet_total_amount + wallet_frozen_amount)
+	end
+
+	def wallet_available_on_time(ends,req_booking)
+		return wallet_total_amount if ends <= Time.now
+		wallet_amount = wallet_available_amount
+		snapshot_bookings(ends).each do |booking|
+			wallet_amount -= booking.pricing.mode::SECURITY if !booking.hold? || req_booking.wallet_overlaps?(booking)
+		end
+		return (wallet_amount < 0) ? 0 : wallet_amount
+	end
+
+	def unsafe_booking?(booking)
+		if booking.defer_allowed? || booking.security_charge.nil?
+			return booking.security_amount_remaining > 0
+		else
+			return booking.insufficient_deposit
+		end
+	end
+
+	def unsafe_bookings
+		wallet_snapshot[:unsafe].select{|b| b.starts>Time.now}	
+	end
+
+	def wallet_snapshot(snap_start= Time.now, snap_end= snap_start+CommonHelper::WALLET_SNAPSHOT.days)
+		amount = wallet_available_amount
+		snapshot={starts: snap_start, ends: snap_end, amount: amount, bookings: [], unsafe: []}
+		upcoming_bookings.each do |booking|
+			#TODO handle no car case
+			next if !CommonHelper::UPCOMING_STATUSES.include?(booking.status)
+			impact = booking.wallet_impact
+			snapshot[:unsafe] << impact[:booking] if (booking.wallet_security_payment.nil? && amount<booking.security_amount)
+			amount += impact[:amount]
+			snapshot[:bookings] << impact
+		end
+		snapshot
+	end 
+	
+	private :before_create_tasks, :before_validation_tasks, :valid_otp_length?
 end

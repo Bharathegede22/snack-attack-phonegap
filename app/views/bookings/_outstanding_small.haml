@@ -17,7 +17,8 @@
 		end
 		total = 0
 		total = @fare[:total] + @fare[:penalty] if @fare[:total] > 0
-	- if total == 0
+		total = -@fare[:refund] if @fare[:refund] > 0
+	- if total <= 0
 		.size-20
 			.fl
 				- total = 0
@@ -44,27 +45,38 @@
 	- if total > 0
 		.bg-e.r-5.p-5.size-14.dgrey.border-c.solid
 			%table{width: '100%'}
-				%tr
-					%td.p-5
-						%b Reschedule Charges
-					%td
-						= @string
-						by
-						= tmp.chomp(', ')
-					%td.p-5.t-r
-						₹#{show_currency total}
-				- if @booking.security_amount_deferred?
+				- if @booking.defer_allowed?
+					%tr
+						%td.p-5
+							%b Reschedule Charges
+						%td
+							= @string
+							by
+							= tmp.chomp(', ')
+						%td.p-5.t-r
+							₹#{show_currency total}
+				- else
+					%tr
+						%td.p-5
+							%b Reschedule Charges with security deposit
+						%td
+							= @string
+							by
+							= tmp.chomp(', ')
+						%td.p-5.t-r
+							₹#{show_currency(total + @booking.security_amount - @wallet_available)}
+				- if @booking.defer_allowed? && !(@wallet_available>= @booking.security_amount)
 					%tr
 						%td.p-5
 							.fl
-								%b Refundable Deposit
+								%b Deposit Due
 							.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Fully refundable security deposit which will be released once your booking is over. It will take 4-5 business days before the refund reflects in your account."}
 								%u (?)
 							.fc
 						%td
-							- if @booking.defer_allowed?
+							- if @booking.defer_allowed? && !(@wallet_available>= @booking.security_amount)
 								%span
-									%input{id: "changeDeposit", name: "deposit", type: "checkbox", value:'1'}
+									%input{id: "changeDepositModal", name: "deposit", type: "checkbox", value:'1', onchange: "updateTotalPayment();"}
 								%span
 									Pay Deposit Now
 								%span.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => @booking.deposit_help}
@@ -73,12 +85,12 @@
 								.hide
 									%input{checked: "checked", id: "changeDeposit", name: "deposit", type: "checkbox", value:'1'}
 						%td.p-5.t-r
-							- if @booking.defer_allowed?
+							- if @booking.defer_allowed? && !(@wallet_available>= @booking.security_amount)
 								#DepositChange.t-s
-									₹#{show_currency pricing.mode::SECURITY}
+									₹ #{show_currency(@booking.security_amount-@wallet_available)}
 							- else
-								₹#{show_currency pricing.mode::SECURITY}
-					- if @booking.defer_allowed?
+								₹#{show_currency (@booking.security_amount-@wallet_available)}
+					- if @booking.defer_allowed? && !(@wallet_available>= @booking.security_amount)
 						%tr#DepositChangeMessage.red.t-c
 							%td.p-5{colspan: '3'}
 								%i
@@ -91,21 +103,22 @@
 							- if @booking.defer_allowed?
 								#DepositChangeFinal ₹#{show_currency(total)}
 							- else
-								₹#{show_currency(total + pricing.mode::SECURITY)}
-		- if @booking.security_amount_deferred? && @booking.defer_allowed?
+								₹#{show_currency(total + @booking.security_amount - @wallet_available)}
+
+		- if @booking.defer_allowed? && !(@wallet_available>= @booking.security_amount)
 			:javascript
-				$('#changeDeposit').change(function() {
-					var $this = $(this);
+				function updateTotalPayment() {
+					var $this = $("#changeDepositModal");
 					if ($this.is(':checked')) {
 						$("#DepositChangeMessage").hide();
 						$("#DepositChange").removeClass('t-s');
-						$("#DepositChangeFinal").html("₹#{show_currency(total + pricing.mode::SECURITY)}");
+						$("#DepositChangeFinal").html("₹#{show_currency(total + @booking.security_amount - @wallet_available)}");
 					} else {
 						$("#DepositChangeMessage").show();
 						$("#DepositChange").addClass('t-s');
 						$("#DepositChangeFinal").html("₹#{show_currency(total)}");
 					}
-				});
+				}
 - else
 	%h4.zoom No change in booking amount
 .hide

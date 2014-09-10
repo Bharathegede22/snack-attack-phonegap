@@ -1,0 +1,29 @@
+.size-18.t-c
+	Amount Currently Available for Refund: 
+	%span.f-b Rs. #{number_with_delimiter(current_user.wallet_total_amount)}
+
+%br/
+
+%table.m-0{style: "width: 100%;", cellspacing: 0, cellpadding: 0}
+	%tr.size-13
+		%th.p-b10.p-t10.bg-e.t-c
+			Date
+		%th.p-b10.p-t10.bg-e.t-c
+			Booking
+		%th.p-b10.p-t10.bg-e.t-c
+			Amount
+		%th.p-b10.p-t10.bg-e.t-c
+			Description
+
+	%tbody
+		- @history.each do |wallet|
+			%tr
+				%td.t-c.bg-w.p-t10.p-b10.border-b-e
+					= wallet[:date]
+				%td.t-c.bg-w.p-t10.p-b10.border-b-e
+					= wallet[:booking] 
+				%td.t-c.bg-w.p-t10.p-b10.border-b-e
+					= wallet[:amount]
+				%td.t-c.bg-w.p-t10.p-b10.border-b-e
+					= wallet[:description] 
+					

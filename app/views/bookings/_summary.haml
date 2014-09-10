@@ -1,112 +1,106 @@
 :ruby
-	@pricing = @booking.pricing if !@pricing
-	@total = 0
-	tmp = 0
+	if !flash[:error].blank? && flash[:error].include?('transaction') && flash[:error].include?('failed')
+		survey = true
+	else
+		survey = false
+	end
+	offer = @booking.offer
+	@pricing = @booking.pricing
+	outstanding_amount = @booking.outstanding
+	security_remaining = @booking.security_amount_remaining
+	payable_amount = outstanding_amount>=0 ? (outstanding_amount + security_remaining) : security_remaining
 %table.table.table-bordered
 	%tr.active
 		%td{:colspan => '2'}
 			%h4.f-b Fare Breakdown
-	- @booking.charges.each do |c|
-		- if !['early_return', 'security_deposit', 'security_deposit_refund'].include?(c.activity)
-			%tr
+	- total_charge = 0
+	- @booking.charges.each do |charge|
+		- total_charge += charge.refund==0 ? charge.amount : -charge.amount
+		%tr
+			-if !['security_deposit'].include? charge.activity
 				%td
-					= c.activity_text
+					= charge.activity.titleize
 				%td.t-r
-					- if c.refund > 0
-						₹#{"-" + show_currency(c.amount)}
-						- tmp -= c.amount
-					- else
-						₹#{show_currency(c.amount)}
-						- tmp += c.amount
+					#{charge.refund==0 ? '' : '-'}₹ #{show_currency charge.amount}
+			- else
+				%td
+					Refundable Deposit
+				%td.t-r
+					#{charge.refund==0 ? '' : '-'}₹ #{show_currency charge.amount}
 	%tr.f-b.bg-c
 		%td
 			Total Tariff
 		%td.t-r
-			₹#{show_currency(tmp)}
-	- deposit = false
-	- @booking.charges.each do |c|
-		- if ['security_deposit', 'security_deposit_refund'].include?(c.activity)
-			- deposit = true
-			%tr
-				%td
-					- if c.activity == 'security_deposit'
-						Refundable Deposit
-					- else
-						= c.activity_text
-				%td.t-r
-					- if c.refund > 0
-						₹#{"-" + show_currency(c.amount)}
-						- tmp -= c.amount
-					- else
-						₹#{show_currency(c.amount)}
-						- tmp += c.amount
-	- if !deposit
-		- deposit = @booking.status < 9 ? @pricing.mode::SECURITY : 0
-		%tr
-			%td
-				Refundable Deposit
-			%td.t-r
-				#Deposit.t-s
-					₹#{show_currency(deposit)}
-	%tr.f-b.bg-c
-		%td
-			Total Amount
-		%td.t-r
-			₹#{show_currency(tmp)}
-			- @total += tmp
-			- tmp = 0
+			₹#{show_currency(total_charge)}
+
 	%tr.active
 		%td{:colspan => '2'}
 			.row
 				.col-md-10
 					%h4.f-b Payments Received
 				.col-md-2
-					- if payments && @booking.payments.length > 0
-						.m-t5
-							%a.btn.btn-xs.btn-default{href: "/bookings/#{@booking.encoded_id}/payments", target: '_blank', role: "button", :title => 'See Details'}
-								%span.glyphicon.glyphicon-list
-	- @booking.confirmed_payments.each do |p|
+	- total_payu=0
+	- @booking.confirmed_payments.where(through: 'payu').each do |p|
 		%tr
 			%td
 				= p.through_text + " Payment"
 			%td.t-r
 				₹#{show_currency(p.amount)}
-				- tmp += p.amount
+				- total_payu += p.amount
 	%tr.f-b
 		%td
 			Total
 		%td.t-r
-			₹#{show_currency(tmp)}
-	:ruby
-		@total -= tmp
-		tmp = 0
-		refunds = @booking.confirmed_refunds
-		refunds.each do |r|
-			tmp += r.amount if !r.through.include?('early_return')
-		end
-		@total += tmp
-	- if tmp > 0
-		%tr.active
-			%td{:colspan => '2'}
-				%h4.f-b Refunds Issued
-		- refunds.each do |r|
-			- if !r.through.include?('early_return')
-				%tr
-					%td
-						= r.through_text
-					%td.t-r
-						₹#{show_currency(r.amount)}
-		%tr.f-b
-			%td
-				Total
-			%td.t-r
-				₹#{show_currency(tmp)}
+			₹#{show_currency(total_payu)}
+	%tr.active
+		%td{:colspan => '2'}
+			%h4.f-b Refunds Issued
+	- total_payu_refund=0
+	- @booking.confirmed_refunds.each do |r|
+		- if !r.through.include?('early_return') && !['wallet', 'wallet_widget'].include?(r.through)
+			- total_payu_refund+=r.amount
+			%tr
+				%td
+					= r.through_text
+				%td.t-r
+					₹#{show_currency(r.amount)}
+	%tr.f-b
+		%td
+			Total
+		%td.t-r
+			₹#{show_currency(total_payu_refund)}
+	%tr.active
+		%td{:colspan => '2'}
+			%h4.f-b Zoomcar Wallet
+	- total_wallet=0
+	- @booking.confirmed_refunds.each do |r|
+		- if ['wallet', 'wallet_widget'].include?(r.through)
+			- total_wallet+=r.amount
+			%tr
+				%td
+					Added to Wallet 
+				%td.t-r
+					₹#{show_currency(r.amount)}
+	- @booking.confirmed_payments.each do |r|
+		- if ['wallet'].include?(r.through)
+			- total_wallet-=r.amount
+			%tr
+				%td
+					Paid from Wallet
+				%td.t-r
+					\- ₹#{show_currency(r.amount)}
+	%tr.f-b
+		%td
+			Total
+		%td.t-r
+			₹#{show_currency(total_wallet)}
 	- if !@booking.promo.blank?
 		%tr.bg-e
 			%td{:colspan => '2'}
 				.fl.f-b Promo Code
 				.fr #{@booking.promo}
 				.fc
+	- @total = @booking.outstanding
 	- if @total > 0
 		%tr.danger.size-16
 			%td

@@ -16,7 +16,7 @@
 				%td &nbsp;
 				%td.p-5.t-r
 					₹#{show_currency @fare[:total]}
-			- if @pricing.mode::SECURITY > 0
+			- if @booking.security_amount_remaining > 0
 				%tr
 					%td.p-5
 						.fl
@@ -35,7 +35,7 @@
 					%td.p-5.t-r
 						- if @booking.defer_allowed?
 							#Deposit
-								₹#{show_currency @pricing.mode::SECURITY}
+								₹#{show_currency @booking.outstanding_with_security}
 			- if @booking.defer_allowed?
 				%tr#DepositMessage.red.t-c{style: 'display:none;'}
 					%td.p-5{colspan: '3'}
@@ -53,7 +53,7 @@
 							total = @fare[:total]
 						end
 					#DepositFinal
-						₹#{show_currency(total + @pricing.mode::SECURITY)}
+						₹#{show_currency(total + @booking.security_amount_remaining)}
 - render_flash
 :javascript
 	function checkJquery() {
@@ -64,7 +64,7 @@
 					$('#checkoutDeposit').val("1");
 					$("#DepositMessage").hide();
 					$("#Deposit").removeClass('t-s');
-					$("#DepositFinal").html("₹#{show_currency(total + @pricing.mode::SECURITY)}");
+					$("#DepositFinal").html("₹#{show_currency(total + @booking.security_amount_remaining)}");
 				} else {
 					$('#checkoutDeposit').val("0");
 					$("#DepositMessage").show();

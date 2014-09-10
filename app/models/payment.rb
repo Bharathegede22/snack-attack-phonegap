@@ -1,11 +1,12 @@
 class Payment < ActiveRecord::Base
 	
 	belongs_to :booking
-	
+	has_one :wallet, as: :transferable
+
 	validates :booking_id, :through, :amount, presence: true
 	#validates :through, uniqueness: {scope: [:booking_id, :key]}
 	
-	default_scope where('(status < 5)')
+	default_scope {where('(status < 5)')}
 	
 	after_save :after_save_tasks
 	
@@ -194,13 +195,26 @@ class Payment < ActiveRecord::Base
 						b.status = 6
 					end
 					BookingMailer.payment(b.id).deliver
-					SmsSender.perform_async(b.user_mobile, "Zoom booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoom Support.", b.id)
+					if Rails.env.production?
+						SmsSender.perform_async(b.user_mobile, "Zoom booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoom Support.", b.id)
+					end
 				end
 				b.deposit_status = 2 if b.deposit_status == 1
 				b.notes += "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs." + self.amount.to_s + " - Payment Received through <u>" + self.through_text + "</u>.<br/>"
 				b.save(:validate => false)
 				Booking.recalculate(b.id)
+				wallet_amount = (b.outstanding_without_deposit + self.amount)>=0 ? b.outstanding_without_deposit.abs : self.amount
+				b.add_security_deposit_to_wallet(wallet_amount) if wallet_amount != 0
+				self.update_column(:deposit_available_for_refund, wallet_amount)
+				if !b.defer_allowed? && b.security_charge.nil?
+					b.add_security_deposit_charge
+				end
+				if !b.defer_allowed? && b.wallet_security_payment.nil?
+					b.update_column(:insufficient_deposit, false)
+					b.make_payment_from_wallet
+				end
 			end
+
 		end
 	end
 	

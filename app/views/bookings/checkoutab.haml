@@ -125,8 +125,8 @@
 						#CorporateDiv
 							= render :partial => 'corporate'
 				%table.position-r{width: '100%'}
-					%tr
-						%td.p-5.p-l20.size-12
+					%tr.bg-e
+						%td.p-10.p-l20.size-12
 							.fl.text-up
 								Tariff
 							- if h < 4
@@ -136,7 +136,7 @@
 								%a.pointer#applyPromoCode
 									Apply Promo Code
 							.fc
-						%td.p-5.t-r.p-r20.zoom-b.f-b.size-16
+						%td.p-10.t-r.p-r20.zoom-b.f-b.size-16
 							₹ #{show_currency fare[:total]}
 
 					%tr#promoCode{style: 'display: none'}
@@ -172,12 +172,34 @@
 
 					- if pricing.mode::SECURITY > 0
 						%tr
-							%td.p-10.p-l20.size-12
+							%td.p-5.p-l20.size-12
 								.fl.text-up
 									Refundable Deposit
 								.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Fully refundable security deposit which will be released once your booking is over. It will take 4-5 business days before the refund reflects in your account."}
 									[?]
-								- if @booking.defer_allowed?
+								.fc
+								.fl.m-t5
+									%a.pop{'href' => '#', 'tabindex' => '0', 'data-toggle' => "popover", 'data-trigger' => 'focus', 'data-placement' => "left", 'data-title' => "Don’t have multiple Security Deposits stuck in refund processes!", 'data-html' => "true", 'data-content' => "<div class='p-l5 m-b5'>• Use the same Deposit across multiple bookings through your ZoomCar Wallet.</div><div class='p-l5 m-b5'>• Refund the amount you want, when you want.</div><div class='p-l5'>• Add money to the Deposit amount in the Wallet if needed.</div><div class='m-t10'>Learn more <a href='/faq#faq-41' target='_blank'>here</a>.</div>"}
+										Can I Use One Security Deposit For Multiple Bookings?
+								.fc
+							%td.p-10.t-r.p-r20.lgrey.f-b.size-16.securityTotal
+								#Deposit
+									₹ #{show_currency pricing.mode::SECURITY}
+						- unless @wallet_available==0
+							%tr
+								%td.p-10.p-l20.size-12
+									.fl.text-up
+										Money in Wallet
+									.fc
+								%td.p-10.t-r.p-r20.lgrey.f-b.size-16
+									\- ₹ #{show_currency @wallet_available}
+
+						%tr.bg-e
+							%td.p-10.p-l20.size-12
+								.fl.text-up
+									Deposit Due
+								
+								- if @booking.defer_allowed? && !(@wallet_available>= @booking.security_amount)
 									.fl.p-l20
 										%span
 											%input{checked: "checked", id: "changeDeposit", name: "securityDeposit", type: "checkbox", value: "yes"}
@@ -186,15 +208,14 @@
 										%span.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => @booking.deposit_help}
 											[?]
 								.fc
-							%td.p-10.t-r.p-r20.zoom-b.f-b.size-16.securityTotal
-								- if @booking.defer_allowed?
-									#Deposit
-										₹ #{show_currency pricing.mode::SECURITY}
+							%td.p-10.t-r.p-r20.zoom-b.f-b.size-16
+								₹ #{show_currency(@booking.security_amount-@wallet_available)}
+
 					- if @booking.defer_allowed?
 						%tr#DepositMessage{style: "display: none"}
 							%td.p-10.p-l20.p-r20.size-11.position-r{style: "top: -10px", colspan: '2'}
 								%i
-									= @booking.deposit_warning.html_safe
+									= @booking.deposit_warning(@wallet_available>0 ? "remaining " : '').html_safe
 
 					%tr.bg-6.white.bg-zoom.ribbon
 						%td.p-10.p-l20.text-up.size-16.f-b
@@ -207,7 +228,7 @@
 									total = fare[:total]
 								end
 							#DepositFinal
-								₹ #{show_currency(total + pricing.mode::SECURITY)}
+								₹ #{show_currency(total + @booking.security_amount - @wallet_available)}
 
 					%tr
 						%td.p-5.p-l20.p-t10.size-12
@@ -300,7 +321,7 @@
 					$('#checkoutDeposit').val("1");
 					$('#DepositMessage').hide();
 					$("#Deposit").removeClass('t-s');
-					$("#DepositFinal").html("₹ #{show_currency(total + pricing.mode::SECURITY)}");
+					$("#DepositFinal").html("₹ #{show_currency(total + @booking.security_amount - @wallet_available)}");
 				} else {
 					$('#checkoutDeposit').val("0");
 					$('#DepositMessage').show();

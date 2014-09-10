@@ -710,7 +710,7 @@ checkUser();
 
 /* Tariff Details& FAQ Tabs */
 $(function () {
-	$('#tariff-header a, #faq-tabs a, #fee-tabs a').click(function (e) {
+	$('#tariff-header a, #faqs-tabs a, #fee-tabs a').click(function (e) {
   		e.preventDefault();
   		$(this).siblings().removeClass('active');
   		$(this).addClass('active');
@@ -718,6 +718,37 @@ $(function () {
 	})
 });
 
+
+$(".clickable-row").click(function() {
+	window.document.location = $(this).attr("href");
+});
+
+$('.pop').popover();
+
+$('.safe-booking, .unsafe-booking').on('hide.bs.popover', function(){
+	var title = $(this).attr('data-original-title');
+	var el = $('#row'+title);
+	el.removeClass('highlight');
+});
+
+$('.safe-booking, .unsafe-booking').on('show.bs.popover', function(){
+	var title = $(this).attr('data-original-title');
+	var el = $('#row'+title);
+	el.addClass('highlight');
+});
+
 $('#resume_header').click(function(){
 	$('#resume_body').slideToggle();
+	return false;
 });
+
+
+var url = document.location.toString();
+if (url.match('#')) {
+	var anchor = url.split('#')[1];
+	if(anchor == 'faq-41')
+	{
+		$('#faqs-tabs a[href=#faqs-6]').tab('show').addClass('active').siblings().removeClass('active');
+	    $(document).scrollTop($('#faq-41').offset().top);
+	}
+}

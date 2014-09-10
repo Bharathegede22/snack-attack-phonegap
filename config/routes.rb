@@ -1,5 +1,7 @@
 Web::Application.routes.draw do
-	
+
+	get 'mydeposits' => "wallets#show"
+  	get 'bookings'  => "wallets#show"
 	devise_for :users, 
 		:controllers => {
 			:confirmations => "users/confirmations", 
@@ -16,7 +18,7 @@ Web::Application.routes.draw do
 		end
 	end
 
-	resources :bookings do
+	resources :bookings, :except => [:index, :delete] do
 		collection do
 			get 'corporate'
 			get 'details'
@@ -45,6 +47,7 @@ Web::Application.routes.draw do
 			get 'payment'
 			get 'reschedule'
 			get 'feedback'
+			get 'holddeposit'
 			post 'feedback'
 
 			post 'cancel'
@@ -68,6 +71,16 @@ Web::Application.routes.draw do
 			post 'license'
 			post 'signup'
 			post 'update'
+		end
+	end
+
+	resources :wallets, :only => [] do
+		collection do
+			get 'history'
+  			get 'show_refund'
+			#post "wallets#topup"
+  			post 'refund'
+  			post 'topup'
 		end
 	end
 	

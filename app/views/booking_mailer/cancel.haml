@@ -2,13 +2,21 @@
 	city = @booking.city
 	cargroup = @booking.cargroup
 	location = @booking.location
-	outstanding = @booking.outstanding
+	outstanding = @booking.outstanding_without_deposit
+	if !@booking.hold
+		if @booking.insufficient_deposit
+			amount = [@booking.security_amount.to_i, @booking.user.wallet_total_amount.to_i].min	
+			outstanding += amount if amount > 0
+		else
+			outstanding = @booking.outstanding
+		end
+	end
 %br/
 Hi #{@user.name},
 %br/
 %br/
 %br/
-You've cancelled the following reservation:
+Your booking has been cancelled. These are the details of the reservation:
 %br/
 %br/
 %div{style: "border-radius:5px; background:#eeeeee; padding:5px; margin:0px;"}
@@ -62,30 +70,27 @@ You've cancelled the following reservation:
 %div{style: "background:#eeeeee; margin:0px; padding:10px; color:#000000;"}
 	- if @total != 0
 		- if @total < 0
+			We have initiated a refund of 
 			%b
 				Rs.
-				= 0 - @total
-			is refunded back to the reservation.
+				= @total.abs
+			, it should reach your account in 5 business days. If you have opted to hold your deposit in your Zoomcar Wallet, the remainder has been moved there
 		- else
 			%b
-				Rs.
-				= @total
-			is added as cancellation charges to the reservation.
+			Your charges have exceeded the Security Deposit, please pay the outstanding amount by clicking through to your invoice.
 	- else
 		%b
-			No change in your reservation charges.
-	%br/
-	- if outstanding < 0
-		%b
-			Rs.
-			#{0-outstanding}
-		will be refunded back to your account.
-		%br/
-		%i Please note that it will take 3-4 days for the reimbursed amount to reflect in your account.
-		%br/
+			All charges were covered by the Security Deposit
 %br/
 %br/
-We're sorry that this reservation won't work out for you now, but check out what else is available for another time by logging onto
+%br/
+Here is the invoice for your booking:
+%a{href: @booking.link + "/invoice"} 
+	= @booking.link + "/invoice" 
+Please do feel free to reach out to us about any of these charges, we are always there to address your concerns.
+%br/
+%br/
+We're sorry that this reservation didn't work out for you now, but check out what else is available for another time by logging onto
 %b 
 	%a{href: "http://www.zoomcar.in", target: "_blank"} www.zoomcar.in.
 %br/
@@ -94,9 +99,9 @@ If you have any questions about your reservation you can contact Zoom at #{city.
 %br/
 %br/
 %br/
-Happy Driving!
+Best,
 %br/
 %br/ 
-The Zoom Team
+The ZoomCar Team
 %br/
 %br/
