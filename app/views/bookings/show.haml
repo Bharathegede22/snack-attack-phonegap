@@ -148,7 +148,7 @@
 		.fr.p-10.t-r.p-r20.grey.f-b.size-16
 			₹ #{show_currency @booking.security_amount}
 		.fc
-		- if @booking.status >= 1 && !@booking.settled
+		- if @booking.status >= 1 && !@booking.settled && @booking.deposit_status!=3 && !@booking.hold
 			.fl.p-l20.p-r10.p-b10
 				%input{id: "holdDeposit", name: "holdDeposit", type: "checkbox", value: "yes"}
 				%label#holdDepositLabel{style: 'font-weight: normal; margin: 0;', for: 'holdDeposit'}
