@@ -197,6 +197,13 @@ class MainController < ApplicationController
 		@canonical = "http://www.zoomcar.in/howitworks"
 		@header = 'help'
 	end
+	
+	def signup
+		@meta_title = "Self Drive Cars Rental In #{@city.name} | Join Online, Book A Car & Drive | Zoomcar.in"
+		@meta_description = "Signup for Zoomcar"
+		@meta_keywords = "how zoomcar works"
+		@canonical = "http://www.zoomcar.in/signup"
+	end
 
 	def howtozoom
 		@meta_title = "Self Drive Cars Rental In #{@city.name} | Join Online, Book A Car & Drive | Zoomcar.in"
