@@ -86,11 +86,13 @@
 					#BubbleParking.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Parking, On Zoom!</b><br/>Drive your own car or 2 wheeler to our vehicle site. Free parking for your vehicle at our site during your reservation, courtesy Zoom!",        	:onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'Parking');"}
 						.p-10
 							.parking
-		.wrapper
-			.widget-hor
-				.bg.r-5.bs-3.p-10
-					#SearchFormDiv.form
-						= render :partial => '/bookings/widget_homepage'
+		#HomepageForm
+			.wrapper
+				.widget-hor
+					.bg.r-5.bs-3.p-10
+						#SearchFormDiv.form
+							= render :partial => '/bookings/widget_homepage'
+
 = render :partial => '/main/locations'
 = render :partial => '/main/reviews'
 = render :partial => '/main/press'

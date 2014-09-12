@@ -66,6 +66,7 @@ Web::Application.routes.draw do
 			get 'signin'
 			get 'signup'
 			get 'status'
+			get 'status_old'
 			get 'credits'
 
 			post 'license'

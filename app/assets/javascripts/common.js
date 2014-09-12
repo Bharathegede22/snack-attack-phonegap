@@ -111,7 +111,10 @@ function checkout(data) {
 
 function checkUser() {
 	if($('#UserBar').length) {
-		getData("/users/status", 'UserBar', 'replace', null);
+		if($('body').hasClass('body-header-new'))
+			getData("/users/status", 'UserBar', 'replace', null);
+		else
+			getData("/users/status_old", 'UserBar', 'replace', null);
 	}
 }
 
@@ -751,4 +754,28 @@ if (url.match('#')) {
 		$('#faqs-tabs a[href=#faqs-6]').tab('show').addClass('active').siblings().removeClass('active');
 	    $(document).scrollTop($('#faq-41').offset().top);
 	}
+}
+
+if($('body').hasClass('body-header-new'))
+{
+	$(document).scroll(function(){
+		if($(document).scrollTop() >= 115)
+		{
+			$('#HomepageForm')
+				.addClass('line-bg border-b-c')
+				.css({'position': 'fixed', 'z-index': 10, 'top': '96px', 'height': '40px', 'width': '100%',})
+				.find('.widget-hor')
+					.css({'top': '0'})
+					.children().first().removeClass('bg r-5 bs-3').css({'padding': '4px 10px 4px 10px'});
+		}
+		else
+		{
+			$('#HomepageForm')
+				.removeClass('line-bg border-b-c')
+				.css({'position': 'relative', 'z-index': 10, 'top': '0', 'height': '40px', 'width': '100%',})
+				.find('.widget-hor')
+					.css({'top': '107px'})
+					.children().first().addClass('bg r-5 bs-3').css({'padding': '10px'});
+		}
+	});
 }

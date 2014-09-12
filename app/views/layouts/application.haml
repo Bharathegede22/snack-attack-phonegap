@@ -1,7 +1,9 @@
 !!!
 %html{lang: "en"}
 	= render :partial => "/layouts/head"
-	%body
-		= render :partial => "/layouts/header"
+
+	- cls = (!cookies[:abtestc].blank?) ? 'body-header-new' : ''
+	%body{:class => cls}
+		= render :partial => (!cookies[:abtestc].blank?) ? "/layouts/header" : "/layouts/header_old"
 		= yield
 		= render :partial => '/layouts/footer'

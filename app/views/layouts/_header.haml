@@ -1,130 +1,149 @@
 = render :partial => '/layouts/tag_manager'
 #DocTop
-- if !@header.blank? && @header == 'search'
-	#NavBuffer.nav-buffer-big
-- else
-	#NavBuffer.nav-buffer
-%nav.navbar.navbar-fixed-top{:role => "navigation"}
-	.wrapper
-		%a.logo{:href => '/'}
-		.fl
-			.broadcast.fl
-				#CityBar.dropdown.fr
-					%a.dropdown-toggle.p-r10.p-l10{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
-						= @city.name
-						%b.caret
-					%ul.dropdown-menu.pull-left
+
+#header-new
+	- announcement = 0
+	- if announcement == 0
+		- if @header == 'homepage'
+			#NavBuffer.nav-buffer-1
+		- else
+			#NavBuffer.nav-buffer-2
+	- elsif announcement == 1
+		- if @header == 'homepage'
+			#NavBuffer.nav-buffer-3
+		- else
+			#NavBuffer.nav-buffer-4
+
+	.header.navbar-fixed-top.border-b-c
+		/ .bg-zoom
+		/ 	.wrapper.p-t5.p-b5
+		/ 		.t-c.white.f-b
+		/ 			We have now launched at 5 locations in New Delhi
+		#topbar.bg-zoomb
+			.wrapper
+				.fl
+					#city-selection
 						- City.active.each do |city|
+							- cls = (city.name == @city.name) ? 'active' : ''
+							%a.inline-block.p-t5.p-r10.p-b5.p-l10{'class' => cls, 'href' => "/#{city.name.downcase}"}
+								= city.name
+				.fr.white
+					.fl.border-r-d-9.p-l10.p-r10
+						.inline-block.p-b5.p-t5
+							&nbsp;
+						%a.inline-block.header-icon.facebook.m-r5{'target' => "blank", 'href' => "http://facebook.com/zoomcar.in"} &nbsp;
+						%a.inline-block.header-icon.twitter{'target' => "blank", 'href' => 'http://twitter.com/zoomcarindia'} &nbsp;
+
+					.fl.border-r-d-9.p-l10.p-r10
+						.inline-block.p-b5.p-t5.p-r5
+							Download App:
+						%a.inline-block.header-icon.iphone.m-r5.help{'target' => "blank", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "Get Zoomcar iPhone App", href: "https://itunes.apple.com/us/app/zoomcar-self-drive-cars/id889910218?mt=8&utm_source=home%20page&utm_medium=header%20links&utm_content=iOS&utm_campaign=installs"} &nbsp;
+						%a.inline-block.header-icon.android.help{'target' => "blank", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "Get Zoomcar Android App", href: "https://play.google.com/store/apps/details?id=com.zoomcar&referrer=utm_source%3Dhome%2520page%26utm_medium%3Dheader%2520links%26utm_content%3Dandroid%26utm_campaign%3Dinstalls"} &nbsp;
+
+					%a.fl.border-r-d-9.p-l10.p-r10.topbar-link.offers-link{href: "/#{@city.name.downcase}/offers"}
+						.inline-block.header-icon.offers.m-r3 &nbsp;
+						.inline-block.p-b3.p-t3
+							Offers
+
+					#alerts.dropdown.fl
+						- alerts = (current_user && current_user.unsafe_bookings.any?)
+						- cls =  (alerts) ? 'active' : ''
+						%a.dropdown-toggle.fl.border-r-d-9.p-l5.topbar-link{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
+							.inline-block.header-icon.alerts{'class' => cls} &nbsp;
+							.inline-block.p-b5.p-t5 &nbsp;
+
+						- if alerts
+							%ul.dropdown-menu.pull-right
+								%li
+									%a{:href => "/bookings"}
+										You have an upcoming booking with Security Deposit due
+						- else
+							%ul.dropdown-menu.pull-right
+								%li
+									%a{:href => "javascript:void(0)"}
+										You have no new notifications. Cheers :)
+
+					#UserBar.dropdown.fl
+						%a.dropdown-toggle.fl.border-r-d-9.topbar-link.p-5.p-l10{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
+							My Account
+							%b.caret
+						%ul.dropdown-menu.pull-right
 							%li
-								= link_to city.name, "/#{city.name.downcase}"
-			.fc
-			.m-t3.m-l5.size-11
-				Download app:
-			.mobile-app
-				%a.android.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "Get ZoomCar Android App", href: "https://play.google.com/store/apps/details?id=com.zoomcar&referrer=utm_source%3Dhome%2520page%26utm_medium%3Dheader%2520links%26utm_content%3Dandroid%26utm_campaign%3Dinstalls"}
-				%a.iphone.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "Get ZoomCar iPhone App", href: "https://itunes.apple.com/us/app/zoomcar-self-drive-cars/id889910218?mt=8&utm_source=home%20page&utm_medium=header%20links&utm_content=iOS&utm_campaign=installs"}
+								%a{:href => "javascript:void(0)", :onclick => "showModal('Sign Up', '/users/signup');"}
+									Sign Up
+							%li
+								%a{:href => "javascript:void(0)", :onclick => "showModal('Sign In', '/users/signin');"}
+									Sign In
+							%li
+								%a{:href => "javascript:void(0)", :onclick => "showModal('Sign In', '/users/forgot');"}
+									Forgot Password
+					.fc
 				.fc
-		.info
-			- if current_user && current_user.unsafe_bookings.any?
-				%a.wallet-alert.fr.ts-3.f-b.pointer.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "You have an upcoming booking with Security Deposit due", href: "/bookings"}
-					!
-			.broadcast.fr
-				#UserBar.dropdown.fr
-					%a.dropdown-toggle.p-r10.p-l10{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
-						My Account
-						%b.caret
-					%ul.dropdown-menu.pull-right
-						%li
-							%a{href: "javascript:void(0)", onclick: "showModal('Sign Up', '/users/signup');"}
-								Sign Up
-						%li
-							%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/signin');"}
-								Sign In
-						%li
-							%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/forgot');"}
-								Forgot Password
-			%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
-				We're Hiring
-			.fc
-			.support
-				= @city.contact_phone
-		.links
-			%ul.nav.navbar-nav.fr
-				- if @header.blank? || @header != 'homepage'
-					- cls = (!@header.blank? && (@header == 'search' || @header == 'booking')) ? 'active' : ''
-					%li
-						%a{class: cls, href: "javascript:void(0)", onclick: "showSearch();"} Book Cars
-				%li.dropdown
-					- cls = (!@header.blank? && @header == 'tariff') ? 'dropdown-toggle active' : 'dropdown-toggle'
-					%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}
-						Tariffs
-						%b.caret
-					%ul.dropdown-menu
-						%li
-							%a{href: "/#{@city.name.downcase}/tariff"}
-								Tariffs Details
-						%li
-							%a{href: "javascript:void(0)", onclick: "showModal('Tariff Calculator', '/calculator/tariff');"}
-								Tariff Calculator
-						%li
-							%a{href: "javascript:void(0)", onclick: "showModal('Trip Modification Estimator', '/calculator/reschedule');"}
-								Trip Modification Estimator
-				%li.dropdown
-					- cls = (!@header.blank? && @header == 'help') ? 'dropdown-toggle active' : 'dropdown-toggle'
-					%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}
-						How It Works
-						%b.caret
-					%ul.dropdown-menu
-						%li
-							%a{href: "/howitworks"}
-								How ZoomCar Works
-						%li
-							%a{href: "/#{@city.name.downcase}/safety"}
-								Zoom in Safety
-						%li
-							%a{href: "/outstation"}
-								Going Outstation?
-						%li
-							%a{href: "/reva"}
-								Zoom's Electric!
-						%li
-							%a{href: "/#{@city.name.downcase}/faq"}
-								FAQs
-						%li
-							%a{href: "/handover"}
-								Zoom Responsibly
-				%li.dropdown
-					- cls = (!@header.blank? && @header == 'policy') ? 'dropdown-toggle active' : 'dropdown-toggle'
-					%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}
-						Policies
-						%b.caret
-					%ul.dropdown-menu
-						%li
-							%a{href: "/#{@city.name.downcase}/fees"}
-								Fee Policy
-						%li
-							%a{href: "/eligibility"}
-								Eligibility
-						%li
-							%a{href: "/member"}
-								Member Agreement
-						%li
-							%a{href: "/privacy"}
-								Privacy Policy
-				%li
-					- cls = (!@header.blank? && @header == 'offers') ? 'active' : ''
-					%a{class: cls, href: "/#{@city.name.downcase}/offers"} Offers
-			.fc
-		.fc
-	- cls = (!@header.blank? && @header == 'search') ? '' : 'hide'
-	- if !@header.blank? && @header == 'search'
-		#SH
-			#SearchFormDiv.search-header
-				= render :partial => '/bookings/widget'
-	- else
-		#SH{:style => 'display:none;'}
-			#SearchFormDiv.search-header
-				#SHContent
-				#SHWait.t-c
-					.wait.m-auto
+
+		.bg-w
+			.wrapper.p-t5.p-b10
+				%a.logo{:href => '/'}
+
+				%nav.links{:role => "navigation"}
+					%ul.nav.navbar-nav.fr
+						%li.dropdown
+							- cls = (!@header.blank? && @header == 'tariff') ? 'dropdown-toggle active' : 'dropdown-toggle'
+							%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}
+								Tariffs
+								%b.caret
+							%ul.dropdown-menu
+								%li
+									%a{href: "/#{@city.name.downcase}/tariff"}
+										Tariffs Details
+								%li
+									%a{href: "javascript:void(0)", onclick: "showModal('Tariff Calculator', '/calculator/tariff');"}
+										Tariff Calculator
+								%li
+									%a{href: "javascript:void(0)", onclick: "showModal('Trip Modification Estimator', '/calculator/reschedule');"}
+										Trip Modification Estimator
+						%li.dropdown
+							- cls = (!@header.blank? && @header == 'help') ? 'dropdown-toggle active' : 'dropdown-toggle'
+							%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}
+								How It Works
+								%b.caret
+							%ul.dropdown-menu
+								%li
+									%a{href: "/howitworks"}
+										How ZoomCar Works
+								%li
+									%a{href: "/#{@city.name.downcase}/safety"}
+										Zoom in Safety
+								%li
+									%a{href: "/outstation"}
+										Going Outstation?
+								%li
+									%a{href: "/reva"}
+										Zoom's Electric!
+								%li
+									%a{href: "/#{@city.name.downcase}/faq"}
+										FAQs
+								%li
+									%a{href: "/handover"}
+										Zoom Responsibly
+						%li.position-r
+							%div
+								.size-11.lgrey.position-a{:style => 'top: 0px; right: 10px; line-height: 10px;'}
+									Need help?
+								%a.t-n{href: 'tel:08033013371'}
+									080-33013371
+
+					.fc
+
+		- cls = (!@header.blank? && @header == 'search') ? '' : 'hide'
+		- if @header.blank? || @header != 'homepage'
+			#SH
+				#SearchFormDiv.search-header
+					= render :partial => '/bookings/widget'
+		- else
+			#SH{:style => 'display:none;'}
+				#SearchFormDiv.search-header
+					#SHContent
+					#SHWait.t-c
+						.wait.m-auto
+					
 #Flash.wrapper

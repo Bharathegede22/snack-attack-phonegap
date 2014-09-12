@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   before_filter :check_ref
   
   def abtest?
-    !cookies[:abtest].blank?
+    !cookies[:abtestc].blank?
   end
 
   def check_city

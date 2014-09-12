@@ -91,7 +91,12 @@ class UsersController < ApplicationController
 		p @city.inspect
 		render json: {html: render_to_string('/users/status.haml', :layout => false)}
 	end
-	
+
+	def status_old
+		p @city.inspect
+		render json: {html: render_to_string('/users/status_old.haml', :layout => false)}
+	end
+
 	def update
 		if current_user.update(signup_params.merge({'profile' => 1}))
 			flash[:notice] = 'Profile changes are saved! '

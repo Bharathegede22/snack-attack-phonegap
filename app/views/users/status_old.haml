@@ -1,5 +1,5 @@
 - if user_signed_in?
-	%a.dropdown-toggle.fl.border-r-d-9.topbar-link.p-5.p-l10{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
+	%a.dropdown-toggle.p-r10.p-l10{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
 		My Account
 		%b.caret
 	%ul.dropdown-menu.pull-right
@@ -18,7 +18,7 @@
 			%a{:href => "javascript:void(0)", :onclick => "logOut('#{destroy_user_session_path}');"}
 				Logout
 - else
-	%a.dropdown-toggle.fl.border-r-d-9.topbar-link.p-5.p-l10{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
+	%a.dropdown-toggle.p-r10.p-l10{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
 		My Account
 		%b.caret
 	%ul.dropdown-menu.pull-right
