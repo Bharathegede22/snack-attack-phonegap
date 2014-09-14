@@ -201,7 +201,7 @@
 			.bg-zoomb.white.p-10.f-b.size-18.p-l10.p-r10
 				Refunds Issued
 			- total_refund=0
-			- @booking.confirmed_refunds.select{|p| p.through=='payu'}.each do |refund|
+			- @booking.confirmed_refunds.select{|p| p.through=='payu' || p.through=='wallet_refund'}.each do |refund|
 				.fl.p-10.p-l20.size-12
 					.text-up
 						Amount Refunded (#{refund.created_at.strftime('%Y-%m-%d')})

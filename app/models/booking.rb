@@ -475,6 +475,7 @@ class Booking < ActiveRecord::Base
 			total -= p.amount.to_i
 		end
 		self.confirmed_refunds.each do |r|
+			next if r.through == 'wallet_refund'
 			total += r.amount.to_i if !r.through.include?('early_return')
 		end
 		return total.to_i	
