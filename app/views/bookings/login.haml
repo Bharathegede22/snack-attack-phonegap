@@ -2,7 +2,7 @@
 	= render :partial => "/bookings/search_steps", locals: {step: 2}
 	.wrapper
 		- render_flash
-		.main-content.fl.bg-w.bs-9
+		.narrow-content.fl.bg-w.bs-9
 			.p-20
 				- if user_signed_in?
 					- if current_user.check_details
@@ -14,7 +14,7 @@
 						= render :template => "/users/signup"
 				- else
 					= render :template => "/devise/sessions/new"
-		.sidebar-fixed.fr
+		.sidebar-b.fr
 			= render :partial => "/bookings/sidebar", locals: {step: 2}
 		.fc
 		%br/
