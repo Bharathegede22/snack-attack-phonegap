@@ -749,10 +749,10 @@ $('#resume_header').click(function(){
 var url = document.location.toString();
 if (url.match('#')) {
 	var anchor = url.split('#')[1];
-	if(anchor == 'faq-41')
+	if(anchor == 'faq-42')
 	{
 		$('#faqs-tabs a[href=#faqs-7]').tab('show').addClass('active').siblings().removeClass('active');
-	    $(document).scrollTop($('#faq-41').offset().top);
+	    $(document).scrollTop($('#faq-42').offset().top);
 	}
 }
 
