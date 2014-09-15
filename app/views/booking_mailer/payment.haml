@@ -86,7 +86,7 @@ Please review the details of your reservation:
 					- if @booking.security_amount_deferred?
 						Deposit is yet to be paid.
 						%i
-							= @booking.deposit_warning
+							= @booking.deposit_warning.html_safe
 					- else
 						Deposit is fully paid.
 		- if offer
