@@ -185,6 +185,7 @@ class Payment < ActiveRecord::Base
 			b = self.booking
 			b.valid?
 			if b && b.outstanding <= 0
+				old_status = b.status
 				if b.status == 0
 					if !b.car_id.blank?
 						b.status = 1
@@ -194,7 +195,6 @@ class Payment < ActiveRecord::Base
 						Inventory.block(b.cargroup_id, b.location_id, b.starts, b.ends)
 						b.status = 6
 					end
-					BookingMailer.payment(b.id).deliver
 					if Rails.env.production?
 						SmsSender.perform_async(b.user_mobile, "Zoom booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoom Support.", b.id)
 					end
@@ -213,6 +213,7 @@ class Payment < ActiveRecord::Base
 					b.update_column(:insufficient_deposit, false)
 					b.make_payment_from_wallet
 				end
+				BookingMailer.payment(b.id).deliver if old_status==0
 			end
 
 		end

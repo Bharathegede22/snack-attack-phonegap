@@ -298,6 +298,7 @@
 				.text-up
 					Payable Amount
 			#DepositFinal.fr.p-10.t-r.p-r20.zoom.f-b.size-20
+				- payable_amount = @booking.outstanding if @booking.settled
 				₹ #{show_currency payable_amount}
 			-if payable_amount>0
 				.fc
