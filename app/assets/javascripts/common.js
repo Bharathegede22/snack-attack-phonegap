@@ -751,7 +751,7 @@ if (url.match('#')) {
 	var anchor = url.split('#')[1];
 	if(anchor == 'faq-41')
 	{
-		$('#faqs-tabs a[href=#faqs-6]').tab('show').addClass('active').siblings().removeClass('active');
+		$('#faqs-tabs a[href=#faqs-7]').tab('show').addClass('active').siblings().removeClass('active');
 	    $(document).scrollTop($('#faq-41').offset().top);
 	}
 }
