@@ -211,22 +211,40 @@ class Booking < ActiveRecord::Base
 				self.notes += note
 			end
 			#total -= deposit.amount.to_i
+			self.reload
 			total = self.outstanding_without_deposit
-			if !self.hold
-				if self.insufficient_deposit || self.security_charge.nil?
-					amount = [self.security_amount.to_i, self.user.wallet_total_amount.to_i].min	
-					total -= amount if amount > 0
+			deposit = 0
+			if total < 0
+				amount = [self.security_amount.to_i, self.user.wallet_total_amount.to_i].min
+				if self.hold
+					deposit = amount if amount > 0
 				else
-					total = self.outstanding
+					total -= amount if amount > 0
+				end
+			else
+				amount = [self.security_amount.to_i, self.user.wallet_total_amount.to_i].min
+				total -= amount if amount > 0
+				if total < 0
+					deposit = total.abs if self.hold
+				else
+					total = 0
+					deposit = 0
 				end
 			end
+			# if !self.hold
+			# 	if self.insufficient_deposit || self.security_charge.nil?
+			# 		amount = [self.security_amount.to_i, self.user.wallet_total_amount.to_i].min	
+			# 		total -= amount if amount > 0
+			# 	else
+			# 		total = self.outstanding
+			# 	end
+			# end
 		# elsif !self.hold && refunds.where(through: 'wallet').any?
 		# 	make_payment_from_wallet(refunds.where(through: 'wallet').first.amount)
 		end
-			
 		self.save(validate: false)
-		BookingMailer.cancel(self.id, total).deliver
-		sendsms('cancel', total) if Rails.env.production?
+		BookingMailer.cancel(self.id,total.to_i.abs,deposit.to_i.abs).deliver
+		sendsms('cancel', total.to_i.abs,deposit.to_i.abs) if Rails.env.production?
 		return data
 	end
 	
@@ -587,10 +605,19 @@ class Booking < ActiveRecord::Base
 		payments.where(through: 'wallet', :status=>1).first
 	end
 
-	def sendsms(action, amount)
+	def sendsms(action, amount,deposit)
 		message =  case action 
 		when 'change' then "Zoom booking (#{self.confirmation_key}) is changed. #{self.cargroup.display_name} from #{self.starts.strftime('%I:%M %p, %d %b')} till #{self.ends.strftime('%I:%M %p, %d %b')} at #{self.location.shortname}. "
-		when 'cancel' then "Hi! Your Zoomcar booking (#{self.confirmation_key}) has been cancelled. We have initiated a refund of Rs.#{amount}, it should reach your account in 5 business days. If you have opted to hold your deposit in your Zoomcar Wallet, the remainder has been moved there."
+		when 'cancel' then "Hi! Your Zoomcar booking (#{self.confirmation_key}) has been cancelled."
+			if amount > 0 && deposit > 0
+				message << "We have initiated a refund of Rs.#{amount.to_i.abs}, it should reach your account in 5 business days. Rs.#{deposit.to_i.abs} of your deposit has been moved to your Zoomcar Wallet."
+			elsif amount == 0 && deposit > 0 
+				message <<"Rs.#{deposit.to_i.abs} of your deposit has been moved to your Zoomcar Wallet"
+			elsif amount > 0 && deposit == 0
+				message << "We have initiated a refund of Rs.#{amount.to_i.abs}."
+			elsif amount == 0 && deposit == 0
+				message<<"All charges were covered by the Security Deposit, it should reach your account in 5 business days."
+			end
 		end
 		if action != 'cancel'
 			if amount == 0
