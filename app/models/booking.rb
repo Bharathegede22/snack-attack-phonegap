@@ -243,8 +243,8 @@ class Booking < ActiveRecord::Base
 		# 	make_payment_from_wallet(refunds.where(through: 'wallet').first.amount)
 		end
 		self.save(validate: false)
-		BookingMailer.cancel(self.id, total.abs,deposit.abs).deliver
-		sendsms('cancel', total.abs,deposit.abs) if Rails.env.production?
+		BookingMailer.cancel(self.id,total.to_i.abs,deposit.to_i.abs).deliver
+		sendsms('cancel', total.to_i.abs,deposit.to_i.abs) if Rails.env.production?
 		return data
 	end
 	
