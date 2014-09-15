@@ -2,21 +2,19 @@
 	city = @booking.city
 	cargroup = @booking.cargroup
 	location = @booking.location
-	outstanding = @booking.outstanding_without_deposit
-	if !@booking.hold
-		if @booking.insufficient_deposit
-			amount = [@booking.security_amount.to_i, @booking.user.wallet_total_amount.to_i].min	
-			outstanding += amount if amount > 0
-		else
-			outstanding = @booking.outstanding
-		end
-	end
 %br/
 Hi #{@user.name},
 %br/
 %br/
 %br/
-Your booking has been cancelled. These are the details of the reservation:
+- if @status == 11
+	We are sorry to inform you that your booking got cancelled because you did not upload a valid driver’s license picture
+- elsif @status == 13
+	We are sorry to inform you that your booking got cancelled because the car met with an accident, and despite our best efforts we could not find a replacement. We are deeply apologetic about this. These are the details of the reservation:
+- elsif @status == 9 
+	We are sorry to inform you that your booking has been cancelled because you did not pickup the car
+- elsif @status == 12
+	We are sorry to inform you that your booking got cancelled because you did not pay the outstanding amount. These are the details of the reservation:
 %br/
 %br/
 %div{style: "border-radius:5px; background:#eeeeee; padding:5px; margin:0px;"}
@@ -68,25 +66,34 @@ Your booking has been cancelled. These are the details of the reservation:
 %br/
 %br/
 %div{style: "background:#eeeeee; margin:0px; padding:10px; color:#000000;"}
-	- if @total != 0
-		- if @total < 0
-			We have initiated a refund of 
-			%b
-				Rs.
-				= @total.abs
-			, it should reach your account in 5 business days. If you have opted to hold your deposit in your Zoomcar Wallet, the remainder has been moved there
-		- else
-			%b
-			Your charges have exceeded the Security Deposit, please pay the outstanding amount by clicking through to your invoice.
-	- else
+	- if @total > 0 && @deposit > 0
+		We have initiated a refund of 
 		%b
-			All charges were covered by the Security Deposit
+			Rs.
+			= @total.to_i
+		, it should reach your account in 5 business days.
+		%b
+			Rs.
+			= @deposit.to_i
+		of your deposit has been moved to your Zoomcar Wallet.
+	-elsif @total == 0 && @deposit > 0 
+		%b
+			Rs.
+			= @deposit.to_i
+			of your deposit has been moved to your Zoomcar Wallet
+	-elsif @total > 0 && @deposit == 0
+		We have initiated a refund of
+		%b
+			Rs.
+			= @total.to_i
+	-elsif @total == 0 && @deposit == 0
+		All charges were covered by the Security Deposit, it should reach your account in 5 business days.
 %br/
 %br/
 %br/
 Here is the invoice for your booking:
 %a{href: @booking.link + "/invoice"} 
-	= @booking.link + "/invoice" 
+	= @booking.link + "/invoice"
 Please do feel free to reach out to us about any of these charges, we are always there to address your concerns.
 %br/
 %br/

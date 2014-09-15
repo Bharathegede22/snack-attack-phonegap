@@ -4,9 +4,10 @@ class BookingMailer < ActionMailer::Base
   
   default from: "ZoomCar <help@zoomcar.in>"#, bcc: "support@zoomcar.in"
   
-  def cancel(booking, total)
+  def cancel(booking, total,deposit)
 		@booking = Booking.find_by_id booking
 		@total = total
+		@deposit = deposit
 		@user = @booking.user
 		mail(:to => @user.email, :subject => "Your Zoom Reservation : #{@booking.confirmation_key}", bcc: @booking.city.contact_email)
 	end
