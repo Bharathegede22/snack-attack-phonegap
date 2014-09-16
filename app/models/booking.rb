@@ -605,7 +605,7 @@ class Booking < ActiveRecord::Base
 		payments.where(through: 'wallet', :status=>1).first
 	end
 
-	def sendsms(action, amount,deposit)
+	def sendsms(action, amount,deposit = 0)
 		message =  case action 
 		when 'change' then "Zoom booking (#{self.confirmation_key}) is changed. #{self.cargroup.display_name} from #{self.starts.strftime('%I:%M %p, %d %b')} till #{self.ends.strftime('%I:%M %p, %d %b')} at #{self.location.shortname}. "
 		when 'cancel' then "Hi! Your Zoomcar booking (#{self.confirmation_key}) has been cancelled."
