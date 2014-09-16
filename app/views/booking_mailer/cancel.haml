@@ -7,14 +7,7 @@ Hi #{@user.name},
 %br/
 %br/
 %br/
-- if @status == 11
-	We are sorry to inform you that your booking got cancelled because you did not upload a valid driver’s license picture
-- elsif @status == 13
-	We are sorry to inform you that your booking got cancelled because the car met with an accident, and despite our best efforts we could not find a replacement. We are deeply apologetic about this. These are the details of the reservation:
-- elsif @status == 9 
-	We are sorry to inform you that your booking has been cancelled because you did not pickup the car
-- elsif @status == 12
-	We are sorry to inform you that your booking got cancelled because you did not pay the outstanding amount. These are the details of the reservation:
+Your booking has been cancelled. These are the details of the reservation:
 %br/
 %br/
 %div{style: "border-radius:5px; background:#eeeeee; padding:5px; margin:0px;"}

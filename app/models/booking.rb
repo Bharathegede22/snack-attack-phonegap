@@ -609,6 +609,8 @@ class Booking < ActiveRecord::Base
 		message =  case action 
 		when 'change' then "Zoom booking (#{self.confirmation_key}) is changed. #{self.cargroup.display_name} from #{self.starts.strftime('%I:%M %p, %d %b')} till #{self.ends.strftime('%I:%M %p, %d %b')} at #{self.location.shortname}. "
 		when 'cancel' then "Hi! Your Zoomcar booking (#{self.confirmation_key}) has been cancelled."
+		end
+		if action == 'cancel'
 			if amount > 0 && deposit > 0
 				message << "We have initiated a refund of Rs.#{amount.to_i.abs}, it should reach your account in 5 business days. Rs.#{deposit.to_i.abs} of your deposit has been moved to your Zoomcar Wallet."
 			elsif amount == 0 && deposit > 0 

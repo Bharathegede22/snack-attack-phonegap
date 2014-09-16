@@ -13,7 +13,7 @@ class BookingsController < ApplicationController
 		@security = (@booking.hold) ? 0 : (@booking.pricing.mode::SECURITY - @booking.security_amount_remaining)
 		if request.post?
 			@booking.valid?
-			fare = @booking.do_cancellation
+			@fare = @booking.do_cancellation
 			flash[:notice] = "Your booking is successfully <b>cancelled</b>. <b>#{fare[:refund] - fare[:penalty] + @security}</b> will be refunded to you shortly."
 		else
 			@booking.status = 9
