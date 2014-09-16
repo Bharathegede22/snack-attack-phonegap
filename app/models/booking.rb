@@ -489,7 +489,7 @@ class Booking < ActiveRecord::Base
 				end
 			end
 		end
-		self.confirmed_payments.where(:through => "payu").each do |p|
+		self.confirmed_payments.reject{|p| p.through.include?("wallet")}.each do |p|
 			total -= p.amount.to_i
 		end
 		self.confirmed_refunds.each do |r|
