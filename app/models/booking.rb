@@ -357,6 +357,16 @@ class Booking < ActiveRecord::Base
 	def get_fare
 		return "Pricing#{self.pricing.version}".constantize.check(self)
 	end
+
+	def kle_enabled
+		#binding.pry
+		if !self.location.kle_enabled.nil?
+			#return (self.starts >= self.location.kle_enabled && Cargroup.find(self.actual_cargroup_id).kle)
+			return (self.starts >= self.location.kle_enabled && Cargroup.find(self.cargroup_id).kle)
+		else
+			false
+		end
+	end
 	
 	def link
 		return "http://" + HOSTNAME + "/bookings/" + self.encoded_id

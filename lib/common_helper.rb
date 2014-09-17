@@ -20,6 +20,7 @@ module CommonHelper
   
 	CUSTOMER_CARE = "080-33013371"
 	CUSTOMER_CARE_EMAIL = "contact@zoomcar.in"
+	KLE_UNLOCK_NUMBER = ""
 	LIABILITY = '5,000'
 	ALLOTMENT = 90
 	WEEKDAY_DISCOUNT = 40
