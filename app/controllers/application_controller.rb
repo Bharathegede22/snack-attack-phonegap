@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   #protect_from_forgery with: :exception
   
   before_filter :check_city
-  #before_filter :check_mobile
+  before_filter :check_mobile
   before_filter :check_ref
   
   def abtest?
@@ -64,7 +64,6 @@ class ApplicationController < ActionController::Base
   			else
   				@device = 'android'
   			end
-  			render 'mobile_redirect', :layout => false and return
   		end
   	end
   end

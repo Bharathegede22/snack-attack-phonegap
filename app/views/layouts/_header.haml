@@ -1,11 +1,6 @@
 = render :partial => '/layouts/tag_manager'
 #DocTop
-
-- mobile_redirect = 0
-
-- if mobile_redirect == 1
-	= render :partial => '/main/mobile_redirect'
-
+= render :partial => '/main/mobile_redirect' if !@device.blank?
 #header-new
 	- announcement = 0
 	- if announcement == 0
