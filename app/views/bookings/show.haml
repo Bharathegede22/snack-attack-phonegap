@@ -150,7 +150,7 @@
 		.fc
 		- if @booking.status >= 1 && !@booking.settled && @booking.deposit_status!=3 && !@booking.hold
 			.fl.p-l20.p-r10.p-b10
-				%input{id: "holdDeposit", name: "holdDeposit", type: "checkbox", value: "yes"}
+				%input{id: "holdDeposit", name: "holdDeposit", type: "checkbox", value: "yes", onclick: "pushEvent('Wallet', 'Holds Clicked (Bookings Summary)');"}
 				%label#holdDepositLabel{style: 'font-weight: normal; margin: 0;', for: 'holdDeposit'}
 					Hold This Security Deposit
 
@@ -160,7 +160,7 @@
 					.f-i.size-11.p-t5
 						You can refund this money any time 24 hours before or 6 hours after a booking through My Bookings.
 					
-					%input.button.m-t5.size-12{style: "width:100px;", type: "submit", id: "holdDepositApply", value: "Apply"}
+					%input.button.m-t5.size-12{style: "width:100px;", type: "submit", id: "holdDepositApply", value: "Apply", onclick: "pushEvent('Wallet', 'Holds Applied (Bookings Summary)');"}
 
 					#holdSuccess.alert.alert-success{'style' => 'display: none;'} 
 						Hold Successful
@@ -225,7 +225,7 @@
 				%span.pointer.pop.size-12.white{'href' => '#', 'data-toggle' => "popover",  'data-placement' => "top", 'data-html' => "true", 'data-content' => "<div class='grey size-12 f-n'>Your ZoomCar Wallet is where your Security Deposit is kept. This allows you to use the same deposit across multiple bookings. <a href='/faq#faq-42'>Learn more</a> in our FAQs.</div>"}
 					[?]
 			.fr
-				%a.white.size-12{href: "javascript:void(0)", onclick: "showModal('Transaction History', '/wallets/history');"}
+				%a.white.size-12{href: "javascript:void(0)", onclick: "showModal('Transaction History', '/wallets/history');pushEvent('Wallet', 'Transaction History Pop Up (Bookings Summary)');"}
 					Show Transaction History
 			.fc
 		- total=0
