@@ -33,7 +33,7 @@
 			Security Deposit in Wallet
 		.p-10.size-22.f-b.t-c.border-b-c
 			= "Rs. " + number_with_delimiter(wallet_amount)
-		%a.block.p-10.black.border-b-c.t-n{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/show_refund');pushEvent('Wallet', 'Refund Widget Click (Bookings Summary)');"}
+		%a.block.p-10.black.border-b-c.t-n{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/show_refund');pushEvent('Wallet', 'Refund Widget Click (My Bookings)');"}
 			Available for refund: 
 			%span.zoom.f-b
 				= "Rs. " + number_with_delimiter(current_user.wallet_total_amount)
