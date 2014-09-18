@@ -12,18 +12,18 @@ class Booking < ActiveRecord::Base
 	has_many	:charges, :inverse_of => :booking, dependent: :destroy
 	has_many	:payments, :inverse_of => :booking, dependent: :destroy
 	has_many	:refunds, :inverse_of => :booking, dependent: :destroy
-	has_many	:confirmed_payments, -> { where "status = 1" }, class_name: "Payment"
-	has_many	:confirmed_refunds, -> { where "status = 1" }, class_name: "Refund"
+	has_many	:confirmed_payments, -> { where "status = 1 and through != 'wallet_widget'" }, class_name: "Payment"
+	has_many	:confirmed_refunds, -> { where "status = 1 and through != 'wallet_widget'" }, class_name: "Refund"
 	has_many 	:credit, :as => :creditable , dependent: :destroy
 	has_many	:utilizations, -> {where "minutes > 0"}, dependent: :destroy
 	
 	has_one :coupon_code
 	has_one	:review, :inverse_of => :booking, dependent: :destroy
 	has_one :debug, :as => :debugable, dependent: :destroy
+	has_one :wallet_payment
 	
 	has_paper_trail
 	
-	attr_accessor :defer_deposit
 	attr_accessor :ends_last
 	attr_accessor :pricing_mode_last
 	attr_accessor :starts_last
@@ -40,13 +40,28 @@ class Booking < ActiveRecord::Base
 	before_save :before_save_tasks
 	before_validation :before_validation_tasks
 	
-	def add_security_deposit_charge
-		return if !self.corporate_id.blank?
-		charge = Charge.where(["booking_id = ? AND activity = 'security_deposit'", self.id]).first
-		return if charge
-		charge 					= Charge.new(:booking_id => self.id, :activity => 'security_deposit')
+	# Return a scope for all interval overlapping the given interval, including the given interval itself
+	scope :overlapping, lambda { |interval| {
+	:conditions => ["(DATEDIFF(starts, ?) * DATEDIFF(?, ends)) >= 0 AND user_id = ? AND status > 0 AND status < 5", interval.ends, interval.starts, interval.user_id]
+	}}
+	
+	scope :overlapping_deposit, lambda { |interval| {
+	:conditions => ["(DATEDIFF(starts, ?) * DATEDIFF(?, ends)) >= 0 AND user_id = ? AND status > 0 AND status < 5", interval.ends + CommonHelper::WALLET_FREEZE_END.hours, interval.starts - CommonHelper::WALLET_FREEZE_START.hours, interval.user_id]
+	}}
+
+	def add_security_deposit_charge(pay_wallet= false)
+		return if !self.corporate_id.blank? || !security_charge.nil?
+		charge 			= Charge.new(:booking_id => self.id, :activity => 'security_deposit')
 		charge.amount 	= self.pricing.mode::SECURITY
 		charge.save
+		make_payment_from_wallet if pay_wallet
+	end
+
+	def add_security_deposit_to_wallet(amount= security_amount)
+		return if (amount.to_i <= 0)
+		refund = Refund.create!(status: 1, booking_id: self.id, through: 'wallet', amount: amount)
+		Wallet.create!(amount: amount, user_id: self.user_id, status: 1, credit: true, transferable: refund)
+		self.update_column(:hold, false) if amount.to_i >= 5000
 	end
 
 	def cancellation_charge
@@ -65,11 +80,17 @@ class Booking < ActiveRecord::Base
 			Inventory.connection.clear_query_cache
 			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
 			if self.starts != self.starts_last || self.ends != self.ends_last
-				if self.starts < self.starts_last
-					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
-				end
-				 if check == 1 && self.ends > self.ends_last
-					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, self.ends_last, (self.ends + cargroup.wait_period.minutes))
+				if self.starts > self.ends_last + cargroup.wait_period.minutes || self.ends < self.starts_last - cargroup.wait_period.minutes
+					# Non Overlapping Reschedule
+					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
+				else
+					# Overlapping Reschedule
+					if self.starts < self.starts_last
+						check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
+					end
+					if check == 1 && self.ends > self.ends_last
+						check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, self.ends_last, (self.ends + cargroup.wait_period.minutes))
+					end
 				end
 			else
 				check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
@@ -82,7 +103,7 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def check_payment
-		total = self.outstanding
+		total = defer_deposit ? self.outstanding_without_deposit : self.outstanding_with_security
 		if total > 0
 			payment = Payment.create!(booking_id: self.id, through: 'payu', amount: total)
 		else
@@ -141,12 +162,13 @@ class Booking < ActiveRecord::Base
 		return "ZoomCar allows you to delay paying the Security Deposit. We really don’t want your money stuck in a deposit if your booking starts days from now."
 	end
 	
-	def deposit_warning
-		return "Please pay the deposit by <b>#{(self.starts - CommonHelper::JIT_DEPOSIT_CANCEL.hours).strftime('%d/%m/%y %I:%M %p')}</b> or your booking will get <u>cancelled</u>."
+	def deposit_warning(remaining='')
+		return "Please pay the #{remaining}deposit by <b>#{(self.starts - CommonHelper::JIT_DEPOSIT_CANCEL.hours).strftime('%d/%m/%y %I:%M %p')}</b> or your booking will get <u>cancelled</u>."
 	end
 	
 	def do_cancellation
 		return nil if self.status > 8
+		self.release_payment = true
 		self.status = 10
 		self.manage_inventory
 		data = self.get_fare
@@ -174,7 +196,7 @@ class Booking < ActiveRecord::Base
 			end
 		end
 		total = 0 - data[:refund] + data[:penalty]
-		# Deposit Refund
+		
 		deposit = Charge.where(["booking_id = ? AND activity = 'security_deposit'", self.id]).first
 		if deposit
 			charge = Charge.where(["booking_id = ? AND activity = 'security_deposit_refund'", self.id]).first
@@ -188,11 +210,42 @@ class Booking < ActiveRecord::Base
 				note += data[:penalty].to_s + " - Security Deposit Refund.<br/>"
 				self.notes += note
 			end
-			total -= deposit.amount.to_i
+			#total -= deposit.amount.to_i
+			out = Booking.find_by_id(self.id)
+			#self.reload
+			total = out.outstanding_without_deposit
+			deposit = 0
+			if total < 0
+				amount = [out.security_amount.to_i, out.user.wallet_total_amount.to_i].min
+				if self.hold
+					deposit = amount if amount > 0
+				else
+					total -= amount if amount > 0
+				end
+			else
+				amount = [out.security_amount.to_i, out.user.wallet_total_amount.to_i].min
+				total -= amount if amount > 0
+				if total < 0
+					deposit = total.abs if self.hold
+				else
+					total = 0
+					deposit = 0
+				end
+			end
+			# if !self.hold
+			# 	if self.insufficient_deposit || self.security_charge.nil?
+			# 		amount = [self.security_amount.to_i, self.user.wallet_total_amount.to_i].min	
+			# 		total -= amount if amount > 0
+			# 	else
+			# 		total = self.outstanding
+			# 	end
+			# end
+		# elsif !self.hold && refunds.where(through: 'wallet').any?
+		# 	make_payment_from_wallet(refunds.where(through: 'wallet').first.amount)
 		end
 		self.save(validate: false)
-		BookingMailer.cancel(self.id, total).deliver
-		sendsms('cancel', total)
+		BookingMailer.cancel(self.id,total.to_i.abs,deposit.to_i.abs).deliver
+		sendsms('cancel', total.to_i.abs,deposit.to_i.abs) if Rails.env.production?
 		return data
 	end
 	
@@ -357,19 +410,23 @@ class Booking < ActiveRecord::Base
 	def get_fare
 		return "Pricing#{self.pricing.version}".constantize.check(self)
 	end
-
-	def kle_enabled
-		#binding.pry
-		if !self.location.kle_enabled.nil?
-			#return (self.starts >= self.location.kle_enabled && Cargroup.find(self.actual_cargroup_id).kle)
-			return (self.starts >= self.location.kle_enabled && Cargroup.find(self.cargroup_id).kle)
-		else
-			false
-		end
+	
+	def hold_security?
+		self.hold == true
 	end
 	
 	def link
 		return "http://" + HOSTNAME + "/bookings/" + self.encoded_id
+	end
+
+	def make_payment_from_wallet(amount= security_amount, insufficient_flag=true)
+		amount = [amount.to_i, user.wallet_total_amount.to_i].min
+		if (amount < security_amount) && insufficient_flag
+			self.update_column(:insufficient_deposit,true) and return
+		end 
+		return if amount.to_i <= 0
+		wpayment = Payment.create!(status: 1, booking_id: self.id, through: 'wallet', amount: (amount > self.pricing.mode::SECURITY) ? (self.pricing.mode::SECURITY) : amount)
+		Wallet.create!(amount: amount, user_id: self.user_id, status: 1, credit: false, transferable: wpayment)
 	end
 	
 	def manage_inventory
@@ -379,23 +436,21 @@ class Booking < ActiveRecord::Base
 			Inventory.connection.clear_query_cache
 			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
 			if !self.starts_last.blank? && (self.starts != self.starts_last || self.ends != self.ends_last)
-				if self.starts < self.starts_last
-					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
-				end
-				if self.ends > self.ends_last
-					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, self.ends_last, (self.ends + cargroup.wait_period.minutes)) if check == 1
+				if self.starts > self.ends_last + cargroup.wait_period.minutes || self.ends < self.starts_last - cargroup.wait_period.minutes
+					# Non Overlapping Reschedule
+					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
+				elsif (self.starts != self.starts_last || self.ends != self.ends_last)
+					# Overlapping Reschedule
+					if self.starts < self.starts_last
+						check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
+					end
+					if self.ends > self.ends_last && check == 1
+						check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, self.ends_last, (self.ends + cargroup.wait_period.minutes))
+					end
 				end
 				if check == 1
-					if self.starts < self.starts_last
-						Inventory.block(self.cargroup_id, self.location_id, self.starts, self.starts_last)
-					elsif self.starts > self.starts_last
-						Inventory.release(self.cargroup_id, self.location_id, self.starts_last, self.starts)
-					end
-					if self.ends > self.ends_last
-						Inventory.block(self.cargroup_id, self.location_id, self.ends_last, self.ends)
-					elsif self.ends < self.ends_last
-						Inventory.release(self.cargroup_id, self.location_id, self.ends, self.ends_last)
-					end
+					Inventory.release(self.cargroup_id, self.location_id, self.starts_last, self.ends_last)
+					Inventory.block(self.cargroup_id, self.location_id, self.starts, self.ends)
 				end
 			else
 				if self.status < 9
@@ -418,11 +473,49 @@ class Booking < ActiveRecord::Base
 		total += self.total_refunds
 		return total.to_i
 	end
+
+	def outstanding_with_security
+		total = self.outstanding_without_deposit 
+		total<=0 ? security_amount_remaining : (total + security_amount_remaining)
+	end
+
+	def outstanding_without_deposit
+  		total = 0
+		self.charges.each do |c|
+			unless c.activity.include?('early_return') || c.activity.include?('security_deposit')
+				if c.refund > 0
+					total -= c.amount.to_i
+				else
+					total += c.amount.to_i
+				end
+			end
+		end
+		self.confirmed_payments.reject{|p| p.through.include?("wallet")}.each do |p|
+			total -= p.amount.to_i
+		end
+		self.confirmed_refunds.each do |r|
+			next if r.through == 'wallet_refund'
+			total += r.amount.to_i if !r.through.include?('early_return')
+		end
+		return total.to_i	
+  	end
 	
 	def outstanding_warning
 		return "Please pay any outstanding amount by <b>#{(self.starts - CommonHelper::JIT_DEPOSIT_CANCEL.hours).strftime('%d/%m/%y %I:%M %p')}</b> or your booking will get <u>cancelled</u>."
 	end
-	
+
+	# Check if a given interval overlaps this interval    
+	def overlaps?(other)
+		return false if other.nil?
+		(starts - other.ends) * (other.starts - ends) >= 0
+	end
+
+	# Check if a given interval overlaps this interval    
+	def wallet_overlaps?(other)
+		return false if other.nil?
+		((starts - CommonHelper::WALLET_FREEZE_START.hours) - (other.ends + CommonHelper::WALLET_FREEZE_END.hours)) * ((other.starts- CommonHelper::WALLET_FREEZE_START.hours) - (ends + CommonHelper::WALLET_FREEZE_END.hours))>= 0
+	end
+
 	def refund_amount
 		total = 0
 		self.charges.each do |c|
@@ -485,14 +578,49 @@ class Booking < ActiveRecord::Base
 		#Utilization.manage(id)
 	end
 
-	def security_amount_deferred?
-		pricing.mode::SECURITY > 0 && !charges.where(activity: 'security_deposit', :active=>true).any?
+	def security_amount
+		pricing.mode::SECURITY rescue 0
 	end
 
-	def sendsms(action, amount)
+	def security_amount_deferred?
+		pricing.mode::SECURITY > 0 && security_amount_remaining > 0
+	end
+
+	def security_amount_remaining
+		return 0 if ((status > 1) || wallet_security_payment.present?)
+		count = Booking.select(:id).where('user_id = ? and starts = ? and created_at < ? and status < 8 and status > 0', self.user_id, self.starts, self.created_at.blank? ? Time.now : self.created_at).count # for exactly overlaping booking
+		amount = security_amount*(count+1) - user.wallet_available_on_time(self.starts.advance(hours: -CommonHelper::WALLET_FREEZE_START), self)
+		amount = (amount < 0) ? 0 : amount
+		[amount, security_amount].min
+	end
+
+	def security_charge
+		charges.where(activity: 'security_deposit', :active=>true).first
+	end
+	
+	def security_refund_charge
+		charges.where(activity: 'security_deposit_refund', :active=>true).first
+	end
+	
+	def wallet_security_payment
+		payments.where(through: 'wallet', :status=>1).first
+	end
+
+	def sendsms(action, amount,deposit = 0)
 		message =  case action 
 		when 'change' then "Zoom booking (#{self.confirmation_key}) is changed. #{self.cargroup.display_name} from #{self.starts.strftime('%I:%M %p, %d %b')} till #{self.ends.strftime('%I:%M %p, %d %b')} at #{self.location.shortname}. "
-		when 'cancel' then "Zoom booking (#{self.confirmation_key}) is cancelled. Rs.#{amount} will be refunded back to your account in 4 days. "
+		when 'cancel' then "Hi! Your Zoomcar booking (#{self.confirmation_key}) has been cancelled."
+		end
+		if action == 'cancel'
+			if amount > 0 && deposit > 0
+				message << "We have initiated a refund of Rs.#{amount.to_i.abs}, it should reach your account in 5 business days. Rs.#{deposit.to_i.abs} of your deposit has been moved to your Zoomcar Wallet."
+			elsif amount == 0 && deposit > 0 
+				message <<"Rs.#{deposit.to_i.abs} of your deposit has been moved to your Zoomcar Wallet"
+			elsif amount > 0 && deposit == 0
+				message << "We have initiated a refund of Rs.#{amount.to_i.abs}."
+			elsif amount == 0 && deposit == 0
+				message<<"All charges were covered by the Security Deposit, it should reach your account in 5 business days."
+			end
 		end
 		if action != 'cancel'
 			if amount == 0
@@ -503,8 +631,9 @@ class Booking < ActiveRecord::Base
 				message << "Rs.#{amount.to_i} is outstanding. "
 			end
 		end
-		message << "#{self.city.contact_phone} : Zoom Support."
-		SmsSender.perform_async(self.user_mobile, message, self.id)
+		message << "#{self.city.contact_phone} : Zoom Support." if action != 'cancel'
+		#SmsSender.perform_async(self.user_mobile, message, self.id) if Rails.env.production?
+		SmsTask::message_exotel(self.user_mobile, message, self.id)
 	end
 	
 	def set_fare
@@ -565,6 +694,7 @@ class Booking < ActiveRecord::Base
 			when 5 then 'Completed'
 			when 6 then 'No Inventory'
 			when 7 then 'No Car'
+			when 8 then 'Settled'
 			when 9 then 'No Show'
 			when 10 then 'Cancelled'
 			when 12 then 'Auto Cancelled'
@@ -578,6 +708,7 @@ class Booking < ActiveRecord::Base
 			when 5 then 'Completed'
 			when 6 then 'No Inventory'
 			when 7 then 'No Car'
+			when 8 then 'Settled'
 			when 9 then 'No Show'
 			when 10 then 'Cancelled'
 			when 12 then 'Auto Cancelled'
@@ -600,6 +731,7 @@ class Booking < ActiveRecord::Base
 		when 5 then 'Completed'
 		when 6 then 'No Inventory'
 		when 7 then 'No Car'
+		when 8 then 'Settled'
 		when 9 then 'No Show'
 		when 10 then 'Cancelled'
 		when 12 then 'Auto Cancelled'
@@ -653,20 +785,27 @@ class Booking < ActiveRecord::Base
 		self.user_mobile = user.phone
 	end
 	
+	def wallet_impact
+		{starts: ([Time.now, starts-CommonHelper::WALLET_FREEZE_START.hours].max),
+		 booking: self,
+		 amount: hold_security? ? 0 : -security_amount,
+		 ends: ([ends+CommonHelper::WALLET_FREEZE_END.hours, Time.now+CommonHelper::WALLET_SNAPSHOT.days].min)}
+	end
+
 	protected
 	
 	def after_create_tasks
-		charge 													= Charge.new(:booking_id => self.id, :activity => 'booking_fee')
-		charge.hours 										= self.hours
-		charge.billed_total_hours 			= self.hours
-		charge.billed_discounted_hours 	= self.discounted_hours
-		charge.billed_standard_hours 		= self.normal_hours
-		charge.estimate 								= self.estimate
-		charge.discount 								= self.discount
-		charge.amount 									= self.total_fare
+		charge                         = Charge.new(:booking_id => self.id, :activity => 'booking_fee')
+		charge.hours                   = self.hours
+		charge.billed_total_hours      = self.hours
+		charge.billed_discounted_hours = self.discounted_hours
+		charge.billed_standard_hours   = self.normal_hours
+		charge.estimate                = self.estimate
+		charge.discount                = self.discount
+		charge.amount                  = self.total_fare
 		charge.save
-		add_security_deposit_charge if self.defer_deposit.blank? && self.pricing.mode::SECURITY > 0
 		self.confirmation_key = self.encoded_id.upcase
+		self.hold = true
 		self.save(validate: false)
 	end
 
@@ -677,6 +816,7 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def before_save_tasks
+		self.actual_cargroup_id = self.cargroup_id if self.cargroup_id_changed?
 		if self.id.blank?
 			setup
 			set_fare
