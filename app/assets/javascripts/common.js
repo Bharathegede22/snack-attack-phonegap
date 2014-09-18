@@ -718,6 +718,7 @@ $(function () {
   		$(this).siblings().removeClass('active');
   		$(this).addClass('active');
   		$(this).tab('show');
+  		pushEvent('Wallet', 'Wallet FAQ Pop Up (Checkout)');
 	})
 });
 
@@ -738,6 +739,7 @@ $('.safe-booking, .unsafe-booking').on('show.bs.popover', function(){
 	var title = $(this).attr('data-original-title');
 	var el = $('#row'+title);
 	el.addClass('highlight');
+	pushEvent('Wallet', 'Graph Booking Icon (My Bookings)');
 });
 
 $('#resume_header').click(function(){
