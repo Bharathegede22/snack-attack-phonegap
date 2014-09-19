@@ -211,18 +211,19 @@ class Booking < ActiveRecord::Base
 				self.notes += note
 			end
 			#total -= deposit.amount.to_i
-			self.reload
-			total = self.outstanding_without_deposit
+			out = Booking.find_by_id(self.id)
+			#self.reload
+			total = out.outstanding_without_deposit
 			deposit = 0
 			if total < 0
-				amount = [self.security_amount.to_i, self.user.wallet_total_amount.to_i].min
+				amount = [out.security_amount.to_i, out.user.wallet_total_amount.to_i].min
 				if self.hold
 					deposit = amount if amount > 0
 				else
 					total -= amount if amount > 0
 				end
 			else
-				amount = [self.security_amount.to_i, self.user.wallet_total_amount.to_i].min
+				amount = [out.security_amount.to_i, out.user.wallet_total_amount.to_i].min
 				total -= amount if amount > 0
 				if total < 0
 					deposit = total.abs if self.hold
