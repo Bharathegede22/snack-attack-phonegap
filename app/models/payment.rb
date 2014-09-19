@@ -195,7 +195,7 @@ class Payment < ActiveRecord::Base
 						Inventory.block(b.cargroup_id, b.location_id, b.starts, b.ends)
 						b.status = 6
 					end
-					BookingMailer.payment(b.id).deliver
+					#BookingMailer.payment(b.id).deliver
 					#SmsSender.perform_async(b.user_mobile, "Zoom booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoom Support.", b.id)
 					if !b.location.kle_enabled.nil?
 						if (b.created_at < b.location.kle_enabled && b.starts >= b.location.kle_enabled) && (b.starts.to_i - b.created_at.to_i) < 86400 && b.kle_enabled
