@@ -181,7 +181,7 @@ class Payment < ActiveRecord::Base
 	protected
 	
 	def after_save_tasks
-		if self.status == 1 
+		if self.status_changed? && self.status == 1 
 			b = self.booking
 			b.valid?
 			if b && b.outstanding <= 0
@@ -204,8 +204,11 @@ class Payment < ActiveRecord::Base
 				b.save(:validate => false)
 				Booking.recalculate(b.id)
 				wallet_amount = (b.outstanding_without_deposit + self.amount)>=0 ? b.outstanding_without_deposit.abs : self.amount
-				b.add_security_deposit_to_wallet(wallet_amount) if wallet_amount != 0
-				self.update_column(:deposit_available_for_refund, wallet_amount)
+				if wallet_amount != 0
+						b.add_security_deposit_to_wallet(wallet_amount)
+						self.update_column(:deposit_available_for_refund, wallet_amount)
+						self.update_column(:deposit_paid, wallet_amount)
+				end
 				if !b.defer_allowed? && b.security_charge.nil?
 					b.add_security_deposit_charge
 				end
