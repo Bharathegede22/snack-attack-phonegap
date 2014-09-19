@@ -98,8 +98,22 @@ Please review the details of your reservation:
 						= @booking.promo
 					%br/
 					= offer.summary.html_safe
-%br/
-%br/
+- if @booking.kle_enabled
+	%br/
+	%br/
+	You can now enter a Zoomcar at the start of your booking or exit it at the end keyless-ly:
+	%ul
+		%li Unlock: At the start of your booking, to unlock the car use the Zoomcar app or SMS "UNLOCK" to #{CommonHelper::KLE_UNLOCK_NUMBER} from the phone number linked to your Zoomcar account. Watch the magic unfold!
+		%li Grab Car Keys: Take the keys from the key-holder in the glove-box. Remember you can unlock and lock the car keyless-ly only once during your booking, so keep the keys on you.
+		%li Checklist: Go through the checklist on the in-car tablet's Zoomcar app. We ensure the car has everything for a smooth journey. Please remember if the checklist is not filled we will assume you found everything in great condition.
+		%li Start Your Journey: Zoom off!
+		%li Return: Place the key back in the key-holder and turn to locked position. Complete the super-quick return checklist on the tablet.
+		%li Lock: The car auto-locks 5 minutes after you submit the return checklist. You are now all set! See you again soon at the wheel of another Zoomcar.
+	%br/
+	%br/
+	Please make sure the number linked with your Zoomcar account is your correct number: #{@booking.user_mobile}. We will text your car’s details on this number, and also allow unlocking the car via SMS through only this number.
+	%br/
+	%br/
 %div{style: "margin:0px; padding:0px;"}
 	%b{style: "color:red; font-style:italic;"} IMPORTANT!
 	%br/
@@ -108,9 +122,10 @@ Please review the details of your reservation:
 		%b
 			= (@booking.starts - CommonHelper::JIT_DEPOSIT_CANCEL.hours).strftime("%d/%m/%y %I:%M %p")
 		or your booking will get cancelled.
-	%p{style: "margin:5px 0 0 0; padding:0;"}
-		\- Please remember to carry your original driving license at the time of picking the car. Zoom reserves the right of cancelling the reservation if the original driving license is not produced.
-		\- Users driving in Pune should be aware that cars with self-drive license plates are required to pay the Rs 15 Cantonment toll.
+	- if !@booking.kle_enabled
+		%p{style: "margin:5px 0 0 0; padding:0;"}
+			\- Please remember to carry your original driving license at the time of picking the car. Zoom reserves the right of cancelling the reservation if the original driving license is not produced.
+			\- Users driving in Pune should be aware that cars with self-drive license plates are required to pay the Rs 15 Cantonment toll.
 	%p{style: "margin:5px 0 0 0; padding:0;"}
 		\- As a friendly reminder, your reservation comes with 
 		%b
@@ -125,8 +140,9 @@ Please review the details of your reservation:
 			and
 			%a{href: 'http://www.zoomcar.in/fees'} fee policy
 			for more.
-	%p{style: "margin:5px 0 0 0; padding:0;"}
-		\- Please remember to carry your valid credit / debit card for paying any fee at the time you return the vehicle.
+	- if !@booking.kle_enabled
+		%p{style: "margin:5px 0 0 0; padding:0;"}
+			\- Please remember to carry your valid credit / debit card for paying any fee at the time you return the vehicle.
 %br/
 %div{style: "background:#eeeeee; margin:0px; padding:10px; color:#000000;"}
 	Please note that for a reservation that is cancelled less than 24 hours before it is scheduled to start, you will be obligated to pay 25% of the reservation amount, with a maximum of Rs 2000. See our
@@ -135,31 +151,32 @@ Please review the details of your reservation:
 	for more details.
 %br/
 %br/
-%b Your Details
-%br/
-%div{style: "padding:5px; margin:0px;"}
-	%table{border: '0', cellpadding: '5', cellspacing: '0', style: "font-size:12px; color:#333333;"}
-		%tr
-			%td{valign: 'top'} Name:
-			%td{valign: 'top'}
-				%b #{@user.name}
-		%tr
-			%td{valign: 'top'} Email: 
-			%td{valign: 'top'}
-				%b #{@user.email}
-		%tr
-			%td{valign: 'top'} Mobile: 
-			%td{valign: 'top'}
-				%b #{@user.phone}
-		%tr
-			%td{valign: 'top'} License:
-			%td{valign: 'top'}
-				- license = @user.license_pic
-				- if license
-					%a{href: 'http://uploads.zoomcar.in' + license.avatar.url(:profile), target: '_blank'}
-						See license
-				- else
-					= "-"
+- if !@booking.kle_enabled
+	%b Your Details
+	%br/
+	%div{style: "padding:5px; margin:0px;"}
+		%table{border: '0', cellpadding: '5', cellspacing: '0', style: "font-size:12px; color:#333333;"}
+			%tr
+				%td{valign: 'top'} Name:
+				%td{valign: 'top'}
+					%b #{@user.name}
+			%tr
+				%td{valign: 'top'} Email: 
+				%td{valign: 'top'}
+					%b #{@user.email}
+			%tr
+				%td{valign: 'top'} Mobile: 
+				%td{valign: 'top'}
+					%b #{@user.phone}
+			%tr
+				%td{valign: 'top'} License:
+				%td{valign: 'top'}
+					- license = @user.license_pic
+					- if license
+						%a{href: 'http://uploads.zoomcar.in' + license.avatar.url(:profile), target: '_blank'}
+							See license
+					- else
+						= "-"
 %br/
 %br/
 If you have any questions about your reservation you can contact Zoom at #{city.contact_email} / #{city.contact_phone}.
@@ -169,6 +186,6 @@ If you have any questions about your reservation you can contact Zoom at #{city.
 Happy Driving!
 %br/
 %br/ 
-The Zoom Team
+The ZoomCar Team
 %br/
 %br/

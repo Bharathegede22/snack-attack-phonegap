@@ -18,11 +18,15 @@ class UsersController < ApplicationController
 				@image = current_user.license_pic
 				if @image
 					@image.update(image_params)
+					current_user.license_status = 1
+					current_user.save!
 				else
 					@image = Image.new(image_params)
 					@image.imageable_id = current_user.id
 					@image.imageable_type = 'License'
 					@image.save
+					current_user.license_status = 1
+					current_user.save!
 				end
 				if @image.valid?
 					current_user.update_attribute(:license_status, 1)
@@ -41,8 +45,13 @@ class UsersController < ApplicationController
 			else
 				flash[:error] = 'Please attach a license image'
 			end
+<<<<<<< HEAD
 		# else
 		# 	@step = params[:step]
+=======
+		else
+			@step = params[:step]
+>>>>>>> kle
 		end
 	end
 	

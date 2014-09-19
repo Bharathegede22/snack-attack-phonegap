@@ -466,6 +466,16 @@ class Booking < ActiveRecord::Base
 		end
 		return check
 	end
+
+	def kle_enabled
+		#binding.pry
+		if !self.location.kle_enabled.nil?
+			#return (self.starts >= self.location.kle_enabled && Cargroup.find(self.actual_cargroup_id).kle)
+			return (self.starts >= self.location.kle_enabled && Cargroup.find(self.cargroup_id).kle)
+		else
+			false
+		end
+	end
 	
 	def outstanding
 		total = self.total_charges
@@ -632,7 +642,8 @@ class Booking < ActiveRecord::Base
 			end
 		end
 		message << "#{self.city.contact_phone} : Zoom Support." if action != 'cancel'
-		SmsSender.perform_async(self.user_mobile, message, self.id) if Rails.env.production?
+		#SmsSender.perform_async(self.user_mobile, message, self.id) if Rails.env.production?
+		SmsTask::message_exotel(self.user_mobile, message, self.id)
 	end
 	
 	def set_fare

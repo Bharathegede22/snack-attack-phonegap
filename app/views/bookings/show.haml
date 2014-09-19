@@ -79,13 +79,46 @@
 					- if @booking.security_amount_deferred? && @booking.status < 9
 						.red
 							Security Deposit Unpaid
-					= @booking.status_help
-
-		.border-b-c
-			.p-t10.p-b10.p-l20.p-r20
-				.text-up.size-11.m-b3
-					Location
-				.zoom-b.f-b.size-14
+					.size-20
+						= @booking.status_help
+		.row
+			.col-md-3
+				.p-5 
+					%b Car Type
+			.col-md-9
+				.p-5
+					- cargroup = @booking.cargroup
+					= cargroup.display_name
+					- if !cargroup.disclaimer.blank?
+						.red.size-10
+							= cargroup.disclaimer.html_safe
+		.row
+			.col-md-3
+				.p-5
+					%b Car Rented
+			.col-md-9
+				.p-5
+					- if @booking.paid?
+						- if !@booking.car_id.blank?
+							- car = @booking.car
+							%b #{car.name}
+							= "(" + car.license + ")" if !car.license.blank?
+						- elsif @booking.status < 6
+							.red
+								- if @booking.kle_enabled
+									Website (Car Hired field on confirmation page): We will SMS your car's number plate 20 minute before your booking starts.
+								- else
+									Your car will be allocated by 
+									%b
+										= (@booking.starts - CommonHelper::ALLOTMENT.minutes).strftime("%d %b, %Y %I:%M %p")
+						- else
+							\-
+		.row
+			.col-md-3 
+				.p-5
+					%b Rented From
+			.col-md-9
+				.p-5
 					- location = @booking.location
 					= location.shortname
 					- if !location.disclaimer.blank?
