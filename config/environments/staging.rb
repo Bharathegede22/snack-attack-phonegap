@@ -54,7 +54,7 @@ Web::Application.configure do
   # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
 
   # Use a different cache store in production.
-  config.cache_store = :dalli_store, '180.179.52.168:11211', {:namespace => MEMCACHED_KEY}
+  config.cache_store = :dalli_store, '23.98.67.162:11211', {:namespace => MEMCACHED_KEY}
   
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   config.action_controller.asset_host = Proc.new { |source|

@@ -3,7 +3,7 @@ require 'bundler/capistrano'
 load 'deploy/assets'
 
 set :rvm_ruby_string, '2.0.0@zoomweb'
-set :rvm_type, :system
+set :rvm_type, :user
 
 set :keep_releases, 5
 set :domain_name, "www.zoomcartest.com"
@@ -11,7 +11,7 @@ set :domain_name, "www.zoomcartest.com"
 default_run_options[:pty] = true
 set :scm, :git
 set :repository, "git@github.com:ZoomCar/web.git"
-set :branch, "master"
+set :branch, "staging"
 set :deploy_via, :remote_cache
 ssh_options[:forward_agent] = true
 
@@ -24,7 +24,7 @@ role :app, "23.98.66.94"
 role :db,  "23.98.66.94", :primary => true
 
 ssh_options[:user] = "wheels"
-ssh_options[:keys] = "~/.ssh/private.key"
+ssh_options[:keys] = "~/.ssh/azure/test/private.key"
 ssh_options[:port] = 2255
 
 set :bundle_gemfile, "Gemfile"
