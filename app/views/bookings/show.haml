@@ -65,9 +65,12 @@
 								= "(" + car.license + ")" if !car.license.blank?
 							- elsif @booking.status < 6
 								.red
-									Your car will be allocated by 
-									%b
-										= (@booking.starts - CommonHelper::ALLOTMENT.minutes).strftime("%d %b, %Y %I:%M %p")
+									- if @booking.kle_enabled
+										We will SMS your car's number plate 20 minute before your booking starts.
+									- else
+										Your car will be allocated by 
+										%b
+											= (@booking.starts - CommonHelper::ALLOTMENT.minutes).strftime("%d %b, %Y %I:%M %p")
 							- else
 								\-
 
