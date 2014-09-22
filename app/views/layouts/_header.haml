@@ -129,8 +129,8 @@
 							%div
 								.size-11.lgrey.position-a{:style => 'top: 0px; right: 10px; line-height: 10px;'}
 									Need help?
-								%a.t-n{href: 'tel:08033013371'}
-									080-33013371
+								%a.t-n{href: "tel:#{@city.contact_phone.gsub('-','')}"}
+									= @city.contact_phone
 
 					.fc
 
