@@ -104,6 +104,7 @@ class Booking < ActiveRecord::Base
 	
 	def check_payment
 		total = defer_deposit ? self.outstanding_without_deposit : self.outstanding_with_security
+		total = self.outstanding if self.status==5
 		if total > 0
 			payment = Payment.create!(booking_id: self.id, through: 'payu', amount: total)
 		else
