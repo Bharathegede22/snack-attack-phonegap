@@ -104,6 +104,7 @@ class Booking < ActiveRecord::Base
 	
 	def check_payment
 		total = defer_deposit ? self.outstanding_without_deposit : self.outstanding_with_security
+		total = self.outstanding if self.status==5
 		if total > 0
 			payment = Payment.create!(booking_id: self.id, through: 'payu', amount: total)
 		else
@@ -466,6 +467,16 @@ class Booking < ActiveRecord::Base
 		end
 		return check
 	end
+
+	def kle_enabled
+		#binding.pry
+		if !self.location.kle_enabled.nil?
+			#return (self.starts >= self.location.kle_enabled && Cargroup.find(self.actual_cargroup_id).kle)
+			return (self.starts >= self.location.kle_enabled && Cargroup.find(self.cargroup_id).kle)
+		else
+			false
+		end
+	end
 	
 	def outstanding
 		total = self.total_charges
@@ -632,7 +643,8 @@ class Booking < ActiveRecord::Base
 			end
 		end
 		message << "#{self.city.contact_phone} : Zoom Support." if action != 'cancel'
-		SmsSender.perform_async(self.user_mobile, message, self.id) if Rails.env.production?
+		#SmsSender.perform_async(self.user_mobile, message, self.id) if Rails.env.production?
+		SmsTask::message_exotel(self.user_mobile, message, self.id)
 	end
 	
 	def set_fare
