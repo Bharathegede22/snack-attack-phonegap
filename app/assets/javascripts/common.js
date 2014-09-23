@@ -784,4 +784,5 @@ if($('body').hasClass('body-header-new'))
 
 $('#ContinueToSite').click(function(){
 	$('#MobileRedirect').remove();
+	$('meta[name=viewport]').remove();
 });
