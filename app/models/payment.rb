@@ -208,6 +208,10 @@ class Payment < ActiveRecord::Base
 							BookingMailer.kle_mail(b.id).deliver
 							Email.create(activity: 'Userprepardness_confirm',booking_id: b.id,user_id: b.user_id)
 						end
+						if b.kle_enabled && b.created_at >= b.location.kle_enabled
+							BookingMailer.kle_mail(b.id).deliver
+							Email.create(activity: 'Userprepardness_confirm',booking_id: b.id,user_id: b.user_id)
+						end
 					end
 					SmsTask::message_exotel(b.user_mobile, "Zoom booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoom Support.", b.id)
 				end
