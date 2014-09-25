@@ -65,9 +65,12 @@
 								= "(" + car.license + ")" if !car.license.blank?
 							- elsif @booking.status < 6
 								.red
-									Your car will be allocated by 
-									%b
-										= (@booking.starts - CommonHelper::ALLOTMENT.minutes).strftime("%d %b, %Y %I:%M %p")
+									- if @booking.kle_enabled
+										We will SMS your car's number plate 20 minute before your booking starts.
+									- else
+										Your car will be allocated by 
+										%b
+											= (@booking.starts - CommonHelper::ALLOTMENT.minutes).strftime("%d %b, %Y %I:%M %p")
 							- else
 								\-
 
@@ -79,8 +82,8 @@
 					- if @booking.security_amount_deferred? && @booking.status < 9
 						.red
 							Security Deposit Unpaid
-					= @booking.status_help
-
+					.size-20
+						= @booking.status_help
 		.border-b-c
 			.p-t10.p-b10.p-l20.p-r20
 				.text-up.size-11.m-b3
@@ -298,7 +301,7 @@
 				.text-up
 					Payable Amount
 			#DepositFinal.fr.p-10.t-r.p-r20.zoom.f-b.size-20
-				- payable_amount = @booking.outstanding if @booking.settled
+				- payable_amount = @booking.outstanding if @booking.settled || @booking.status==5
 				₹ #{show_currency payable_amount}
 			-if payable_amount>0
 				.fc

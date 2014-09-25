@@ -34,5 +34,10 @@ class BookingMailer < ActionMailer::Base
 		@user = @booking.user
 		mail(:to => @user.email, :subject => "Your Zoom Reservation : #{@booking.confirmation_key}", bcc: @booking.city.contact_email)
 	end
+
+	def kle_mail(booking)
+		@booking = Booking.find_by_id booking
+		mail(to: @booking.user.email, subject: "Zoomcar goes keyless! And so does your booking")
+	end
 	
 end

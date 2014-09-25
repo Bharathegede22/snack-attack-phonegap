@@ -181,7 +181,7 @@ class Payment < ActiveRecord::Base
 	protected
 	
 	def after_save_tasks
-		if self.status == 1 
+		if self.status_changed? && self.status == 1 
 			b = self.booking
 			b.valid?
 			if b && b.outstanding <= 0
@@ -195,17 +195,33 @@ class Payment < ActiveRecord::Base
 						Inventory.block(b.cargroup_id, b.location_id, b.starts, b.ends)
 						b.status = 6
 					end
-					if Rails.env.production?
-						SmsSender.perform_async(b.user_mobile, "Zoom booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoom Support.", b.id)
-					end
+					#BookingMailer.payment(b.id).deliver
+					#SmsSender.perform_async(b.user_mobile, "Zoom booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoom Support.", b.id)
+					# if !b.location.kle_enabled.nil?
+					# 	if (b.created_at < b.location.kle_enabled && b.starts >= b.location.kle_enabled) && (b.starts.to_i - b.created_at.to_i) < 86400 && b.kle_enabled
+					# 		####SEND EMAIL#####
+					# 		BookingMailer.kle_mail(b.id).deliver
+					# 	end
+					# 	if (b.created_at < b.location.kle_enabled && b.starts > b.location.kle_enabled) && (b.starts.to_i - b.created_at.to_i) < 604800 && (b.starts.to_i - b.created_at.to_i) > 108000 && b.kle_enabled
+					# 		####SEND EMAIL#####
+					# 		BookingMailer.kle_mail(b.id).deliver
+					# 	end
+					# end
+					# if Rails.env.production?
+					# 	SmsSender.perform_async(b.user_mobile, "Zoom booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoom Support.", b.id)
+					# end
+					SmsTask::message_exotel(b.user_mobile, "Zoom booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoom Support.", b.id)
 				end
 				b.deposit_status = 2 if b.deposit_status == 1
 				b.notes += "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs." + self.amount.to_s + " - Payment Received through <u>" + self.through_text + "</u>.<br/>"
 				b.save(:validate => false)
 				Booking.recalculate(b.id)
 				wallet_amount = (b.outstanding_without_deposit + self.amount)>=0 ? b.outstanding_without_deposit.abs : self.amount
-				b.add_security_deposit_to_wallet(wallet_amount) if wallet_amount != 0
-				self.update_column(:deposit_available_for_refund, wallet_amount)
+				if wallet_amount != 0
+						b.add_security_deposit_to_wallet(wallet_amount)
+						self.update_column(:deposit_available_for_refund, wallet_amount)
+						self.update_column(:deposit_paid, wallet_amount)
+				end
 				if !b.defer_allowed? && b.security_charge.nil?
 					b.add_security_deposit_charge
 				end

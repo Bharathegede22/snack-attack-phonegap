@@ -1,5 +1,6 @@
 = render :partial => '/layouts/tag_manager'
 #DocTop
+= render :partial => '/main/mobile_redirect' if !@device.blank?
 - if !@header.blank? && @header == 'search'
 	#NavBuffer.nav-buffer-big
 - else

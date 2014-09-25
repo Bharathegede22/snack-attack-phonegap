@@ -120,7 +120,7 @@ class MainController < ApplicationController
 	end
 	
 	def careers
-		@meta_title = "The Zoom Careers | www.zoomcar.in"
+		@meta_title = "Zoom Careers | www.zoomcar.in"
 		@meta_description = "Zoom Carrers"
 		@meta_keywords = "zoomcar careers"
 		@canonical = "http://www.zoomcar.in/careers"

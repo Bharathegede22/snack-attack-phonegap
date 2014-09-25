@@ -25,6 +25,9 @@
 		%meta{property: "og:site_name", content: "ZoomCar"}
 		%meta{property: "og:description", content: @meta_description}
 		%meta{property: "fb:app_id", content: '194504380711275'}
+
+		- if !@device.blank?
+			%meta{content: "width=device-width, user-scalable=no, initial-scale=1", name: "viewport"}/
 		:javascript
 			_udn = 'zoomcar.in';
 		:javascript

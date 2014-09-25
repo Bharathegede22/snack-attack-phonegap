@@ -18,15 +18,19 @@ class UsersController < ApplicationController
 				@image = current_user.license_pic
 				if @image
 					@image.update(image_params)
+					current_user.license_status = 1
+					current_user.save!
 				else
 					@image = Image.new(image_params)
 					@image.imageable_id = current_user.id
 					@image.imageable_type = 'License'
 					@image.save
+					current_user.license_status = 1
+					current_user.save!
 				end
 				if @image.valid?
 					current_user.update_attribute(:license_status, 1)
-					BookingMailer.delay.license_update(current_user.id)
+					BookingMailer.license_update(current_user.id).deliver
 					flash[:notice] = 'Thanks for uploading your driving license image.'
 					current_user.license_status = 1
 					current_user.save!
@@ -41,8 +45,6 @@ class UsersController < ApplicationController
 			else
 				flash[:error] = 'Please attach a license image'
 			end
-		# else
-		# 	@step = params[:step]
 		end
 	end
 	
