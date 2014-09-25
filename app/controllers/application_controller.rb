@@ -28,11 +28,8 @@ class ApplicationController < ActionController::Base
 	    else
 	    	city_prompt = true
 	      ip = request.headers["X-Real-IP"] if request.headers["X-Real-IP"] && !request.headers["X-Real-IP"].empty?
-	      if ip
-	        city = get_city_from_ip(ip)
-	      else
-	        city = 'bangalore'
-	      end
+	      city = get_city_from_ip(ip) if ip
+        city = 'bangalore' if city.blank?
 	    end
     end
     if city_prompt
