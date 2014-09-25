@@ -383,8 +383,12 @@ function postData(complete_url,divId,divAction,divWait,dataStr) {
   var resp = $.ajax({
   	url: complete_url, 
   	data: dataStr, 
-		dataType: "json",
-		type: 'POST'
+		dataType: "jsonp",
+		jsonp: "callback",
+		type: 'POST',
+		success: function( response ) {
+        console.log( response ); // server response
+    }
 	});
 	resp.done(
     function(data){
