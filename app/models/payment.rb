@@ -222,10 +222,10 @@ class Payment < ActiveRecord::Base
 						self.update_column(:deposit_available_for_refund, wallet_amount)
 						self.update_column(:deposit_paid, wallet_amount)
 				end
-				if !b.defer_allowed? && b.security_charge.nil?
+				if !b.defer_payment_allowed?
 					b.add_security_deposit_charge
 				end
-				if !b.defer_allowed? && b.wallet_security_payment.nil?
+				if !b.defer_payment_allowed? && b.wallet_security_payment.nil?
 					b.update_column(:insufficient_deposit, false)
 					b.make_payment_from_wallet
 				end
