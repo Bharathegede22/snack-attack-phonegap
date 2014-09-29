@@ -69,3 +69,24 @@ class Offer < ActiveRecord::Base
 	end
 	
 end
+
+# == Schema Information
+#
+# Table name: offers
+#
+#  id                :integer          not null, primary key
+#  heading           :string(255)
+#  description       :text
+#  promo_code        :string(255)
+#  status            :boolean          default(TRUE)
+#  disclaimer        :text
+#  visibility        :integer          default(0)
+#  user_condition    :text
+#  booking_condition :text
+#  output_condition  :text
+#  created_at        :datetime
+#  updated_at        :datetime
+#  summary           :string(255)
+#  instructions      :text
+#  valid_till        :datetime
+#

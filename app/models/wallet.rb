@@ -23,3 +23,19 @@ class Wallet < ActiveRecord::Base
 		self.booking_id = transferable.booking_id unless transferable.nil?
 	end
 end
+
+# == Schema Information
+#
+# Table name: wallets
+#
+#  id                :integer          not null, primary key
+#  transferable_id   :integer
+#  transferable_type :string(255)
+#  user_id           :integer
+#  amount            :decimal(8, 2)    default(0.0)
+#  credit            :boolean
+#  status            :integer          default(0)
+#  created_at        :datetime
+#  updated_at        :datetime
+#  booking_id        :integer
+#
