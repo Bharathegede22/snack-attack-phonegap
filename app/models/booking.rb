@@ -157,7 +157,11 @@ class Booking < ActiveRecord::Base
 	
 	def defer_allowed?
 		self.starts > (Time.now + CommonHelper::JIT_DEPOSIT_ALLOW.hours)
-	end
+  end
+
+  def defer_payment_allowed?
+    self.starts > (Time.now + CommonHelper::JIT_DEPOSIT_ALLOW.hours + 30.minutes)
+  end
 	
 	def deposit_help
 		return "ZoomCar allows you to delay paying the Security Deposit. We really don’t want your money stuck in a deposit if your booking starts days from now."
@@ -421,6 +425,7 @@ class Booking < ActiveRecord::Base
 	end
 
 	def make_payment_from_wallet(amount= security_amount, insufficient_flag=true)
+    return unless self.wallet_security_payment.nil?
 		amount = [amount.to_i, user.wallet_total_amount.to_i].min
 		if (amount < security_amount) && insufficient_flag
 			self.update_column(:insufficient_deposit,true) and return

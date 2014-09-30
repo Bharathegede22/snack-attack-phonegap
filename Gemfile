@@ -69,4 +69,7 @@ group :development, :test do
   gem 'cucumber-rails', :require => false
   gem 'database_cleaner'
   gem 'coveralls', :require => false  
+  gem 'binding_of_caller'
+  gem 'better_errors'
+  gem 'letter_opener'
 end
