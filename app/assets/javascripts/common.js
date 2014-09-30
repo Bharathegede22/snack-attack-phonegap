@@ -1,3 +1,4 @@
+
 jQuery.fn.center = function(){
 	if(window.fixedSupported) {
 		this.css("position","fixed");
@@ -370,7 +371,7 @@ function populateLocations(cityId, zoom, divId) {
 	getData('/get_locations_map/' + cityId + '?zoom=' + zoom, divId, 'replace', divId + 'Wait');
 }
 
-function postData(complete_url,divId,divAction,divWait,dataStr) {
+function postData(complete_url,divId,divAction,divWait,dataStr,datatype) {
 	checkajax = $("#AjaxActive").val();
   if(checkajax == 1){
   	if("undefined" != typeof(event)) event.returnValue = false;
@@ -383,12 +384,8 @@ function postData(complete_url,divId,divAction,divWait,dataStr) {
   var resp = $.ajax({
   	url: complete_url, 
   	data: dataStr, 
-		dataType: "jsonp",
-		jsonp: "callback",
+		dataType: datatype,
 		type: 'POST',
-		success: function( response ) {
-        console.log( response ); // server response
-    }
 	});
 	resp.done(
     function(data){
@@ -540,7 +537,8 @@ function socialPlugins() {
 	(function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs"));
 }
 
-function SubmitForm(frm,url,divId){
+function SubmitForm(frm,url,divId,datatype){
+	if ( datatype == undefined ) { datatype = 'json'; }
 	var frmId = frm.id;
 	if($("#" + frmId.replace('Form','Submit')).length > 0 && $("#" + frmId.replace('Form','Wait')).length > 0){
 		hideDiv = frmId.replace('Form','Wait');
@@ -631,7 +629,7 @@ function SubmitForm(frm,url,divId){
   }
   if(!failed){
   	$("#" + frmId.replace('Form','Submit')).hide();
-    postData(url, divId, 'replace', hideDiv, new_url);
+    postData(url, divId, 'replace', hideDiv, new_url, datatype);
   }
   if("undefined" != typeof(event)) event.returnValue = false;
   return false;
