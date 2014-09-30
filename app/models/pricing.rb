@@ -26,3 +26,30 @@ class Pricing < ActiveRecord::Base
 	end
 	
 end
+
+# == Schema Information
+#
+# Table name: pricings
+#
+#  id                     :integer          not null, primary key
+#  cargroup_id            :integer
+#  city_id                :integer
+#  hourly_fare            :integer
+#  daily_fare             :integer
+#  weekly_fare            :integer
+#  monthly_fare           :integer
+#  hourly_kms             :integer
+#  daily_kms              :integer
+#  weekly_kms             :integer
+#  monthly_kms            :integer
+#  starts                 :date
+#  version                :string(6)
+#  status                 :boolean          default(FALSE)
+#  excess_kms             :decimal(5, 2)
+#  hourly_discounted_fare :integer
+#  daily_discounted_fare  :integer
+#
+# Indexes
+#
+#  index_pricings_on_city_id_and_cargroup_id  (city_id,cargroup_id)
+#
