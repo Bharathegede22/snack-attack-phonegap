@@ -28,7 +28,8 @@ class Offer < ActiveRecord::Base
 		coupon = nil
 		text = ''
 		# Promo
-		offer = Offer.where("promo_code = '#{code}' OR promo_code LIKE '%#{code},%' OR promo_code LIKE '%#{code}'").first
+    #We shall normalize the table to fix it in the right way
+    offer = Offer.where("FIND_IN_SET(?, promo_code) OR FIND_IN_SET(?, promo_code)"," #{code}","#{code}").first
 		# Coupon
 		if offer.blank?
 			coupon = CouponCode.find_by(:code => code)
