@@ -33,3 +33,20 @@ class Credit < ActiveRecord::Base
 	end
 	
 end
+
+# == Schema Information
+#
+# Table name: credits
+#
+#  id              :integer          not null, primary key
+#  user_id         :integer
+#  creditable_type :string(255)
+#  amount          :integer
+#  action          :boolean
+#  created_at      :datetime
+#  updated_at      :datetime
+#  status          :boolean          default(TRUE)
+#  note            :string(255)
+#  creditable_id   :integer
+#  source_name     :string(255)
+#
