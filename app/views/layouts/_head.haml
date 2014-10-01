@@ -25,6 +25,10 @@
 		%meta{property: "og:site_name", content: "ZoomCar"}
 		%meta{property: "og:description", content: @meta_description}
 		%meta{property: "fb:app_id", content: '194504380711275'}
+		- if @city.name.downcase == 'bangalore'
+			%link{rel: "alternate", href: "http://www.zoomcar.in/pune", hreflang: "en"}/
+		- elsif @city.name.downcase == 'pune'
+			%link{rel: "alternate", href: "http://www.zoomcar.in/bangalore", hreflang: "en"}/
 
 		- if !@device.blank?
 			%meta{content: "width=device-width, user-scalable=no, initial-scale=1", name: "viewport"}/

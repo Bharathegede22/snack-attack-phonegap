@@ -17,16 +17,17 @@
 	- @booking.charges.each do |charge|
 		- total_charge += charge.refund==0 ? charge.amount : -charge.amount
 		%tr
-			-if !['security_deposit'].include? charge.activity
-				%td
-					= charge.activity.titleize
-				%td.t-r
-					#{charge.refund==0 ? '' : '-'}₹ #{show_currency charge.amount}
-			- else
-				%td
-					Refundable Deposit
-				%td.t-r
-					#{charge.refund==0 ? '' : '-'}₹ #{show_currency charge.amount}
+			-if !['early_return_charge','early_return_refund'].include? charge.activity
+				-if !['security_deposit'].include? charge.activity
+					%td
+						= charge.activity.titleize
+					%td.t-r
+						#{charge.refund==0 ? '' : '-'}₹ #{show_currency charge.amount}
+				- else
+					%td
+						Refundable Deposit
+					%td.t-r
+						#{charge.refund==0 ? '' : '-'}₹ #{show_currency charge.amount}
 	%tr.f-b.bg-c
 		%td
 			Total Tariff
@@ -43,7 +44,7 @@
 	- @booking.confirmed_payments.where(through: 'payu').each do |p|
 		%tr
 			%td
-				= p.through_text + " Payment"
+				Amount Paid (#{p.created_at.strftime('%Y-%m-%d')})
 			%td.t-r
 				₹#{show_currency(p.amount)}
 				- total_payu += p.amount
@@ -61,7 +62,7 @@
 			- total_payu_refund+=r.amount
 			%tr
 				%td
-					= r.through_text
+					Amount Refunded (#{r.created_at.strftime('%Y-%m-%d')})
 				%td.t-r
 					₹#{show_currency(r.amount)}
 	%tr.f-b
