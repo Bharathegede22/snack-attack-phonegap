@@ -101,20 +101,6 @@
 	function checkJquery() {
 		if(window.jQuery) {
 			trackEventsForPageScroll(0);
-			if(location.pathname == "/bangalore") {
-				var a = document.createElement("link");
-				a.rel = "alternate";
-				a.href = "http://www.zoomcar.in/pune";
-				a.hreflang = "en";
-				document.getElementsByTagName("head")[0].appendChild(a);
-			}
-			else if(location.pathname == "/pune") {
-				var a = document.createElement("link");
-				a.rel = "alternate";
-				a.href = "http://www.zoomcar.in/bangalore";
-				a.hreflang = "en";
-				document.getElementsByTagName("head")[0].appendChild(a);
-			}
 		}
 		else {
 			window.setTimeout(checkJquery, 1000);
