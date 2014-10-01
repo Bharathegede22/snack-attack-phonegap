@@ -44,7 +44,7 @@
 	- @booking.confirmed_payments.where(through: 'payu').each do |p|
 		%tr
 			%td
-				= p.through_text + " Payment"
+				Amount Paid (#{p.created_at.strftime('%Y-%m-%d')})
 			%td.t-r
 				₹#{show_currency(p.amount)}
 				- total_payu += p.amount
@@ -62,7 +62,7 @@
 			- total_payu_refund+=r.amount
 			%tr
 				%td
-					= r.through_text
+					Amount Refunded (#{r.created_at.strftime('%Y-%m-%d')})
 				%td.t-r
 					₹#{show_currency(r.amount)}
 	%tr.f-b
