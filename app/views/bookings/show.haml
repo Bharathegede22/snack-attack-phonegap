@@ -271,6 +271,7 @@
 			.text-up
 				Booking charges
 		.fr.p-10.t-r.p-r20.grey.f-b.size-16
+			- outstanding_amount = @booking.outstanding if @booking.settled || @booking.status==5
 			₹ #{show_currency outstanding_amount}
 		.fc
 
