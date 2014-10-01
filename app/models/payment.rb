@@ -187,6 +187,7 @@ class Payment < ActiveRecord::Base
 			if b && b.outstanding <= 0
 				old_status = b.status
 				if b.status == 0
+					b.carry = true if (self.amount > b.outstanding)
 					if !b.car_id.blank?
 						b.status = 1
 					elsif b.manage_inventory == 1
