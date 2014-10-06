@@ -197,19 +197,22 @@ class Payment < ActiveRecord::Base
 					end
 					#BookingMailer.payment(b.id).deliver
 					#SmsSender.perform_async(b.user_mobile, "Zoom booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoom Support.", b.id)
-					# if !b.location.kle_enabled.nil?
-					# 	if (b.created_at < b.location.kle_enabled && b.starts >= b.location.kle_enabled) && (b.starts.to_i - b.created_at.to_i) < 86400 && b.kle_enabled
-					# 		####SEND EMAIL#####
-					# 		BookingMailer.kle_mail(b.id).deliver
-					# 	end
-					# 	if (b.created_at < b.location.kle_enabled && b.starts > b.location.kle_enabled) && (b.starts.to_i - b.created_at.to_i) < 604800 && (b.starts.to_i - b.created_at.to_i) > 108000 && b.kle_enabled
-					# 		####SEND EMAIL#####
-					# 		BookingMailer.kle_mail(b.id).deliver
-					# 	end
-					# end
-					# if Rails.env.production?
-					# 	SmsSender.perform_async(b.user_mobile, "Zoom booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoom Support.", b.id)
-					# end
+					if !b.location.kle_enabled.nil?
+						if (b.created_at < b.location.kle_enabled && b.starts >= b.location.kle_enabled) && (b.starts.to_i - b.created_at.to_i) < 86400 && b.kle_enabled
+							####SEND EMAIL#####
+							BookingMailer.kle_mail(b.id).deliver
+							Email.create(activity: 'Userprepardness_confirm',booking_id: b.id,user_id: b.user_id)
+						end
+						if (b.created_at < b.location.kle_enabled && b.starts > b.location.kle_enabled) && (b.starts.to_i - b.created_at.to_i) < 604800 && (b.starts.to_i - b.created_at.to_i) > 108000 && b.kle_enabled
+							####SEND EMAIL#####
+							BookingMailer.kle_mail(b.id).deliver
+							Email.create(activity: 'Userprepardness_confirm',booking_id: b.id,user_id: b.user_id)
+						end
+						if b.kle_enabled && b.created_at >= b.location.kle_enabled
+							BookingMailer.kle_mail(b.id).deliver
+							Email.create(activity: 'Userprepardness_confirm',booking_id: b.id,user_id: b.user_id)
+						end
+					end
 					SmsTask::message_exotel(b.user_mobile, "Zoom booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoom Support.", b.id)
 				end
 				b.deposit_status = 2 if b.deposit_status == 1
