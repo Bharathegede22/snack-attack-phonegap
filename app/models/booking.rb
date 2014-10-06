@@ -474,7 +474,6 @@ class Booking < ActiveRecord::Base
 	end
 
 	def kle_enabled
-		#binding.pry
 		if !self.location.kle_enabled.nil?
 			#return (self.starts >= self.location.kle_enabled && Cargroup.find(self.actual_cargroup_id).kle)
 			return (self.starts >= self.location.kle_enabled && Cargroup.find(self.cargroup_id).kle)
