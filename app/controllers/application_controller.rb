@@ -66,6 +66,7 @@ class ApplicationController < ActionController::Base
   end
   
   def check_ref
+    response.headers["X-FRAME-OPTIONS"] = "ALLOW-FROM http://optimizely.com"
   	# Check Ref Initial
   	if cookies[:ref].blank?
   		vref = ''
