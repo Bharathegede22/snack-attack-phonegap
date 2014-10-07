@@ -455,11 +455,12 @@ class BookingsController < ApplicationController
 			@booking.ends = Time.zone.parse(session[:search][:ends]) if !session[:search].blank? && !session[:search][:ends].blank?
 			@booking.location_id = session[:search][:loc] if !session[:search].blank? && !session[:search][:loc].blank?
 			@booking.cargroup_id = session[:search][:car] if !session[:search].blank? && !session[:search][:car].blank?
-      search_results_from_admin = RestClient.get "http://admin.dev/mobile/v3/bookings/search",
+      search_results_from_admin = RestClient.get "#{CommonHelper::ADMIN_URL}/mobile/#{CommonHelper::API_VERSION}/bookings/search",
                                                    params: {
                                                               starts: session[:search][:starts],
                                                               ends: session[:search][:ends],
-                                                              city_id: @city.id
+                                                              city_id: @city.id,
+                                                              location_id: @booking.location_id
                                                             }
       json_result = JSON.parse(search_results_from_admin) rescue nil
 		#	@inventory = Inventory.search(@city, @booking.starts, @booking.ends) if !session[:search].blank? && @booking.valid?
