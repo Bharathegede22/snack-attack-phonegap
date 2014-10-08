@@ -483,7 +483,7 @@ class BookingsController < ApplicationController
 		render layout: 'plain'
 	end
 	
-	def timeline
+	def timeline_bak
 		if !params[:car].blank? && !params[:location].blank? && !session[:search].blank? && !session[:search][:starts].blank? && !session[:search][:ends].blank?
 			@booking = Booking.new
 			@booking.starts = Time.zone.parse(session[:search][:starts])
@@ -505,6 +505,39 @@ class BookingsController < ApplicationController
 			render_404
 		end
 	end
+  
+  def timeline
+    if !params[:car].blank? && !params[:location].blank? && !session[:search].blank? && !session[:search][:starts].blank? && !session[:search][:ends].blank?
+			@booking = Booking.new
+			@booking.starts = Time.zone.parse(session[:search][:starts])
+			@booking.ends = Time.zone.parse(session[:search][:ends])
+			@booking.cargroup_id = params[:car]
+			@booking.location_id = params[:location]
+      @page ||= (params[:page] || 0).to_i
+      timeline_from_admin = RestClient.get "#{CommonHelper::ADMIN_URL}/mobile/#{CommonHelper::API_VERSION}/bookings/timeline",
+                                                   params: {
+                                                              starts: session[:search][:starts],
+                                                              ends: session[:search][:ends],
+                                                              city_id: @city.id,
+                                                              location: params[:location],
+                                                              page: params[:page],
+                                                              car: params[:car]
+                                                            }
+      json = JSON.parse(timeline_from_admin) rescue nil
+      result = json["inventory"]
+      @inventory = []
+      result.each do |i|
+        @inventory << Inventory.new(i)
+      end
+      if @page == 0
+        render json: {html: render_to_string('timeline.haml', layout: false)}
+      else
+        render json: {html: render_to_string('timeline_more.haml', layout: false)}
+      end
+    else
+      render_404
+    end
+  end
 	
 	def userdetails
 		redirect_to do_bookings_path(@city.name.downcase) and return if !user_signed_in? || (current_user && current_user.check_details)
