@@ -27,6 +27,7 @@ class BookingsController < ApplicationController
 	
 	def checkout
 		@booking.user = current_user
+		session[:promo_discount] = 0
 		@wallet_available = @booking.security_amount - @booking.security_amount_remaining
 		redirect_to do_bookings_path(@city.name.downcase) and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		generic_meta
@@ -71,6 +72,8 @@ class BookingsController < ApplicationController
 
 	def do
 		if !params[:car].blank? && !params[:loc].blank? && !session[:search].blank? && !session[:search][:starts].blank? && !session[:search][:ends].blank?
+			session[:search][:loc] = params[:loc]
+			session[:search][:car] = params[:car]
 			session[:book] = {:starts => session[:search][:starts], :ends => session[:search][:ends], :loc => params[:loc], :car => params[:car]}
 			if params[:notify].present?
 				session[:notify] = true
@@ -340,11 +343,29 @@ class BookingsController < ApplicationController
   def promo
   	if !params[:clear].blank? && params[:clear].to_i == 1
   		session[:promo_code] = nil
+  		session[:promo_message] = nil
+  		session[:promo_discount] = -1 * session[:promo_discount]
   	else
-			if !params[:promo].blank?
-				@offer = Offer.get(params[:promo],@city)
-				session[:promo_code] = params[:promo].upcase if @offer[:offer] && @offer[:error].blank?
-	    end
+  		params[:total] = session[:total]
+  		params[:city_id] = @city.id
+		params[:starts] = Time.zone.parse(session[:search][:starts]) if !session[:search].blank? && !session[:search][:starts].blank?
+		params[:ends] = Time.zone.parse(session[:search][:ends]) if !session[:search].blank? && !session[:search][:ends].blank?
+		params[:location_id] = session[:search][:loc] if !session[:search].blank? && !session[:search][:loc].blank?
+		params[:cargroup_id] = session[:search][:car] if !session[:search].blank? && !session[:search][:car].blank?
+
+
+  		url = "http://localhost:3000/mobile/v3/bookings/promo"
+  		uri = URI(url)
+  		uri.query = URI.encode_www_form(params)
+  		res = Net::HTTP.get_response(uri)
+  		#res = Net::HTTP.post_form uri, {"promo" => params[:promo], "api_version" => params[:api_version]}
+  		res = JSON.parse(res.body)
+  		promo = res["promo"]
+  		session[:promo_message] = promo["message"]
+  		if !promo["code"].blank? && promo["valid"] == true
+  			session[:promo_code] = promo["code"]
+  			session[:promo_discount] = promo["discount"]
+  		end
 		end
     render json: {html: render_to_string('_promoab.haml', layout: false)}
   end

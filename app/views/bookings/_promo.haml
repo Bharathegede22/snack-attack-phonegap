@@ -3,18 +3,31 @@
 	- if @offer && !@offer[:error].blank?
 		.alert.alert-danger
 			= @offer[:error].html_safe
-	- if session[:promo_code].blank?
+	- if session[:promo_code].blank? && session[:promo_message].blank?
 		%form.promocode-form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 			.row
 				.col-md-9.text-right.promo-input
 					%input#DetailsName.validate-presence.form-control{:placeholder => "Enter Promo Code" ,name: 'promo', type: "text", value: @promo}
 				.col-md-3.text-left.promo-submit
 					#PromoSubmit
-						%button.btn.btn-default.apply_promocode_btn{type:"submit"} Apply
-
-				#PromoWait{style: "display:none;"}
-					.wait
-				#DetailsNameError.error
+						%button.btn.btn-default{type:"submit"} Apply Promo Code
+		#PromoWait{style: "display:none;"}
+			.wait
+		#DetailsNameError.error
+	- elsif session[:promo_code].blank? && !session[:promo_message].blank?
+		.p-b5
+			.fl
+				%b Promo Code (Optional)
+			.fr
+				%form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+					#PromoSubmit
+						%button.btn.btn-default.btn-xs{type:"submit"}
+							%span.glyphicon.glyphicon-remove
+					#PromoWait{style: "display:none;"}
+						.wait
+			.fc
+		.p-b5.size-12
+			%i #{session[:promo_message]}
 	- else
 		.p-b5
 			.fl
@@ -39,5 +52,23 @@
 							%span.glyphicon.glyphicon-remove
 					#PromoWait{:style => "display: none;"}
 						.wait
-			.promoCode_condition_block_whenApplied
-				%i.promoCode_condition Promo Codes are not applicable on Blackout Days.
+			.fc
+		.p-b5
+			Promo code 
+			%b #{session[:promo_code]}
+			has been applied. You will get a discount of 
+			%b Rs. #{session[:promo_discount]}
+		.p-b5.size-12
+			%i #{session[:promo_message]}
+:javascript
+	function checkNextJquery() {
+		if (window.jQuery) {
+			var total_str = $("#DepositFinal").text()
+			total_str = total_str.replace( /[^\d]/g, '' );
+			total_str = parseInt(total_str, 10) - #{session[:promo_discount]};
+			$("#DepositFinal").html("₹ "+total_str);
+		} else {
+			window.setTimeout(checkNextJquery, 1000);
+		}
+	}
+	checkNextJquery();
