@@ -354,7 +354,7 @@ class BookingsController < ApplicationController
 		params[:cargroup_id] = session[:search][:car] if !session[:search].blank? && !session[:search][:car].blank?
 
 
-  		url = "http://localhost:3000/mobile/v3/bookings/promo"
+  		url = "#{ADMIN_HOSTNAME}/mobile/v3/bookings/promo"
   		uri = URI(url)
   		uri.query = URI.encode_www_form(params)
   		res = Net::HTTP.get_response(uri)
