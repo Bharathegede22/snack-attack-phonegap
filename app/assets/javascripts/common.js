@@ -739,7 +739,18 @@ $('.safe-booking, .unsafe-booking').on('show.bs.popover', function(){
 	var title = $(this).attr('data-original-title');
 	var el = $('#row'+title);
 	el.addClass('highlight');
-	pushEvent('Wallet', 'Graph Booking Icon (My Bookings)');
+});
+
+//flag to prevent bogus google analytics events
+var flg = true;
+$('.safe-booking, .unsafe-booking').on('show.bs.popover', function(){
+	if(flg){
+		pushEvent('Wallet', 'Graph Booking Icon (My Bookings)');
+		flg = false;
+	}
+	else {
+		flg = true;
+	}
 });
 
 $('#resume_header').click(function(){

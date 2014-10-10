@@ -70,6 +70,8 @@ class Payment < ActiveRecord::Base
 		Payment.find_by_sql("SELECT p.* FROM payments p 
 			INNER JOIN bookings b ON b.id = p.booking_id 
 			WHERE p.through = 'payu' AND p.status = 1 AND b.status = 0 AND p.created_at < '#{(Time.now - 30.minutes).to_s(:db)}'").each do |p|
+			p.update_column(:status, 0)
+			p.status = 1
 			p.save
 			count += 1
 		end
@@ -187,6 +189,7 @@ class Payment < ActiveRecord::Base
 			if b && b.outstanding <= 0
 				old_status = b.status
 				if b.status == 0
+					b.carry = true if (self.amount > b.outstanding)
 					if !b.car_id.blank?
 						b.status = 1
 					elsif b.manage_inventory == 1
@@ -197,19 +200,22 @@ class Payment < ActiveRecord::Base
 					end
 					#BookingMailer.payment(b.id).deliver
 					#SmsSender.perform_async(b.user_mobile, "Zoom booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoom Support.", b.id)
-					# if !b.location.kle_enabled.nil?
-					# 	if (b.created_at < b.location.kle_enabled && b.starts >= b.location.kle_enabled) && (b.starts.to_i - b.created_at.to_i) < 86400 && b.kle_enabled
-					# 		####SEND EMAIL#####
-					# 		BookingMailer.kle_mail(b.id).deliver
-					# 	end
-					# 	if (b.created_at < b.location.kle_enabled && b.starts > b.location.kle_enabled) && (b.starts.to_i - b.created_at.to_i) < 604800 && (b.starts.to_i - b.created_at.to_i) > 108000 && b.kle_enabled
-					# 		####SEND EMAIL#####
-					# 		BookingMailer.kle_mail(b.id).deliver
-					# 	end
-					# end
-					# if Rails.env.production?
-					# 	SmsSender.perform_async(b.user_mobile, "Zoom booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoom Support.", b.id)
-					# end
+					if !b.location.kle_enabled.nil?
+						if (b.created_at < b.location.kle_enabled && b.starts >= b.location.kle_enabled) && (b.starts.to_i - b.created_at.to_i) < 86400 && b.kle_enabled
+							####SEND EMAIL#####
+							BookingMailer.kle_mail(b.id).deliver
+							Email.create(activity: 'Userprepardness_confirm',booking_id: b.id,user_id: b.user_id)
+						end
+						if (b.created_at < b.location.kle_enabled && b.starts > b.location.kle_enabled) && (b.starts.to_i - b.created_at.to_i) < 604800 && (b.starts.to_i - b.created_at.to_i) > 108000 && b.kle_enabled
+							####SEND EMAIL#####
+							BookingMailer.kle_mail(b.id).deliver
+							Email.create(activity: 'Userprepardness_confirm',booking_id: b.id,user_id: b.user_id)
+						end
+						if b.kle_enabled && b.created_at >= b.location.kle_enabled
+							BookingMailer.kle_mail(b.id).deliver
+							Email.create(activity: 'Userprepardness_confirm',booking_id: b.id,user_id: b.user_id)
+						end
+					end
 					SmsTask::message_exotel(b.user_mobile, "Zoom booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoom Support.", b.id)
 				end
 				b.deposit_status = 2 if b.deposit_status == 1
@@ -222,10 +228,10 @@ class Payment < ActiveRecord::Base
 						self.update_column(:deposit_available_for_refund, wallet_amount)
 						self.update_column(:deposit_paid, wallet_amount)
 				end
-				if !b.defer_allowed? && b.security_charge.nil?
+				if !b.defer_payment_allowed?
 					b.add_security_deposit_charge
 				end
-				if !b.defer_allowed? && b.wallet_security_payment.nil?
+				if !b.defer_payment_allowed? && b.wallet_security_payment.nil?
 					b.update_column(:insufficient_deposit, false)
 					b.make_payment_from_wallet
 				end
@@ -236,3 +242,28 @@ class Payment < ActiveRecord::Base
 	end
 	
 end
+
+# == Schema Information
+#
+# Table name: payments
+#
+#  id                           :integer          not null, primary key
+#  booking_id                   :integer
+#  status                       :integer          default(0)
+#  through                      :string(20)
+#  key                          :string(255)
+#  notes                        :text
+#  amount                       :decimal(8, 2)
+#  created_at                   :datetime
+#  updated_at                   :datetime
+#  mode                         :integer
+#  qb_id                        :integer
+#  refunded_amount              :integer          default(0)
+#  deposit_available_for_refund :integer          default(0)
+#  deposit_paid                 :integer          default(0)
+#
+# Indexes
+#
+#  index_payments_on_booking_id  (booking_id)
+#  index_payments_on_key         (key)
+#

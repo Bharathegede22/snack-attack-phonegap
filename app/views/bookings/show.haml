@@ -135,7 +135,7 @@
 		- total_charge = 0
 		- @booking.charges.each do |charge|
 			- total_charge += charge.refund==0 ? charge.amount : -charge.amount
-			-unless charge.activity == 'security_deposit'
+			-if !['security_deposit','early_return_charge','early_return_refund'].include? charge.activity
 				.fl.p-10.p-l20.size-12
 					.text-up
 						= charge.activity.titleize
@@ -199,7 +199,7 @@
 			.fr.p-10.t-r.p-r20.zoom-b.f-b.size-20
 				₹ #{show_currency total_payment}
 			.fc
-	- if @booking.confirmed_refunds.select{|p| p.through=='payu'}.any?
+	- if @booking.confirmed_refunds.select{|p| p.through=='payu' || p.through == 'wallet_refund'}.any?
 		.bg-w.bs-9.m-b20{'style' => 'width: 360px'}
 			.bg-zoomb.white.p-10.f-b.size-18.p-l10.p-r10
 				Refunds Issued
@@ -271,6 +271,7 @@
 			.text-up
 				Booking charges
 		.fr.p-10.t-r.p-r20.grey.f-b.size-16
+			- outstanding_amount = @booking.outstanding if @booking.settled || @booking.status==5
 			₹ #{show_currency outstanding_amount}
 		.fc
 
