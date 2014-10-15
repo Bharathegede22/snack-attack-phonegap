@@ -8,7 +8,8 @@ class ApplicationController < ActionController::Base
   before_filter :check_city
   before_filter :check_mobile
   before_filter :check_ref
-  
+  before_filter :authenticate_staging if Rails.env == 'staging'
+
   def abtest?
     !cookies[:abtestd].blank?
   end
@@ -112,6 +113,14 @@ class ApplicationController < ActionController::Base
   
   def render_404
   	render :file => Rails.root.join("public/404.html"),  :status => 404, :layout => nil
+  end
+
+
+  def authenticate_staging
+    if current_user.blank? || (!current_user.blank? && current_user.role < 1)
+      flash[:notice] = "Please login with support to access test server."
+      redirect_to '/' and return
+    end
   end
   
   private
