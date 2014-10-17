@@ -348,11 +348,12 @@ class BookingsController < ApplicationController
   	else
   		params[:total] = session[:total]
   		params[:city_id] = @city.id
-		params[:starts] = Time.zone.parse(session[:search][:starts]) if !session[:search].blank? && !session[:search][:starts].blank?
-		params[:ends] = Time.zone.parse(session[:search][:ends]) if !session[:search].blank? && !session[:search][:ends].blank?
-		params[:location_id] = session[:search][:loc] if !session[:search].blank? && !session[:search][:loc].blank?
-		params[:cargroup_id] = session[:search][:car] if !session[:search].blank? && !session[:search][:car].blank?
-
+			params[:starts] = Time.zone.parse(session[:search][:starts]) if !session[:search].blank? && !session[:search][:starts].blank?
+			params[:ends] = Time.zone.parse(session[:search][:ends]) if !session[:search].blank? && !session[:search][:ends].blank?
+			params[:location_id] = session[:search][:loc] if !session[:search].blank? && !session[:search][:loc].blank?
+			params[:cargroup_id] = session[:search][:car] if !session[:search].blank? && !session[:search][:car].blank?
+			params[:ref_initial] = session[:ref_initial] if !session[:ref_initial].blank?
+			params[:ref_immediate] = session[:ref_immediate] if !session[:ref_immediate].blank?
 
   		url = "#{ADMIN_HOSTNAME}/mobile/v3/bookings/promo"
   		uri = URI(url)
