@@ -32,7 +32,7 @@ Web::Application.configure do
   # number of complex assets.
   config.assets.debug = false
   
-  config.action_controller.asset_host = "http://local.dev"
+  config.action_controller.asset_host = "//#{HOSTNAME}"
   
   config.cache_store = :dalli_store, {:namespace => MEMCACHED_KEY}
   
