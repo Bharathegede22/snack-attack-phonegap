@@ -1,4 +1,4 @@
-= render :partial => '/layouts/tag_manager'
+= render :partial => '/layouts/tag_manager' if Rails.env.production?
 #DocTop
 = render :partial => '/main/mobile_redirect' if !@device.blank?
 #header-new

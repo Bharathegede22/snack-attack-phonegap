@@ -59,13 +59,13 @@ Web::Application.configure do
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   config.action_controller.asset_host = Proc.new { |source|
   	if source.starts_with?('/assets')
-  		"http://assets." + HOSTNAME.gsub('www.','')
+  		"//assets." + HOSTNAME.gsub('www.','')
     elsif source.starts_with?('/images')
-      "http://images." + HOSTNAME.gsub('www.','')
+      "//images." + HOSTNAME.gsub('www.','')
     elsif source.starts_with?('/system')
-      "http://uploads." + HOSTNAME.gsub('www.','')
+      "//uploads." + HOSTNAME.gsub('www.','')
     else
-      "http://assets." + HOSTNAME.gsub('www.','')
+      "//assets." + HOSTNAME.gsub('www.','')
     end
   }
 

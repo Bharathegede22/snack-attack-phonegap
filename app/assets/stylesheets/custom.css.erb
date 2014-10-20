@@ -1026,7 +1026,7 @@ a {
 }
 
 .content .car1, .content .car2, .content .car3, .content .car4, .content .car5, 
-	.content .car6, .content .car7, .content .car8, .content .car9, .content .car10, .content .car11 {
+	.content .car6, .content .car7, .content .car8, .content .car9, .content .car10, .content .car11, .content .car12, .content .car13, .content .car14, .content .car15 {
 	background:url(<%= asset_path 'cars/strip.jpg' %>) no-repeat;
 	width:100px;
 	height:80px;
@@ -1076,8 +1076,12 @@ a {
 	background-position:-1000px 0px;
 }
 
+.content .car12 {
+	background-position:-1100px 0px;
+}
+
 .small-car1, .small-car2, .small-car3, .small-car4, .small-car5, 
-	.small-car6, .small-car7, .small-car8, .small-car9, .small-car10, .small-car11 {
+	.small-car6, .small-car7, .small-car8, .small-car9, .small-car10, .small-car11, .small-car12 {
 	background:url(<%= asset_path 'cars/small-strip.jpg' %>) no-repeat;
 	width:70px;
 	height:56px;
@@ -1127,6 +1131,9 @@ a {
 	background-position:-700px 0px;
 }
 
+.small-car12 {
+	background-position:-770px 0px;
+}
 
 .colored .small-car1 {
 	background-position:0px -56px;
@@ -1172,6 +1179,10 @@ a {
 	background-position:-700px -56px;
 }
 
+.colored .small-car12 {
+	background-position:-770px -56px;
+}
+
 .search-item:hover .car1, .colored .car1 {
 	background-position:0px -80px;
 }
@@ -1214,6 +1225,10 @@ a {
 
 .search-item:hover .car11, .colored .car11 {
 	background-position:-1000px -80px;
+}
+
+.search-item:hover .car12, .colored .car12 {
+	background-position:-1100px -80px;
 }
 
 .search-item .details {
@@ -1754,10 +1769,11 @@ a {
 	color: #323a45;
 	text-decoration: none;
 	display:block;
-	width:87px;
+	width:78px;
 	float:left;
 	padding:15px 0;
 	text-align:center;
+	font-size: 12px;
 }
 
 .tariff-header a:hover {

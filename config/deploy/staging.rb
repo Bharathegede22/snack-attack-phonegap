@@ -11,7 +11,7 @@ set :domain_name, "www.zoomcartest.com"
 default_run_options[:pty] = true
 set :scm, :git
 set :repository, "git@github.com:ZoomCar/web.git"
-set :branch, "staging"
+set :branch, "master"
 set :deploy_via, :remote_cache
 ssh_options[:forward_agent] = true
 
@@ -81,4 +81,4 @@ before "deploy:assets:precompile", "generic:configs"
 after "deploy", "generic:unicorn_restart"
 after "deploy", "deploy:cleanup"
 after "deploy", "generic:clear_cache"
-after "deploy", "generic:update_cron"
+#after "deploy", "generic:update_cron"

@@ -8,7 +8,8 @@ class ApplicationController < ActionController::Base
   before_filter :check_city
   before_filter :check_mobile
   before_filter :check_ref
-  
+  before_filter :authenticate_staging if Rails.env == 'staging'
+
   def abtest?
     !cookies[:abtestd].blank?
   end
@@ -27,8 +28,8 @@ class ApplicationController < ActionController::Base
 	      city = cookies[:city]
 	    else
 	    	city_prompt = true
-        ip = request.headers["X-Real-IP"] if request.headers["X-Real-IP"] && !request.headers["X-Real-IP"].empty?
-        city = get_city_from_ip(ip) if ip
+	      ip = request.headers["X-Real-IP"] if request.headers["X-Real-IP"] && !request.headers["X-Real-IP"].empty?
+	      city = get_city_from_ip(ip) if ip
         city = 'bangalore' if city.blank?
 	    end
     end
@@ -66,6 +67,7 @@ class ApplicationController < ActionController::Base
   end
   
   def check_ref
+    response.headers["X-FRAME-OPTIONS"] = "ALLOW-FROM http://optimizely.com"
   	# Check Ref Initial
   	if cookies[:ref].blank?
   		vref = ''
@@ -111,6 +113,14 @@ class ApplicationController < ActionController::Base
   
   def render_404
   	render :file => Rails.root.join("public/404.html"),  :status => 404, :layout => nil
+  end
+
+
+  def authenticate_staging
+    if current_user.blank? || (!current_user.blank? && current_user.role < 1)
+      flash[:notice] = "Please login with support to access test server."
+      redirect_to '/' and return
+    end
   end
   
   private
