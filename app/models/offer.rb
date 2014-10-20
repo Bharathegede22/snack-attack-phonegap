@@ -68,6 +68,10 @@ class Offer < ActiveRecord::Base
 		return text  unless self.check_output_condition
 		return none
 	end
+
+	def update_coupon(coupon_id, booking_id)
+		CouponCode.where(:id => coupon_id).update_all(:used => 1, :used_at => Time.now, :booking_id => booking_id)
+	end
 	
 end
 

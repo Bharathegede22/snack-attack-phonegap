@@ -127,16 +127,10 @@ class BookingsController < ApplicationController
 		end
 		
 		# Check Offer
-		promo = nil
-		promo = Offer.get(session[:promo_code],@city) if !session[:promo_code].blank?
-		if !session[:promo_booking].blank?
-			@booking = Booking.find(session[:promo_booking])
-			session[:promo_booking] = nil
-			@booking.status = 0
-		end
-		if promo
+		#promo = Offer.get(session[:promo_code],@city) if !session[:promo_code].blank?
+		if session[:promo_valid]
 			@booking.promo = session[:promo_code]
-			@booking.offer_id = promo[:offer].id
+			@booking.offer_id = session[:promo_offer_id]
 		end
 		
 		# Corporate Booking
@@ -153,13 +147,23 @@ class BookingsController < ApplicationController
 		@booking.save!
 		
 		# Expiring Coupon Code
-		if promo && promo[:coupon]
-			promo[:coupon].used = 1
-			promo[:coupon].used_at = Time.now	
-			promo[:coupon].booking_id = @booking.id
-			promo[:coupon].save!
+		if session[:promo_valid] && !session[:promo_coupon_id].nil?
+			Offer.update_coupon(coupon_id, @booking.id)
 		end
 		
+		#create a charge if booking has been created and promocode exist
+		if @booking.id && session[:promo_valid]
+			
+			params[:booking_id] = @booking.id
+			params[:amount] = session[:promo_discount]
+
+			url = "#{ADMIN_HOSTNAME}/mobile/v3/bookings/createDiscountCharge"
+  		uri = URI(url)
+  		uri.query = URI.encode_www_form(params)
+  		res = Net::HTTP.get_response(uri)
+  		#res = JSON.parse(res.body)
+		end
+
 		# Using crredits
 		Credit.use_credits(@booking, session[:credits]) if !session[:credits].blank?
 		
@@ -345,6 +349,7 @@ class BookingsController < ApplicationController
   		session[:promo_code] = nil
   		session[:promo_message] = nil
   		session[:promo_discount] = -1 * session[:promo_discount]
+  		session[:promo_valid] = false
   	else
   		params[:total] = session[:total]
   		params[:city_id] = @city.id
@@ -363,9 +368,12 @@ class BookingsController < ApplicationController
   		res = JSON.parse(res.body)
   		promo = res["promo"]
   		session[:promo_message] = promo["message"]
+  		session[:promo_valid] = promo["valid"]
   		if !promo["code"].blank? && promo["valid"] == true
   			session[:promo_code] = promo["code"]
   			session[:promo_discount] = promo["discount"]
+  			session[:promo_offer_id] = promo["offer_id"]
+  			session[:promo_coupon_id] = promo["coupon_id"]
   		end
 		end
     render json: {html: render_to_string('_promoab.haml', layout: false)}
