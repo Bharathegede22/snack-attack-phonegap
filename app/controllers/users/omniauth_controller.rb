@@ -1,5 +1,6 @@
-class Users::OmniauthController < Devise::OmniauthCallbacksController 
-	
+class Users::OmniauthController < Devise::OmniauthCallbacksController
+
+  skip_before_filter :authenticate_staging if Rails.env == 'staging'
 	include Devise::Controllers::Rememberable
 	
   def facebook
