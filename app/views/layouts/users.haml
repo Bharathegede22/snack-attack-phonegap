@@ -1,9 +1,11 @@
 !!!
 %html{lang: "en"}
 	= render :partial => "/layouts/head_static"
-	- cls = (!cookies[:abtestd].blank?) ? 'body-header-new' : ''
+	-#- cls = (!cookies[:abtestd].blank?) ? 'body-header-new' : ''
+	- cls = ''
 	%body{:class => cls}
-		= render :partial => (!cookies[:abtestd].blank?) ? "/layouts/header" : "/layouts/header_old"
+		-#= render :partial => (!cookies[:abtestd].blank?) ? "/layouts/header" : "/layouts/header_old"
+		= render :partial => "/layouts/header_old"
 		.content
 			.wrapper.bg-f
 				.p-20

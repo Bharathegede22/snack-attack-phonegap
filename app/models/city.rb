@@ -108,7 +108,7 @@ class City < ActiveRecord::Base
 	
 	def self.active
 		Rails.cache.fetch("cities") do
-			City.where(:active => 1)
+			City.where(:active => 1).all
 		end
 	end
 	

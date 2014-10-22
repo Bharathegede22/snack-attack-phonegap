@@ -10,9 +10,9 @@ class ApplicationController < ActionController::Base
   before_filter :check_ref
   before_filter :authenticate_staging if Rails.env == 'staging'
 
-  def abtest?
-    !cookies[:abtestd].blank?
-  end
+  # def abtest?
+  #   !cookies[:abtestd].blank?
+  # end
 
   def check_city
     # Checking explicit city in the url
