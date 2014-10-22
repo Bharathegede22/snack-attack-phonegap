@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
 	
 	before_filter :authenticate_user!, :only => [:license, :social, :settings, :update, :credits]
+	skip_before_filter :authenticate_staging if Rails.env == 'staging'
 	
 	def credits
 		@total_credits = current_user.total_credits
