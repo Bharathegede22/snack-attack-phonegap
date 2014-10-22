@@ -157,7 +157,7 @@ class BookingsController < ApplicationController
 			params[:booking_id] = @booking.id
 			params[:amount] = session[:promo_discount]
 
-			url = "#{ADMIN_HOSTNAME}/mobile/v3/bookings/createDiscountCharge"
+			url = "#{ADMIN_HOSTNAME}/mobile/v3/bookings/create_discount_charge"
   		uri = URI(url)
   		uri.query = URI.encode_www_form(params)
   		res = Net::HTTP.get_response(uri)
@@ -359,6 +359,7 @@ class BookingsController < ApplicationController
 			params[:cargroup_id] = session[:search][:car] if !session[:search].blank? && !session[:search][:car].blank?
 			params[:ref_initial] = session[:ref_initial] if !session[:ref_initial].blank?
 			params[:ref_immediate] = session[:ref_immediate] if !session[:ref_immediate].blank?
+			params[:platform] = "web"
 
   		url = "#{ADMIN_HOSTNAME}/mobile/v3/bookings/promo"
   		uri = URI(url)
