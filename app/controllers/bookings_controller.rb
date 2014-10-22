@@ -147,7 +147,7 @@ class BookingsController < ApplicationController
 		@booking.save!
 		
 		# Expiring Coupon Code
-		if session[:promo_valid] && !session[:promo_coupon_id].nil?
+		if session[:promo_valid] && session[:promo_coupon_id].present?
 			Offer.update_coupon(coupon_id, @booking.id)
 		end
 		
@@ -351,15 +351,8 @@ class BookingsController < ApplicationController
   		session[:promo_discount] = -1 * session[:promo_discount]
   		session[:promo_valid] = false
   	else
-  		params[:total] = session[:total]
-  		params[:city_id] = @city.id
-			params[:starts] = Time.zone.parse(session[:search][:starts]) if !session[:search].blank? && !session[:search][:starts].blank?
-			params[:ends] = Time.zone.parse(session[:search][:ends]) if !session[:search].blank? && !session[:search][:ends].blank?
-			params[:location_id] = session[:search][:loc] if !session[:search].blank? && !session[:search][:loc].blank?
-			params[:cargroup_id] = session[:search][:car] if !session[:search].blank? && !session[:search][:car].blank?
-			params[:ref_initial] = session[:ref_initial] if !session[:ref_initial].blank?
-			params[:ref_immediate] = session[:ref_immediate] if !session[:ref_immediate].blank?
-			params[:platform] = "web"
+
+  		promo_params = updated_params(params)
 
   		url = "#{ADMIN_HOSTNAME}/mobile/v3/bookings/promo"
   		uri = URI(url)
@@ -370,7 +363,7 @@ class BookingsController < ApplicationController
   		promo = res["promo"]
   		session[:promo_message] = promo["message"]
   		session[:promo_valid] = promo["valid"]
-  		if !promo["code"].blank? && promo["valid"] == true
+  		if promo["code"].present? && promo["valid"] == true
   			session[:promo_code] = promo["code"]
   			session[:promo_discount] = promo["discount"]
   			session[:promo_offer_id] = promo["offer_id"]
@@ -378,6 +371,19 @@ class BookingsController < ApplicationController
   		end
 		end
     render json: {html: render_to_string('_promoab.haml', layout: false)}
+  end
+
+  def updated_params(params)
+  	params[:total] = session[:total]
+  	params[:city_id] = @city.id
+  	params[:starts] = Time.zone.parse(session[:search][:starts]) if !session[:search].blank? && !session[:search][:starts].blank?
+		params[:ends] = Time.zone.parse(session[:search][:ends]) if !session[:search].blank? && !session[:search][:ends].blank?
+		params[:location_id] = session[:search][:loc] if !session[:search].blank? && !session[:search][:loc].blank?			
+		params[:cargroup_id] = session[:search][:car] if !session[:search].blank? && !session[:search][:car].blank?
+		params[:ref_initial] = session[:ref_initial] if !session[:ref_initial].blank?
+		params[:ref_immediate] = session[:ref_immediate] if !session[:ref_immediate].blank?
+		params[:platform] = "web"
+		return params
   end
   
   def promo_sql
