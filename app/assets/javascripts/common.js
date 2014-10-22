@@ -1,4 +1,3 @@
-
 jQuery.fn.center = function(){
 	if(window.fixedSupported) {
 		this.css("position","fixed");
@@ -385,7 +384,7 @@ function postData(complete_url,divId,divAction,divWait,dataStr) {
   	url: complete_url, 
   	data: dataStr, 
 		dataType: "json",
-		type: 'POST',
+		type: 'POST'
 	});
 	resp.done(
     function(data){
