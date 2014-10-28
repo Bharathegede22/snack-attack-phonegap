@@ -1,6 +1,4 @@
 class MainController < ApplicationController
-
-  skip_before_filter :authenticate_staging, :only => [:index]
 	
 	def about
 		@meta_title = "About ZoomCar Team | Online Self Drive Car In #{@city.name}"

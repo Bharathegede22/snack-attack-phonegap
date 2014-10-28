@@ -64,8 +64,3 @@
 	- flash[:notice] = "<b>Access Denied!</b> Please login to continue."
 	:javascript
 		showModal('Sign In', '/users/signin');
-- elsif session[:staging] == 1
-	- session[:staging] = nil
-	- flash[:notice] = "<b>Access Denied!</b>"
-	:javascript
-		showModal('Sign In', '/users/access');

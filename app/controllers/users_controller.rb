@@ -1,14 +1,10 @@
 class UsersController < ApplicationController
 	
 	before_filter :authenticate_user!, :only => [:license, :social, :settings, :update, :credits]
-	skip_before_filter :authenticate_staging if Rails.env == 'staging'
+	skip_before_filter :authenticate_staging
 	
 	def access
-		if user_signed_in?
-			return render json: {html: render_to_string('/users/access.haml', :layout => false)}
-		else
-			return render json: {html: render_to_string('/devise/sessions/new.haml', :layout => false)}
-		end
+		flash[:error] = "<b>Access Denied!</b>"
 	end
 
 	def credits

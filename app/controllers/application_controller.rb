@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   before_filter :check_city
   before_filter :check_mobile
   before_filter :check_ref
-  before_filter :authenticate_staging if Rails.env == 'staging'
+  before_filter :authenticate_staging
 
   def abtest?
     !cookies[:abtestd].blank?
@@ -119,10 +119,7 @@ class ApplicationController < ActionController::Base
   end
 
   def authenticate_staging
-    if current_user.blank? || (!current_user.blank? && current_user.role < 1)
-      session[:staging] = 1
-      redirect_to '/' and return
-    end
+    redirect_to '/users/access' and return if Rails.env == 'staging' && (current_user.blank? || (!current_user.blank? && current_user.role < 1))
   end
   
   private
