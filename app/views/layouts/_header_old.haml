@@ -5,7 +5,6 @@
 	#NavBuffer.nav-buffer-big
 - else
 	#NavBuffer.nav-buffer
-
 %nav.navbar.navbar-fixed-top{:role => "navigation"}
 	.wrapper
 		%a.logo{:href => '/'}
@@ -27,27 +26,25 @@
 				%a.iphone.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "Get ZoomCar iPhone App", href: "https://itunes.apple.com/us/app/zoomcar-self-drive-cars/id889910218?mt=8&utm_source=home%20page&utm_medium=header%20links&utm_content=iOS&utm_campaign=installs"}
 				.fc
 		.info
-			- if current_user && current_user.unsafe_bookings.any?
-				%a.wallet-alert.fr.ts-3.f-b.pointer.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "You have an upcoming booking with Security Deposit due", href: "/bookings"}
-					!
-			.broadcast.fr
-				#UserBar.dropdown.fr
-					%a.dropdown-toggle.p-r10.p-l10{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
-						My Account
-						%b.caret
-					%ul.dropdown-menu.pull-right
-						%li
-							%a{href: "javascript:void(0)", onclick: "showModal('Sign Up', '/users/signup');"}
-								Sign Up
-						%li
-							%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/signin');"}
-								Sign In
-						%li
-							%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/forgot');"}
-								Forgot Password
-			%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
-				We're Hiring
-			.fc
+			#UserBar
+				.broadcast.fr
+					.dropdown.fr
+						%a.dropdown-toggle.p-r10.p-l10{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
+							My Account
+							%b.caret
+						%ul.dropdown-menu.pull-right
+							%li
+								%a{href: "javascript:void(0)", onclick: "showModal('Sign Up', '/users/signup');"}
+									Sign Up
+							%li
+								%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/signin');"}
+									Sign In
+							%li
+								%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/forgot');"}
+									Forgot Password
+				%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
+					We're Hiring
+				.fc
 			.support
 				= @city.contact_phone
 		.links

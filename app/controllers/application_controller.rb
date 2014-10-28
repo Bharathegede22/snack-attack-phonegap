@@ -118,10 +118,9 @@ class ApplicationController < ActionController::Base
   	render :file => Rails.root.join("public/404.html"),  :status => 404, :layout => nil
   end
 
-
   def authenticate_staging
     if current_user.blank? || (!current_user.blank? && current_user.role < 1)
-      flash[:notice] = "Please login with support to access test server."
+      session[:staging] = 1
       redirect_to '/' and return
     end
   end
