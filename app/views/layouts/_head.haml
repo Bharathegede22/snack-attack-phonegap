@@ -10,8 +10,8 @@
 	- else
 		%meta{content: "index,follow", name: "robot"}/
 		%meta{content: "3", name: "revisit-after"}/
-	%meta{content: "© Copyright #{Time.now.year} ZoomCar India Private Ltd. All rights reserved.", name: "copyright"}/
-	%meta{content: "ZoomCar India Private Ltd.", name: "author"}/
+	%meta{content: "© Copyright #{Time.now.year} Zoomcar India Private Ltd. All rights reserved.", name: "copyright"}/
+	%meta{content: "Zoomcar India Private Ltd.", name: "author"}/
 	%meta{content: "www.onlinemetatag.com", name: "generator"}/
 	%meta{content: "English", name: "language"}/
 	%meta{charset: "utf-8"}/
@@ -23,13 +23,13 @@
 			%meta{property: "og:title", content: "Self Drive Cars In India"}
 			%meta{property: "og:image", content: 'http://assets.zoomcar.in/images/logo-big.jpg'}
 			%meta{property: "og:url", content: @canonical}
-			%meta{property: "og:site_name", content: "ZoomCar"}
+			%meta{property: "og:site_name", content: "Zoomcar"}
 			%meta{property: "og:description", content: @meta_description}
 		- else
 			%meta{property: "og:title", content: "Self Drive Cars In #{@city.name}"}
 			%meta{property: "og:image", content: 'http://assets.zoomcar.in/images/logo-big.jpg'}
 			%meta{property: "og:url", content: @canonical}
-			%meta{property: "og:site_name", content: "ZoomCar"}
+			%meta{property: "og:site_name", content: "Zoomcar"}
 			%meta{property: "og:description", content: @meta_description}
 		%meta{property: "fb:app_id", content: '194504380711275'}
 		- City.active.each do |c|
