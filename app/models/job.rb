@@ -9,7 +9,7 @@ class Job < ActiveRecord::Base
 	end
 	
 	def link
-		return "http://www.zoomcar.in/job/" + self.encoded_id
+		return "http://" + HOSTNAME + "/job/" + self.encoded_id
 	end
 	
 	def meta_description

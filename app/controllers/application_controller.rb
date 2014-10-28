@@ -18,7 +18,10 @@ class ApplicationController < ActionController::Base
     # Checking explicit city in the url
     city_prompt = false
     city = params[:city]
-    city = city.downcase if city
+    if city
+      city = city.downcase
+      @cityp = City.lookup(city)
+    end
     
     # Fallback ip detect
     if city.blank?

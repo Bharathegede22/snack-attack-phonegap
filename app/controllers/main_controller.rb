@@ -216,13 +216,27 @@ class MainController < ApplicationController
 	end
 	
 	def index
-		@city = City.lookup('bangalore') if @city.blank?
-		redirect_to "/" + @city.name.downcase and return if request.url.split('?').first.split('/').last != @city.name.downcase
-		@meta_title = @city.meta_title
-		@meta_description = @city.meta_description
-		@meta_keywords = @city.meta_keywords
-		@header = 'homepage'
-		@canonical = @city.link
+		if true #Rails.env.production?
+			@city = City.lookup('bangalore') if @city.blank?
+			redirect_to "/" + @city.name.downcase and return if request.url.split('?').first.split('/').last != @city.name.downcase
+			@meta_title = @city.meta_title
+			@meta_description = @city.meta_description
+			@meta_keywords = @city.meta_keywords
+			@header = 'homepage'
+			@canonical = @city.link
+		elsif !@cityp.blank?
+			@meta_title = @city.meta_title
+			@meta_description = @city.meta_description
+			@meta_keywords = @city.meta_keywords
+			@header = 'homepage'
+			@canonical = @city.link
+		else
+			@meta_title = City.meta_title
+			@meta_description = City.meta_description
+			@meta_keywords = City.meta_keywords
+			@header = 'homepage'
+			@canonical = City.link
+		end
 		#expires_in 1.months, :public => true, 'max-stale' => 0 #if Rails.env == 'production'
 	end
 	
