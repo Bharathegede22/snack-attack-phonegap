@@ -35,13 +35,20 @@
 		.partition
 			%h3 Let's keep in touch
 			.p-t5.lgrey.lh-18
-				117, 2nd Cross,
+				- if @city.name.downcase == 'pune'
+					106, Suratwala Mark Plazzo,
+					%br/
+					Opp. Fortune Inn Hotel,
+					%br/
+					Hinjewadi, Pune - 411057
+				- else
+					117, 2nd Cross,
+					%br/
+					HAL 3rd Stage,
+					%br/
+					Bangalore - 560075
 				%br/
-				HAL 3rd Stage,
-				%br/
-				Bangalore - 560075
-				%br/
-				Phone: #{CommonHelper::CUSTOMER_CARE}
+				Phone: #{@city.contact_phone}
 				%br/
 				Email: 
 				%a{:href => "mailto:info@zoomcar.in"} info@zoomcar.in
