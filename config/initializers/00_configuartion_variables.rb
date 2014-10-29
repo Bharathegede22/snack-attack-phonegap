@@ -1,5 +1,7 @@
 configurations = YAML.load(File.read(File.join(::Rails.root.to_s, 'config', 'configurations.yml')))
 
+APP_KEY = configurations['app_key']
+
 FACEBOOK_ID = configurations['facebook_id']
 FACEBOOK_SECRET = configurations['facebook_secret']
 
