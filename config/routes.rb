@@ -1,7 +1,9 @@
 Web::Application.routes.draw do
 
 	get 'mydeposits' => "wallets#show"
-  	get 'bookings'  => "wallets#show"
+  get 'bookings'  => "wallets#show"
+	get 'device'  => "main#device"
+
 	devise_for :users, 
 		:controllers => {
 			:confirmations => "users/confirmations", 

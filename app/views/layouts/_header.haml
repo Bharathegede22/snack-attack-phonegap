@@ -1,4 +1,4 @@
-= render :partial => '/layouts/tag_manager' if Rails.env.production?
+= render :partial => '/layouts/tag_manager' if false && Rails.env.production?
 #DocTop
 = render :partial => '/main/mobile_redirect' if !@device.blank?
 #header-new
@@ -13,7 +13,6 @@
 			#NavBuffer.nav-buffer-3
 		- else
 			#NavBuffer.nav-buffer-4
-
 	.header.navbar-fixed-top.border-b-c
 		/ .bg-zoom
 		/ 	.wrapper.p-t5.p-b5
@@ -33,25 +32,21 @@
 							&nbsp;
 						%a.inline-block.header-icon.facebook.m-r5{'target' => "blank", 'href' => "http://facebook.com/zoomcar.in"} &nbsp;
 						%a.inline-block.header-icon.twitter{'target' => "blank", 'href' => 'http://twitter.com/zoomcarindia'} &nbsp;
-
 					.fl.border-r-d-9.p-l10.p-r10
 						.inline-block.p-b5.p-t5.p-r5
 							Download App:
 						%a.inline-block.header-icon.iphone.m-r5.help{'target' => "blank", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "Get Zoomcar iPhone App", href: "https://itunes.apple.com/us/app/zoomcar-self-drive-cars/id889910218?mt=8&utm_source=home%20page&utm_medium=header%20links&utm_content=iOS&utm_campaign=installs"} &nbsp;
 						%a.inline-block.header-icon.android.help{'target' => "blank", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "Get Zoomcar Android App", href: "https://play.google.com/store/apps/details?id=com.zoomcar&referrer=utm_source%3Dhome%2520page%26utm_medium%3Dheader%2520links%26utm_content%3Dandroid%26utm_campaign%3Dinstalls"} &nbsp;
-
 					%a.fl.border-r-d-9.p-l10.p-r10.topbar-link.offers-link{href: "/#{@city.name.downcase}/offers"}
 						.inline-block.header-icon.offers.m-r3 &nbsp;
 						.inline-block.p-b3.p-t3
 							Offers
-
 					#alerts.dropdown.fl
 						- alerts = (current_user && current_user.unsafe_bookings.any?)
 						- cls =  (alerts) ? 'active' : ''
 						%a.dropdown-toggle.fl.border-r-d-9.p-l5.topbar-link{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
 							.inline-block.header-icon.alerts{'class' => cls} &nbsp;
 							.inline-block.p-b5.p-t5 &nbsp;
-
 						- if alerts
 							%ul.dropdown-menu.pull-right
 								%li
@@ -62,7 +57,6 @@
 								%li
 									%a{:href => "javascript:void(0)"}
 										You have no new notifications. Cheers :)
-
 					#UserBar.dropdown.fl
 						%a.dropdown-toggle.fl.border-r-d-9.topbar-link.p-5.p-l10{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
 							My Account
@@ -79,11 +73,9 @@
 									Forgot Password
 					.fc
 				.fc
-
 		.bg-w
 			.wrapper.p-t5.p-b10
 				%a.logo{:href => '/'}
-
 				%nav.links{:role => "navigation"}
 					%ul.nav.navbar-nav.fr
 						%li.dropdown
@@ -131,9 +123,7 @@
 									Need help?
 								%a.t-n{href: "tel:#{@city.contact_phone.gsub('-','')}"}
 									= @city.contact_phone
-
 					.fc
-
 		- cls = (!@header.blank? && @header == 'search') ? '' : 'hide'
 		- if @header.blank? || @header != 'homepage'
 			#SH
@@ -144,6 +134,5 @@
 				#SearchFormDiv.search-header
 					#SHContent
 					#SHWait.t-c
-						.wait.m-auto
-					
+						.wait.m-auto			
 #Flash.wrapper

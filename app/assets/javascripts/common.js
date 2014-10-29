@@ -208,6 +208,11 @@ function hideCalculator() {
 	$('#Overlay').toggle('explode');
 }
 
+function hideMobile() {
+	$('#MobileRedirect').toggle('explode');
+	getData('/device?web=1', null, null, null);
+}
+
 function initializeDatePicker() {
 	var d = new Date(jQuery.now());
 	var nd = new Date(); nd.setDate(nd.getDate() + 60);

@@ -2,10 +2,10 @@
 	%tr
 		%td
 			%div{:style => 'color:#6ABD19; font-size:40px; font-weight:bold; padding:10px 0; text-align:center;'}
-				%a{href: "http://www.zoomcar.in", style: "text-decoration:none; color:#6ABD19;"}
+				%a{href: "http://www.zoomcar.com", style: "text-decoration:none; color:#6ABD19;"}
 					%img{:src => "http://#{HOSTNAME}/images/email/logo.png", :alt => 'Zoomcar', :border => '0'}/
 			%div{:style => "border-radius:10px; background:#ffffff; padding:20px; width:600px; margin:auto; color:#333333; font-size:12px; box-shadow: 0px 0px 10px #6ABD19;"}
-				- if HOSTNAME != 'www.zoomcar.in'
+				- if !Rails.env.production?
 					%div{style: "text-align:center; color:red; margin:10px; padding:0; font-weight:bold;"}
 						Support / Fleet Guys : Please ignore this email.
 				= yield
@@ -42,7 +42,6 @@
 								Account Block
 							%td{align: 'center'}
 								₹ #{CommonHelper::OVERSPEEDING} Fine
-				- if HOSTNAME != 'www.zoomcar.in'
+				- if !Rails.env.production?
 					%div{style: "text-align:center; color:red; margin:10px; padding:0; font-weight:bold;"}
 						this email is generated on Zoomcar's test server and doesn't have any relevance whatsoever
-					

@@ -133,6 +133,10 @@ class MainController < ApplicationController
 		@canonical = @city.link('attractions')
 	end
 	
+	def device
+		render json: {html: ''}
+	end
+
 	def eligibility
 		@meta_title = "Is Zoomcar For Me? Eligibility Policy | Zoomcar.in"
 		@meta_description = "Read the eligibility policy from Zoomcar. Members must be #{CommonHelper::MIN_AGE} years with driving license and member should be able to pay by credit or debit card"
