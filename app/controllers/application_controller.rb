@@ -156,7 +156,7 @@ class ApplicationController < ActionController::Base
 	
 	def set_cookies_ref(city)
     session[:city] = city.downcase
-    cookies[:city] = {:value => city.downcase, :expires => 10.years.from_now, :domain => "." + HOSTNAME.split(':').first.gsub("www.", '')
+    cookies[:city] = {:value => city.downcase, :expires => 10.years.from_now, :domain => "." + HOSTNAME.split(':').first.gsub("www.", '')}
     @city = City.lookup(city.downcase)
   end
   
