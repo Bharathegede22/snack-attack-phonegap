@@ -3,13 +3,13 @@
 		.partition
 			%h3 How It Works?
 			.p-t5
-				%a{:href => "/howitworks"} How ZoomCar Works
+				%a{:href => "/howitworks"} How Zoomcar Works
 			.p-t5
 				%a{:href => "/#{@city.name.downcase}/safety"} Zoom in Safety
 			.p-t5
 				%a{:href => "/outstation"} Going Outstation?
 			.p-t5
-				%a{:href => "/reva"} Zoom's Electric!
+				%a{:href => "/reva"} Zoomcar's Electric!
 			.p-t5
 				%a{:href => "/#{@city.name.downcase}/faq"} FAQs
 			.p-t5
@@ -27,36 +27,43 @@
 		.partition
 			%h3 About Us
 			.p-t5
-				%a{:href => "/about"} Zoom Team
+				%a{:href => "/about"} Zoomcar Team
 			.p-t5
-				%a{:href => "/careers"} Careers @ Zoom
+				%a{:href => "/careers"} Careers @ Zoomcar
 			.p-t5
-				%a{:href => "http://www.zoomcar.com/blog/", :target => "_blank"} Zoom Blog
+				%a{:href => "http://www.zoomcar.com/blog/", :target => "_blank"} Zoomcar Blog
 		.partition
 			%h3 Let's keep in touch
 			.p-t5.lgrey.lh-18
-				117, 2nd Cross,
+				- if @city.name.downcase == 'pune'
+					106, Suratwala Mark Plazzo,
+					%br/
+					Opp. Fortune Inn Hotel,
+					%br/
+					Hinjewadi, Pune - 411057
+				- else
+					117, 2nd Cross,
+					%br/
+					HAL 3rd Stage,
+					%br/
+					Bangalore - 560075
 				%br/
-				HAL 3rd Stage,
-				%br/
-				Bangalore - 560075
-				%br/
-				Phone: #{CommonHelper::CUSTOMER_CARE}
+				Phone: #{@city.contact_phone}
 				%br/
 				Email: 
 				%a{:href => "mailto:info@zoomcar.in"} info@zoomcar.in
 				%br/
-				%a.link{:href => "/contact", :rel => "nofollow", :target => "_blank", :title => "Directions to Zoom's Office!"} Get Directions
+				%a.link{:href => "/contact", :rel => "nofollow", :target => "_blank", :title => "Directions to Zoomcar's Office!"} Get Directions
 			.social.fl
 				%a.link{:href => "https://www.facebook.com/zoomcar.in?ref=hl", :rel => "nofollow", :target => "_blank", :title => "Connect with us on Facebook!"}
 				%a.link{:href => "https://plus.google.com/u/0/105997905931151680973/posts", :rel => "nofollow", :target => "_blank", :title => "We're on Google+ too!"}
 				%a.link{:href => "https://twitter.com/ZoomCarIndia", :rel => "nofollow", :target => "_blank", :title => "Follow us on Twitter!"}
-				%a.link{:href => "http://zoomcar.com/blog/", :rel => "nofollow", :target => "_blank", :title => "Catch up with us on our Blog!"}
+				%a.link{:href => "http://www.zoomcar.com/blog/", :rel => "nofollow", :target => "_blank", :title => "Catch up with us on our Blog!"}
 			.fc
 		.fc
 
 		.m-t10.lgrey.t-c
-			&copy; Copyright #{Time.now.year} ZoomCar India Private Ltd. All rights reserved.
+			&copy; Copyright #{Time.now.year} Zoomcar India Private Ltd. All rights reserved.
 		%br/
 
 	:javascript
