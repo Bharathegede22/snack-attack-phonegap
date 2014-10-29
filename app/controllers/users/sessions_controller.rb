@@ -1,5 +1,7 @@
 class Users::SessionsController < Devise::SessionsController
 	
+	skip_before_filter :authenticate_staging
+
 	def create
 		if request.xhr?
 			resource = warden.authenticate!(:scope => resource_name, :recall => "#{controller_path}#failure")

@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   before_filter :check_city
   before_filter :check_mobile
   before_filter :check_ref
-  before_filter :authenticate_staging if Rails.env == 'staging'
+  before_filter :authenticate_staging
 
   def abtest?
     !cookies[:abtestd].blank?
@@ -18,7 +18,10 @@ class ApplicationController < ActionController::Base
     # Checking explicit city in the url
     city_prompt = false
     city = params[:city]
-    city = city.downcase if city
+    if city
+      city = city.downcase
+      @cityp = City.lookup(city)
+    end
     
     # Fallback ip detect
     if city.blank?
@@ -115,12 +118,8 @@ class ApplicationController < ActionController::Base
   	render :file => Rails.root.join("public/404.html"),  :status => 404, :layout => nil
   end
 
-
   def authenticate_staging
-    if current_user.blank? || (!current_user.blank? && current_user.role < 1)
-      flash[:notice] = "Please login with support to access test server."
-      redirect_to '/' and return
-    end
+    redirect_to '/users/access' and return if Rails.env == 'staging' && (current_user.blank? || (!current_user.blank? && current_user.role < 1))
   end
   
   private
@@ -157,7 +156,7 @@ class ApplicationController < ActionController::Base
 	
 	def set_cookies_ref(city)
     session[:city] = city.downcase
-    cookies[:city] = {:value => city.downcase, :expires => 10.years.from_now, :domain => ".#{HOSTNAME.split(':').first}"}
+    cookies[:city] = {:value => city.downcase, :expires => 10.years.from_now, :domain => "." + HOSTNAME.split(':').first.gsub("www.", '')}
     @city = City.lookup(city.downcase)
   end
   

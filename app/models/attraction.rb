@@ -15,7 +15,7 @@ class Attraction < ActiveRecord::Base
 	end
 	
 	def link(city=nil)
-		return "http://www.zoomcar.in/" + CommonHelper.escape(self.city.name.downcase) + "/car-rental-to-" + CommonHelper.escape(self.name.downcase) + "_" + self.encoded_id
+		return "http://" + HOSTNAME + "/" + CommonHelper.escape(self.city.name.downcase) + "/car-rental-to-" + CommonHelper.escape(self.name.downcase) + "_" + self.encoded_id
 	end
 	
 	def meta_description(city=nil)

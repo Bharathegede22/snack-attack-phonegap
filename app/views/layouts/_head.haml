@@ -1,5 +1,4 @@
 %head
-	%script{src: "//cdn.optimizely.com/js/#{HOSTNAME.include?('test') ? 1628990188 : 1586983751}.js"}
 	%title= @meta_title
 	%meta{content: @meta_description, name: "description"}/
 	%meta{content: @meta_keywords, name: "keywords"}/
@@ -19,17 +18,22 @@
 	%link{href: asset_path('favicon.png'), rel: "shortcut icon", type: "image/png"}/
 	%link{href: "https://fonts.googleapis.com/css?family=Droid+Sans", rel: "stylesheet"}/
 	- if params[:controller] == 'main' && params[:action] == 'index'
-		%meta{property: "og:title", content: "Self Drive Cars In #{@city.name}"}
-		%meta{property: "og:image", content: 'http://assets.zoomcar.in/images/logo-big.jpg'}
-		%meta{property: "og:url", content: @canonical}
-		%meta{property: "og:site_name", content: "ZoomCar"}
-		%meta{property: "og:description", content: @meta_description}
+		- if @cityp.blank?
+			%meta{property: "og:title", content: "Self Drive Cars In India"}
+			%meta{property: "og:image", content: 'http://assets.zoomcar.in/images/logo-big.jpg'}
+			%meta{property: "og:url", content: @canonical}
+			%meta{property: "og:site_name", content: "ZoomCar"}
+			%meta{property: "og:description", content: @meta_description}
+		- else
+			%meta{property: "og:title", content: "Self Drive Cars In #{@city.name}"}
+			%meta{property: "og:image", content: 'http://assets.zoomcar.in/images/logo-big.jpg'}
+			%meta{property: "og:url", content: @canonical}
+			%meta{property: "og:site_name", content: "ZoomCar"}
+			%meta{property: "og:description", content: @meta_description}
 		%meta{property: "fb:app_id", content: '194504380711275'}
-		- if @city.name.downcase == 'bangalore'
-			%link{rel: "alternate", href: "http://www.zoomcar.in/pune", hreflang: "en"}/
-		- elsif @city.name.downcase == 'pune'
-			%link{rel: "alternate", href: "http://www.zoomcar.in/bangalore", hreflang: "en"}/
-
+		- City.active.each do |c|
+			- if @cityp.blank? || @cityp.name.downcase != c.name.downcase
+				%link{rel: "alternate", href: c.link, hreflang: "en"}/
 		- if !@device.blank?
 			%meta{content: "width=device-width, user-scalable=no, initial-scale=1", name: "viewport"}/
 		:javascript
