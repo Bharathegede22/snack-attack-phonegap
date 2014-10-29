@@ -164,7 +164,7 @@ class Booking < ActiveRecord::Base
   end
 	
 	def deposit_help
-		return "ZoomCar allows you to delay paying the Security Deposit. We really don’t want your money stuck in a deposit if your booking starts days from now."
+		return "Zoomcar allows you to delay paying the Security Deposit. We really don’t want your money stuck in a deposit if your booking starts days from now."
 	end
 	
 	def deposit_warning(remaining='')
@@ -623,7 +623,7 @@ class Booking < ActiveRecord::Base
 
 	def sendsms(action, amount,deposit = 0)
 		message =  case action 
-		when 'change' then "Zoom booking (#{self.confirmation_key}) is changed. #{self.cargroup.display_name} from #{self.starts.strftime('%I:%M %p, %d %b')} till #{self.ends.strftime('%I:%M %p, %d %b')} at #{self.location.shortname}. "
+		when 'change' then "Zoomcar booking (#{self.confirmation_key}) is changed. #{self.cargroup.display_name} from #{self.starts.strftime('%I:%M %p, %d %b')} till #{self.ends.strftime('%I:%M %p, %d %b')} at #{self.location.shortname}. "
 		when 'cancel' then "Hi! Your Zoomcar booking (#{self.confirmation_key}) has been cancelled."
 		end
 		if action == 'cancel'
@@ -646,7 +646,7 @@ class Booking < ActiveRecord::Base
 				message << "Rs.#{amount.to_i} is outstanding. "
 			end
 		end
-		message << "#{self.city.contact_phone} : Zoom Support." if action != 'cancel'
+		message << "#{self.city.contact_phone} : Zoomcar Support." if action != 'cancel'
 		#SmsSender.perform_async(self.user_mobile, message, self.id) if Rails.env.production?
 		SmsTask::message_exotel(self.user_mobile, message, self.id)
 	end

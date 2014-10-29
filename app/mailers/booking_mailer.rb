@@ -2,21 +2,21 @@ class BookingMailer < ActionMailer::Base
   
   layout 'email'
   
-  default from: "ZoomCar <help@zoomcar.in>"#, bcc: "support@zoomcar.in"
+  default from: "Zoomcar <help@zoomcar.in>"#, bcc: "support@zoomcar.in"
   
   def cancel(booking, total,deposit)
 		@booking = Booking.find_by_id booking
 		@total = total
 		@deposit = deposit
 		@user = @booking.user
-		mail(:to => @user.email, :subject => "Your Zoom Reservation : #{@booking.confirmation_key}", bcc: @booking.city.contact_email)
+		mail(:to => @user.email, :subject => "Your Zoomcar Reservation : #{@booking.confirmation_key}", bcc: @booking.city.contact_email)
 	end
 	
 	def change(booking, total)
 		@booking = Booking.find_by_id booking
 		@total = total
 		@user = @booking.user
-		mail(:to => @user.email, :subject => "Your Zoom Reservation : #{@booking.confirmation_key}", bcc: @booking.city.contact_email)
+		mail(:to => @user.email, :subject => "Your Zoomcar Reservation : #{@booking.confirmation_key}", bcc: @booking.city.contact_email)
 	end
 	
 	def change_failed(booking)
@@ -32,7 +32,7 @@ class BookingMailer < ActionMailer::Base
   def payment(booking)
 		@booking =Booking.find_by_id booking
 		@user = @booking.user
-		mail(:to => @user.email, :subject => "Your Zoom Reservation : #{@booking.confirmation_key}", bcc: @booking.city.contact_email)
+		mail(:to => @user.email, :subject => "Your Zoomcar Reservation : #{@booking.confirmation_key}", bcc: @booking.city.contact_email)
 	end
 
 	def kle_mail(booking)

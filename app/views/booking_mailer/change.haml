@@ -9,7 +9,7 @@ Hi #{@user.name},
 %br/
 %br/
 %br/
-Your Zoom reservation end time has been changed.
+Your Zoomcar reservation end time has been changed.
 %br/
 Please review the details of your reservation:
 %br/
@@ -85,7 +85,7 @@ Please review the details of your reservation:
 			#{outstanding}
 		is outstanding against the reservation.
 		- if @booking.starts < Time.now
-			Please clear all your outstanding amount when you drop the vehicle back to Zoom.
+			Please clear all your outstanding amount when you drop the vehicle back to Zoomcar.
 		- else
 			%a{href: "#{@booking.link}", target: "_blank"}
 				Make payment
@@ -94,7 +94,7 @@ Please review the details of your reservation:
 			Rs.
 			#{0-outstanding}
 		will be refunded back to your account.
-		%i Please note that all refunds are processed at the time the vehicle is returned back to Zoom and the reservation has officially ended. It will then take 3-4 days for the reimbursed amount to reflect in your account.
+		%i Please note that all refunds are processed at the time the vehicle is returned back to Zoomcar and the reservation has officially ended. It will then take 3-4 days for the reimbursed amount to reflect in your account.
 %br/
 %br/
 %div{style: "margin:0px; padding:0px;"}
@@ -102,7 +102,7 @@ Please review the details of your reservation:
 	%br/
 	- if @booking.starts > Time.now
 		%p{style: "margin:5px 0 0 0; padding:0;"}
-			\- Please remember to carry your original driving license at the time of picking the car. Zoom reserves the right of cancelling the reservation if the original driving license is not produced.
+			\- Please remember to carry your original driving license at the time of picking the car. Zoomcar reserves the right of cancelling the reservation if the original driving license is not produced.
 		%p{style: "margin:5px 0 0 0; padding:0;"}
 			\- Please remember to carry your valid credit / debit card for paying any fee at the time you return the vehicle.
 	%p{style: "margin:5px 0 0 0; padding:0;"}
@@ -148,13 +148,13 @@ Please review the details of your reservation:
 					= "-"
 %br/
 %br/
-If you have any questions about your reservation you can contact Zoom at #{city.contact_email} / #{city.contact_phone}.
+If you have any questions about your reservation you can contact Zoomcar at #{city.contact_email} / #{city.contact_phone}.
 %br/
 %br/
 %br/  
 Happy Driving!
 %br/
 %br/ 
-The Zoom Team
+The Zoomcar Team
 %br/
 %br/

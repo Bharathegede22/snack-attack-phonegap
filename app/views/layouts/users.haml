@@ -1,15 +1,17 @@
 !!!
 %html{lang: "en"}
 	= render :partial => "/layouts/head_static"
-	- cls = (!cookies[:abtestd].blank?) ? 'body-header-new' : ''
+	-#- cls = (!cookies[:abtestd].blank?) ? 'body-header-new' : ''
+	- cls = ''
 	%body{:class => cls}
-		= render :partial => (!cookies[:abtestd].blank?) ? "/layouts/header" : "/layouts/header_old"
+		-#= render :partial => (!cookies[:abtestd].blank?) ? "/layouts/header" : "/layouts/header_old"
+		= render :partial => "/layouts/header_old"
 		.content
 			.wrapper.bg-f
 				.p-20
 					- if current_user && !current_user.check_license && params[:action] != 'license'
 						.alert.alert-danger
-							Please upload your driving license to enjoy full Zoom services. 
+							Please upload your driving license to enjoy full Zoomcar services. 
 							%a.f-b{href: "/users/license"} Click here 
 					= yield
 		= render :partial => '/layouts/footer'
