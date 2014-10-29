@@ -223,7 +223,7 @@ class Payment < ActiveRecord::Base
 				b.save(:validate => false)
 				Booking.recalculate(b.id)
 				wallet_amount = (b.outstanding_without_deposit + self.amount)>=0 ? b.outstanding_without_deposit.abs : self.amount
-				if wallet_amount != 0
+				if wallet_amount != 0 && b.wallet_security_payment.nil?
 						b.add_security_deposit_to_wallet(wallet_amount)
 						self.update_column(:deposit_available_for_refund, wallet_amount)
 						self.update_column(:deposit_paid, wallet_amount)
