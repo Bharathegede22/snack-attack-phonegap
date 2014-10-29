@@ -1,5 +1,7 @@
 class WalletsController < ApplicationController
+  
   before_filter :authenticate_user!
+  
   include WalletsHelper
 
   def refund

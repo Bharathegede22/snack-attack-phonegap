@@ -99,9 +99,10 @@ a {
 
 .navbar .wallet-alert {
 	background:#BE3232;
-	padding:3px 10px;
+	padding:3px 0px;
 	color:#ffffff;
 	font-size:12px;
+	width:20px;
 }
 
 .support {
@@ -179,7 +180,7 @@ a {
 
 .homepage .cars .h1 h1 span {
 	background:#323a45;
-	padding:5px 10px 7px 10px;
+	padding:3px 10px 5px 10px;
 	font-size:30px;
 	font-weight:bold;
 	color:#ffffff;
@@ -189,8 +190,7 @@ a {
 
 .homepage .cars .h1 p span {
 	background:#323a45;
-	padding:5px 10px 7px 10px;
-	margin:5px 0 0 -150px;
+	padding:3px 10px 5px 10px;
 	color:#ffffff;
 	font-size:16px;
 	border-left:2px solid #6ABD19;
@@ -365,12 +365,16 @@ a {
 	width:730px;
 	position:absolute;
 	left:115px;
-	top:107px;
+	top:110px;
 	z-index:5;
 }
 
-.widget-hor .bg {
+.widget-hor .search-form {
 	background:url(<%= asset_path 'bg-solid-medium.png' %>) #eee;
+	-webkit-box-shadow: 0px 0px 5px #000000;
+	-moz-box-shadow: 0px 0px 5px #000000;
+	box-shadow: 0px 0px 5px #000000;
+	behavior: url(<%= asset_path 'assets/PIE.htc' %>);
 }
 
 .search-header .box, .vertical-widget .box, .widget-hor .box {

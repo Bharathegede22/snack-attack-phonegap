@@ -22,7 +22,7 @@ class City < ActiveRecord::Base
 	end
 	
 	def link(action=nil)
-		return "http://www.zoomcar.in/" + CommonHelper.escape(self.name.downcase) + case action
+		return "http://" + HOSTNAME + "/" + CommonHelper.escape(self.name.downcase) + case action
 		when 'attractions' then "/attractions"
 		when 'inside' then "/explore"
 		when 'outside' then "/nearby"
@@ -120,8 +120,28 @@ class City < ActiveRecord::Base
 		return tmp
 	end
 	
+	def self.h1
+		"Self Drive Cars In India"
+	end
+	
+	def self.link
+		"http://www.zoomcar.in"
+	end
+	
 	def self.lookup(name)
 		return active_hash[name.downcase]
+	end
+	
+	def self.meta_description
+		"Book a self-drive car online in India. Self driving car rental made easy like never before, simply join us for renting a car by the hour, day, week or month. Our tariff includes fuel, insurance & taxes."
+	end
+	
+	def self.meta_keywords
+		"zoomcar, self drive car, self drive car rental, renting a car, self drive cars"
+	end
+	
+	def self.meta_title
+		"Self Drive Cars Rental In India | Join Online, Book A Car & Drive | Zoomcar.in"
 	end
 	
 end

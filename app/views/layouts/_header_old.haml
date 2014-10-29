@@ -1,11 +1,10 @@
-= render :partial => '/layouts/tag_manager'
+= render :partial => '/layouts/tag_manager' if false
 #DocTop
 = render :partial => '/main/mobile_redirect' if !@device.blank?
 - if !@header.blank? && @header == 'search'
 	#NavBuffer.nav-buffer-big
 - else
 	#NavBuffer.nav-buffer
-
 %nav.navbar.navbar-fixed-top{:role => "navigation"}
 	.wrapper
 		%a.logo{:href => '/'}
@@ -23,31 +22,29 @@
 			.m-t3.m-l5.size-11
 				Download app:
 			.mobile-app
-				%a.android.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "Get ZoomCar Android App", href: "https://play.google.com/store/apps/details?id=com.zoomcar&referrer=utm_source%3Dhome%2520page%26utm_medium%3Dheader%2520links%26utm_content%3Dandroid%26utm_campaign%3Dinstalls"}
-				%a.iphone.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "Get ZoomCar iPhone App", href: "https://itunes.apple.com/us/app/zoomcar-self-drive-cars/id889910218?mt=8&utm_source=home%20page&utm_medium=header%20links&utm_content=iOS&utm_campaign=installs"}
+				%a.android.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "Get Zoomcar Android App", href: "https://play.google.com/store/apps/details?id=com.zoomcar&referrer=utm_source%3Dhome%2520page%26utm_medium%3Dheader%2520links%26utm_content%3Dandroid%26utm_campaign%3Dinstalls"}
+				%a.iphone.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "Get Zoomcar iPhone App", href: "https://itunes.apple.com/us/app/zoomcar-self-drive-cars/id889910218?mt=8&utm_source=home%20page&utm_medium=header%20links&utm_content=iOS&utm_campaign=installs"}
 				.fc
 		.info
-			- if current_user && current_user.unsafe_bookings.any?
-				%a.wallet-alert.fr.ts-3.f-b.pointer.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "You have an upcoming booking with Security Deposit due", href: "/bookings"}
-					!
-			.broadcast.fr
-				#UserBar.dropdown.fr
-					%a.dropdown-toggle.p-r10.p-l10{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
-						My Account
-						%b.caret
-					%ul.dropdown-menu.pull-right
-						%li
-							%a{href: "javascript:void(0)", onclick: "showModal('Sign Up', '/users/signup');"}
-								Sign Up
-						%li
-							%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/signin');"}
-								Sign In
-						%li
-							%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/forgot');"}
-								Forgot Password
-			%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
-				We're Hiring
-			.fc
+			#UserBar
+				.broadcast.fr
+					.dropdown.fr
+						%a.dropdown-toggle.p-r10.p-l10{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
+							My Account
+							%b.caret
+						%ul.dropdown-menu.pull-right
+							%li
+								%a{href: "javascript:void(0)", onclick: "showModal('Sign Up', '/users/signup');"}
+									Sign Up
+							%li
+								%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/signin');"}
+									Sign In
+							%li
+								%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/forgot');"}
+									Forgot Password
+				%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
+					We're Hiring
+				.fc
 			.support
 				= @city.contact_phone
 		.links
@@ -79,7 +76,7 @@
 					%ul.dropdown-menu
 						%li
 							%a{href: "/howitworks"}
-								How ZoomCar Works
+								How Zoomcar Works
 						%li
 							%a{href: "/#{@city.name.downcase}/safety"}
 								Zoom in Safety
@@ -88,7 +85,7 @@
 								Going Outstation?
 						%li
 							%a{href: "/reva"}
-								Zoom's Electric!
+								Zoomcar's Electric!
 						%li
 							%a{href: "/#{@city.name.downcase}/faq"}
 								FAQs
