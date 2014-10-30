@@ -1,4 +1,5 @@
 class BookingsController < ApplicationController
+  include BookingsHelper
 
   before_filter :authenticate_user!, :only => [:checkout]
   before_filter :copy_params, :only => [:docreate]
@@ -457,13 +458,15 @@ class BookingsController < ApplicationController
       @booking.location_id = session[:search][:loc] if !session[:search].blank? && !session[:search][:loc].blank?
       @booking.cargroup_id = session[:search][:car] if !session[:search].blank? && !session[:search][:car].blank?
       Rails.logger.info "Calling admin for search results: ========"
-      search_results_from_admin = RestClient.get "#{CommonHelper::ADMIN_URL}/mobile/#{CommonHelper::API_VERSION}/bookings/search",
+
+      search_results_from_admin = admin_api_get_call "#{admin_hostname}/mobile/#{admin_api_version}/bookings/search",
                                                    params: {
                                                               starts: session[:search][:starts],
                                                               ends: session[:search][:ends],
                                                               city_id: @city.id,
                                                               location_id: @booking.location_id
                                                             }
+      Rails.logger.info "API call over: ======== "
       @inventory,@cars = get_inventory_from_json search_results_from_admin
       @header = 'search'
     end
@@ -527,8 +530,8 @@ class BookingsController < ApplicationController
 			@booking.ends = Time.zone.parse(session[:search][:ends])
 			@booking.cargroup_id = params[:car]
 			@booking.location_id = params[:location]
-      @page ||= (params[:page] || 0).to_i
-      timeline_from_admin = RestClient.get "#{CommonHelper::ADMIN_URL}/mobile/#{CommonHelper::API_VERSION}/bookings/timeline",
+      @page = (params[:page] || 0).to_i
+      timeline_from_admin = admin_api_get_call "#{ADMIN_HOSTNAME}/mobile/#{ADMIN_API_VERSION}/bookings/timeline",
                                                    params: {
                                                               starts: session[:search][:starts],
                                                               ends: session[:search][:ends],
@@ -537,12 +540,7 @@ class BookingsController < ApplicationController
                                                               page: params[:page],
                                                               car: params[:car]
                                                             }
-      json = JSON.parse(timeline_from_admin) rescue nil
-      result = json["inventory"]
-      @inventory = []
-      result.each do |i|
-        @inventory << Inventory.new(i)
-      end
+      @inventory = get_timeline_inventory_from_json timeline_from_admin
       if @page == 0
         render json: {html: render_to_string('timeline.haml', layout: false)}
       else
@@ -551,6 +549,16 @@ class BookingsController < ApplicationController
     else
       render_404
     end
+  end
+
+  def get_timeline_inventory_from_json timeline_from_admin
+    json = JSON.parse(timeline_from_admin)  rescue nil
+    result = json["inventory"]
+    inventory = []
+    result.each do |i|
+      inventory << Inventory.new(i)
+    end
+    inventory
   end
 	
 	def userdetails
