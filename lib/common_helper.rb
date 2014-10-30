@@ -85,7 +85,7 @@ module CommonHelper
 	]
 
   API_VERSION="v3"
-  ADMIN_URL="http://admin.dev/" if Rails.env.development?
+  ADMIN_URL="http://localhost:3000/" if Rails.env.development?
   ADMIN_URL="http://zoomcaradmin.com/" if Rails.env.production?
   ADMIN_URL="http://admin.zoomcartest.com/" if Rails.env.staging?
   
