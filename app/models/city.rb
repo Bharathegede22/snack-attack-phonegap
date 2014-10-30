@@ -85,19 +85,19 @@ class City < ActiveRecord::Base
 			if(self.seo_inside_title.present?)
 				self.seo_inside_title
 			else
-				"Self Drive Car Rental, Explore #{self.name} | Zoomcar.in"
+				"Self Drive Car Rental, Explore #{self.name} | Zoomcar"
 			end
 		when 'outside' then 
 			if(self.seo_outside_title.present?)
 				self.seo_outside_title
 			else
-				"Self Drive Car Rental, Explore Beyond #{self.name} | Zoomcar.in"
+				"Self Drive Car Rental, Explore Beyond #{self.name} | Zoomcar"
 			end
 		else
 			if(self.seo_title.present?)
 				self.seo_title
 			else
-				"Self Drive Cars Rental In #{self.name} | Join Online, Book A Car & Drive | Zoomcar.in"
+				"Self Drive Cars Rental In #{self.name} | Join Online, Book A Car & Drive | Zoomcar"
 			end
 		end
 	end
@@ -125,7 +125,7 @@ class City < ActiveRecord::Base
 	end
 	
 	def self.link
-		"http://www.zoomcar.in"
+		"http://#{HOSTNAME}"
 	end
 	
 	def self.lookup(name)
@@ -141,7 +141,7 @@ class City < ActiveRecord::Base
 	end
 	
 	def self.meta_title
-		"Self Drive Cars Rental In India | Join Online, Book A Car & Drive | Zoomcar.in"
+		"Self Drive Cars Rental In India | Join Online, Book A Car & Drive | Zoomcar"
 	end
 	
 end

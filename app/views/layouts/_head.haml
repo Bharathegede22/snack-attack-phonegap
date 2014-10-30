@@ -20,13 +20,13 @@
 	- if params[:controller] == 'main' && params[:action] == 'index'
 		- if @cityp.blank?
 			%meta{property: "og:title", content: "Self Drive Cars In India"}
-			%meta{property: "og:image", content: 'http://assets.zoomcar.in/images/logo-big.jpg'}
+			%meta{property: "og:image", content: 'http://assets.zoomcar.com/images/logo-big.jpg'}
 			%meta{property: "og:url", content: @canonical}
 			%meta{property: "og:site_name", content: "Zoomcar"}
 			%meta{property: "og:description", content: @meta_description}
 		- else
 			%meta{property: "og:title", content: "Self Drive Cars In #{@city.name}"}
-			%meta{property: "og:image", content: 'http://assets.zoomcar.in/images/logo-big.jpg'}
+			%meta{property: "og:image", content: 'http://assets.zoomcar.com/images/logo-big.jpg'}
 			%meta{property: "og:url", content: @canonical}
 			%meta{property: "og:site_name", content: "Zoomcar"}
 			%meta{property: "og:description", content: @meta_description}
@@ -37,14 +37,14 @@
 		- if !@device.blank?
 			%meta{content: "width=device-width, user-scalable=no, initial-scale=1", name: "viewport"}/
 		:javascript
-			_udn = 'zoomcar.in';
+			_udn = 'zoomcar.com';
 		:javascript
 			function utmx_section(){}function utmx(){}(function(){var k='68920521-1',d=document,l=d.location,c=d.cookie; if(l.search.indexOf('utm_expid='+k)>0)return; function f(n){if(c){var i=c.indexOf(n+'=');if(i>-1){var j=c.indexOf(';',i);return escape(c.substring(i+n.length+1,j<0?c.length:j))}}}var x=f('__utmx'),xx=f('__utmxx'),h=l.hash;d.write('<sc'+'ript src="'+'http'+(l.protocol=='https:'?'s://ssl':'://www')+'.google-analytics.com/ga_exp.js?'+'utmxkey='+k+'&utmx='+(x?x:'')+'&utmxx='+(xx?xx:'')+'&utmxtime='+new Date().valueOf()+(h?'&utmxhash='+escape(h.substr(1)):'')+'" type="text/javascript" charset="utf-8"><\/sc'+'ript>')})();
 		:javascript
 			utmx('url','A/B');
 	- elsif HOSTNAME.include?('zoom') && params[:controller] == 'bookings' && params[:action] == 'checkout'
 		:javascript
-			_udn = 'zoomcar.in';
+			_udn = 'zoomcar.com';
 		:javascript
 			function utmx_section(){}function utmx(){}(function(){var k='68920521-4',d=document,l=d.location,c=d.cookie; if(l.search.indexOf('utm_expid='+k)>0)return; function f(n){if(c){var i=c.indexOf(n+'=');if(i>-1){var j=c.indexOf(';',i);return escape(c.substring(i+n.length+1,j<0?c.length:j))}}}var x=f('__utmx'),xx=f('__utmxx'),h=l.hash;d.write('<sc'+'ript src="'+'http'+(l.protocol=='https:'?'s://ssl':'://www')+'.google-analytics.com/ga_exp.js?'+'utmxkey='+k+'&utmx='+(x?x:'')+'&utmxx='+(xx?xx:'')+'&utmxtime='+new Date().valueOf()+(h?'&utmxhash='+escape(h.substr(1)):'')+'" type="text/javascript" charset="utf-8"><\/sc'+'ript>')})();
 		:javascript
@@ -65,7 +65,7 @@
 		else window.onload = downloadJSAtOnload;
 		var _gaq = _gaq || [];
 		_gaq.push(['_setAccount', 'UA-38347989-1']);
-		_gaq.push(['_setDomainName', 'zoomcar.in']);
+		_gaq.push(['_setDomainName', 'zoomcar.com']);
 		_gaq.push(['_setAllowLinker', true]);
 		_gaq.push(['_trackPageview']);
 		(function() {

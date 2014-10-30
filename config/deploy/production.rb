@@ -6,7 +6,7 @@ set :rvm_ruby_string, '2.0.0@zoomweb'
 set :rvm_type, :system
 
 set :keep_releases, 5
-set :domain_name, "www.zoomcar.in"
+set :domain_name, "www.zoomcar.com"
 
 default_run_options[:pty] = true
 set :scm, :git
