@@ -125,7 +125,7 @@ class Payment < ActiveRecord::Base
 				payment = Payment.find(id)
 				if payment
 					booking = payment.booking
-					booking.user_email = 'amit@zoomcar.in' if HOSTNAME != 'www.zoomcar.in'
+					booking.user_email = 'amit@zoomcar.in' if !Rails.env.production?
 					hash = PAYU_SALT + "|" + 
 						params['status'] + "|||||||||||" + 
 						booking.user_email + "|" + 
@@ -199,7 +199,7 @@ class Payment < ActiveRecord::Base
 						b.status = 6
 					end
 					#BookingMailer.payment(b.id).deliver
-					#SmsSender.perform_async(b.user_mobile, "Zoom booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoom Support.", b.id)
+					#SmsSender.perform_async(b.user_mobile, "Zoomcar booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoomcar Support.", b.id)
 					if !b.location.kle_enabled.nil?
 						if (b.created_at < b.location.kle_enabled && b.starts >= b.location.kle_enabled) && (b.starts.to_i - b.created_at.to_i) < 86400 && b.kle_enabled
 							####SEND EMAIL#####
@@ -216,14 +216,14 @@ class Payment < ActiveRecord::Base
 							Email.create(activity: 'Userprepardness_confirm',booking_id: b.id,user_id: b.user_id)
 						end
 					end
-					SmsTask::message_exotel(b.user_mobile, "Zoom booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoom Support.", b.id)
+					SmsTask::message_exotel(b.user_mobile, "Zoomcar booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoomcar Support.", b.id)
 				end
 				b.deposit_status = 2 if b.deposit_status == 1
 				b.notes += "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs." + self.amount.to_s + " - Payment Received through <u>" + self.through_text + "</u>.<br/>"
 				b.save(:validate => false)
 				Booking.recalculate(b.id)
 				wallet_amount = (b.outstanding_without_deposit + self.amount)>=0 ? b.outstanding_without_deposit.abs : self.amount
-				if wallet_amount != 0
+				if wallet_amount != 0 && b.wallet_security_payment.nil?
 						b.add_security_deposit_to_wallet(wallet_amount)
 						self.update_column(:deposit_available_for_refund, wallet_amount)
 						self.update_column(:deposit_paid, wallet_amount)

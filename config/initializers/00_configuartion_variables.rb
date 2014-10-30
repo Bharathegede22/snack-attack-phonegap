@@ -1,5 +1,7 @@
 configurations = YAML.load(File.read(File.join(::Rails.root.to_s, 'config', 'configurations.yml')))
 
+APP_KEY = configurations['app_key']
+
 FACEBOOK_ID = configurations['facebook_id']
 FACEBOOK_SECRET = configurations['facebook_secret']
 
@@ -28,7 +30,6 @@ SIDEKIQ_SERVER = configurations['sidekiq_server']
 SIDEKIQ_NAMESPACE = configurations['sidekiq_namespace']
 
 MAIL_INTERCEPTOR = configurations['mail_interceptor']
-
 
 DELIVERY_OPTIONS = {user_name: configurations['mandrill_user_name'],
 	password: configurations['mandrill_password'],

@@ -468,6 +468,11 @@ class BookingsController < ApplicationController
     end
   end
 
+  def show
+    flash.keep
+    render layout: 'users'
+  end
+
   def get_inventory_from_json json_data
     begin
       json_result = JSON.parse(json_data)

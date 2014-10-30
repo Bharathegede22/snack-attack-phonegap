@@ -1,37 +1,49 @@
 - if user_signed_in?
-	%a.dropdown-toggle.fl.border-r-d-9.topbar-link.p-5.p-l10{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
-		My Account
-		%b.caret
-	%ul.dropdown-menu.pull-right
-		%li
-			%a{:href => "#{@sslhost}/bookings"} My Bookings
-		- if !false
-			%li
-				%a{:href => "#{@sslhost}/users/credits"} Credits History
-		%li
-			%a{:href => "#{@sslhost}/users/settings"}
-				Account Settings
-		%li
-			%a{:href => "#{@sslhost}/users/license"}
-				License Details
-		%li
-			%a{:href => "javascript:void(0)", :onclick => "logOut('#{destroy_user_session_path}');"}
-				Logout
+	- if current_user && current_user.unsafe_bookings.any?
+		%a.wallet-alert.fr.ts-3.f-b.pointer.help.t-c{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "You have an upcoming booking with Security Deposit due", href: "/bookings"}
+			!
+	.broadcast.fr
+		.dropdown.fr
+			%a.dropdown-toggle.fl.border-r-d-9.topbar-link.p-5.p-l10{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
+				My Account
+				%b.caret
+			%ul.dropdown-menu.pull-right
+				%li
+					%a{:href => "#{@sslhost}/bookings"} My Bookings
+				- if !false
+					%li
+						%a{:href => "#{@sslhost}/users/credits"} Credits History
+				%li
+					%a{:href => "#{@sslhost}/users/settings"}
+						Account Settings
+				%li
+					%a{:href => "#{@sslhost}/users/license"}
+						License Details
+				%li
+					%a{:href => "javascript:void(0)", :onclick => "logOut('#{destroy_user_session_path}');"}
+						Logout
+	%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
+		We're Hiring
+	.fc
 - else
-	%a.dropdown-toggle.fl.border-r-d-9.topbar-link.p-5.p-l10{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
-		My Account
-		%b.caret
-	%ul.dropdown-menu.pull-right
-		%li
-			%a{:href => "javascript:void(0)", :onclick => "showModal('Sign Up', '/users/signup');"}
-				Sign Up
-		%li
-			%a{:href => "javascript:void(0)", :onclick => "showModal('Sign In', '/users/signin');"}
-				Sign In
-		%li
-			%a{:href => "javascript:void(0)", :onclick => "showModal('Sign In', '/users/forgot');"}
-				Forgot Password
-
+	.broadcast.fr
+		.dropdown.fr
+			%a.dropdown-toggle.fl.border-r-d-9.topbar-link.p-5.p-l10{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
+				My Account
+				%b.caret
+			%ul.dropdown-menu.pull-right
+				%li
+					%a{:href => "javascript:void(0)", :onclick => "showModal('Sign Up', '/users/signup');"}
+						Sign Up
+				%li
+					%a{:href => "javascript:void(0)", :onclick => "showModal('Sign In', '/users/signin');"}
+						Sign In
+				%li
+					%a{:href => "javascript:void(0)", :onclick => "showModal('Sign In', '/users/forgot');"}
+						Forgot Password
+	%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
+		We're Hiring
+	.fc
 - if user_signed_in? && !session[:social_signup].blank?
 	- if session[:social_signup] == 0
 		- session[:social_signup] = nil

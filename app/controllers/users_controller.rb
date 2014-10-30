@@ -1,8 +1,12 @@
 class UsersController < ApplicationController
 	
 	before_filter :authenticate_user!, :only => [:license, :social, :settings, :update, :credits]
-	skip_before_filter :authenticate_staging if Rails.env == 'staging'
+	skip_before_filter :authenticate_staging
 	
+	def access
+		flash[:error] = "<b>Access Denied!</b>"
+	end
+
 	def credits
 		@total_credits = current_user.total_credits
 	    @earned_credits = current_user.credits.where(:action=> true).order(:created_at => :desc)
@@ -68,6 +72,7 @@ class UsersController < ApplicationController
 			current_user.pincode = user.pincode
 			current_user.state = user.state
 			current_user.city = user.city
+      current_user.city_id = @city.id
 			current_user.signup = true
 			if current_user.save
 				flash[:notice] = 'Details saved, please carry on!' if session[:book].blank?
