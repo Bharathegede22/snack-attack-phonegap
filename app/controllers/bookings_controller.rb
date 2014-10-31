@@ -442,7 +442,7 @@ class BookingsController < ApplicationController
       @booking.ends = Time.zone.parse(params[:ends]) if !params[:ends].blank?
       @booking.location_id = params[:loc] if !params[:loc].blank?
       @booking.cargroup_id = params[:car] if !params[:car].blank?
-      @booking.valid?
+      # @booking.valid?
       session[:search] = {:starts => params[:starts], :ends => params[:ends], :loc => params[:loc], :car => params[:car]}
       if params[:id] == 'homepage'
         render json: {html: render_to_string('_widget_homepage.haml', layout: false)}
