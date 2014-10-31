@@ -72,8 +72,6 @@ class BookingsController < ApplicationController
 
 	def do
 		if !params[:car].blank? && !params[:loc].blank? && !session[:search].blank? && !session[:search][:starts].blank? && !session[:search][:ends].blank?
-			session[:search][:loc] = params[:loc]
-			session[:search][:car] = params[:car]
 			session[:book] = {:starts => session[:search][:starts], :ends => session[:search][:ends], :loc => params[:loc], :car => params[:car]}
 			if params[:notify].present?
 				session[:notify] = true
@@ -351,7 +349,6 @@ class BookingsController < ApplicationController
   		session[:promo_discount] = -1 * session[:promo_discount]
   		session[:promo_valid] = false
   	else
-
   		promo_params = updated_params(params)
 
   		url = "#{ADMIN_HOSTNAME}/mobile/v3/bookings/promo"
@@ -361,29 +358,34 @@ class BookingsController < ApplicationController
   		#res = Net::HTTP.post_form uri, {"promo" => params[:promo], "api_version" => params[:api_version]}
   		res = JSON.parse(res.body)
   		promo = res["promo"]
-  		session[:promo_message] = promo["message"]
-  		session[:promo_valid] = promo["valid"]
-  		if promo["code"].present? && promo["valid"] == true
-  			session[:promo_code] = promo["code"]
-  			session[:promo_discount] = promo["discount"]
-  			session[:promo_offer_id] = promo["offer_id"]
-  			session[:promo_coupon_id] = promo["coupon_id"]
-  		end
+
+  		update_sessions(promo)
 		end
     render json: {html: render_to_string('_promoab.haml', layout: false)}
   end
 
-  def updated_params(params)
+  def updated_params(params)	
   	params[:total] = session[:total]
   	params[:city_id] = @city.id
-  	params[:starts] = Time.zone.parse(session[:search][:starts]) if !session[:search].blank? && !session[:search][:starts].blank?
-		params[:ends] = Time.zone.parse(session[:search][:ends]) if !session[:search].blank? && !session[:search][:ends].blank?
-		params[:location_id] = session[:search][:loc] if !session[:search].blank? && !session[:search][:loc].blank?			
-		params[:cargroup_id] = session[:search][:car] if !session[:search].blank? && !session[:search][:car].blank?
+  	params[:starts] = Time.zone.parse(session[:book][:starts]) if !session[:book].blank? && !session[:book][:starts].blank?
+		params[:ends] = Time.zone.parse(session[:book][:ends]) if !session[:book].blank? && !session[:book][:ends].blank?
+		params[:location_id] = session[:book][:loc] if !session[:book].blank? && !session[:book][:loc].blank?			
+		params[:cargroup_id] = session[:book][:car] if !session[:book].blank? && !session[:book][:car].blank?
 		params[:ref_initial] = session[:ref_initial] if !session[:ref_initial].blank?
 		params[:ref_immediate] = session[:ref_immediate] if !session[:ref_immediate].blank?
 		params[:platform] = "web"
 		return params
+  end
+
+  def update_sessions(promo)
+  	session[:promo_message] = promo["message"]
+  	session[:promo_valid] = promo["valid"]
+  	if promo["code"].present? && promo["valid"] == true
+  		session[:promo_code] = promo["code"]
+			session[:promo_discount] = promo["discount"]
+ 			session[:promo_offer_id] = promo["offer_id"]
+ 			session[:promo_coupon_id] = promo["coupon_id"]
+ 		end 	
   end
   
   def promo_sql
