@@ -125,7 +125,7 @@ class Payment < ActiveRecord::Base
 				payment = Payment.find(id)
 				if payment
 					booking = payment.booking
-					booking.user_email = 'amit@zoomcar.in' if !Rails.env.production?
+					booking.user_email = PAYU_EMAIL if !Rails.env.production?
 					hash = PAYU_SALT + "|" + 
 						params['status'] + "|||||||||||" + 
 						booking.user_email + "|" + 

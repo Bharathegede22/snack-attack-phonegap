@@ -4,7 +4,7 @@ class MainController < ApplicationController
 		@meta_title = "About Zoomcar Team | Online Self Drive Car In #{@city.name}"
 		@meta_description = "Read about Zoomcar's self drive car team. Highly qualified professionals with knowledge and experience in self driven car rental services"
 		@meta_keywords = "zoomcar team"
-		@canonical = "http://www.zoomcar.in/about"
+		@canonical = "http://#{HOSTNAME}/about"
 	end
 
   def calculator
@@ -120,10 +120,10 @@ class MainController < ApplicationController
   end
 
 	def careers
-		@meta_title = "Zoomcar Careers | www.zoomcar.in"
+		@meta_title = "Zoomcar Careers | #{HOSTNAME}"
 		@meta_description = "Zoomcar Careers"
 		@meta_keywords = "zoomcar careers"
-		@canonical = "http://www.zoomcar.in/careers"
+		@canonical = "http://#{HOSTNAME}/careers"
 	end
 
 	def city
@@ -141,7 +141,7 @@ class MainController < ApplicationController
 		@meta_title = "Is Zoomcar For Me? Eligibility Policy | Zoomcar.in"
 		@meta_description = "Read the eligibility policy from Zoomcar. Members must be #{CommonHelper::MIN_AGE} years with driving license and member should be able to pay by credit or debit card"
 		@meta_keywords = "zoomcar eligibility policy"
-		@canonical = "http://www.zoomcar.in/eligibility"
+		@canonical = "http://#{HOSTNAME}/eligibility"
 		@header = 'policy'
 	end
 
@@ -149,7 +149,7 @@ class MainController < ApplicationController
 		@meta_title = "Zoomcar Frequently Asked Questions (FAQs) | Zoomcar.in"
 		@meta_description = "Read answers about Zoomcar to the most frequently asked questions on our FAQ page"
 		@meta_keywords = "zoomcar faqs"
-		@canonical = "http://www.zoomcar.in/#{@city.name.downcase}/faq"
+		@canonical = "http://#{HOSTNAME}/#{@city.name.downcase}/faq"
 		@header = 'help'
 		render "/main/pricing/#{@city.pricing_mode}/faq"
 	end
@@ -158,7 +158,7 @@ class MainController < ApplicationController
 		@meta_title = "Zoomcar Fees Policy | Zoomcar.in"
 		@meta_description = "Read Zoomcar fees policy for any returning vehicle late, returning vehicle to wrong location, traffic and parking violations, key not returned at end of reservation, accident & Zoomcar rule violations" 
     @meta_keywords = "zoomcar fees policy"
-		@canonical = "http://www.zoomcar.in/#{@city.name.downcase}/fees"
+		@canonical = "http://#{HOSTNAME}/#{@city.name.downcase}/fees"
 		@header = 'policy'
 		render "/main/pricing/#{@city.pricing_mode}/policy"
 	end
@@ -170,10 +170,10 @@ class MainController < ApplicationController
 	end
 
 	def handover
-		@meta_title = "Things to know before you Zoom off | www.zoomcar.in"
+		@meta_title = "Things to know before you Zoom off | #{HOSTNAME}"
 		@meta_description = "Zoomcar Handover"
 		@meta_keywords = "zoomcar handover"
-		@canonical = "http://www.zoomcar.in/handover"
+		@canonical = "http://#{HOSTNAME}/handover"
 		@header = 'help'
 	end
 
@@ -181,14 +181,14 @@ class MainController < ApplicationController
 		@meta_title = "List of Holidays | Zoomcar.in"
 		@meta_description = "Zoom off on Holidays "
 		@meta_keywords = "zoomcar holidays"
-		@canonical = "http://www.zoomcar.in/#{@city.name.downcase}/holidays"
+		@canonical = "http://#{HOSTNAME}/#{@city.name.downcase}/holidays"
 	end
 
 	def homepage
 		@meta_title = "Self Drive Cars Rental In #{@city.name} | Join Online, Book A Car & Drive | Zoomcar.in"
 		@meta_description = "Book a self-driven car online. Self driving car rental made easy like never before, simply join us for renting a car by the hour or day. Includes fuel, insurance & taxes"
 		@meta_keywords = "zoomcar, self drive car, self drive car rental, renting a car, self drive cars"
-		@canonical = "http://www.zoomcar.in/#{@city.name.downcase}"
+		@canonical = "http://#{HOSTNAME}/#{@city.name.downcase}"
 		@header = 'homepage'
 		@noindex = true
 		#expires_in 1.months, :public => true, 'max-stale' => 0 #if Rails.env == 'production'
@@ -198,7 +198,7 @@ class MainController < ApplicationController
 		@meta_title = "Self Drive Cars Rental In #{@city.name} | Join Online, Book A Car & Drive | Zoomcar.in"
 		@meta_description = "Know how Zoomcar works"
 		@meta_keywords = "how zoomcar works"
-		@canonical = "http://www.zoomcar.in/howitworks"
+		@canonical = "http://#{HOSTNAME}/howitworks"
 		@header = 'help'
 	end
 
@@ -206,14 +206,14 @@ class MainController < ApplicationController
 		@meta_title = "Self Drive Cars Rental In #{@city.name} | Join Online, Book A Car & Drive | Zoomcar.in"
 		@meta_description = "Signup for Zoomcar"
 		@meta_keywords = "how zoomcar works"
-		@canonical = "http://www.zoomcar.in/signup"
+		@canonical = "http://#{HOSTNAME}/signup"
 	end
 
 	def howtozoom
 		@meta_title = "Self Drive Cars Rental In #{@city.name} | Join Online, Book A Car & Drive | Zoomcar.in"
 		@meta_description = "Read how to be a better Zoomcar Member"
 		@meta_keywords = "zoomcar member"
-		@canonical = "http://www.zoomcar.in/howtozoom"
+		@canonical = "http://#{HOSTNAME}/howtozoom"
 		@header = 'help'
 	end
 
@@ -265,15 +265,15 @@ class MainController < ApplicationController
 		@meta_title = "Zoomcar Member Agreement | Zoomcar.in"
 		@meta_description = "Read Zoomcar Member agreement is a contract and governs the relationships, rights, and obligations between Zoomcar India Private Limited and the Member"
 		@meta_keywords = "zoomcar Member agreemen"
-		@canonical = "http://www.zoomcar.in/member"
+		@canonical = "http://#{HOSTNAME}/member"
 		@header = 'policy'
 	end
 
 	def offers
-		@meta_title = "Zoom for Less in #{@city.name} | www.zoomcar.in"
+		@meta_title = "Zoom for Less in #{@city.name} | #{HOSTNAME}"
 		@meta_description = "Offers running in #{@city.name} on Zoomcar"
 		@meta_keywords = "zoomcar offers"
-		@canonical = "http://www.zoomcar.in/#{@city.name.downcase}/offers"
+		@canonical = "http://#{HOSTNAME}/#{@city.name.downcase}/offers"
 		@header = 'offers'
 	end
 
@@ -281,7 +281,7 @@ class MainController < ApplicationController
 		@meta_title = "Outstation Car Rental | Rent Self-Drive Car For Outstation Trips"
 		@meta_description = "Zoomcar provides local car rental for outstation trips outside Karnataka and Maharashtra state.  Book outstation car for Goa, Kerala, Tamil Nadu and Andhra Pradesh at budget prices"
 		@meta_keywords = "Outstation car rental, outstation car hire, self drive car for outstation"
-		@canonical = "http://www.zoomcar.in/outstation"
+		@canonical = "http://#{HOSTNAME}/outstation"
 		@header = 'help'
 	end
 
@@ -289,7 +289,7 @@ class MainController < ApplicationController
 		@meta_title = "Zoomcar Privacy Policy | Zoomcar.in"
 		@meta_description = "Read Zoomcar website usage privacy policy and terms and conditions"
 		@meta_keywords = "zoomcar privacy policy"
-		@canonical = "http://www.zoomcar.in/privacy"
+		@canonical = "http://#{HOSTNAME}/privacy"
 		@header = 'policy'
 	end
 
@@ -301,7 +301,7 @@ class MainController < ApplicationController
 		@meta_title = "Electric Car Rental | Rent Reva For Self-Drive In #{@city.name}"
 		@meta_description = "Zoomcar now offers eco friendly electric car for hire in #{@city.name}. Now rent Mahindra Reva E20 India's only fully electric car by the hour or by the day."
 		@meta_keywords = "electric car hire, hire Reva in #{@city.name}"
-		@canonical = "http://www.zoomcar.in/reva"
+		@canonical = "http://#{HOSTNAME}/reva"
 		@header = 'help'
 	end
 
@@ -309,7 +309,7 @@ class MainController < ApplicationController
 		@meta_title = "Zoomcar Safety | Zoomcar.in"
 		@meta_description = "Zoomcar guidelines for a safe zooming experience"
 		@meta_keywords = "zoomcar, zoom, safety"
-		@canonical = "http://www.zoomcar.in/#{@city.name.downcase}/safety"
+		@canonical = "http://#{HOSTNAME}/#{@city.name.downcase}/safety"
 		@header = 'help'
 	end
 
@@ -317,7 +317,7 @@ class MainController < ApplicationController
 		@meta_title = "Zoomcar Rental Tariffs In #{@city.name} | Zoomcar.in"
 		@meta_description = "Zoomcar offers the simplest, easiest car-rental tariff in #{@city.name}. Find out what all is included"
 		@meta_keywords = "zoomcar hire tariffs"
-		@canonical = "http://www.zoomcar.in/#{@city.name}/tariff"
+		@canonical = "http://#{HOSTNAME}/#{@city.name}/tariff"
 		@header = 'tariff'
 		render "/main/pricing/#{@city.pricing_mode}/tariff"
 	end
@@ -326,7 +326,7 @@ class MainController < ApplicationController
 		@meta_title = "Zoomcar Rental Tariffs In #{@city.name} | Zoomcar.in"
 		@meta_description = "Zoomcar offers the simplest, easiest car-rental tariff in #{@city.name}. Find out what all is included"
 		@meta_keywords = "zoomcar hire tariffs"
-		@canonical = "http://www.zoomcar.in/mobile_redirect"
+		@canonical = "http://#{HOSTNAME}/mobile_redirect"
 		@header = 'mobile_redirect'
 		render '/main/mobile_redirect', layout: false
 	end

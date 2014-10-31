@@ -1,7 +1,7 @@
 :ruby
-	if HOSTNAME != 'www.zoomcar.in'
-		@booking.user_email = 'amit@zoomcar.in'
-		@booking.user_mobile = '9686432937'
+	if Rails.env.development?
+		@booking.user_email = PAYU_EMAIL
+		@booking.user_mobile = PAYU_PHONE
 	end
 %b.size-24 Please wait while we process your request
 %br
