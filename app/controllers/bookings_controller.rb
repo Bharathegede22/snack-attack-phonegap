@@ -540,7 +540,7 @@ class BookingsController < ApplicationController
                                                               page: params[:page],
                                                               car: params[:car]
                                                             }
-      @inventory = get_timeline_inventory_from_json timeline_from_admin
+      @inventory,@cargroup,@location = get_timeline_inventory_from_json timeline_from_admin
       if @page == 0
         render json: {html: render_to_string('timeline.haml', layout: false)}
       else
@@ -558,7 +558,11 @@ class BookingsController < ApplicationController
     result.each do |i|
       inventory << Inventory.new(i)
     end
-    inventory
+    result = json["cargroup"]
+    cargroup = Cargroup.new(result)
+    result = json["location"]
+    location = Location.new(result)
+    [inventory,cargroup,location]
   end
 	
 	def userdetails
