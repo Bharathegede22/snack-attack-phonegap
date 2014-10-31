@@ -79,4 +79,5 @@ group :development, :test do
   gem 'pry-debugger'
   gem 'awesome_print'
   gem 'interactive_editor'
+  gem 'meta_request'
 end
