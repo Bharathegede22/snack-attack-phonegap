@@ -464,7 +464,8 @@ class BookingsController < ApplicationController
                                                               starts: session[:search][:starts],
                                                               ends: session[:search][:ends],
                                                               city_id: @city.id,
-                                                              location_id: @booking.location_id
+                                                              location_id: @booking.location_id,
+                                                              platform: "web"
                                                             }
       Rails.logger.info "API call over: ======== "
       @inventory,@cars = get_inventory_from_json search_results_from_admin
@@ -538,7 +539,8 @@ class BookingsController < ApplicationController
                                                               city_id: @city.id,
                                                               location: params[:location],
                                                               page: params[:page],
-                                                              car: params[:car]
+                                                              car: params[:car],
+                                                              platform: "web"
                                                             }
       @inventory,@cargroup,@location = get_timeline_inventory_from_json timeline_from_admin
       if @page == 0
