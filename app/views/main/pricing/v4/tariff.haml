@@ -53,10 +53,9 @@
 							.fc
 						.white
 							%i Price includes
-							#{show_currency(pricing.hourly_kms)} Kms for every hour booked.
+								#{show_currency(pricing.hourly_kms)} Kms for every hour booked.
 							%br
-							Rs. #{show_currency(pricing.excess_kms)}/km will be charged beyond the usage.
-							%sup #
+							%i Rs. #{show_currency(pricing.excess_kms)}/km will be charged beyond the usage.
 					.inline-block.bg-zoomb.p-10.r-5.m-10.tariff_old_sideboxes{style: 'width:170px;'}
 						.p-b10
 							Daily Trip 
