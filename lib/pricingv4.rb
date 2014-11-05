@@ -171,33 +171,44 @@ class Pricingv4
 		data[:hours] = h
 		
 		h = MIN_HOURS if h < MIN_HOURS
-		blackout_days = Holiday.blackout_days(start_date+330.minutes, end_date+330.minutes).collect(&:day)
-		weekly_discount = ((h/24) >= 7) ? (1-@pricing.weekly_percentage_discount.to_f/100) : 1
-		discounted_fare = @pricing.hourly_discounted_fare.to_i
-		fare = @pricing.hourly_fare
+
+		bod_fare = @pricing.hourly_bod_fare.to_i
+		if (h/24) >= 7
+			discounted_fare = ((@pricing.hourly_discounted_fare.to_i) * (1-(@pricing.weekly_percentage_discount.to_f/100))).to_i
+			fare = ((@pricing.hourly_fare.to_i) * (1-(@pricing.weekly_percentage_discount.to_f/100))).to_i
+		else
+			discounted_fare = @pricing.hourly_discounted_fare.to_i
+			fare = @pricing.hourly_fare
+		end
 		kms = @pricing.hourly_kms
-		bod_extra = @pricing.hourly_bod_fare.to_i
+
 		hour = 1
 		wday = start_date.wday
 		data[:kms] = (kms*h).round
-		
+		year = start_date.year
+		blackout_days = Holiday.list(year)
+
 		while hour <= h
 			data[:estimate] += fare
-			if blackout_days.any?{|bod| bod.to_time < start_date.advance(hours: hour) && bod.to_time.advance(hours: 24) >= start_date.advance(hours: hour)}
+			if blackout_days.include?(start_date.advance(hours: (hour-1)).strftime("%m-%d"))
 				data[:bod_hours] += 1
-				data[:bod_extra] += (bod_extra - fare)
+				data[:bod_extra] += (bod_fare - fare)
 			elsif [0,5,6].include?(wday)
 				data[:standard_hours] += 1
 			else
 				data[:discounted_hours] += 1
 				data[:discount] += (fare - discounted_fare)
 			end
-			wday = (start_date + hour.hours).wday
+			if year != start_date.advance(hours: hour).year
+				year = start_date.advance(hours: hour).year
+				blackout_days = Holiday.list(year)
+			end
+			wday = start_date.advance(hours: hour).wday
 			hour += 1
 		end
 		data[:estimate] = data[:estimate].round
 		data[:discount] = data[:discount].round
-		data[:total] = weekly_discount*(data[:estimate] - data[:discount]) + data[:bod_extra]
+		data[:total] = data[:estimate] - data[:discount] + data[:bod_extra]
 		return data
 	end
 	

@@ -9,7 +9,7 @@
 				%th.holiday-list-head Blackout Day
 				%th.holiday-list-head Date
 				%th.holiday-list-head Day
-			- Holiday.list.each do |h|
+			- Holiday.active.each do |h|
 				%tr
 					%td.holiday-list-tabs
 						= h.name
