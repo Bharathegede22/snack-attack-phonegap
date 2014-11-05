@@ -1,18 +1,19 @@
 .static
-	%h1.zoom Blackout Days #{Time.now.year}
+	%h1.zoom Upcoming Blackout Days
 	%p
 		Offers / Coupon codes are not valid on Blackout Days. Additional Charges apply for booking on Blackout Days. Please check the 
 		%a{:href => "/bangalore/tariff", :target => "_blank"}tariff page 
 		for pricing details.	
 		%table.table.table-bordered.table-holiday-list
 			%tr.active
-			
+				%th.holiday-list-head Blackout Day
 				%th.holiday-list-head Date
 				%th.holiday-list-head Day
 			- Holiday.list.each do |h|
 				%tr
-					
 					%td.holiday-list-tabs
-						= h.day.strftime("%d %b")
+						= h.name
+					%td.holiday-list-tabs
+						= h.day.strftime("%d %b %Y")
 					%td.holiday-list-tabs
 						= h.day.strftime("%A")
