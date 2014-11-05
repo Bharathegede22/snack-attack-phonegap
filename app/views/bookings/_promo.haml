@@ -18,7 +18,7 @@
 	- elsif session[:promo_code].blank? && !session[:promo_message].blank?
 		.p-b5
 			.fl
-				%b Promo Code (Optional)
+				%b Promo Code
 			.fr
 				%form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 					#PromoSubmit

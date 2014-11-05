@@ -84,6 +84,7 @@ Web::Application.routes.draw do
 		collection do
 			get 'history'
   		get 'show_refund'
+      get 'credit_history'
   		post 'refund'
   		post 'topup'
 		end
