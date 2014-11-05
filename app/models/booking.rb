@@ -189,11 +189,12 @@ class Booking < ActiveRecord::Base
 			self.notes += note
 		end
 		if data[:penalty] > 0
+			data[:penalty] = [self.pricing.mode::CHARGE_CAP, data[:penalty]].min #WEB-181 cap cancellation charge to 2500
 			charge = Charge.where(["booking_id = ? AND activity = 'cancellation_charge'", self.id]).first
 			charge = Charge.new(booking_id: self.id, activity: 'cancellation_charge') if !charge
-			charge.estimate = [self.pricing.mode::CHARGE_CAP, data[:penalty]].min #WEB-181 cap cancellation charge to 2500
+			charge.estimate = data[:penalty]
 			charge.discount = 0
-			charge.amount = [self.pricing.mode::CHARGE_CAP, data[:penalty]].min #WEB-181 cap cancellation charge to 2500
+			charge.amount = data[:penalty]
 			if charge.save
 				note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs."
 				note += data[:penalty].to_s + " - Cancellation Charge.<br/>"
