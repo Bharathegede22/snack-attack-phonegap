@@ -23,7 +23,7 @@ class Booking < ActiveRecord::Base
 	has_one :wallet_payment
 	
 	has_paper_trail
-	
+	attr_accessor :auto_cancel
 	attr_accessor :ends_last
 	attr_accessor :pricing_mode_last
 	attr_accessor :starts_last
@@ -189,6 +189,7 @@ class Booking < ActiveRecord::Base
 			self.notes += note
 		end
 		if data[:penalty] > 0
+			data[:penalty] = [self.pricing.mode::CHARGE_CAP, data[:penalty]].min #WEB-181 cap cancellation charge to 2500
 			charge = Charge.where(["booking_id = ? AND activity = 'cancellation_charge'", self.id]).first
 			charge = Charge.new(booking_id: self.id, activity: 'cancellation_charge') if !charge
 			charge.estimate = data[:penalty]

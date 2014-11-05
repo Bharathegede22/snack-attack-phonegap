@@ -171,7 +171,7 @@ class Pricingv4
 		data[:hours] = h
 		
 		h = MIN_HOURS if h < MIN_HOURS
-		blackout_days = Holiday.blackout_days(start_date, end_date).collect(&:day)
+		blackout_days = Holiday.blackout_days(start_date+330.minutes, end_date+330.minutes).collect(&:day)
 		weekly_discount = ((h/24) >= 7) ? (1-@pricing.weekly_percentage_discount.to_f/100) : 1
 		discounted_fare = @pricing.hourly_discounted_fare.to_i
 		fare = @pricing.hourly_fare
