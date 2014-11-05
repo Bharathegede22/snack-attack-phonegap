@@ -46,17 +46,27 @@ class BookingsController < ApplicationController
 		end
 		render json: {html: render_to_string('_corporate.haml', layout: false)}
   end
-	
+
+  # Applies credits to user booking
+  #
+  # Author:: Rohit
+  # Date:: 22/10/2014
+  # Expects ::
+  #   <b>params[:fare]</b> credits to apply
+  #
 	def credits
-		if current_user.total_credits.to_i < params[:fare].to_i
-			flash[:error] = 'Insufficient credits, please try again!'
-		else
-			session[:credits] = params[:fare].to_i
-			flash[:message] = 'Credits applied, please carry on!'
-		end
-		#@fare = @booking.cargroup.check_fare(@booking.starts, @booking.ends)
-		@fare = "Pricing#{Pricing::DEFAULT_VERSION}".check_fare_calc(@booking.starts, @booking.ends,@booking.cargroup.id,@city.id)
-		render json: {html: render_to_string('_outstanding.haml', layout: false)}
+    @booking.user = current_user
+    if true || params[:apply_credits]
+      result = @booking.credits_applicable(params[:fare])
+      if result[:error].nil?
+        session[:credits] = result[:credits]
+      else
+        flash[:error] = result[:error]
+      end
+    elsif params[:remove_credits]
+      session[:credits] = nil
+    end
+		render json: {html: render_to_string('_credits.haml', :locals => {:fare => @booking.get_fare}, layout: false)}
 	end
 
 	def do

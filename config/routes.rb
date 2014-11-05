@@ -83,10 +83,11 @@ Web::Application.routes.draw do
 	resources :wallets, :only => [] do
 		collection do
 			get 'history'
-  			get 'show_refund'
+  		get 'show_refund'
+      get 'credit_history'
 			#post "wallets#topup"
-  			post 'refund'
-  			post 'topup'
+  		post 'refund'
+  		post 'topup'
 		end
 	end
 	

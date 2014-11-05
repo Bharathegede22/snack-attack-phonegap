@@ -224,3 +224,28 @@
 					.p-t10
 						= "Rs. " + number_with_delimiter(booking.outstanding_with_security)
 
+Total Credits :: #{current_user.total_credits}
+.bs-g.m-t20
+	.p-10.bg-zoomb.white.f-b
+		Credit History Temp
+	%table.table-condensed.table-hover.table
+		%tr.active
+			%th.t-c Amount
+			%th.t-c Description
+			%th.t-c Booking ID
+			%th.t-c Date
+		- current_user.credits.each do |credit|
+			%tr.active
+				%td
+					.inline-block.colored
+						#{credit.amount}
+				%td
+					.inline-block.colored
+						.inline-block.colored
+							#{credit.action ? "Credits Added" : "Booking Fee"}
+				%td
+					.inline-block.colored
+						#{credit.booking_id}
+				%td
+					.inline-block.colored
+						#{credit.created_at.strftime("%d %b, %Y %H:%M %p")}
