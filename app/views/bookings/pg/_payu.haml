@@ -1,5 +1,5 @@
 :ruby
-	if Rails.env.development?
+	if !Rails.env.production?
 		@booking.user_email = PAYU_EMAIL
 		@booking.user_mobile = PAYU_PHONE
 	end
