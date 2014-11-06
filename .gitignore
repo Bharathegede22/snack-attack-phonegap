@@ -26,3 +26,4 @@ emails
 .powenv
 .powrc
 .idea/
+*.un~
