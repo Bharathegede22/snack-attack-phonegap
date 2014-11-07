@@ -1,7 +1,7 @@
 require "open-uri"
 class User < ActiveRecord::Base
   
-  has_one :image, :as => :imageable, dependent: :destroy
+  has_many :image, :as => :imageable, dependent: :destroy
   has_many :bookings
   has_many :credits
   has_many :wallets

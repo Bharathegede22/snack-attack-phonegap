@@ -594,6 +594,22 @@ class Booking < ActiveRecord::Base
 		#Utilization.manage(id)
 	end
 
+	def self.timediff(book)
+		pay = Payment.where("booking_id =? and status = 1",book.id).order(created_at: :asc)
+		if !pay.blank?
+			return (book.starts - pay.first.created_at).to_i
+		end
+	end
+
+	def self.latest_booking(user)
+		Booking.where("user_id = ? and status = 1",user.id).order(starts: :asc)
+	end
+
+	def self.booking_creation(book)
+		payment = Payment.where("booking_id =? and status = 1",book.id).order(created_at: :asc)
+		return payment.first.created_at
+	end
+
 	def security_amount
 		pricing.mode::SECURITY rescue 0
 	end

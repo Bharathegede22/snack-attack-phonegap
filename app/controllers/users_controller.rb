@@ -17,41 +17,89 @@ class UsersController < ApplicationController
 		render json: {html: render_to_string('/devise/passwords/new.haml', :layout => false)}
 	end
 	
-	def license
-		if request.post?
-			if !params[:image].blank?
-				@image = current_user.license_pic
-				if @image
-					@image.update(image_params)
-					current_user.license_status = 1
-					current_user.save!
+	def license_get_del
+		if params[:license_delete] == "true"
+				@hash = {}
+				image_arr = []
+				image_count = 0
+				if params[:image_id].present? && !current_user.license_pic.blank?
+					img = Image.where("imageable_id = ? AND id = ? AND imageable_type = 'License'", current_user.id,params[:image_id].to_i)
+					all_pics = Image.where("imageable_id = ? AND imageable_type = 'License'",current_user.id)
+					image_count = all_pics.count if !all_pics.blank?
+					if !img.blank?
+						img.first.avatar.destroy
+						if img.first.destroy
+							image_count = image_count - 1
+							# image_arr << {delete_status: 1, count: image_count}
+							last_count = Image.where("imageable_id = ? AND imageable_type = 'License'",current_user.id)
+							if last_count.count == 0
+								User.find(current_user.id).update_column(:license_status,0)
+								image_arr << {delete_status: 1, count: image_count,final_status: 0}
+							else
+								image_arr << {delete_status: 1, count: image_count,final_status: 1}
+							end
+						end	
+					end
 				else
-					@image = Image.new(image_params)
+					image_arr << {delete_status: 0, count: image_count}	
+				end
+				@hash = {image: image_arr}
+				render :json => @hash
+		else
+			@hash = {}
+    	@image_arr = []
+    	image_count = 0
+    	count = 0
+    	image = Image.where("imageable_id = ? AND imageable_type = 'License'",current_user.id)
+    	if image.blank?
+    		image_count = 0 
+    	else
+    		image_count = image.count
+    	end
+	    @image_arr << {count: image_count,status: current_user.license_status}
+	    if !image.blank?
+	    	image.each do|img|
+	    	# urll = "http://local.dev"
+	   	  	urll = img.avatar.url
+	   	  	@image_arr << {url: urll, image_id: img.id}
+	   	  	# count = count + 1
+	  		end
+	    end
+			@hash = {image: @image_arr}
+	   	render :json => @hash
+	  end
+	end
+
+	def license
+    if request.post? 
+	      @hash = {}
+	      @image_arr = []
+	      count = 0
+		   	image_count = Image.where("imageable_id = ? AND imageable_type = 'License'",current_user.id).count
+		   	if image_count < 5 
+			   	@image = Image.new(image_params)
 					@image.imageable_id = current_user.id
 					@image.imageable_type = 'License'
-					@image.save
-					current_user.license_status = 1
-					current_user.save!
-				end
-				if @image.valid?
-					current_user.update_attribute(:license_status, 1)
-					BookingMailer.license_update(current_user.id).deliver
-					flash[:notice] = 'Thanks for uploading your driving license image.'
-					current_user.license_status = 1
-					current_user.save!
-					#@step = (params[:step].to_i + 1).to_s if !params[:step].blank?
-				else
-					if @image.errors[:avatar_content_type].length > 0
-						flash[:error] = 'Please attach a valid license image. Only allow formats are jpg, jpeg, gif and png.'
-					else
-						flash[:error] = 'Please attach a valid license image. Maximum allowed file size is 2 MB.'
-					end
-				end
-			else
-				flash[:error] = 'Please attach a license image'
-			end
-		end
-	end
+					if @image.save
+						image_count = (image_count + 1)
+						current_user.license_status = 1
+						current_user.save!
+				    @image_arr << {count: image_count,status: current_user.license_status}
+		    		# urll = "http://local.dev"
+		   	  	urll = @image.avatar.url
+		   	  	@image_arr << {url: urll, image_id: @image.id}
+		   	  else
+		   	  	@image_arr << {count: image_count,status: current_user.license_status,error: 1}
+				  end
+			      @hash = {image: @image_arr}
+			      render :json => @hash
+			 	else
+			 			@image_arr << {count: image_count,status: current_user.license_status,error: 0}
+			 			
+			    	####
+			  end
+	  end
+  end
 	
 	def signin
 		if user_signed_in?
@@ -118,7 +166,7 @@ class UsersController < ApplicationController
 	private
 	
 	def image_params
-		params.require(:image).permit(:avatar)
+		params.permit(:avatar)
 	end
 	
   def signup_params
