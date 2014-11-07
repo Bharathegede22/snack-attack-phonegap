@@ -131,5 +131,5 @@ Web::Application.routes.draw do
 		get '/safety'=>'main#safety'
 		get '/:id' => 'seo#index'
 	end
-  
+
 end

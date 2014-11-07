@@ -330,7 +330,7 @@ class Booking < ActiveRecord::Base
 		else
 			if self.starts != self.starts_last
 				str = 'Rescheduling'
-				if fare[:hours] > 0
+				if fare[:total] != 0
 					self.rescheduled = true
 					if fare[:refund] > 0
 						action_text = 'reschedule_refund'
@@ -351,7 +351,7 @@ class Booking < ActiveRecord::Base
 			end
 			charge = self.do_charge(str, fare, action_text)
 			self.save(validate: false)
-			if fare[:hours] > 0 || str == 'Rescheduling'
+			if fare[:total] != 0 || str == 'Rescheduling'
 				if charge
 					if charge.refund == 1
 						total = -1 * charge.amount.to_i
