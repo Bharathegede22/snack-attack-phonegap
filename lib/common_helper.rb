@@ -83,6 +83,7 @@ module CommonHelper
 		'Uttarakhand',
 		'West Bengal'
 	]
+  
 		
   class << self
   	def encode(c,id)
