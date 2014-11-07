@@ -475,7 +475,8 @@ class BookingsController < ApplicationController
       		@cars = nil
       		@error_message = "Something went wrong. Please try after some time"
 			flash[:error] = "Something went wrong. Please try after half an hour"
-			Rails.logger.info "================== #{e.message}Error getting search results from api,\n params: #{params.inspect}"
+
+			Rails.logger.info "#{flash.inspect}================== #{e.message}Error getting search results from api,\n params: #{params.inspect}"
 	      	Rails.logger.info "#{session[:search].inspect} , city_id: #{@city.id}, @booking.location_id: #{@booking.location_id}"
      	end
     end
