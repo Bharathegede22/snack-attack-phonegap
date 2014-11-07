@@ -15,7 +15,7 @@ class Booking < ActiveRecord::Base
 	has_many	:confirmed_payments, -> { where "status = 1 and through != 'wallet_widget'" }, class_name: "Payment"
   has_many	:confirmed_credit_payments, -> { where("status = 1 AND through = 'credits'") }, class_name: "Payment"
 	has_many	:confirmed_refunds, -> { where "status = 1 and through != 'wallet_widget'" }, class_name: "Refund"
-  has_many 	:credits, -> { where(action: true) }, :as => :creditable, dependent: :destroy
+  has_many 	:credits, :as => :creditable, dependent: :destroy
 	has_many	:utilizations, -> {where "minutes > 0"}, dependent: :destroy
 	
 	has_one :coupon_code
