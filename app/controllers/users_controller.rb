@@ -83,7 +83,7 @@ class UsersController < ApplicationController
 					if @image.save
 						image_count = (image_count + 1)
 						current_user.license_status = 1
-						# current_user.save(:validate=>false)
+						current_user.save(:validate=>false)
 				    @image_arr << {count: image_count,status: current_user.license_status}
 		    		# urll = "http://local.dev"
 		   	  	urll = @image.avatar.url
