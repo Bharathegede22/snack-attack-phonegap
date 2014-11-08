@@ -80,6 +80,14 @@ class User < ActiveRecord::Base
       return false
     end
   end
+
+  def is_underage?
+  	if ((Time.now.to_i - self.dob.to_datetime.to_i) < 21.years.to_i)
+  		return true
+  	else
+  		return false
+  	end
+  end
   
   def license_check?
     @license_check
