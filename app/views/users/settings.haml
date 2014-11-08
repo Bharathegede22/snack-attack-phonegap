@@ -39,6 +39,8 @@
 					.col-sm-10
 						- if current_user.dob.blank?
 							= f.text_field :dob, :class => 'form-control dob', placeholder: "dd/mm/yyyy (min #{CommonHelper::MIN_AGE} years)"
+						- elsif [2,3].include?(current_user.license_status) || current_user.status == 1 || current_user.is_underage?
+							= f.text_field :dob, :value => current_user.dob.strftime("%d/%m/%Y"), :class => 'form-control dob', placeholder: "dd/mm/yyyy (min #{CommonHelper::MIN_AGE} years)", disabled: ""
 						- else
 							= f.text_field :dob, :value => current_user.dob.strftime("%d/%m/%Y"), :class => 'form-control dob', placeholder: "dd/mm/yyyy (min #{CommonHelper::MIN_AGE} years)"
 						.error

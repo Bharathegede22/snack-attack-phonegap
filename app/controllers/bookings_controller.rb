@@ -587,7 +587,7 @@ class BookingsController < ApplicationController
 	end
 	
   def check_blacklist
-    redirect_to checkout_bookings_path(@city.name.downcase) if current_user && current_user.is_blacklisted?
+    redirect_to checkout_bookings_path(@city.name.downcase) if current_user && current_user.is_blacklisted? && current_user.is_underage?
   end
   
 	def check_inventory
