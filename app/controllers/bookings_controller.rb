@@ -457,19 +457,28 @@ class BookingsController < ApplicationController
       @booking.ends = Time.zone.parse(session[:search][:ends]) if !session[:search].blank? && !session[:search][:ends].blank?
       @booking.location_id = session[:search][:loc] if !session[:search].blank? && !session[:search][:loc].blank?
       @booking.cargroup_id = session[:search][:car] if !session[:search].blank? && !session[:search][:car].blank?
-      Rails.logger.info "Calling admin for search results: ========"
+      begin
+	      Rails.logger.info "Calling admin for search results: ========"
+	      search_results_from_admin = admin_api_get_call "#{admin_hostname}/mobile/#{admin_api_version}/bookings/search",
+	                                                   params: {
+	                                                              starts: session[:search][:starts],
+	                                                              ends: session[:search][:ends],
+	                                                              city: @city.name,
+	                                                              location_id: @booking.location_id,
+	                                                              platform: "web"
+	                                                            }
+	        Rails.logger.info "API call over: ======== "
+	      	@inventory,@cars = get_inventory_from_json search_results_from_admin
+	      	@header = 'search'
+      	rescue Exception => e
+      		@inventory = nil
+      		@cars = nil
+      		@error_message = "Something went wrong. Please try after some time"
+			flash[:error] = "Something went wrong. Please try after half an hour"
 
-      search_results_from_admin = admin_api_get_call "#{admin_hostname}/mobile/#{admin_api_version}/bookings/search",
-                                                   params: {
-                                                              starts: session[:search][:starts],
-                                                              ends: session[:search][:ends],
-                                                              city_id: @city.id,
-                                                              location_id: @booking.location_id,
-                                                              platform: "web"
-                                                            }
-      Rails.logger.info "API call over: ======== "
-      @inventory,@cars = get_inventory_from_json search_results_from_admin
-      @header = 'search'
+			Rails.logger.info "#{flash.inspect}================== #{e.message}Error getting search results from api,\n params: #{params.inspect}"
+	      	Rails.logger.info "#{session[:search].inspect} , city_id: #{@city.id}, @booking.location_id: #{@booking.location_id}"
+     	end
     end
   end
 
@@ -507,30 +516,36 @@ class BookingsController < ApplicationController
 
   def timeline
     if !params[:car].blank? && !params[:location].blank? && !session[:search].blank? && !session[:search][:starts].blank? && !session[:search][:ends].blank?
-			@booking = Booking.new
-			@booking.starts = Time.zone.parse(session[:search][:starts])
-			@booking.ends = Time.zone.parse(session[:search][:ends])
-			@booking.cargroup_id = params[:car]
-			@booking.location_id = params[:location]
-      @page = (params[:page] || 0).to_i
-      timeline_from_admin = admin_api_get_call "#{ADMIN_HOSTNAME}/mobile/#{ADMIN_API_VERSION}/bookings/timeline",
-                                                   params: {
-                                                              starts: session[:search][:starts],
-                                                              ends: session[:search][:ends],
-                                                              city_id: @city.id,
-                                                              location: params[:location],
-                                                              page: params[:page],
-                                                              car: params[:car],
-                                                              platform: "web"
-                                                            }
-      @inventory,@cargroup,@location = get_timeline_inventory_from_json timeline_from_admin
-      if @page == 0
-        render json: {html: render_to_string('timeline.haml', layout: false)}
-      else
-        render json: {html: render_to_string('timeline_more.haml', layout: false)}
-      end
+		@booking = Booking.new
+		@booking.starts = Time.zone.parse(session[:search][:starts])
+		@booking.ends = Time.zone.parse(session[:search][:ends])
+		@booking.cargroup_id = params[:car]
+		@booking.location_id = params[:location]
+  		@page = (params[:page] || 0).to_i
+  		begin
+  			
+  		timeline_from_admin = admin_api_get_call "#{ADMIN_HOSTNAME}/mobile/#{ADMIN_API_VERSION}/bookings/timeline",
+                                               params: {
+                                                          starts: session[:search][:starts],
+                                                          ends: session[:search][:ends],
+                                                          city: "pune",
+                                                          location: params[:location],
+                                                          page: params[:page],
+                                                          car: params[:car],
+                                                          platform: "web"
+                                                        }
+ 	 	@inventory,@cargroup,@location = get_timeline_inventory_from_json timeline_from_admin
+      	if @page == 0
+        	render json: {html: render_to_string('timeline.haml', layout: false)}
+        else
+        	render json: {html: render_to_string('timeline_more.haml', layout: false)}
+        end
+        rescue Exception => e
+  			Rails.logger.info "Exception in call to api===="
+  			render_404
+  		end
     else
-      render_404
+    	render_404
     end
   end
 	
