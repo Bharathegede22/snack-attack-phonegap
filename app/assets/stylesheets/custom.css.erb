@@ -2279,7 +2279,8 @@ a {
 }*/
 
 
-/* ============= DL MODULE =================*/
+/******************************************* DL Page stylesheet ********************************************/
+
 
 .zc-dl-instruction-block h3 {
     background: #323A45;
@@ -2325,7 +2326,8 @@ a {
 }
 
 .app_links_text {
-    font-size: 12px !important;
+    display: inline-block;
+    font-size: 16px !important;
     font-weight: normal !important;
 }
 
@@ -2342,11 +2344,12 @@ a {
 }
 
 .licence-upload-area span:last-child {
-    font-size: 12px;
+    font-size: 13px;
 } 
 
 .licence-instruct-table {
     width: 105% !important;
+    font-size: 13px;
     color: #939492;
     padding: 0;
     margin-left: -30px;
@@ -2407,11 +2410,8 @@ button.delete {
 }
 
 .uploaded-img-wrapper {
-	position: relative;
+    position: relative;
     padding: 0;
-}
-.uploaded-img-wrapper .popover_overlay {
-       margin-left: 0;
 }
 
 .webcamBtn {
@@ -2488,49 +2488,7 @@ button.delete {
     outline: 0;
 }
 
-.black_overlay{
-    display: none;
-    position: absolute;
-    top: 0%;
-    left: 0%;
-    width: 100%;
-    height: 100%;
-    background-color: black;
-    z-index:1001;
-    -moz-opacity: 0.8;
-    opacity:.80;
-    filter: alpha(opacity=80);
-    -webkit-transition-delay: 2s; /* Safari */
-    -webkit-transition: opacity 0.3s ease-out;  
-     -moz-transition: opacity 0.3s ease-out;  
-      -ms-transition: opacity 0.3s ease-out;  
-       -o-transition: opacity 0.3s ease-out;  
-          transition: opacity 0.3s ease-out;  
-}
-
-.white_content {
-    display: none;
-    position: absolute;
-    top: 30%;
-    left: 40%;
-    width: 300px;
-    height: 300px;
-    /*padding-top: 55px;*/
-    text-align: center;
-    padding: 16px;
-    border: 10px solid #6ABD19;
-    background-color: white;
-    z-index:1002;
-    overflow: auto;
-}
-
-#pre_uploaded_images {
-    /*width: 300px;
-    height: 350px;*/
-}
-
 .uploaded-img-wrapper img {
-    margin-left: 15px !important;
     float: left;
     width: 150px;
     height: 200px; 
@@ -2606,6 +2564,7 @@ button.delete {
 
 
 .license-loader {
+    display: none;
     position: fixed;
     left: 0px;
     top: 0px;
@@ -2647,7 +2606,7 @@ button.delete {
     font-weight: bold;    
 }
 
-.license-status3 {
+.licence-status3 {
     display: none;
     font-size: 18px;
     color: rgb(205, 5, 5);
@@ -2655,13 +2614,27 @@ button.delete {
 }
 
 .status1-warning, .status3-warning {
-    color: #ccc;
+    display: none;
+    color: #908F8F;
+    width: 102%;
+    font-size: 13px;
+}
+
+.status1-warning, .status3-warning {
+    
 }
 
 #app-links-block {
+    display: inline-block;
+    width: 100%;
     margin-top: 100px;
     color: #939492;
     font-size: 13px;
+}
+
+.app-icon-block {
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .uploaded-img-wrapper, .pre_uploaded-img-wrapper {
@@ -2687,6 +2660,37 @@ button.delete {
 
 .iphone-dl-page {
     background-position: 0px -100px;
+}
+
+.status1-moreThan-sixHrs, .status1-lessThan-sixHrs {
+    display: none;
+}
+
+.zc-upload-dl-page-wrapper {
+    display: none;
+}
+
+.uploaded-img-wrapper {
+    background: url(<%= asset_path 'loading_image.gif' %>) no-repeat;
+    background-position: center;
+}
+
+.ajax-file-upload-error {
+    display: none;
+    margin-top: 20px;
+}
+
+.ajax-file-upload-green:before {
+    content: 'Upload\00a0Image\00a0';
+}
+
+
+.form-control-uneditable-dob{
+		background: none !important;
+		border: none;
+		box-shadow: none;
+		padding-left: 0;
+		padding-top: 0
 }
 
 

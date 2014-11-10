@@ -595,14 +595,14 @@ class Booking < ActiveRecord::Base
 	end
 
 	def self.timediff(book)
-		pay = Payment.where("booking_id =? and status = 1",book.id).order(created_at: :asc)
+		pay = Payment.where("booking_id =? and status IN (1)",book.id).order(created_at: :asc)
 		if !pay.blank?
 			return (book.starts - pay.first.created_at).to_i
 		end
 	end
 
 	def self.latest_booking(user)
-		Booking.where("user_id = ? and status = 1",user.id).order(starts: :asc)
+		Booking.where("user_id = ? and starts >? and status IN (1,6,7)",user.id,Time.zone.now).order(starts: :asc)
 	end
 
 	def self.booking_creation(book)

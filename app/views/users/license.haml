@@ -4,12 +4,29 @@
     if (window.jQuery) {
 
       $(document).ready(function(){
+      var xmlHttp = new XMLHttpRequest();
+      xmlHttp.open("GET", "http://local.dev/users/license", true);
+
+      xmlHttp.onreadystatechange=function(){
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+          clearTimeout(xmlHttpTimeout); 
+          //alert(xmlHttp.responseText);
+        }
+      }
+      xmlHttp.send("");
+      var xmlHttpTimeout=setTimeout(ajaxTimeout,5000);
+      function ajaxTimeout(){
+        xmlHttp.abort();
+        alert("Image upload failed because your network connection dropped. Please try again.");
+      }
+
+      $(".ajax-file-upload-green").innerHTML = "Upload Image";
 
       $("body").addClass("upload_dl_page");
 
-      var total_image_count;
-      $(".license-loader").fadeOut("slow"); 
+      $(".zc-upload-dl-page-wrapper").css("display", "block");
 
+      var total_image_count;
 
       image_data1 = {"data": true};
       $.ajax({
@@ -29,7 +46,7 @@
   function display_data(resp) {
 
     var obj = resp;
-    var final_status = obj.image[0].status;  
+    var final_status = obj.image[0].status;      
 
     if (final_status == 0) {
       $(".licence-status0").css("display", "block");
@@ -37,14 +54,16 @@
 
     if (final_status == 1) {
       $(".licence-status1").css("display", "block");
+      $(".status1-warning").css("display", "block");
     }
 
     if (final_status == 2) {
         $(".licence-status2").css("display", "block");
     }
 
-    if (final_status ==3 ) {
+    if (final_status == 3 ) {
       $(".licence-status3").css("display","block");
+      $(".status3-warning").css("display", "block");
     }
 
     if (obj.image.length != 0) {
@@ -92,9 +111,7 @@
 
                 if (final_status == 2) {
                   $(".delete").css("display", "none");
-                }
-
-                
+                }               
                 
         }
     }
@@ -104,31 +121,22 @@
   }
 
       var uploadedArray;
-        $("#img-loader").show();
+ 
         $("#fileuploader").uploadFile({
           showStatusAfterSuccess:false,
           url:"/users/license",
           fileName:"avatar",
+          allowedTypes:"jpg,png",
           multiple: "true",
           showAbort:false,
           showDone:false,
           uploadButtonClass:"ajax-file-upload-green",
           onSuccess:function(files,data,xhr)
               { 
-
-                $("#img-loader").hide();
+                
                 $("#eventsmessage").html($("#eventsmessage").html()+"<br/>Success for: "+JSON.stringify(data));
 
                 console.log(data.image[0].count);
-
-                if (data.image[0].count == 5) {
-                  $(".licence-upload-btns").css("display", "none");
-                }
-                else {
-                  $(".licence-upload-btns").css("display", "block");
-                }
-
-
 
                 var output = document.getElementById("result");
 
@@ -159,19 +167,38 @@
                     img_div.appendChild(popupDiv);
 
                     output.insertBefore(img_div,null);
+
+                    setTimeout(function(){
+                      $(".uploaded-img-wrapper").css("background", "#fff");
+                    },500);
+
                     $(".uploaded-img-wrapper").insertBefore(".licence-upload-btns");
+
+                      
+                    
+
+                if (data.image[0].count == 5) {
+                  $(".licence-upload-btns").css("display", "none");
+                }
+                else {
+                  $(".licence-upload-btns").css("display", "block");
+                }
 
                   if (data.image[0].count > 0) {
                     $(".licence-status0").css("display", "none");
                     $(".licence-status2").css("display", "none");
                     $(".licence-status3").css("display", "none");
+                    $(".status3-warning").css("display", "none");
+                    $(".status0-moreThan-sixHrs").css("display", "none");
                     $(".licence-status1").css("display", "block");
+                    $(".status1-warning").css("display", "block");
                   }
 
-
-
               }
-          });      
+
+              
+          });     
+
   });
 
   var parentElId, actionDelRequest;
@@ -219,8 +246,10 @@
                  console.log(delStatus.image[0].count);
                  if (delStatus.image[0].count == 0) {
                     $(".licence-status1").css("display","none");
+                    $(".status1-warning").css("display", "none");
                     $(".licence-status2").css("display","none");
                     $(".licence-status3").css("display","none");
+                    $(".status3-warning").css("display", "none");
                     $(".licence-status0").css("display","block");
                  }
 
@@ -238,7 +267,7 @@
                     $(delLicence).css("display", "none");
                  }
                  else {
-                    alert("Image not deleted. Please try again");
+                    alert("Image deletion failed because your network connection dropped. Please try again.");
                  }
 
                 },
@@ -263,7 +292,6 @@
     }
   }
   checkJquery();
-.license-loader    
 .zc-upload-dl-page-wrapper
   .licence-data-container
     .zc-dl-instruction-block
@@ -281,10 +309,10 @@
                     driving licence is required to take a ZoomCar.
                 %tr
                   %td.col-md-4.license-manual-table.license-manual-heading ALL INFORMATION
-                  %td.col-md-8.license-manual-table ZoomCar manually checks each license. Please ensure the following are clearly visible in the picture: Name, Date of Birth, Driver License Number, Expiry Date and Vehicle Class. In case your license has these details on different sides or pages, Please upload all images.
+                  %td.col-md-8.license-manual-table ZoomCar manually checks each license. Please ensure the following are clearly visible in the picture: Name, Date of Birth, Driver License Number, Expiry Date, and Vehicle Class. In case your license has these details on different sides or pages, please upload all images.
                 %tr
                   %td.col-md-4.license-manual-table.license-manual-heading CORRECT INFORMATION
-                  %td.col-md-8.license-manual-table Any discrepancy will cause booking cancellation.
+                  %td.col-md-8.license-manual-table Any discrepancy in information will cause booking cancellation.
           .col-md-3.zc-licence-status-block.text-center
             %p.status-tag Licence Status
             %p.licence-status0 Not Uploaded
@@ -293,13 +321,13 @@
             - if !book.blank? && current_user.license_status == 0
               - if Booking.timediff(book.first) > 21600
                 %p.status0-moreThan-sixHrs
-                  Please upload a clear picture of your driver’s license by [date and time of #{Booking.booking_creation(book.first).strftime("%d/%m/%y %I:%M %p")} or your booking will get cancelled.
+                  Please upload a clear picture of your driver’s license by [date and time of #{Booking.booking_creation(book.first).strftime("%d %b, %Y %I:%M %p")} or your booking will get cancelled.
               - else
                 %p.status0-lessThan-sixHrs
                   Please upload a clear picture of your driver’s license or you will not be able to access your Zoomcar.
             %p.license-status1.status1-warning We will check your license shortly.
             %p.licence-status2 Approved
-            %p.license-status3 Declined
+            %p.licence-status3 Declined
             %p.license-status3.status3-warning Your driver's license picture was not valid. Please upload another picture. 
       .licence-upload-area
         %div
@@ -308,14 +336,15 @@
         #pre_uploaded_img_parent
         .licence-upload-btns.col-md-4
           / <input id="files" class="custom-file-upload" type="file" multiple/>
-          %div#fileuploader Upload
+          %div#fileuploader Upload Image
         
         #result.clearfix
+        .license-loader
         #img-loader
         #app-links-block.text-center
-          %span.app_links_text
-            You can easily upload the easily from our mobile apps: 
-          %span
+          .app_links_text
+            Upload your license on the go, just point and shoot. Download the Zoomcar app.
+          .app-icon-block
             %a.iphone-dl-page.help{"data-original-title" => "", "data-placement" => "bottom", "data-title" => "Get Zoomcar iPhone App", "data-toggle" => "tooltip", :target => "_blank", :href => "https://itunes.apple.com/us/app/zoomcar-self-drive-cars/id889910218?mt=8&amp;utm_source=home%20page&amp;utm_medium=header%20links&amp;utm_content=iOS&amp;utm_campaign=installs", :title => ""}
          
             %a.android-dl-page.help{"data-original-title" => "", "data-placement" => "bottom", "data-title" => "Get Zoomcar Android App", "data-toggle" => "tooltip", :target => "_blank", :href => "https://play.google.com/store/apps/details?id=com.zoomcar&amp;referrer=utm_source%3Dhome%2520page%26utm_medium%3Dheader%2520links%26utm_content%3Dandroid%26utm_campaign%3Dinstalls", :title => ""}

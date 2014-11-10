@@ -10,10 +10,10 @@
 			.wrapper.bg-f
 				.p-20
 					- book = Booking.where(confirmation_key: params[:id],status: 1)
-					- if !book.blank?
+					- if !book.blank? && [0,3].include?(current_user.license_status)
 						- if Booking.timediff(book.first) > 21600
 							.alert.alert-danger
-								Please upload a clear picture of your driver’s license by [date and time of #{Booking.booking_creation(book.first).strftime("%d/%m/%y %I:%M %p")} or your booking will get cancelled.
+								Please upload a clear picture of your driver’s license by #{Booking.booking_creation(book.first).strftime("%d %b, %Y %I:%M %p")} or your booking will get cancelled.
 						- else
 							.alert.alert-danger
 								Please upload a clear picture of your driver’s license or you will not be able to access your Zoomcar.
