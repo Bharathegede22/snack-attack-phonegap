@@ -1,27 +1,20 @@
-.p-b5
-	%b Use Credits (Optional)
 #CreditDiv
 	- if session[:credits].blank?
 		:ruby
 			total = fare[:estimate] - fare[:discount] - (session[:promo_valid] ? session[:promo_discount] : 0)
 			total = current_user.total_credits.to_i if current_user.total_credits.to_i < total
 		%form{:id => "CreditForm", :onsubmit => "return SubmitForm(this,'/bookings/credits','OutstandingDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
-			.row
-				.col-md-7
-					- if flash[:error].present?
-						.p
-							#{flash[:error]}
-					.p-t10
-						Available Credits :
-						₹#{current_user.total_credits}
-						%input#fare.form-control{name: 'fare', type: "hidden", value: ("#{total}") }
-				.col-md-5	
-					%button.btn.btn-default{type:"submit"} Apply #{total} Credits
+			.col-md-12.promoCode-desc-block.clearfix
+				.col-md-8.text-center.clearfix.aval-credit-amount
+					₹#{current_user.total_credits} Available
+					%input#fare.form-control{name: 'fare', type: "hidden", value: ("#{total}") }
+				.col-md-4.text-left.clearfix
+					%button.btn.btn-default.use-credits-submit{type:"submit"} Use
 			#CreditWait{style: "display:none;"}
 				.wait
 		#DetailsNameError.error
 	- else
-		.p-b5
+		.p-b5.text-center
 			Your 
 			%b ₹#{session[:credits]}
 			credits have been used.

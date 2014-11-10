@@ -346,7 +346,7 @@ class BookingsController < ApplicationController
 				session[:promo_code] = params[:promo].upcase if @offer[:offer] && @offer[:error].blank?
 	    end
 		end
-    render json: {html: render_to_string('_promo.haml', layout: false)}
+    render json: {html: render_to_string('_promoab.haml', layout: false)}
   end
   
   def promo_sql

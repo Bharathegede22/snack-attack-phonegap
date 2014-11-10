@@ -190,20 +190,6 @@ class Booking < ActiveRecord::Base
 			self.notes += note
     end
 
-    # if credits_used > 0
-    #   charge = Charge.where(booking_id: self.id, activity: 'credits_refund').first
-    #   charge = Charge.new(booking_id: self.id, activity: 'credits_refund') if !charge
-    #   charge.refund = 1
-    #   charge.estimate = credits_used
-    #   charge.discount = 0
-    #   charge.amount = credits_used
-    #   if charge.save
-    #     note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs."
-    #     note += data[:refund].to_s + " - Credits Refund.<br/>"
-    #     self.notes += note
-    #   end
-    # end
-
 		if data[:penalty] > 0
 			data[:penalty] = [self.pricing.mode::CHARGE_CAP, data[:penalty]].min #WEB-181 cap cancellation charge to 2500
 			charge = Charge.where(["booking_id = ? AND activity = 'cancellation_charge'", self.id]).first
