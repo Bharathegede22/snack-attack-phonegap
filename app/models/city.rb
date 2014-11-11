@@ -170,4 +170,5 @@ end
 #  seo_outside_description :string(255)
 #  seo_outside_keywords    :string(255)
 #  seo_outside_h1          :string(255)
+#  active                  :boolean          default(FALSE)
 #

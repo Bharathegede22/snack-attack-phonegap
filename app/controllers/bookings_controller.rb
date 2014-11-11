@@ -225,7 +225,8 @@ class BookingsController < ApplicationController
 	
 	def holddeposit
 		@booking.update_attribute(:hold, true)
-		respond_to do |format|
+    Activity.create!(user_id: @booking.user_id, booking_id: @booking.id , activity: 'on_hold') if @booking.hold_security?
+    respond_to do |format|
 			format.json {render :json =>{:error=>'', :messag=> 'Hold Successful'}}
 			format.html {redirect_to '/bookings'}
 		end
