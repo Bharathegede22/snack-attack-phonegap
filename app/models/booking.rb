@@ -729,7 +729,10 @@ class Booking < ActiveRecord::Base
 			when 8 then 'Settled'
 			when 9 then 'No Show'
 			when 10 then 'Cancelled'
+			when 11 then 'Cancelled'
 			when 12 then 'Auto Cancelled'
+			when 14 then 'Cancelled'
+			when 15 then 'Cancelled'
 			else '-'
 			end
 		else
@@ -743,7 +746,10 @@ class Booking < ActiveRecord::Base
 			when 8 then 'Settled'
 			when 9 then 'No Show'
 			when 10 then 'Cancelled'
+			when 11 then 'Cancelled'
 			when 12 then 'Auto Cancelled'
+			when 14 then 'Cancelled'
+			when 15 then 'Cancelled'
 			else '-'
 			end
 		end
@@ -766,7 +772,10 @@ class Booking < ActiveRecord::Base
 		when 8 then 'Settled'
 		when 9 then 'No Show'
 		when 10 then 'Cancelled'
+		when 11 then 'Cancelled'
 		when 12 then 'Auto Cancelled'
+		when 14 then 'Cancelled'
+		when 15 then 'Cancelled'
 		else '-'
 		end
 		return txt

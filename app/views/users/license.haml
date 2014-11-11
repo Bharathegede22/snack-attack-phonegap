@@ -4,21 +4,6 @@
     if (window.jQuery) {
 
       $(document).ready(function(){
-      var xmlHttp = new XMLHttpRequest();
-      xmlHttp.open("GET", "http://local.dev/users/license", true);
-
-      xmlHttp.onreadystatechange=function(){
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-          clearTimeout(xmlHttpTimeout); 
-          //alert(xmlHttp.responseText);
-        }
-      }
-      xmlHttp.send("");
-      var xmlHttpTimeout=setTimeout(ajaxTimeout,5000);
-      function ajaxTimeout(){
-        xmlHttp.abort();
-        alert("Image upload failed because your network connection dropped. Please try again.");
-      }
 
       $(".ajax-file-upload-green").innerHTML = "Upload Image";
 
@@ -321,7 +306,7 @@
             - if !book.blank? && current_user.license_status == 0
               - if Booking.timediff(book.first) > 21600
                 %p.status0-moreThan-sixHrs
-                  Please upload a clear picture of your driver’s license by [date and time of #{Booking.booking_creation(book.first).strftime("%d %b, %Y %I:%M %p")} or your booking will get cancelled.
+                  Please upload a clear picture of your driver’s license by #{Booking.booking_creation(book.first).strftime("%d %b, %Y %I:%M %p")} or your booking will get cancelled.
               - else
                 %p.status0-lessThan-sixHrs
                   Please upload a clear picture of your driver’s license or you will not be able to access your Zoomcar.
