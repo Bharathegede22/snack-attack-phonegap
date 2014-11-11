@@ -128,13 +128,18 @@
 		- credits_earned = @booking.credits.where(source_name: 'Early Return').collect(&:amount).sum
 		- if credits_earned > 0
 			.border-b-c
-				.p-t10.p-b10.p-l20.p-r20
-					.text-up.size-11.m-b3
-						CREDITS
-					.zoom-b.f-b.size-14
-						You earned Rs. #{credits_earned} credits from this booking
-						%span
-							%button.btn.popover-right-btn{"data-container" => "body", "data-content" => "Your credits have added to your zoomcar wallet. Use them to pay the fee for your next booking.", "data-placement" => "right", "data-toggle" => "popover", :type => "button"} [?]
+			.p-t10.p-b10.p-l20.p-r20
+				.text-up.size-11.m-b3
+					Credits
+				.zoom-b.f-b.size-14.earned-credit-statement
+					You earnrd ₹ #{credits_earned} credits from this booking
+					#showPage-popover-block
+						%button.btn.creditsDescBtn-showPage [?]
+
+			.popover.fade.right.in.booking-showPage-popupBox
+				.arrow
+				%h3.popover-title{:style => "display: none;"}
+				.popover-content Your credits have been added to your zoomcar wallet. Use them to pay the fee for your next booking.
 
 	= render :partial => '/bookings/socialshare'
 

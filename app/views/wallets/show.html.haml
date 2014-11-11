@@ -28,18 +28,62 @@
 #wallet-info.bs-g.fl
 	.p-10.bg-zoomb.white.t-c.f-b
 		My Wallet
-	.solid.border-c
-		.p-t5.size-11.t-c
-			Security Deposit in Wallet
-		.p-10.size-22.f-b.t-c.border-b-c
-			= "Rs. " + number_with_delimiter(wallet_amount)
-		%a.block.p-10.black.border-b-c.t-n{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/show_refund');pushEvent('Wallet', 'Refund Widget Click (My Bookings)');"}
-			Available for refund: 
-			%span.zoom.f-b
-				= "Rs. " + number_with_delimiter(current_user.wallet_total_amount)
-		%a.block.p-10.black.border-b-c.t-n{href: "javascript:void(0)", onclick: "showModal('Transaction History', '/wallets/history');pushEvent('Wallet', 'Transaction History Pop Up (My Bookings)');"}
-			%span.glyphicon.glyphicon-list
-			Show Transaction History
+	.col-md-12.clearfix.credits-history-block.nullPad
+		.col-md-6.nullPad.deposit-block.security-block-left
+			.security-top-icon-block
+				.security-heading-area.text-center.col-md-6.text-right
+					Security Deposit
+				.credits-icon-area.text-left
+					%img.img-responsive.icon-securityBadge{:src => asset_path('icon_7542.png')}
+			.col-md-6.clearfix.nullPad.text-left.text-alignment-wallet
+				In Wallet
+			.col-md-6.clearfix.nullPad.text-right.amount-desc
+				₹ #{number_with_delimiter(wallet_amount)}
+			%br/
+			.col-md-6.clearfix.text-left.avail-refund-wallet
+				Available for Refund
+			.col-md-6.clearfix.nullPad.text-right.avail-refund-amount.amount-desc
+				₹ #{number_with_delimiter(current_user.wallet_total_amount)}
+
+		.col-md-6.nullPad.security-block-right
+			.credit-top-icon-block
+				.credits-heading-area.text-right.col-md-6
+					Credits
+				.credits-popover-mark
+					%button.btn.credits-popover [?]
+				.credits-icon-area.text-left
+					%img.img-responsive.icon-currency{:src => asset_path('Coins.png')}
+			.col-md-6.clearfix.nullPad.text-left.total-wallet-money
+				In Wallet
+			.col-md-6.clearfix.nullPad.text-right.amount-desc
+				₹ #{number_with_delimiter(current_user.total_credits)}
+
+	.col-md-12.clearfix
+		.col-md-6.text-center.nullPad.show-history-left
+			%a{:href => ""}
+				%span.glyphicon.glyphicon-list.go-for-history
+				%span.show-history-text Show History
+		.col-md-6.text-center.nullPad
+			%a{:href => ""}
+				%span.glyphicon.glyphicon-list.go-for-history
+				%span.show-history-text Show History
+
+	.popover.fade.right.in.walletPage-popupBox
+		.arrow
+		%h3.popover-title{:style => "display: none;"}
+		.popover-content ZoomCar credits can be used at checkout to pay the booking fee. You earn credits when you return a car early, get a friend to join a Zoomcar community, and through promotions we run from time to time
+
+		/ .p-t5.size-11.t-c
+		/ 	Security Deposit in Wallet
+		/ .p-10.size-22.f-b.t-c.border-b-c
+		/ 	= "Rs. " + number_with_delimiter(wallet_amount)
+		/ %a.block.p-10.black.border-b-c.t-n{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/show_refund');pushEvent('Wallet', 'Refund Widget Click (My Bookings)');"}
+		/ 	Available for refund: 
+		/ 	%span.zoom.f-b
+		/ 		= "Rs. " + number_with_delimiter(current_user.wallet_total_amount)
+		/ %a.block.p-10.black.border-b-c.t-n{href: "javascript:void(0)", onclick: "showModal('Transaction History', '/wallets/history');pushEvent('Wallet', 'Transaction History Pop Up (My Bookings)');"}
+		/ 	%span.glyphicon.glyphicon-list
+		/ 	Show Transactio	n History
 
 #wallet-graph.position-r.fr
 	#y-axis.position-a.t-r

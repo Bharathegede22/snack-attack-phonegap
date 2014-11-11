@@ -816,3 +816,17 @@ $('body').on('click', function (e) {
         }
     });
 });
+
+$(".credits-popover").hover(function(){
+	$(".walletPage-popupBox").css("display", "block");
+},
+	function(){
+		$(".walletPage-popupBox").css("display", "none");
+});
+
+$(".creditsDescBtn-showPage").hover(function(){
+	$(".booking-showPage-popupBox").css("display", "block");
+},
+	function(){
+		$(".booking-showPage-popupBox").css("display", "none");
+});
