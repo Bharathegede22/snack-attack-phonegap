@@ -597,7 +597,7 @@ class Booking < ActiveRecord::Base
 	def self.timediff(book)
 		pay = Payment.where("booking_id =? and status IN (1)",book.id).order(created_at: :asc)
 		if !pay.blank?
-			return (book.starts - pay.first.created_at).to_i
+			(book.starts - pay.first.created_at).to_i
 		end
 	end
 
@@ -607,7 +607,7 @@ class Booking < ActiveRecord::Base
 
 	def self.booking_creation(book)
 		payment = Payment.where("booking_id =? and status = 1",book.id).order(created_at: :asc)
-		return payment.first.created_at
+		payment.first.created_at
 	end
 
 	def security_amount

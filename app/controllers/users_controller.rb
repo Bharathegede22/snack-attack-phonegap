@@ -26,13 +26,13 @@ class UsersController < ApplicationController
 					img = Image.where("imageable_id = ? AND id = ? AND imageable_type = 'License'", current_user.id,params[:image_id].to_i)
 					all_pics = Image.where("imageable_id = ? AND imageable_type = 'License'",current_user.id)
 					image_count = all_pics.count if !all_pics.blank?
-					if !img.blank?
+					if img.present?
 						img.first.avatar.destroy
 						if img.first.destroy
 							image_count = image_count - 1
 							# image_arr << {delete_status: 1, count: image_count}
-							last_count = Image.where("imageable_id = ? AND imageable_type = 'License'",current_user.id)
-							if last_count.count == 0
+							# last_count = Image.where("imageable_id = ? AND imageable_type = 'License'",current_user.id)
+							if image_count == 0
 								User.find(current_user.id).update_column(:license_status,0)
 								image_arr << {delete_status: 1, count: image_count,final_status: 0}
 							else
