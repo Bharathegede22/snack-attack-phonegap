@@ -1,4 +1,5 @@
 class BookingsController < ApplicationController
+  include ApplicationHelper
   include BookingsHelper
 
   before_filter :authenticate_user!, :only => [:checkout]
@@ -457,10 +458,9 @@ class BookingsController < ApplicationController
       @booking.ends = Time.zone.parse(session[:search][:ends]) if !session[:search].blank? && !session[:search][:ends].blank?
       @booking.location_id = session[:search][:loc] if !session[:search].blank? && !session[:search][:loc].blank?
       @booking.cargroup_id = session[:search][:car] if !session[:search].blank? && !session[:search][:car].blank?
-      begin
 	      Rails.logger.info "Calling admin for search results: ========"
 	      search_results_from_admin = admin_api_get_call "#{admin_hostname}/mobile/#{admin_api_version}/bookings/search",
-	                                                   params: {
+	                                                  {
 	                                                              starts: session[:search][:starts],
 	                                                              ends: session[:search][:ends],
 	                                                              city: @city.name,
@@ -470,15 +470,6 @@ class BookingsController < ApplicationController
 	        Rails.logger.info "API call over: ======== "
 	      	@inventory,@cars = get_inventory_from_json search_results_from_admin
 	      	@header = 'search'
-      	rescue Exception => e
-      		@inventory = nil
-      		@cars = nil
-      		@error_message = "Something went wrong. Please try after some time"
-			flash[:error] = "Something went wrong. Please try after half an hour"
-
-			Rails.logger.info "#{flash.inspect}================== #{e.message}Error getting search results from api,\n params: #{params.inspect}"
-	      	Rails.logger.info "#{session[:search].inspect} , city_id: #{@city.id}, @booking.location_id: #{@booking.location_id}"
-     	end
     end
   end
 
