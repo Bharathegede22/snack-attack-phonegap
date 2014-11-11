@@ -19,7 +19,7 @@ module CommonHelper
 	RATINGS             = [["Terrible", 1], ["Bad", 2], ["Average", 3], ["Good", 4], ["Excellent", 5]]
 	
 	KLE_UNLOCK_NUMBER = "9243000768"
-	INTERCEPTOR_NUMBER = "9703356074"
+	INTERCEPTOR_NUMBER = ""
 	KLE_CUSTOMER_CARE = "09880483300"
 
 	LIABILITY           = '5,000'

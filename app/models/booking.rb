@@ -594,6 +594,22 @@ class Booking < ActiveRecord::Base
 		#Utilization.manage(id)
 	end
 
+	def self.timediff(book)
+		pay = Payment.where("booking_id =? and status IN (1)",book.id).order(created_at: :asc)
+		if !pay.blank?
+			(book.starts - pay.first.created_at).to_i
+		end
+	end
+
+	def self.latest_booking(user)
+		Booking.where("user_id = ? and starts >? and status IN (1,6,7)",user.id,Time.zone.now).order(starts: :asc)
+	end
+
+	def self.booking_creation(book)
+		payment = Payment.where("booking_id =? and status = 1",book.id).order(created_at: :asc)
+		payment.first.created_at
+	end
+
 	def security_amount
 		pricing.mode::SECURITY rescue 0
 	end
@@ -713,7 +729,10 @@ class Booking < ActiveRecord::Base
 			when 8 then 'Settled'
 			when 9 then 'No Show'
 			when 10 then 'Cancelled'
+			when 11 then 'Cancelled'
 			when 12 then 'Auto Cancelled'
+			when 14 then 'Cancelled'
+			when 15 then 'Cancelled'
 			else '-'
 			end
 		else
@@ -727,7 +746,10 @@ class Booking < ActiveRecord::Base
 			when 8 then 'Settled'
 			when 9 then 'No Show'
 			when 10 then 'Cancelled'
+			when 11 then 'Cancelled'
 			when 12 then 'Auto Cancelled'
+			when 14 then 'Cancelled'
+			when 15 then 'Cancelled'
 			else '-'
 			end
 		end
@@ -750,7 +772,10 @@ class Booking < ActiveRecord::Base
 		when 8 then 'Settled'
 		when 9 then 'No Show'
 		when 10 then 'Cancelled'
+		when 11 then 'Cancelled'
 		when 12 then 'Auto Cancelled'
+		when 14 then 'Cancelled'
+		when 15 then 'Cancelled'
 		else '-'
 		end
 		return txt
