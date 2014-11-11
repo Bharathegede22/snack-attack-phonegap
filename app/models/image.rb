@@ -27,7 +27,7 @@ class Image < ActiveRecord::Base
   validates_attachment :avatar, :presence => true, :content_type => { :content_type => ["image/jpeg", "image/jpg", "image/gif", "image/png"] }, :size => { :in => 0..3.megabyte }
   
   validates :imageable_id, :imageable_type, presence: true
-  validates :imageable_id, uniqueness: {scope: :imageable_type}
+  # validates :imageable_id, uniqueness: {scope: :imageable_type}
   
 end
 

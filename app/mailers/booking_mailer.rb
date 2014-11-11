@@ -2,7 +2,7 @@ class BookingMailer < ActionMailer::Base
   
   layout 'email'
   
-  default from: "Zoomcar <help@zoomcar.in>"#, bcc: "support@zoomcar.in"
+  default from: "Zoomcar <help@zoomcar.com>"
   
   def cancel(booking, total,deposit)
 		@booking = Booking.find_by_id booking
@@ -26,7 +26,7 @@ class BookingMailer < ActionMailer::Base
 	
 	def license_update(user)
 		@user = User.find_by_id user
-		mail(:to => 'support@zoomcar.in', :subject => "License Update for: #{@user.email} ")
+		mail(:to => 'support@zoomcar.com', :subject => "License Update for: #{@user.email} ")
 	end
 
   def payment(booking)

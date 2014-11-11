@@ -51,7 +51,7 @@
 				Phone: #{@city.contact_phone}
 				%br/
 				Email: 
-				%a{:href => "mailto:info@zoomcar.in"} info@zoomcar.in
+				%a{:href => "mailto:#{@city.contact_phone}"} #{@city.contact_email}
 				%br/
 				%a.link{:href => "/contact", :rel => "nofollow", :target => "_blank", :title => "Directions to Zoomcar's Office!"} Get Directions
 			.social.fl
