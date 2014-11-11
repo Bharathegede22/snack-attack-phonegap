@@ -27,8 +27,8 @@ module Web
     config.middleware.use ExceptionNotification::Rack, 
     	:email => {
 		    :email_prefix => "[Zoomcar Error] ", 
-		    :sender_address => %{"Zoomcar Error" <error@zoomcar.in>},
-		    :exception_recipients => %w{error@zoomcar.in}
+		    :sender_address => %{"Zoomcar Error" <error@zoomcar.com>},
+		    :exception_recipients => %w{error@zoomcar.com}
 		}
 		
 		config.to_prepare do
