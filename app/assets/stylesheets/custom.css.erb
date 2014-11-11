@@ -63,13 +63,27 @@ a {
 	height:100px;
 }
 
-.logo {
+.navbar .logo {
 	background:url(<%= asset_path 'r.png' %>) no-repeat;
 	height:50px;
 	width:175px;
 	display:block;
-	margin:5px 10px 0 0;
+	margin:7px 10px 0 0;
 	float:left;
+}
+
+.navbar .nav-box {
+	width:775px;
+	height: 62px;
+	float: right;
+	position: relative;
+}
+
+.navbar .nav-links {
+	position:absolute;
+	top:21px;
+	width: 100%;
+	z-index:1;
 }
 
 .navbar .info {
@@ -78,9 +92,31 @@ a {
 }
 
 .navbar .links {
-	float:right;
+	float:left;
 	width:460px;
-	margin-right:10px;
+	margin-left:40px;
+	height:40px;
+}
+
+.navbar .nav-top-links {
+	position:absolute;
+	top:0px;
+	width: 100%;
+	z-index:2;
+}
+
+.navbar .city-tabs a {
+	padding:2px 10px 4px 10px;
+	font-size:12px;
+	background:#70757D url(<%= asset_path 'bg-line.png' %>);
+	color:#ffffff;
+	float:left;
+	display:block;
+	border-left: 1px solid #ffffff;
+}
+
+.navbar .city-tabs a.active {
+	background:#323a45;
 }
 
 .navbar .hiring {
