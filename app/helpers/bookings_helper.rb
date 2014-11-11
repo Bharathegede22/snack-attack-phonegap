@@ -20,7 +20,7 @@ module BookingsHelper
       [results,cars]
     rescue Exception => ex      
       Rails.logger.info "JsonParsingError: Error parsing response from search results from api===== #{ex.message}--- BookingsHelper"
-      flash[:error] = "Something went wrong please try after some time"
+      flash[:error] = "Sorry, our system is busy right now. Please try after some time."
       [nil,nil]
     end
   end
@@ -40,7 +40,7 @@ module BookingsHelper
       [inventory,cargroup,location]  
     rescue Exception => e
       Rails.logger.info "JsonParsingError: Error parsing response from search results from api===== #{e.message}--- BookingsHelper"
-      flash[:error] = "Something went wrong please try after some time"
+      flash[:error] = "Sorry, our system is busy right now. Please try after some time."
       [nil,nil]
     end
     

@@ -33,32 +33,34 @@
 					#Gmap.map
 	- else
 		.wrapper.bg-f
-			.p-20
-				= render_flash
-				%h1 Search Self-Drive Cars in #{@city.name}
-				%br/
-				.row
-					.col-md-6
-						.f-b.size-20.droid.p-5
-							Zoomcar offers the following vehicles :
-						%ul
-							- Cargroup.list(@city).each do |c|
-								%li.p-5
-									= c.shortname
-									- if !c.disclaimer.blank?
-										.red.size-10
-											= c.disclaimer.html_safe
-					.col-md-6.t-r
-						.f-b.size-20.droid.p-5
-							@ following locations :
-						%ul
-							- Location.live(@city).each do |l|
-								%li.p-5
-									= l.shortname
-									- if !l.disclaimer.blank?
-										.red.size-10
-											= l.disclaimer.html_safe
-				.fc
+			.p-10
+				- if !flash[:error].blank?
+					- render_flash
+				- else
+					%h1 Search Self-Drive Cars in #{@city.name}
+					%br/
+					.row
+						.col-md-6
+							.f-b.size-20.droid.p-5
+								Zoomcar offers the following vehicles :
+							%ul
+								- Cargroup.list(@city).each do |c|
+									%li.p-5
+										= c.shortname
+										- if !c.disclaimer.blank?
+											.red.size-10
+												= c.disclaimer.html_safe
+						.col-md-6.t-r
+							.f-b.size-20.droid.p-5
+								@ following locations :
+							%ul
+								- Location.live(@city).each do |l|
+									%li.p-5
+										= l.shortname
+										- if !l.disclaimer.blank?
+											.red.size-10
+												= l.disclaimer.html_safe
+					.fc
 - if !@inventory.blank?
 	= javascript_tag do
 		:plain
