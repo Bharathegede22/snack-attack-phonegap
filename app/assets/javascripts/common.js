@@ -454,7 +454,7 @@ function showAvailability(carId, locId, avail, locName, carName) {
 		showTimeline(carId, 0);
 		showTimeline(carId, 0);
 	}
-	pushEvent('Search', carName, 'Location');
+	//pushEvent('Search', carName, 'Location');
 }
 
 function showCalculator(action) {
@@ -491,12 +491,14 @@ function showTimeline(carId, action, carName) {
 		if($('#Timeline' + carId).html() == '') {
 			$('#TimelineWait' + carId).slideDown();
 			if(carName) {
-				pushEvent('Search', carName, 'Timeline Open');
+				//pushEvent('Search', carName, 'Timeline Open');
+				pushEvent('Cars Selected', carName, 'Timeline Open');
 			}
 			getData("/bookings/timeline?car=" + carId + "&location=" + locId, 'Timeline' + carId, 'replace', null);
 		} else {
 			if(carName) {
-				pushEvent('Search', carName, 'Timeline Close');
+				//pushEvent('Search', carName, 'Timeline Close');
+				pushEvent('Cars Selected', carName, 'Timeline Close');
 			}
 			$('#TimelineWait' + carId).slideUp();
 			$('#Timeline' + carId).slideUp();
