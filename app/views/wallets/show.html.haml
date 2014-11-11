@@ -60,11 +60,11 @@
 
 	.col-md-12.clearfix
 		.col-md-6.text-center.nullPad.show-history-left
-			%a{:href => ""}
+			%a{:href => "javascript:void(0)", onclick: "showModal('Transaction History', '/wallets/history');pushEvent('Wallet', 'Transaction History Pop Up (My Bookings)');"}
 				%span.glyphicon.glyphicon-list.go-for-history
 				%span.show-history-text Show History
 		.col-md-6.text-center.nullPad
-			%a{:href => ""}
+			%a{:href => "javascript:void(0)", onclick: "showModal('Transaction History', '/wallets/credit_history');pushEvent('Wallet', 'Transaction History Pop Up (My Bookings)');"}
 				%span.glyphicon.glyphicon-list.go-for-history
 				%span.show-history-text Show History
 
@@ -267,29 +267,3 @@
 				%td.t-c
 					.p-t10
 						= "Rs. " + number_with_delimiter(booking.outstanding_with_security)
-
-Total Credits :: #{current_user.total_credits}
-.bs-g.m-t20
-	.p-10.bg-zoomb.white.f-b
-		Credit History Temp
-	%table.table-condensed.table-hover.table
-		%tr.active
-			%th.t-c Amount
-			%th.t-c Description
-			%th.t-c Booking ID
-			%th.t-c Date
-		- current_user.credits.each do |credit|
-			%tr.active
-				%td
-					.inline-block.colored
-						#{credit.amount}
-				%td
-					.inline-block.colored
-						.inline-block.colored
-							#{credit.action ? "Credits Added" : "Booking Fee"}
-				%td
-					.inline-block.colored
-						#{credit.booking_id}
-				%td
-					.inline-block.colored
-						#{credit.created_at.strftime("%d %b, %Y %H:%M %p")}

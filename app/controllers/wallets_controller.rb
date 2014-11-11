@@ -40,6 +40,10 @@ class WalletsController < ApplicationController
     render json: {html: render_to_string('_history.haml', layout: false)}
   end
 
+  def credit_history
+    render json: {html: render_to_string('_credit_history.haml', layout: false)}
+  end
+
   private
 
   def wallet_params

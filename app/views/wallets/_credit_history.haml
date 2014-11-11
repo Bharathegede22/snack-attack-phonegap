@@ -1,0 +1,28 @@
+.size-18.t-c
+	Credits Available: 
+	%span.f-b Rs. #{number_with_delimiter(current_user.total_credits)}
+
+%br/
+
+%table.m-0{style: "width: 100%;", cellspacing: 0, cellpadding: 0}
+	%tr.size-13
+		%th.p-b10.p-t10.bg-e.t-c
+			Amount
+		%th.p-b10.p-t10.bg-e.t-c
+			Description
+		%th.p-b10.p-t10.bg-e.t-c
+			Booking ID
+		%th.p-b10.p-t10.bg-e.t-c
+			Date
+
+	%tbody
+		- current_user.credits.each do |credits|
+			%tr
+				%td.t-c.bg-w.p-t10.p-b10.border-b-e
+					= credit.amount
+				%td.t-c.bg-w.p-t10.p-b10.border-b-e
+					= credit.action ? "Credits Added" : "Booking Fee"
+				%td.t-c.bg-w.p-t10.p-b10.border-b-e
+					= credit.booking_id
+				%td.t-c.bg-w.p-t10.p-b10.border-b-e
+					= credit.created_at.strftime("%d %b, %Y %H:%M %p")
