@@ -32,6 +32,8 @@ gem 'whenever', :require => false
 
 group :development do
 	gem 'capistrano'
+  gem 'flamegraph'
+  gem 'rack-mini-profiler'
 end
 
 group :production do
