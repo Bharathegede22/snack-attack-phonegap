@@ -54,12 +54,12 @@
     if (obj.image.length != 0) {
       
       total_image_count = obj.image[0].count;
-      console.log(total_image_count);
+      //console.log(total_image_count);
 
         for (var i=1; i<obj.image.length; i++) {
 
           if ((obj.image[0].count == 5) || (final_status == 2)){
-              console.log(final_status);
+              //console.log(final_status);
               $(".licence-upload-btns").css("display", "none");
           }
           else {
@@ -121,7 +121,7 @@
                 
                 $("#eventsmessage").html($("#eventsmessage").html()+"<br/>Success for: "+JSON.stringify(data));
 
-                console.log(data.image[0].count);
+                //console.log(data.image[0].count);
 
                 var output = document.getElementById("result");
 
@@ -191,7 +191,7 @@
   $( document ).on( 'click', '.delete', function () {
 
     parentElId = $(this).parent().parent().attr('id');
-     console.log("parent id: " + parentElId);
+     //console.log("parent id: " + parentElId);
      var htm = "<div class='popover_overlay'>"+
                   "<button>Delete</button>"+
                   "<button>Cancel</button>"+
@@ -204,7 +204,7 @@
       }
 
       $(".popover_overlay").attr('id', 'popover-'+parentElId);
-      console.log("id is : " +'popover-'+parentElId);
+      //console.log("id is : " +'popover-'+parentElId);
 
       $(".popover_overlay button:first-child").addClass("popup-delete");
       $(".popover_overlay button:first-child").attr('id', 'popup-delete-image');
@@ -213,7 +213,7 @@
       $(".popover_overlay button:last-child").addClass("popup-cancel");
 
      actionDelRequest = $('#'+ parentElId + " " + 'img').attr('id');
-     console.log(actionDelRequest);
+     //console.log(actionDelRequest);
 
   });
 
@@ -228,7 +228,7 @@
        success: function(delStatus)
                  {   
 
-                 console.log(delStatus.image[0].count);
+                 //console.log(delStatus.image[0].count);
                  if (delStatus.image[0].count == 0) {
                     $(".licence-status1").css("display","none");
                     $(".status1-warning").css("display", "none");
@@ -268,7 +268,7 @@
 
   var cancelDelRequest = "#popover-" + parentElId;
 
-    console.log("cancel req id : " + cancelDelRequest);
+    //console.log("cancel req id : " + cancelDelRequest);
     $(this).parent().remove();
   });
 
