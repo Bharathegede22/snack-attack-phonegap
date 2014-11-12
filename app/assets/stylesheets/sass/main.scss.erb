@@ -5,7 +5,6 @@
  		---bharat.hegde
  *
  */
-@import "sass/mixins";
 /*==============================*/
  //variables
 /*==============================*/
@@ -27,6 +26,33 @@ $width960: 960px;
   background: red;
   width: 100px;
   height: 50px;
+}
+/*==============================*/
+ //mixins
+/*==============================*/
+@mixin delhi_review_cars{
+	background: url(<%= asset_path 'cars/strip-2.png' %>) no-repeat;
+	width: 100px;
+	height: 65px;
+	zoom:1.3;
+}
+@mixin Service_icons_set{
+	background: url(<%= asset_path 'icon_set2.png' %>) no-repeat;
+	width: 57px;
+	height: 57px;
+}
+@mixin delhi_reviews_item_background{
+	background: url(<%= asset_path 'delhi_review_bg.png' %>) no-repeat;
+	overflow: hidden;
+	background-position-x: 57em;
+}
+@mixin shadow_separate_line{
+	width: $width960;
+	margin: 1em auto;
+	height: 10px;
+	-moz-box-shadow: 0 5px 4px -4px rgba(0, 0, 0, 0.4);
+	-webkit-box-shadow: 0 5px 4px -4px rgba(0, 0, 0, 0.4);
+	box-shadow: 0 5px 4px -4px rgba(0, 0, 0, 0.4);
 }
 /*==============================*/
  //main-styles
@@ -110,7 +136,7 @@ $width960: 960px;
 	}
 }
 .offer_icon{
-		background: url(//local.dev/assets/offer_icon.png) no-repeat;
+		background: url(<%= asset_path 'offer_icon.png' %>) no-repeat;
 		width: 55px;
 		height: 52px;
 		position: absolute;
@@ -118,7 +144,7 @@ $width960: 960px;
 		margin: -52px -48px;
 }
 .delhi_gate_bg{
-	background: url(//local.dev/assets/delhi_gate.png) no-repeat;
+	background: url(<%= asset_path 'delhi_gate.png' %>) no-repeat;
 	width: 371px;
 	height: 434px;
 	position: absolute;
@@ -143,7 +169,7 @@ $width960: 960px;
 			z-index: 30;
 			height: 36px;
 			&:hover{
-				background: url(//local.dev/assets/r.png) no-repeat;
+				background: url(<%= asset_path 'r.png' %>) no-repeat;
 				height: 36px;
 				background-position:-5em -4.9em;
 			}

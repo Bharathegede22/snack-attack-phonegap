@@ -15,7 +15,6 @@
  *= require common
  *= require custom
  *= require header-new
- *= require sass/main.scss
- *= require sass/mixins.scss
+ *= require sass/main
  *= require uploadfile.min
  */
