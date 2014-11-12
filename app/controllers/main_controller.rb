@@ -218,7 +218,7 @@ class MainController < ApplicationController
 	end
 
 	def index
-		if true #Rails.env.production?
+		if Rails.env.production?
 			@city = City.lookup('bangalore') if @city.blank?
 			redirect_to "/" + @city.name.downcase and return if request.url.split('?').first.split('/').last != @city.name.downcase
 			@meta_title = @city.meta_title
