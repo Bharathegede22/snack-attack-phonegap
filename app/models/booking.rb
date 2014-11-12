@@ -821,6 +821,20 @@ class Booking < ActiveRecord::Base
 		return total.to_i
 	end
 	
+	def total_discount
+		total = 0
+		self.charges.each do |c|
+			if c.activity.include?('discount')
+				if c.refund > 0
+					total += c.amount
+				else
+					total -= c.amount
+				end
+			end
+		end
+		return total.to_i
+	end
+
 	def total_payments
 		total = 0
 		self.confirmed_payments.each do |p|

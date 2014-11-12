@@ -72,6 +72,16 @@ class Offer < ActiveRecord::Base
 	def update_coupon(coupon_id, booking_id)
 		CouponCode.where(:id => coupon_id).update_all(:used => 1, :used_at => Time.now, :booking_id => booking_id)
 	end
+
+	def self.check(promo_details)
+		url = "#{ADMIN_HOSTNAME}/mobile/v3/bookings/promo"
+  	uri = URI(url)
+  	uri.query = URI.encode_www_form(promo_details)
+  	res = Net::HTTP.get_response(uri)
+  	res = JSON.parse(res.body)
+ 		promo = res["promo"]
+		return promo		
+	end
 	
 end
 

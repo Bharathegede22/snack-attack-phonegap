@@ -125,7 +125,11 @@ class BookingsController < ApplicationController
 		end
 		
 		# Check Offer
-		#promo = Offer.get(session[:promo_code],@city) if !session[:promo_code].blank?
+		
+		promo_params = updated_params(params)
+  	promo_params[:promo] = session[:promo_code]
+  	promo = Offer.check(promo_params)
+  	update_sessions(promo)
 		if session[:promo_valid]
 			@booking.promo = session[:promo_code]
 			@booking.offer_id = session[:promo_offer_id]
@@ -349,43 +353,14 @@ class BookingsController < ApplicationController
   		session[:promo_discount] = -1 * session[:promo_discount]
   		session[:promo_valid] = false
   	else
+  		
   		promo_params = updated_params(params)
 
-  		url = "#{ADMIN_HOSTNAME}/mobile/v3/bookings/promo"
-  		uri = URI(url)
-  		uri.query = URI.encode_www_form(params)
-  		res = Net::HTTP.get_response(uri)
-  		#res = Net::HTTP.post_form uri, {"promo" => params[:promo], "api_version" => params[:api_version]}
-  		res = JSON.parse(res.body)
-  		promo = res["promo"]
+  		promo = Offer.check(promo_params)
 
   		update_sessions(promo)
 		end
     render json: {html: render_to_string('_promoab.haml', layout: false)}
-  end
-
-  def updated_params(params)	
-  	params[:total] = session[:total]
-  	params[:city_id] = @city.id
-  	params[:starts] = Time.zone.parse(session[:book][:starts]) if !session[:book].blank? && !session[:book][:starts].blank?
-		params[:ends] = Time.zone.parse(session[:book][:ends]) if !session[:book].blank? && !session[:book][:ends].blank?
-		params[:location_id] = session[:book][:loc] if !session[:book].blank? && !session[:book][:loc].blank?			
-		params[:cargroup_id] = session[:book][:car] if !session[:book].blank? && !session[:book][:car].blank?
-		params[:ref_initial] = session[:ref_initial] if !session[:ref_initial].blank?
-		params[:ref_immediate] = session[:ref_immediate] if !session[:ref_immediate].blank?
-		params[:platform] = "web"
-		return params
-  end
-
-  def update_sessions(promo)
-  	session[:promo_message] = promo["message"]
-  	session[:promo_valid] = promo["valid"]
-  	if promo["code"].present? && promo["valid"] == true
-  		session[:promo_code] = promo["code"]
-			session[:promo_discount] = promo["discount"]
- 			session[:promo_offer_id] = promo["offer_id"]
- 			session[:promo_coupon_id] = promo["coupon_id"]
- 		end 	
   end
   
   def promo_sql
@@ -443,6 +418,12 @@ class BookingsController < ApplicationController
 						end
 						flash[:notice] = "Your booking successfully <b>" + @string.downcase.gsub('ing', 'ed') + "</b> by " + tmp.chomp(', ')
 						@booking.update_column(:defer_deposit, false) if !params[:deposit].blank? && params[:deposit].to_i == 1
+						if @booking.offer_id.present? && @booking.promo.present?
+							reschedule_params = update_reschedule_params(params, @booking)
+							promo = Offer.check(reschedule_params)
+							offer_discount = @booking.total_discount
+							create_reschedule_offer_charge(@booking.id, promo, offer_discount)
+						end
 						@success = true
 						@confirm = @string = @fare = nil
 					end
@@ -458,6 +439,11 @@ class BookingsController < ApplicationController
 						flash[:error] = "Sorry, but the car is no longer available"
 					else
 						@confirm = true
+						if @booking.offer_id.present? && @booking.promo.present?
+							reschedule_params = update_reschedule_params(params, @booking)
+							promo = Offer.check(reschedule_params)
+							update_sessions(promo)
+						end
 					end
 				else
 					flash[:error] = "Please fix the error!"
