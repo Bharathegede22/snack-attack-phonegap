@@ -1,0 +1,24 @@
+@mixin delhi_review_cars{
+	background: url(//local.dev/assets/cars/strip-2.png) no-repeat;
+	width: 100px;
+	height: 65px;
+	zoom:1.3;
+}
+@mixin Service_icons_set{
+	background: url(//local.dev/assets/icon_set2.png) no-repeat;
+	width: 57px;
+	height: 57px;
+}
+@mixin delhi_reviews_item_background{
+	background: url(//local.dev/assets/delhi_review_bg.png) no-repeat;
+	overflow: hidden;
+	background-position-x: 57em;
+}
+@mixin shadow_separate_line{
+	width: $width960;
+	margin: 1em auto;
+	height: 10px;
+	-moz-box-shadow: 0 5px 4px -4px rgba(0, 0, 0, 0.4);
+	-webkit-box-shadow: 0 5px 4px -4px rgba(0, 0, 0, 0.4);
+	box-shadow: 0 5px 4px -4px rgba(0, 0, 0, 0.4);
+}

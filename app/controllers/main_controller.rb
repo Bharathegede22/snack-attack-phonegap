@@ -132,7 +132,11 @@ class MainController < ApplicationController
 		@meta_keywords = @city.meta_keywords('attractions')
 		@canonical = @city.link('attractions')
 	end
-	
+
+	def deals
+		render "main/deals/#{params[:id]}"
+	end
+
 	def device
 		render json: {html: ''}
 	end
