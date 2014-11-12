@@ -7,7 +7,11 @@ class WalletsController < ApplicationController
   def refund
     @refunded = true
     if create_refund(wallet_params)
-      Activity.create!(user_id: current_user.id, activity: 'refund_requested', amount: params[:amount].to_i)
+      activities_params = {}
+      activities_params[:user_id] = current_user.id
+      activities_params[:activity] = Activity::ACTIVITIES[:refund_requested]
+      activities_params[:amount] = params[:amount].to_i
+      Activity.create_activity(activities_params)
       flash[:notice] = "Your refund has been initiated and it should reach you in 4-5 business days"
     else
       flash[:error] = "Unable to refund."

@@ -439,7 +439,6 @@ class Booking < ActiveRecord::Base
 		return if amount.to_i <= 0
 		wpayment = Payment.create!(status: 1, booking_id: self.id, through: 'wallet', amount: (amount > self.pricing.mode::SECURITY) ? (self.pricing.mode::SECURITY) : amount)
 		Wallet.create!(amount: amount, user_id: self.user_id, status: 1, credit: false, transferable: wpayment)
-    Activity.create!(user_id: self.user_id, booking_id: self.id , activity: 'security_deposit', amount: (amount > self.pricing.mode::SECURITY) ? (self.pricing.mode::SECURITY) : amount)
   end
 	
 	def manage_inventory
