@@ -95,7 +95,7 @@
 				c) An additional Rs. 300 per hour will be charged as late fee.
 			.f-b.zoom.size-16.m-b5 #{count+=1}) What happens if someone else returns the car late, and it is not there when my reservation begins?
 			%p
-				If your reserved vehicle is not where it is supposed to be, notify us immediately by calling #{CommonHelper::CUSTOMER_CARE}. Zoom and our helpful fleet executives will make sure you get where you need to go! If a near-by Zoom vehicle is available, we will transfer your reservation. If not, we will call you a cab and get you a self-drive vehicle as soon as possible so you can quickly be on your way.
+				If your reserved vehicle is not where it is supposed to be, notify us immediately by calling #{@city.contact_phone}. Zoom and our helpful fleet executives will make sure you get where you need to go! If a near-by Zoom vehicle is available, we will transfer your reservation. If not, we will call you a cab and get you a self-drive vehicle as soon as possible so you can quickly be on your way.
 			.f-b.zoom.size-16.m-b5 #{count+=1}) If I bring the car back ahead of my reservation time, do I receive a credit?
 			%p
 				a) Credit worth 50% of billed hourly rate will be given for the remaining hours of your booking.
@@ -128,10 +128,10 @@
 				Only Zoom members are allowed to drive Zoom vehicles. If you allow another member to drive during your reservation, you are still responsible for the vehicle. In the event a non-member drives the vehicle, Zoom's insurance coverage would be invalidated. 
 			.f-b.zoom.size-16.m-b5 #{count+=1}) What do I do if I am in an accident?
 			%p
-				Immediately notify Zoom by calling #{CommonHelper::CUSTOMER_CARE} and we will guide you through the entire process. We will coordinate everything with the police, insurance, and road-side assistance. Don't leave the scene of the accident until proper support has arrived.  You may be required to sign several formality documents associated with the accident.
+				Immediately notify Zoom by calling #{@city.contact_phone} and we will guide you through the entire process. We will coordinate everything with the police, insurance, and road-side assistance. Don't leave the scene of the accident until proper support has arrived.  You may be required to sign several formality documents associated with the accident.
 			.f-b.zoom.size-16.m-b5 #{count+=1}) What do I do if the vehicle breaks down?
 			%p
-				Immediately notify Zoom by calling #{CommonHelper::CUSTOMER_CARE} and we will guide you through the entire process with the help of our Call Center and Fleet Executive team. Each vehicle also has a 24x7 road-side support hotline number. Zoom will coordinate everything with this road-side assistance provider. Don't leave the scene of the breakdown until proper support has arrived.
+				Immediately notify Zoom by calling #{@city.contact_phone} and we will guide you through the entire process with the help of our Call Center and Fleet Executive team. Each vehicle also has a 24x7 road-side support hotline number. Zoom will coordinate everything with this road-side assistance provider. Don't leave the scene of the breakdown until proper support has arrived.
 
 		#faq-6.tab-pane.fade
 			.f-b.zoom.size-16.m-b5 #{count+=1}) Who pays for fuel?
@@ -143,7 +143,7 @@
 
 			.f-b.zoom.size-16.m-b5 #{count+=1})  What are the requirements when I drive across a State border?
 			%p
-				Each State has different procedures. All States will require a commercially registered vehicle to stop at the border RTO station to pay the relevant tolls/taxes to obtain a valid entry permit. All Zoom vehicles contain original copies of the RC Card, Insurance Note, Self-Drive License, and the All India Permit. In the event that an incident arises, please call Zoom's 24 hour Call Center at #{CommonHelper::CUSTOMER_CARE} and we will provide the necessary guidance to the RTO officer to ensure the issue is resolved and you're back Zooming as soon as possible!
+				Each State has different procedures. All States will require a commercially registered vehicle to stop at the border RTO station to pay the relevant tolls/taxes to obtain a valid entry permit. All Zoom vehicles contain original copies of the RC Card, Insurance Note, Self-Drive License, and the All India Permit. In the event that an incident arises, please call Zoom's 24 hour Call Center at #{@city.contact_phone} and we will provide the necessary guidance to the RTO officer to ensure the issue is resolved and you're back Zooming as soon as possible!
 			.f-b.zoom.size-16.m-b5 #{count+=1}) What documents must I show at the State border RTO office after crossing a State border?
 			%p
 				You must show copies of the RC Card, Insurance Note, Self-Drive License, and the All India Permit.
@@ -152,7 +152,7 @@
 				Prices vary depending on State and vehicle type (larger vehicles have higher tolls/taxes). For most states, prices range from ₹100-500 for a weeklong permit. Zoom does not reimburse for these charges. Andhra Pradesh only offers an annual permit, which costs between ₹2,500-3,500. No weekly permit is offered for Andhra Pradesh. Zoom will reimburse the Member the full cost of the Andhra Pradesh permit and the Andhra Pradesh permit only. If you are traveling to Andhra Pradesh, please consult a Zoom representative to see if your vehicle is already equipped with a permit.
 			.f-b.zoom.size-16.m-b5 #{count+=1}) What do I do if a border officer at the State RTO crossing is causing a problem?
 			%p
-				This should not occur since each Zoom vehicle is outfitted with all necessary documents. In the event that an incident does arise, please call Zoom's 24 hour Call Center at #{CommonHelper::CUSTOMER_CARE} and we will provide the necessary guidance to the RTO officer to ensure the issue is resolved and you're back Zooming as soon as possible!  Zoom will not reimburse the member for any additional charges levied by RTO enforcement.
+				This should not occur since each Zoom vehicle is outfitted with all necessary documents. In the event that an incident does arise, please call Zoom's 24 hour Call Center at #{@city.contact_phone} and we will provide the necessary guidance to the RTO officer to ensure the issue is resolved and you're back Zooming as soon as possible!  Zoom will not reimburse the member for any additional charges levied by RTO enforcement.
 			.f-b.zoom.size-16.m-b5 #{count+=1}) Who pays for parking?
 			%p
 				Members must pay for parking outside of the Zoom vehicle's home location.

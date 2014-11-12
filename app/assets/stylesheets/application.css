@@ -15,4 +15,5 @@
  *= require common
  *= require custom
  *= require header-new
+ *= require uploadfile.min
  */

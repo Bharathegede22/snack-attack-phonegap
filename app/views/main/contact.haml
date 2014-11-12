@@ -7,7 +7,7 @@
 			%p
 				117, 2nd Cross, HAL 3rd Stage, Bangalore - 560075
 				%br/
-				Ph: #{CommonHelper::CUSTOMER_CARE}
+				Ph: 080-33013371
 				%br/
 			%br/
 			%h2 Directions
@@ -65,7 +65,7 @@
 		if (window.jQuery) {
 			var script = document.createElement("script");
 			script.type = "text/javascript";
-			script.src = "http://maps.googleapis.com/maps/api/js?key=AIzaSyBSmgKl7zFKESa4cNYeQUXUAkwGOqaXK9k&sensor=true&callback=initializeMap";
+			script.src = "http://maps.googleapis.com/maps/api/js?key=#{GOOGLE_MAP_KEY}&sensor=true&callback=initializeMap";
 			document.body.appendChild(script);
 		} else {
 			window.setTimeout(checkJquery, 1000);
