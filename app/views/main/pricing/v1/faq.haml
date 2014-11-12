@@ -88,7 +88,7 @@
 				Returning vehicles on time is very important, because another member may have the vehicle reserved after you. You have a 15 minute grace period to return the vehicle after your reservation ends. After that, you will be charged the normal hourly fee for the vehicle until you return it. If you inconvenience another member, you will be charged Rs. 600 per hour late (or fraction thereof) after the 15 minute grace period.
 			.f-b.zoom.size-16.m-b5 20) What happens if someone else returns the car late, and it is not there when my reservation begins?
 			%p
-				If your reserved vehicle is not where it is supposed to be, notify us immediately by calling #{CommonHelper::CUSTOMER_CARE}. Zoom and our helpful fleet executives will make sure you get where you need to go! If a near-by Zoom vehicle is available, we will transfer your reservation. If not, we will call you a cab and get you a self-drive vehicle as soon as possible so you can quickly be on your way.
+				If your reserved vehicle is not where it is supposed to be, notify us immediately by calling #{@city.contact_phone}. Zoom and our helpful fleet executives will make sure you get where you need to go! If a near-by Zoom vehicle is available, we will transfer your reservation. If not, we will call you a cab and get you a self-drive vehicle as soon as possible so you can quickly be on your way.
 			.f-b.zoom.size-16.m-b5 21) If I bring the car back ahead of my reservation time, do I receive a credit?
 			%p
 				If you return a vehicle 1 hour or more before your reservation ends, you will get a driving credit for 25% of the unused time. If you have a vehicle only with a daily tariff component, you are eligible for a credit equivalent to 25% of the daily tariff in the event you return the car a day or more early (e.g. a 3 day hire that is returned 1 full day early will result in a driving credit equal to 25% of the standard daily tariff for that respective vehicle).
@@ -116,10 +116,10 @@
 				Only Zoom members are allowed to drive Zoom vehicles. If you allow another member to drive during your reservation, you are still responsible for the vehicle. In the event a non-member drives the vehicle, Zoom's insurance coverage would be invalidated. 
 			.f-b.zoom.size-16.m-b5 28) What do I do if I am in an accident?
 			%p
-				Immediately notify Zoom by calling #{CommonHelper::CUSTOMER_CARE} and we will guide you through the entire process. We will coordinate everything with the police, insurance, and road-side assistance. Don't leave the scene of the accident until proper support has arrived.  You may be required to sign several formality documents associated with the accident.
+				Immediately notify Zoom by calling #{@city.contact_phone} and we will guide you through the entire process. We will coordinate everything with the police, insurance, and road-side assistance. Don't leave the scene of the accident until proper support has arrived.  You may be required to sign several formality documents associated with the accident.
 			.f-b.zoom.size-16.m-b5 29) What do I do if the vehicle breaks down?
 			%p
-				Immediately notify Zoom by calling #{CommonHelper::CUSTOMER_CARE} and we will guide you through the entire process with the help of our Call Center and Fleet Executive team. Each vehicle also has a 24x7 road-side support hotline number. Zoom will coordinate everything with this road-side assistance provider. Don't leave the scene of the breakdown until proper support has arrived.
+				Immediately notify Zoom by calling #{@city.contact_phone} and we will guide you through the entire process with the help of our Call Center and Fleet Executive team. Each vehicle also has a 24x7 road-side support hotline number. Zoom will coordinate everything with this road-side assistance provider. Don't leave the scene of the breakdown until proper support has arrived.
 
 		#faq-6.tab-pane.fade
 			.f-b.zoom.size-16.m-b5 30) Who pays for fuel?
@@ -130,7 +130,7 @@
 				Each reservation comes with #{cg.hourly_km_limit} km/hr with a maximum daily driving limit of #{cg.daily_km_limit} km/day (24 hour period). For example, a 3 hour reservation would come with #{cg.hourly_km_limit * 3} km in driving at no additional charge while a 3 day reservation would come with #{cg.daily_km_limit * 3} km in driving at no additional charge. There is a per-km charge for each km beyond that point. Please see Zoom tariffs for more details.
 			.f-b.zoom.size-16.m-b5 32)  What are the requirements when I drive across a State border?
 			%p
-				Each State has different procedures. All States will require a commercially registered vehicle to stop at the border RTO station to pay the relevant tolls/taxes to obtain a valid entry permit. All Zoom vehicles contain original copies of the RC Card, Insurance Note, Self-Drive License, and the All India Permit. In the event that an incident arises, please call Zoom's 24 hour Call Center at #{CommonHelper::CUSTOMER_CARE} and we will provide the necessary guidance to the RTO officer to ensure the issue is resolved and you're back Zooming as soon as possible!
+				Each State has different procedures. All States will require a commercially registered vehicle to stop at the border RTO station to pay the relevant tolls/taxes to obtain a valid entry permit. All Zoom vehicles contain original copies of the RC Card, Insurance Note, Self-Drive License, and the All India Permit. In the event that an incident arises, please call Zoom's 24 hour Call Center at #{@city.contact_phone} and we will provide the necessary guidance to the RTO officer to ensure the issue is resolved and you're back Zooming as soon as possible!
 			.f-b.zoom.size-16.m-b5 33) What documents must I show at the State border RTO office after crossing a State border?
 			%p
 				You must show copies of the RC Card, Insurance Note, Self-Drive License, and the All India Permit.
@@ -139,7 +139,7 @@
 				Prices vary depending on State and vehicle type (larger vehicles have higher tolls/taxes). For most states, prices range from ₹100-500 for a weeklong permit. Zoom does not reimburse for these charges. Andhra Pradesh only offers an annual permit, which costs between ₹2,500-3,500. No weekly permit is offered for Andhra Pradesh. Zoom will reimburse the Member the full cost of the Andhra Pradesh permit and the Andhra Pradesh permit only. If you are traveling to Andhra Pradesh, please consult a Zoom representative to see if your vehicle is already equipped with a permit.
 			.f-b.zoom.size-16.m-b5 35) What do I do if a border officer at the State RTO crossing is causing a problem?
 			%p
-				This should not occur since each Zoom vehicle is outfitted with all necessary documents. In the event that an incident does arise, please call Zoom's 24 hour Call Center at #{CommonHelper::CUSTOMER_CARE} and we will provide the necessary guidance to the RTO officer to ensure the issue is resolved and you're back Zooming as soon as possible!  Zoom will not reimburse the member for any additional charges levied by RTO enforcement.
+				This should not occur since each Zoom vehicle is outfitted with all necessary documents. In the event that an incident does arise, please call Zoom's 24 hour Call Center at #{@city.contact_phone} and we will provide the necessary guidance to the RTO officer to ensure the issue is resolved and you're back Zooming as soon as possible!  Zoom will not reimburse the member for any additional charges levied by RTO enforcement.
 			.f-b.zoom.size-16.m-b5 36) Who pays for parking?
 			%p
 				Members must pay for parking outside of the Zoom vehicle's home location.

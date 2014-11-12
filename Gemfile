@@ -32,6 +32,8 @@ gem 'whenever', :require => false
 
 group :development do
 	gem 'capistrano'
+  gem 'flamegraph'
+  gem 'rack-mini-profiler'
 end
 
 group :production do
@@ -73,4 +75,11 @@ group :development, :test do
   gem 'better_errors'
   gem 'letter_opener'
   gem 'annotate'
+  gem 'pry'
+  gem 'pry-remote'
+  gem 'pry-stack_explorer'
+  gem 'pry-debugger'
+  gem 'awesome_print'
+  gem 'interactive_editor'
+  gem 'meta_request'
 end

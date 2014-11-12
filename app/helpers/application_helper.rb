@@ -1,4 +1,25 @@
 module ApplicationHelper
+
+  def admin_api_get_call url,params
+    begin
+      resource = RestClient::Resource.new(url,:timeout => 5, :open_timeout => 5)
+      resource.get params: params  
+    rescue Exception => e
+      Rails.logger.info "RestClient GET call failed\n #{e.message}"
+      flash[:error] = "Sorry, our system is busy right now. Please try after some time."
+      return
+    end
+  end
+
+  def admin_api_post_call url,params
+    begin
+      resource = RestClient::Resource.new(url,:timeout => 5, :open_timeout => 5)
+      resource.post params: params  
+    rescue Exception => e
+      Rails.logger.info "RestClient GET call failed\n #{e.message}"
+      flash[:error] = "Sorry, our system is busy right now. Please try after some time."
+    end
+  end
 	
 	def devise_mapping
     @devise_mapping ||= Devise.mappings[:user]

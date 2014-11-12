@@ -17,4 +17,5 @@
  *= require header-new
  *= require sass/main.scss
  *= require sass/mixins.scss
+ *= require uploadfile.min
  */

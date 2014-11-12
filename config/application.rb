@@ -27,8 +27,8 @@ module Web
     config.middleware.use ExceptionNotification::Rack, 
     	:email => {
 		    :email_prefix => "[Zoomcar Error] ", 
-		    :sender_address => %{"Zoomcar Error" <error@zoomcar.in>},
-		    :exception_recipients => %w{error@zoomcar.in}
+		    :sender_address => %{"Zoomcar Error" <error@zoomcar.com>},
+		    :exception_recipients => %w{error@zoomcar.com}
 		}
 		
 		config.to_prepare do
@@ -48,3 +48,6 @@ end
 configurations = YAML.load(File.read(File.join(::Rails.root.to_s, 'config', 'configurations.yml')))
 HOSTNAME = configurations['hostname']
 MEMCACHED_KEY = configurations['memcached_key']
+
+ADMIN_HOSTNAME = configurations['admin_hostname']
+ADMIN_API_VERSION = configurations['admin_api_version']

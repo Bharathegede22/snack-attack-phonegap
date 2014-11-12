@@ -18,11 +18,8 @@ module CommonHelper
   ]
 	RATINGS             = [["Terrible", 1], ["Bad", 2], ["Average", 3], ["Good", 4], ["Excellent", 5]]
 	
-	CUSTOMER_CARE       = "080-33013371"
-	CUSTOMER_CARE_EMAIL = "contact@zoomcar.in"
-
 	KLE_UNLOCK_NUMBER = "9243000768"
-	INTERCEPTOR_NUMBER = "9703356074"
+	INTERCEPTOR_NUMBER = ""
 	KLE_CUSTOMER_CARE = "09880483300"
 
 	LIABILITY           = '5,000'
@@ -83,6 +80,7 @@ module CommonHelper
 		'Uttarakhand',
 		'West Bengal'
 	]
+  
 		
   class << self
   	def encode(c,id)

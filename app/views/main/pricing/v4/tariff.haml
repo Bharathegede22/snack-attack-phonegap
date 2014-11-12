@@ -45,18 +45,16 @@
 								(Mon - Thu)
 							.fr.col-md-4.text-right 
 								Blackout Days
-								%a.tariff_old_blackoutLink{:href => "http://www.zoomcar.com/holidays", :target => "_blank"} [?]
+								%a.tariff_old_blackoutLink{:href => "http://#{HOSTNAME}/holidays", :target => "_blank"} [?]
 
 							.fr.col-md-4
 								(Fri - Sun)
 							
 							.fc
 						.white
-							%i Price includes
-							#{show_currency(pricing.hourly_kms)} Kms for every hour booked.
+							%i Price includes #{show_currency(pricing.hourly_kms)} Kms for every hour booked.
 							%br
-							Rs. #{show_currency(pricing.excess_kms)}/km will be charged beyond the usage.
-							%sup #
+							%i Rs. #{show_currency(pricing.excess_kms)}/km will be charged beyond the usage.
 					.inline-block.bg-zoomb.p-10.r-5.m-10.tariff_old_sideboxes{style: 'width:170px;'}
 						.p-b10
 							Daily Trip 
@@ -102,7 +100,9 @@
 						%br
 						Special Offer: Book for 7 days (or more) and get additional 10% Off.
 						%br
-						No offers apply on blackout days.
+						%b
+							No discount / offers will be applicable on 
+							%a{:href => "http://#{HOSTNAME}/holidays", :target => "_blank"} blackout days
 	%br/
 	.row
 		.col-md-6

@@ -64,6 +64,7 @@ Web::Application.routes.draw do
 			get 'credits'
 			get 'forgot'
 			get 'license'
+			get 'license_get_del'
 			get 'password'
 			get 'settings'
 			get 'social'
@@ -73,6 +74,7 @@ Web::Application.routes.draw do
 			get 'status_old'
 
 			post 'license'
+			post 'license_get_del'
 			post 'signup'
 			post 'update'
 		end
@@ -131,5 +133,5 @@ Web::Application.routes.draw do
 		get '/safety'=>'main#safety'
 		get '/:id' => 'seo#index'
 	end
-  
+
 end
