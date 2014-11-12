@@ -1,7 +1,7 @@
 require "open-uri"
 class User < ActiveRecord::Base
   
-  has_one :image, :as => :imageable, dependent: :destroy
+  has_many :image, :as => :imageable, dependent: :destroy
   has_many :bookings
   has_many :credits
   has_many :wallets
@@ -79,6 +79,14 @@ class User < ActiveRecord::Base
     else 
       return false
     end
+  end
+
+  def is_underage?
+  	if ((Time.now.to_i - self.dob.to_datetime.to_i) < 21.years.to_i)
+  		return true
+  	else
+  		return false
+  	end
   end
   
   def license_check?

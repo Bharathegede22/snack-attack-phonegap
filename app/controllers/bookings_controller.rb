@@ -442,7 +442,7 @@ class BookingsController < ApplicationController
     @meta_title = "Zoom - Car Rental in #{@city.name}"
     @meta_description = "Enjoy the Freedom of Four Wheels with self-drive car rental by the hour or by the day. Now in #{@city.name}!"
     @meta_keywords = "car hire, car rental, car rent, car sharing, car share, shared car, car club, rental car, car-sharing, hire car, renting a car, #{@city.name}, #{@city.name} car hire, #{@city.name} car rental, #{@city.name} car rent, #{@city.name} car sharing, #{@city.name} car share, #{@city.name} car club, #{@city.name} rental car, #{@city.name} car-sharing, #{@city.name} hire car,#{@city.name} renting a car, India, Indian, Indian car-sharing, India car-sharing, Indian car-share, India car-share, India car club, Indian car club, India car sharing, Indian car, Zoomcar, Zoom car, travel india, travel #{@city.name}, explore india, explore #{@city.name}, travel, explore, self-drive, self drive, self-drive #{@city.name}, self drive #{@city.name}"
-    @canonical = "https://www.zoomcar.in/#{@city.name}/search"
+    @canonical = "https://www.zoomcar.com/#{@city.name}/search"
     if request.post?
       @booking = Booking.new
       @booking.city_id = @city.id
@@ -595,7 +595,7 @@ class BookingsController < ApplicationController
 	end
 	
   def check_blacklist
-    redirect_to checkout_bookings_path(@city.name.downcase) if current_user && current_user.is_blacklisted?
+    redirect_to checkout_bookings_path(@city.name.downcase) if current_user && current_user.is_blacklisted? && current_user.is_underage?
   end
   
 	def check_inventory

@@ -6,7 +6,7 @@ module ApplicationHelper
       resource.get params: params  
     rescue Exception => e
       Rails.logger.info "RestClient GET call failed\n #{e.message}"
-      flash[:error] = "Something went wrong please try after some time"
+      flash[:error] = "Sorry, our system is busy right now. Please try after some time."
       return
     end
   end
@@ -17,7 +17,7 @@ module ApplicationHelper
       resource.post params: params  
     rescue Exception => e
       Rails.logger.info "RestClient GET call failed\n #{e.message}"
-      flash[:error] = "Something went wrong please try after some time"
+      flash[:error] = "Sorry, our system is busy right now. Please try after some time."
     end
   end
 	

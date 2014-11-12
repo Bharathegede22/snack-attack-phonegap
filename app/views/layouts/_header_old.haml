@@ -8,113 +8,117 @@
 %nav.navbar.navbar-fixed-top{:role => "navigation"}
 	.wrapper
 		%a.logo{:href => '/'}
-		.fl
-			.broadcast.fl
-				#CityBar.dropdown.fr
-					%a.dropdown-toggle.p-r10.p-l10{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
-						= @city.name
-						%b.caret
-					%ul.dropdown-menu.pull-left
-						- City.active.each do |city|
+		.nav-box
+			.nav-links
+				.fl
+					.m-t3.m-l5.size-11
+						Download app:
+					.mobile-app
+						%a.android.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "Get Zoomcar Android App", href: "https://play.google.com/store/apps/details?id=com.zoomcar&referrer=utm_source%3Dhome%2520page%26utm_medium%3Dheader%2520links%26utm_content%3Dandroid%26utm_campaign%3Dinstalls"}
+						%a.iphone.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "Get Zoomcar iPhone App", href: "https://itunes.apple.com/us/app/zoomcar-self-drive-cars/id889910218?mt=8&utm_source=home%20page&utm_medium=header%20links&utm_content=iOS&utm_campaign=installs"}
+						.fc
+				.links
+					%ul.nav.navbar-nav.fr
+						- if @header.blank? || @header != 'homepage'
+							- cls = (!@header.blank? && (@header == 'search' || @header == 'booking')) ? 'active' : ''
 							%li
-								= link_to city.name, "/#{city.name.downcase}"
-			.fc
-			.m-t3.m-l5.size-11
-				Download app:
-			.mobile-app
-				%a.android.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "Get Zoomcar Android App", href: "https://play.google.com/store/apps/details?id=com.zoomcar&referrer=utm_source%3Dhome%2520page%26utm_medium%3Dheader%2520links%26utm_content%3Dandroid%26utm_campaign%3Dinstalls"}
-				%a.iphone.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "Get Zoomcar iPhone App", href: "https://itunes.apple.com/us/app/zoomcar-self-drive-cars/id889910218?mt=8&utm_source=home%20page&utm_medium=header%20links&utm_content=iOS&utm_campaign=installs"}
+								%a{class: cls, href: "javascript:void(0)", onclick: "showSearch();"} Book Cars
+						%li.dropdown
+							- cls = (!@header.blank? && @header == 'tariff') ? 'dropdown-toggle active' : 'dropdown-toggle'
+							%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}
+								Tariffs
+								%b.caret
+							%ul.dropdown-menu
+								%li
+									%a{href: "/#{@city.name.downcase}/tariff"}
+										Tariffs Details
+								%li
+									%a{href: "javascript:void(0)", onclick: "showModal('Tariff Calculator', '/calculator/tariff');"}
+										Tariff Calculator
+								%li
+									%a{href: "javascript:void(0)", onclick: "showModal('Trip Modification Estimator', '/calculator/reschedule');"}
+										Trip Modification Estimator
+						%li.dropdown
+							- cls = (!@header.blank? && @header == 'help') ? 'dropdown-toggle active' : 'dropdown-toggle'
+							%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}
+								How It Works
+								%b.caret
+							%ul.dropdown-menu
+								%li
+									%a{href: "/howitworks"}
+										How Zoomcar Works
+								%li
+									%a{href: "/#{@city.name.downcase}/safety"}
+										Zoom in Safety
+								%li
+									%a{href: "/outstation"}
+										Going Outstation?
+								%li
+									%a{href: "/reva"}
+										Zoomcar's Electric!
+								%li
+									%a{href: "/#{@city.name.downcase}/faq"}
+										FAQs
+								%li
+									%a{href: "/handover"}
+										Zoom Responsibly
+						%li.dropdown
+							- cls = (!@header.blank? && @header == 'policy') ? 'dropdown-toggle active' : 'dropdown-toggle'
+							%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}
+								Policies
+								%b.caret
+							%ul.dropdown-menu
+								%li
+									%a{href: "/#{@city.name.downcase}/fees"}
+										Fee Policy
+								%li
+									%a{href: "/eligibility"}
+										Eligibility
+								%li
+									%a{href: "/member"}
+										Member Agreement
+								%li
+									%a{href: "/privacy"}
+										Privacy Policy
+						%li
+							- cls = (!@header.blank? && @header == 'offers') ? 'active' : ''
+							%a{class: cls, href: "/#{@city.name.downcase}/offers"} Offers
+					.fc
+				.support
+					= @city.contact_phone
 				.fc
-		.info
-			#UserBar
-				.broadcast.fr
-					.dropdown.fr
-						%a.dropdown-toggle.p-r10.p-l10{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
-							My Account
-							%b.caret
-						%ul.dropdown-menu.pull-right
-							%li
-								%a{href: "javascript:void(0)", onclick: "showModal('Sign Up', '/users/signup');"}
-									Sign Up
-							%li
-								%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/signin');"}
-									Sign In
-							%li
-								%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/forgot');"}
-									Forgot Password
-				%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
-					We're Hiring
+			.nav-top-links
+				.city-tabs.fl
+					:ruby
+						url = request.fullpath
+						url = "/#{@city.name.downcase}" if true # !url.include?(@city.name.downcase)
+					- City.active.each do |city|
+						- if @city.id == city.id
+							= link_to city.name, "/#{city.name.downcase}", class: 'active'
+						- else
+							= link_to city.name, url.gsub("/#{@city.name.downcase}", "/#{city.name.downcase}")
+					.fc
+				.info
+					#UserBar
+						.broadcast.fr
+							.dropdown.fr
+								%a.dropdown-toggle.p-r10.p-l10{href: "javascript:void(0)", 'data-toggle' => "dropdown"}
+									My Account
+									%b.caret
+								%ul.dropdown-menu.pull-right
+									%li
+										%a{href: "javascript:void(0)", onclick: "showModal('Sign Up', '/users/signup');"}
+											Sign Up
+									%li
+										%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/signin');"}
+											Sign In
+									%li
+										%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/forgot');"}
+											Forgot Password
+						%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
+							We're Hiring
+						.fc
 				.fc
-			.support
-				= @city.contact_phone
-		.links
-			%ul.nav.navbar-nav.fr
-				- if @header.blank? || @header != 'homepage'
-					- cls = (!@header.blank? && (@header == 'search' || @header == 'booking')) ? 'active' : ''
-					%li
-						%a{class: cls, href: "javascript:void(0)", onclick: "showSearch();"} Book Cars
-				%li.dropdown
-					- cls = (!@header.blank? && @header == 'tariff') ? 'dropdown-toggle active' : 'dropdown-toggle'
-					%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}
-						Tariffs
-						%b.caret
-					%ul.dropdown-menu
-						%li
-							%a{href: "/#{@city.name.downcase}/tariff"}
-								Tariffs Details
-						%li
-							%a{href: "javascript:void(0)", onclick: "showModal('Tariff Calculator', '/calculator/tariff');"}
-								Tariff Calculator
-						%li
-							%a{href: "javascript:void(0)", onclick: "showModal('Trip Modification Estimator', '/calculator/reschedule');"}
-								Trip Modification Estimator
-				%li.dropdown
-					- cls = (!@header.blank? && @header == 'help') ? 'dropdown-toggle active' : 'dropdown-toggle'
-					%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}
-						How It Works
-						%b.caret
-					%ul.dropdown-menu
-						%li
-							%a{href: "/howitworks"}
-								How Zoomcar Works
-						%li
-							%a{href: "/#{@city.name.downcase}/safety"}
-								Zoom in Safety
-						%li
-							%a{href: "/outstation"}
-								Going Outstation?
-						%li
-							%a{href: "/reva"}
-								Zoomcar's Electric!
-						%li
-							%a{href: "/#{@city.name.downcase}/faq"}
-								FAQs
-						%li
-							%a{href: "/handover"}
-								Zoom Responsibly
-				%li.dropdown
-					- cls = (!@header.blank? && @header == 'policy') ? 'dropdown-toggle active' : 'dropdown-toggle'
-					%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}
-						Policies
-						%b.caret
-					%ul.dropdown-menu
-						%li
-							%a{href: "/#{@city.name.downcase}/fees"}
-								Fee Policy
-						%li
-							%a{href: "/eligibility"}
-								Eligibility
-						%li
-							%a{href: "/member"}
-								Member Agreement
-						%li
-							%a{href: "/privacy"}
-								Privacy Policy
-				%li
-					- cls = (!@header.blank? && @header == 'offers') ? 'active' : ''
-					%a{class: cls, href: "/#{@city.name.downcase}/offers"} Offers
-			.fc
-		.fc
 	- cls = (!@header.blank? && @header == 'search') ? '' : 'hide'
 	- if !@header.blank? && @header == 'search'
 		#SH
