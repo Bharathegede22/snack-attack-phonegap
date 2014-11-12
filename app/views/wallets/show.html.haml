@@ -41,9 +41,11 @@
 				₹ #{number_with_delimiter(wallet_amount)}
 			%br/
 			.col-md-6.clearfix.text-left.avail-refund-wallet
-				Available for Refund
+				%a{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/show_refund');pushEvent('Wallet', 'Refund Widget Click (My Bookings)');"}
+					Available for Refund
 			.col-md-6.clearfix.nullPad.text-right.avail-refund-amount.amount-desc
-				₹ #{number_with_delimiter(current_user.wallet_total_amount)}
+				%a{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/show_refund');pushEvent('Wallet', 'Refund Widget Click (My Bookings)');"}
+					= "₹ "  + number_with_delimiter(current_user.wallet_total_amount)
 
 		.col-md-6.nullPad.security-block-right
 			.credit-top-icon-block
