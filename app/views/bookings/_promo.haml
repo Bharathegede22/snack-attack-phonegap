@@ -18,22 +18,26 @@
 	- else
 		.p-b5
 			.fl
-				%b Promo Code
+				%b Tariff
 			.fr
-				%form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
-					#PromoSubmit
-						%button.btn.btn-default.btn-xs{type:"submit"}
-							%span.glyphicon.glyphicon-remove
-					#PromoWait{style: "display:none;"}
-						.wait
+				/ %form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+				/ 	#PromoSubmit
+				/ 		%button.btn.btn-default.btn-xs{type:"submit"}
+				/ 			%span.glyphicon.glyphicon-remove
+				/ 	#PromoWait{style: "display:none;"}
+				/ 		.wait
 			.fc
-		.col-md-12.promoCode-desc-block.clearfix
-			.col-md-4.text-right.clearfix
+		.col-md-12.promoCode-desc-block.clearfix.rmpad
+			.col-md-4.text-right.clearfix.rmpad
 				%b #{session[:promo_code]}
-			.col-md-8.text-left.clearfix
-				20% off on Weekdays (Mon-Thu) when booked from Zoomcar website!
-				%br
-				%br
-				%i Discount will be manually evaluated and refunded back to your card.
+			.col-md-7.text-right.clearfix.rmpad
+				%b.promo_amount ₹ 1000
+			.col-md-1
+				%form#PromoForm{:action => "javascript:void(0)", "data-ajax" => "false", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoDiv');"}
+					#PromoSubmit
+						%button.btn.btn-default.btn-xs{:type => "submit"}
+							%span.glyphicon.glyphicon-remove
+					#PromoWait{:style => "display: none;"}
+						.wait
 			.promoCode_condition_block_whenApplied
 				%i.promoCode_condition Promo Codes are not applicable on Blackout Days.

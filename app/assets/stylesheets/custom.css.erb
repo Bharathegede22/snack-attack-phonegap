@@ -2802,37 +2802,75 @@ button.delete {
        font-weight: 900;
 }
 .aval-credit-amount {
-font-size: 14px;
-font-weight: 900;
-margin-top: 8px;
+	font-size: 14px;
+	font-weight: 900;
+	margin-top: 8px;
 }
+
 #DetailsNameError {
-display: inline-block !important;
+	display: inline-block !important;
 }
+
 .use-credits-submit, .use-credits-submit:hover {
-background: #D8D8D8;
-color: #000 !important;
-outline: 0;
-border: #D8D8D8;
-width: 67px;
-height: 30px;
+	background: #D8D8D8;
+	color: #000 !important;
+	outline: 0;
+	width: 63px;
+	height: 34px;
+	border: 1px solid #6F6C6C;
+	text-decoration: underline;
+	text-shadow: none;
 }
+
 .available_credits_data {
 	border: none;
 	background: #FFF;
 	padding: 0;
 }
-.apply_promocode_btn {
+.apply_promocode_btn, .apply_promocode_btn:hover {
 	background: #D8D8D8;
 	color: #000 !important;
+	font-weight: normal;
+	border: 1px solid #6F6C6C;
+	text-decoration: underline;
+	text-shadow: none;
 }
 
 #CreditDiv {
 	margin-top: -12px;
 }
 
+.cancel_credits, .cancel_credits:focus {
+	float: right;
+	width: 22px;
+	height: 20px;
+	border-radius: 5px;
+	background: #6ABD19;
+	border: 1px #6ABD19;
+	color: #fff;
+	cursor: pointer;
+	outline: 0;
+}
 
-# ============ Wallet CSS Code =========== 
+.rmpad {
+	padding: 0;
+}
+
+.used_credits_sec {
+	margin-top: 15px;
+	font-size: 13px;
+	text-transform: uppercase;
+}
+
+.promo_amount, .credit_amount {
+	margin-right: 10px;
+	font-size: 14px;
+	color: #6ABD19;
+}
+
+
+/* ============ Wallet CSS Code =========== */
+
 .deposit-block, .show-history-left {
 	border-right: 1px dotted #ccc;
 }
