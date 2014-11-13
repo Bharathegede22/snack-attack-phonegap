@@ -14,6 +14,13 @@ $green: #6ABD19;
 $grey: #C5C5C5;
 $light-grey:#70757D;
 $width960: 960px;
+$grey-bg:	#eee;
+$border-black1px: 1px #323a45 solid;
+$border-black2px: 2px #323a45 solid;
+$border-black3px: 3px #323a45 solid;
+$border-grey1px: 1px #ccc solid;
+$border-grey2px: 2px #ccc solid;
+$border-grey3px: 3px #ccc solid;
 
 /*==============================*/
  //Silent classes
@@ -26,6 +33,9 @@ $width960: 960px;
   background: red;
   width: 100px;
   height: 50px;
+}
+.clear{
+	clear: both;
 }
 /*==============================*/
  //mixins
@@ -245,9 +255,27 @@ $width960: 960px;
 .offer_main_container{
 
 }
-
-
-
+.offers-panel{
+	
+}
+.offers-heading{
+	background: $black !important;
+	h4{
+		color: white;
+	}
+}
+.offer-panel-body{
+	background: $grey-bg;
+	padding: 2.5em 0em;
+}
+.each-car-offer{
+	background: $white;
+	display: inline-block;
+	border: $border-grey2px;
+	.time{
+		width: 120px;
+	}
+}
 
 
 

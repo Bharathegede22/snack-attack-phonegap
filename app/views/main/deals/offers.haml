@@ -1,0 +1,44 @@
+.wrapper
+	.offer_main_container
+		%h3.m-t30 Best deals for today
+		.panel.panel-default.offers-panel
+			.panel-heading.offers-heading
+				%h4 Zoomcar Flash deals:
+			.panel-body.offer-panel-body
+				.col-md-12.inline-block.p-b30
+					.col-md-6.pull-left
+						.each-car-offer.r-3
+							.col-md-4.border-r-c
+								= image_tag("cars/10small.jpg", :alt => "")
+								.fl.p-t5.p-b10
+									.size-20.f-b.zoom-b
+										Scorpio LX
+									.size-14.m-t5.lgrey
+										7 Seater
+										.button.m-t10
+											Book
+							.col-md-8.border-b-c.p-0
+								.col-md-6
+									.text-up.size-13.p-b10.p-t10.t-c.light-grey
+										Pickup Time
+								.col-md-6.border-l-c
+									.text-up.size-13.p-b10.p-t10.t-c.light-grey
+										Dropoff Time
+							.col-md-8.border-b-c.p-0
+								.col-md-6
+									.text-up.size-14.p-b10.p-t10.t-c
+										30 Dec, 2014
+										%br
+										11:30 PM
+								.col-md-6.border-l-c
+									.text-up.size-14.p-b10.p-t10.t-c
+										04 Jan, 2015
+										%br
+										09:00 PM
+					.col-md-6.pull-right
+						.each-car-offer.r-3
+				.col-md-12.inline-block
+					.col-md-6.pull-left
+						.each-car-offer.r-3
+					.col-md-6.pull-right
+						.each-car-offer.r-3
