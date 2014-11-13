@@ -1,5 +1,5 @@
 Web::Application.routes.draw do
-	get "delhi" => "main#inactive"
+	
 	get 'mydeposits' => "wallets#show"
   get 'bookings'  => "wallets#show"
 	get 'device'  => "main#device"
@@ -90,7 +90,7 @@ Web::Application.routes.draw do
 		end
 	end
 	
-	scope "/(:city)", constraints: {city: /bangalore|pune/} do
+	scope "/(:city)", constraints: {city: /bangalore|delhi|pune/} do
 		resources :bookings do
 			collection do
 				get 'checkout'
@@ -119,7 +119,7 @@ Web::Application.routes.draw do
  	get '/jsi/:key/:id' => 'main#redirect'
  	get ':city/:id' => 'main#redirect', constraints: {city: /Pune|Bangalore/}
  	
-	scope "/(:city)", constraints: {city: /bangalore|pune/} do
+	scope "/(:city)", constraints: {city: /bangalore|delhi|pune/} do
 		post '/search/:id' => 'bookings#search'
 		get '/search' => 'bookings#search'
 		get '/' => 'main#index'

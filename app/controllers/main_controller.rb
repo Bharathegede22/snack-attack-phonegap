@@ -243,6 +243,7 @@ class MainController < ApplicationController
 			@header = 'homepage'
 			@canonical = City.link
 		end
+		render :inactive and return if !@city.active
 		#expires_in 1.months, :public => true, 'max-stale' => 0 #if Rails.env == 'production'
 	end
 
