@@ -332,6 +332,11 @@
 			$('#applyPromoCode').click(function(){
 				$('#promoCode').toggle();
 				$('#credits_block').toggle();
+				if ($.trim($(this).text()) === 'Apply Promo Code or Use Credits') {
+			        $(this).text('Hide Promo Code and Credits Options');
+			    } else {
+			        $(this).text('Apply Promo Code or Use Credits');        
+			    }
 			});
 		} else {
 			window.setTimeout(checkJquery, 1000);

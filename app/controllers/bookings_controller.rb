@@ -56,14 +56,14 @@ class BookingsController < ApplicationController
   #
 	def credits
     @booking.user = current_user
-    if true || params[:apply_credits]
+    if params[:apply_credits].to_i > 0
       result = @booking.credits_applicable(params[:fare])
       if result[:error].nil?
         session[:credits] = result[:credits]
       else
         flash[:error] = result[:error]
       end
-    elsif params[:remove_credits]
+    elsif params[:remove_credits].to_i > 0
       session[:credits] = nil
     end
 		render json: {html: render_to_string('_credits.haml', :locals => {:fare => @booking.get_fare}, layout: false)}
