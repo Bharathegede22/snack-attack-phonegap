@@ -43,8 +43,7 @@
 						%br/
 						%br/
 						- if !current_user.nil?
-							- flash[:notice]="test goes here"
-						- render_flash
+							- render_flash
 						%form{:id => "LoginForm", :onsubmit => "return SubmitForm(this,'#{registration_path(:user)}','SignupDiv');", :action => "return false;", "data-ajax" => "false"}
 							.form-horizontal
 								.row.form-group
@@ -187,4 +186,4 @@
 					%a.left.carousel-control{"data-slide" => "prev", :href => "#delhiReviewSlider", :role => "button"}
 					%a.right.carousel-control{"data-slide" => "next", :href => "#delhiReviewSlider", :role => "button"}
 	.wrapper.position-a{style: "height: 300px; bottom:0; left:50%; z-index:-1;"}
-		.position-a{style: "background:url(#{asset_path 'cities/' + @city.name.downcase + '.png'}) no-repeat left bottom; width:1200px; height: 300px; bottom:0; left:-620px;"}
+		.position-a{style: "background:url(#{asset_path 'cities/' + @city.name.downcase + '.png'}) no-repeat left bottom; width:500px; height: 450px; bottom:0; left:-477px;background-size: 29em;"}
