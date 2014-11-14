@@ -333,6 +333,33 @@
 					$("#DepositFinal").html("₹ #{show_currency(total)}");
 				}
 			});
+			var grand_total = #{total};  //final amount display on page
+			var tarrif_after_promo = "#{total}";  // total tariff amount
+			var user_credit = #{current_user.total_credits}; // total credits available
+			var final_total = grand_total;  
+
+			$( document ).on( 'click', '#use_tariff', function (){
+				final_total = final_total - tarrif_after_promo;
+				document.getElementById("final_amount_to_pay").innerHTML = final_total;
+			});
+
+			$( document ).on( 'click', '.cancel_tariff', function (){
+				final_total = final_total + tarrif_after_promo;
+				document.getElementById("final_amount_to_pay").innerHTML = final_total;
+
+			});
+
+			$( document ).on( 'click', '#use_credit', function (){
+				final_total = final_total - user_credit;
+				document.getElementById("final_amount_to_pay").innerHTML = final_total;
+
+			});
+
+			$( document ).on( 'click', '.cancel_credit', function (){
+				final_total = final_total + user_credit;
+				document.getElementById("final_amount_to_pay").innerHTML = final_total;
+			});
+
 			if (!($("#credits_block").length)) {
 					$("#applyPromoCode").css("display", "none");
 					$("#promo_without_credits").css("display", "block");
@@ -344,8 +371,39 @@
 				    } else {
 				        $(this).text('Apply Promo Code');        
 				    }
-			});
+				});
 			}
+
+			$( document ).on( 'click', '.apply_promocode_btn', function (){
+				$("body").addClass("promoCodeClass");
+				$(".promoCodeWithCredits").css("display", "none");
+		
+			});
+			
+			$( document ).on( 'click', '.promoCodeCancelBtn', function (){
+				$("body").removeClass("promoCodeClass");
+				if ($(".creditUseClass").length) {
+				$(".promoCodeWithCredits").css("display", "none");
+			} else {
+				$(".promoCodeWithCredits").css("display", "block");
+			}
+			});
+
+			$( document ).on( 'click', '.use-credits-submit', function (){
+				$(".wrapper").addClass('creditUseClass');
+				$(".promoCodeWithCredits").css("display", "none");
+			
+			});
+
+			$( document ).on( 'click', '.cancelCreditsBtn', function (){
+				$(".wrapper").removeClass("creditUseClass");
+				if ($(".promoCodeClass").length) {
+				$(".promoCodeWithCredits").css("display", "none");
+			} else {
+				$(".promoCodeWithCredits").css("display", "block");
+			}
+			});
+
 			$('#applyPromoCode').click(function(){
 				$('#promoCode').toggle();
 				$('#credits_block').toggle();

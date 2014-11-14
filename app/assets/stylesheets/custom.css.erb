@@ -2909,12 +2909,6 @@ button.delete {
 	color: #6ABD19;
 }
 
-.cancal_creditBtn, .cancal_PromoBtn {
-	float: right;
-	margin-right: -16px;
-	margin-top: -18px;
-}
-
 .cancelCreditsBtn, .promoCodeCancelBtn {
 	width: 16px;
 }
@@ -2926,7 +2920,7 @@ button.delete {
 
 .promoCode-desc-block {
 	font-size: 11px;
-	/*margin-top: 10px;*/
+	margin-top: 10px;
 }
 
 .promoCode_blackoutDay {
@@ -2939,6 +2933,10 @@ button.delete {
 
 #promo_without_credits {
 	display: none;
+}
+
+.useCredit {
+	padding: 0;
 }
 
 .toCheckCredits_promos .cancal_PromoBtn .promoCodeWithCredits,
@@ -2990,9 +2988,16 @@ button.delete {
 }
 
 .walletPage-popupBox {
-	top: 23px; 
+	top: -15px; 
 	left: 471.5px; 
-	display: none;
+	/*display: none;*/
+	background: #000;
+	color: #FFF;
+	z-index: 99999;
+}
+
+.popover.right .popup_walletBox:after {
+	border-right-color: #000;
 }
 
 .booking-showPage-popupBox {
@@ -3039,6 +3044,14 @@ button.delete {
 	height: 23px;
 	margin-top: -2px;
 	margin-left: -11px;
+}
+
+.coinsIcon {
+	margin-left: 12px;
+}
+
+.credits_rightBlock {
+	padding-right: 0;
 }
 
 .credits-popover:active, .credits-popover:hover, .credits-popover:focus{
@@ -3112,10 +3125,16 @@ button.delete {
 }
 .avail-refund-wallet a {
 	color: #000;
+	text-decoration: underline;
 }
 .avail-refund-wallet a:hover {
 	color: #6ABD19;
 	text-decoration: none;
+}
+.cancel_creditBtn, .cancal_PromoBtn {
+	float: right;
+	margin-right: -16px;
+	margin-top: -2px;
 }
 .green{
 	color: #96D05E
