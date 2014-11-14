@@ -4,7 +4,7 @@
 		.alert.alert-danger
 			= @offer[:error].html_safe
 	- if session[:promo_code].blank?
-		%form.promocode-form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+		%form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 			.row
 				.col-md-9.text-right.promo-input
 					%input#DetailsName.validate-presence.form-control{:placeholder => "Enter Promo Code" ,name: 'promo', type: "text", value: @promo}
@@ -20,22 +20,9 @@
 			.fl
 				%b Tariff
 			.fr
-				/ %form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
-				/ 	#PromoSubmit
-				/ 		%button.btn.btn-default.btn-xs{type:"submit"}
-				/ 			%span.glyphicon.glyphicon-remove
-				/ 	#PromoWait{style: "display:none;"}
-				/ 		.wait
-			.fc
-		.col-md-12.promoCode-desc-block.clearfix.rmpad
-			.col-md-4.text-right.clearfix.rmpad
-				%b #{session[:promo_code]}
-			.col-md-7.text-right.clearfix.rmpad
-				%b.promo_amount - ₹ 1000
-			.col-md-1
-				%form#PromoForm{:action => "javascript:void(0)", "data-ajax" => "false", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoDiv');"}
-					#PromoSubmit_promo
-						%button.btn.btn-default.btn-xs{:type => "submit"}
+				%form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+					#PromoSubmit
+						%button.btn.btn-default.btn-xs{type:"submit"}
 							%span.glyphicon.glyphicon-remove
 					#PromoWait{:style => "display: none;"}
 						.wait

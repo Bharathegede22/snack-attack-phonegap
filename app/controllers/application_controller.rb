@@ -159,5 +159,16 @@ class ApplicationController < ActionController::Base
     cookies[:city] = {:value => city.downcase, :expires => 10.years.from_now, :domain => "." + HOSTNAME.split(':').first.gsub("www.", '')}
     @city = City.lookup_all(city.downcase)
   end
+
+  def authenticate_user_from_token!
+    
+    Rails.logger.debug(current_user.inspect)
+    if current_user && !current_user.auth_token_expired?
+      # sign_in current_user, store:false
+    else
+      error_with_message(:tokenNotFound, 401)
+    end
+    
+  end
   
 end

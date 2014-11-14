@@ -2821,7 +2821,7 @@ button.delete {
        padding: 0;
 }
 .promocode-form {
-       width: 70%;
+       width: 87%;
        margin: 0 auto;
 }
 .use-credits-btn, .aval-credits {
@@ -2835,13 +2835,14 @@ button.delete {
 	font-size: 14px;
 	font-weight: 900;
 	margin-top: 8px;
+	padding: 0;
 }
 
 #DetailsNameError {
 	display: inline-block !important;
 }
 
-.use-credits-submit, .use-credits-submit:hover {
+.use-credits-submit, .use-credits-submit:hover, .use-credits-submit:active, .use-credits-submit:focus {
 	background: #D8D8D8;
 	color: #000 !important;
 	outline: 0;
@@ -2850,6 +2851,7 @@ button.delete {
 	border: 1px solid #6F6C6C;
 	text-decoration: underline;
 	text-shadow: none;
+	font-weight: normal;
 }
 
 .available_credits_data {
@@ -2857,7 +2859,7 @@ button.delete {
 	background: #FFF;
 	padding: 0;
 }
-.apply_promocode_btn, .apply_promocode_btn:hover {
+.apply_promocode_btn, .apply_promocode_btn:hover, .use-credits-submit:active, .use-credits-submit:focus {
 	background: #D8D8D8;
 	color: #000 !important;
 	font-weight: normal;
@@ -2868,6 +2870,11 @@ button.delete {
 
 #CreditDiv {
 	margin-top: -12px;
+	background: #eeeeee;
+}
+
+#promoCode, #credits_block {
+	background: #eee;
 }
 
 .cancel_credits, .cancel_credits:focus {
@@ -2886,18 +2893,58 @@ button.delete {
 	padding: 0;
 }
 
+.padleft {
+	padding-left: 15px;
+}
+
 .used_credits_sec {
 	margin-top: 15px;
-	font-size: 13px;
+	font-size: 11px;
 	text-transform: uppercase;
 }
 
 .promo_amount, .credit_amount {
-	margin-right: 10px;
+	margin-right: 5px;
 	font-size: 14px;
 	color: #6ABD19;
 }
 
+.cancal_creditBtn, .cancal_PromoBtn {
+	float: right;
+	margin-right: -16px;
+	margin-top: -18px;
+}
+
+.cancelCreditsBtn, .promoCodeCancelBtn {
+	width: 16px;
+}
+
+.creditRemovespan, .promoRemovespan {
+	left: -3px;
+	vertical-align: text-top;
+}
+
+.promoCode-desc-block {
+	font-size: 11px;
+	/*margin-top: 10px;*/
+}
+
+.promoCode_blackoutDay {
+	display: inline !important;
+}
+
+#PromoDiv {
+	margin-top: -10px;
+}
+
+#promo_without_credits {
+	display: none;
+}
+
+.toCheckCredits_promos .cancal_PromoBtn .promoCodeWithCredits,
+.toCheckCredits_promos .cancal_creditBtn .promoCodeWithCredits  {
+	display: none;
+}
 
 /* ============ Wallet CSS Code =========== */
 
@@ -2990,7 +3037,8 @@ button.delete {
 	display: inline-block;
 	outline: 0;
 	height: 23px;
-	margin-top: 0;
+	margin-top: -2px;
+	margin-left: -11px;
 }
 
 .credits-popover:active, .credits-popover:hover, .credits-popover:focus{

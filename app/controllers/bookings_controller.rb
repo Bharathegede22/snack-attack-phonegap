@@ -3,6 +3,7 @@ class BookingsController < ApplicationController
   include BookingsHelper
 
   before_filter :authenticate_user!, :only => [:checkout]
+  before_filter :authenticate_user_from_token!, :only => [:promo, :docreate]
   before_filter :copy_params, :only => [:docreate]
 	before_filter :check_booking, :only => [:holddeposit, :cancel, :complete, :dodeposit, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
 	before_filter :check_booking_user, :only => [:holddeposit, :dodeposit, :cancel, :invoice, :payments, :reschedule, :feedback]
@@ -27,6 +28,7 @@ class BookingsController < ApplicationController
 	
 	def checkout
 		@booking.user = current_user
+		session[:promo_discount] = 0
 		@wallet_available = @booking.security_amount - @booking.security_amount_remaining
 		redirect_to do_bookings_path(@city.name.downcase) and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		generic_meta
@@ -124,16 +126,14 @@ class BookingsController < ApplicationController
 		end
 		
 		# Check Offer
-		promo = nil
-		promo = Offer.get(session[:promo_code],@city) if !session[:promo_code].blank?
-		if !session[:promo_booking].blank?
-			@booking = Booking.find(session[:promo_booking])
-			session[:promo_booking] = nil
-			@booking.status = 0
-		end
-		if promo
+		
+		promo_params = updated_params(params)
+  	promo_params[:promo] = session[:promo_code]
+  	promo = make_promo_api_call(promo_params)
+  	update_sessions(promo)
+		if session[:promo_valid]
 			@booking.promo = session[:promo_code]
-			@booking.offer_id = promo[:offer].id
+			@booking.offer_id = session[:promo_offer_id]
 		end
 		
 		# Corporate Booking
@@ -150,13 +150,23 @@ class BookingsController < ApplicationController
 		@booking.save!
 		
 		# Expiring Coupon Code
-		if promo && promo[:coupon]
-			promo[:coupon].used = 1
-			promo[:coupon].used_at = Time.now	
-			promo[:coupon].booking_id = @booking.id
-			promo[:coupon].save!
+		if session[:promo_valid] && session[:promo_coupon_id].present?
+			Offer.update_coupon(coupon_id, @booking.id)
 		end
 		
+		#create a charge if booking has been created and promocode exist
+		if @booking.id && session[:promo_valid]
+			
+			params[:booking_id] = @booking.id
+			params[:amount] = session[:promo_discount]
+
+			url = "#{ADMIN_HOSTNAME}/mobile/v3/bookings/create_discount_charge"
+  		uri = URI(url)
+  		uri.query = URI.encode_www_form(params)
+  		res = Net::HTTP.get_response(uri)
+  		#res = JSON.parse(res.body)
+		end
+
 		# Using crredits
 		Credit.use_credits(@booking, session[:credits]) if !session[:credits].blank?
 		
@@ -340,13 +350,18 @@ class BookingsController < ApplicationController
   def promo
   	if !params[:clear].blank? && params[:clear].to_i == 1
   		session[:promo_code] = nil
+  		session[:promo_message] = nil
+  		session[:promo_discount] = -1 * session[:promo_discount]
+  		session[:promo_valid] = false
   	else
-			if !params[:promo].blank?
-				@offer = Offer.get(params[:promo],@city)
-				session[:promo_code] = params[:promo].upcase if @offer[:offer] && @offer[:error].blank?
-	    end
+  		
+  		promo_params = updated_params(params)
+
+  		promo = make_promo_api_call(promo_params)
+
+  		update_sessions(promo)
 		end
-    render json: {html: render_to_string('_promoab.haml', layout: false)}
+    render json: {html: render_to_string('_promo.haml', layout: false)}
   end
   
   def promo_sql
@@ -404,6 +419,12 @@ class BookingsController < ApplicationController
 						end
 						flash[:notice] = "Your booking successfully <b>" + @string.downcase.gsub('ing', 'ed') + "</b> by " + tmp.chomp(', ')
 						@booking.update_column(:defer_deposit, false) if !params[:deposit].blank? && params[:deposit].to_i == 1
+						if @booking.offer_id.present? && @booking.promo.present?
+							reschedule_params = update_reschedule_params(params, @booking)
+							promo = make_promo_api_call(reschedule_params)
+							offer_discount = @booking.total_discount
+							create_reschedule_offer_charge(@booking.id, promo, offer_discount)
+						end
 						@success = true
 						@confirm = @string = @fare = nil
 					end
@@ -419,6 +440,11 @@ class BookingsController < ApplicationController
 						flash[:error] = "Sorry, but the car is no longer available"
 					else
 						@confirm = true
+						if @booking.offer_id.present? && @booking.promo.present?
+							reschedule_params = update_reschedule_params(params, @booking)
+							promo = make_promo_api_call(reschedule_params)
+							update_sessions(promo)
+						end
 					end
 				else
 					flash[:error] = "Please fix the error!"

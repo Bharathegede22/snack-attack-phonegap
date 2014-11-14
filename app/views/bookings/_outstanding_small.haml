@@ -121,5 +121,18 @@
 				}
 - else
 	%h4.zoom No change in booking amount
+- if @booking.promo.present?
+	.bg-e.r-5.p-5.size-14.dgrey.border-c.solid
+		%table{width: '100%'}
+			- if session[:promo_valid] == true
+				%tr
+					%td 
+						Revised Discount of 
+						%b ₹#{session[:promo_discount]} 
+						will be applied.
+			- else
+				%tr
+					%td 
+						Discount Coupon will not be valid.
 .hide
 	%input{name: 'confirm', type: "text", value: '1', readonly: 'true'}
