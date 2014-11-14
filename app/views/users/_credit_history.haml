@@ -21,7 +21,7 @@
 				%td.text-center.bg-w.p-t10.p-b10.border-b-e
 					= credit.created_at.strftime("%d %b, %Y %H:%M %p")
 				%td.text-center.bg-w.p-t10.p-b10.border-b-e
-					= credit.booking_id
+					= credit.booking_key
 				%td.text-center.bg-w.p-t10.p-b10.border-b-e.bold{:class => (credit.action ? "green" : "red")}
 					= (credit.action ? "+ " : "- ") + credit.amount.to_s
 				%td.text-center.bg-w.p-t10.p-b10.border-b-e
