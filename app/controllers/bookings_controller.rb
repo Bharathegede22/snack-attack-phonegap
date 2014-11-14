@@ -361,7 +361,7 @@ class BookingsController < ApplicationController
 
   		update_sessions(promo)
 		end
-    render json: {html: render_to_string('_promoab.haml', layout: false)}
+    render json: {html: render_to_string('_promo.haml', layout: false)}
   end
   
   def promo_sql
