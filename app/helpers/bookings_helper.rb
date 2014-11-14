@@ -1,4 +1,5 @@
 module BookingsHelper
+  include ApplicationHelper
 
   def admin_hostname
    ADMIN_HOSTNAME 
@@ -47,7 +48,8 @@ module BookingsHelper
   end
 
   def updated_params(params)  
-    params[:city_id] = @city.id
+    params[:city] = @city.name
+    params[:auth_token] = @current_user.authentication_token
     params[:starts] = Time.zone.parse(session[:book][:starts]) if !session[:book].blank? && !session[:book][:starts].blank?
     params[:ends] = Time.zone.parse(session[:book][:ends]) if !session[:book].blank? && !session[:book][:ends].blank?
     params[:location_id] = session[:book][:loc] if !session[:book].blank? && !session[:book][:loc].blank?     
@@ -72,6 +74,7 @@ module BookingsHelper
   def update_reschedule_params(params, booking)
     params[:promo] = booking.promo
     params[:city_id] = @city.id
+    params[:auth_token] = @current_user.authentication_token
     params[:starts] = Time.zone.parse(params[:starts]) if params[:starts].present?
     params[:ends] = Time.zone.parse(params[:ends]) if params[:ends].present?
     params[:location_id] = @booking.location_id if @booking.location_id.present?      
@@ -80,6 +83,18 @@ module BookingsHelper
     params[:ref_immediate] = session[:ref_immediate] if !session[:ref_immediate].blank?
     params[:platform] = "web"
     return params 
+  end
+
+  def make_promo_api_call(promo_details)
+    url = "#{ADMIN_HOSTNAME}/mobile/v3/bookings/promo"
+    #uri = URI(url)
+    #binding.pry
+    res = admin_api_get_call(url, promo_details)
+    Rails.logger.debug res
+    
+    res = JSON.parse(res)
+    promo = res["promo"]
+    return promo    
   end
 
   def create_reschedule_offer(booking_id, promo, offer_discount)

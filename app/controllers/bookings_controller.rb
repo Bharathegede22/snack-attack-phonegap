@@ -3,6 +3,7 @@ class BookingsController < ApplicationController
   include BookingsHelper
 
   before_filter :authenticate_user!, :only => [:checkout]
+  before_filter :authenticate_user_from_token!, :only => [:promo, :docreate]
   before_filter :copy_params, :only => [:docreate]
 	before_filter :check_booking, :only => [:holddeposit, :cancel, :complete, :dodeposit, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
 	before_filter :check_booking_user, :only => [:holddeposit, :dodeposit, :cancel, :invoice, :payments, :reschedule, :feedback]
@@ -128,7 +129,7 @@ class BookingsController < ApplicationController
 		
 		promo_params = updated_params(params)
   	promo_params[:promo] = session[:promo_code]
-  	promo = Offer.check(promo_params)
+  	promo = make_promo_api_call(promo_params)
   	update_sessions(promo)
 		if session[:promo_valid]
 			@booking.promo = session[:promo_code]
@@ -356,7 +357,7 @@ class BookingsController < ApplicationController
   		
   		promo_params = updated_params(params)
 
-  		promo = Offer.check(promo_params)
+  		promo = make_promo_api_call(promo_params)
 
   		update_sessions(promo)
 		end
@@ -420,7 +421,7 @@ class BookingsController < ApplicationController
 						@booking.update_column(:defer_deposit, false) if !params[:deposit].blank? && params[:deposit].to_i == 1
 						if @booking.offer_id.present? && @booking.promo.present?
 							reschedule_params = update_reschedule_params(params, @booking)
-							promo = Offer.check(reschedule_params)
+							promo = make_promo_api_call(reschedule_params)
 							offer_discount = @booking.total_discount
 							create_reschedule_offer_charge(@booking.id, promo, offer_discount)
 						end
@@ -441,7 +442,7 @@ class BookingsController < ApplicationController
 						@confirm = true
 						if @booking.offer_id.present? && @booking.promo.present?
 							reschedule_params = update_reschedule_params(params, @booking)
-							promo = Offer.check(reschedule_params)
+							promo = make_promo_api_call(reschedule_params)
 							update_sessions(promo)
 						end
 					end
