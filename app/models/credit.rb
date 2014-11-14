@@ -17,7 +17,7 @@ class Credit < ActiveRecord::Base
 
 		credit = Credit.new
 		credit.user_id = booking.user_id
-    credit.booking_id = booking.confirmation_key.upcase
+    credit.booking_key = booking.confirmation_key.upcase
 		credit.creditable_type = 'Booking'
 		credit.amount = amount
 		credit.action = false
