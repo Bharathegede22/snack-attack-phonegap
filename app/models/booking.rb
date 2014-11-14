@@ -13,8 +13,9 @@ class Booking < ActiveRecord::Base
 	has_many	:payments, :inverse_of => :booking, dependent: :destroy
 	has_many	:refunds, :inverse_of => :booking, dependent: :destroy
 	has_many	:confirmed_payments, -> { where "status = 1 and through != 'wallet_widget'" }, class_name: "Payment"
+  has_many	:confirmed_credit_payments, -> { where("status = 1 AND through = 'credits'") }, class_name: "Payment"
 	has_many	:confirmed_refunds, -> { where "status = 1 and through != 'wallet_widget'" }, class_name: "Refund"
-	has_many 	:credit, :as => :creditable , dependent: :destroy
+  has_many 	:credits, :as => :creditable, dependent: :destroy
 	has_many	:utilizations, -> {where "minutes > 0"}, dependent: :destroy
 	
 	has_one :coupon_code
@@ -187,7 +188,8 @@ class Booking < ActiveRecord::Base
 			note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs."
 			note += data[:refund].to_s + " - Cancellation Refund.<br/>"
 			self.notes += note
-		end
+    end
+
 		if data[:penalty] > 0
 			data[:penalty] = [self.pricing.mode::CHARGE_CAP, data[:penalty]].min #WEB-181 cap cancellation charge to 2500
 			charge = Charge.where(["booking_id = ? AND activity = 'cancellation_charge'", self.id]).first
@@ -636,7 +638,23 @@ class Booking < ActiveRecord::Base
 	
 	def wallet_security_payment
 		payments.where(through: 'wallet', :status=>1).first
-	end
+  end
+
+  def credits_used
+    self.confirmed_credit_payments.collect(&:amount).sum.to_i
+  end
+
+  # Returns credit amount for user
+  # Author:: Rohit
+  # Date:: 27/10/2014
+  #
+  def credits_applicable(fare)
+    if self.user.total_credits.to_i < fare.to_i
+      {:error => 'Insufficient credits, please try again!'}
+    else
+      {:credits => fare.to_i}
+    end
+  end
 
 	def sendsms(action, amount,deposit = 0)
 		message =  case action 

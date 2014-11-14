@@ -61,7 +61,7 @@ Web::Application.routes.draw do
 	resources :users do
 		collection do
 			get 'access'
-			get 'credits'
+			get 'credit_history'
 			get 'forgot'
 			get 'license'
 			get 'license_get_del'
@@ -83,10 +83,9 @@ Web::Application.routes.draw do
 	resources :wallets, :only => [] do
 		collection do
 			get 'history'
-  			get 'show_refund'
-			#post "wallets#topup"
-  			post 'refund'
-  			post 'topup'
+  		get 'show_refund'
+  		post 'refund'
+  		post 'topup'
 		end
 	end
 	

@@ -17,6 +17,7 @@ class Credit < ActiveRecord::Base
 
 		credit = Credit.new
 		credit.user_id = booking.user_id
+    credit.booking_id = booking.confirmation_key.upcase
 		credit.creditable_type = 'Booking'
 		credit.amount = amount
 		credit.action = false
@@ -24,10 +25,10 @@ class Credit < ActiveRecord::Base
 		credit.status = 1
 		credit.creditable_id = booking.id
 		credit.save!
-	end
-	
+  end
+
 	protected
-	
+
 	def after_create_tasks
 		user.update_credits
 	end

@@ -1,24 +1,32 @@
-.p-b5
-	%b Use Credits (Optional)
 #CreditDiv
 	- if session[:credits].blank?
 		:ruby
-			total = @fare[:estimate] - @fare[:discount]
+			total = fare[:estimate] - fare[:discount] - (session[:promo_valid] ? session[:promo_discount] : 0)
 			total = current_user.total_credits.to_i if current_user.total_credits.to_i < total
-		%form{:id => "CreditForm", :onsubmit => "return SubmitForm(this,'/bookings/credits','OutstandingDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
-			.row
-				.col-md-7
-					.p-t10
-						Available Credits :
-						₹#{current_user.total_credits}
-						%input#fare.form-control{name: 'fare', type: "hidden", value: ("#{total}") }
-				.col-md-5	
-					%button.btn.btn-default{type:"submit"} Apply #{total} Credits
+		%form{:id => "CreditForm", :onsubmit => "return SubmitForm(this,'/bookings/credits/?apply_credits=1','OutstandingDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+			.col-md-12.promoCode-desc-block.clearfix
+				.col-md-8.text-center.clearfix.aval-credit-amount
+					₹#{current_user.total_credits} in credits available
+					%input#fare.form-control{name: 'fare', type: "hidden", value: ("#{total}") }
+				.col-md-4.text-left.clearfix
+					%button.btn.btn-default.use-credits-submit{type:"submit"} Use
 			#CreditWait{style: "display:none;"}
 				.wait
 		#DetailsNameError.error
 	- else
-		.p-b5
-			Your 
-			%b ₹#{session[:credits]}
-			credits has been used.
+		.col-md-12.clearfix.rmpad.used_credits_sec
+			.col-md-4.text-right.rmpad
+				%b Credits 
+			.col-md-7.text-right.rmpad
+				%b.credit_amount - ₹ #{session[:credits]}
+			.col-md-1
+				%form#PromoForm{:action => "javascript:void(0)", "data-ajax" => "false", :onsubmit => "return SubmitForm(this,'/bookings/credits?remove_credits=1','OutstandingDiv');"}
+					#PromoSubmit_credits
+						%button.btn.btn-default.btn-xs{:type => "submit"}
+							%span.glyphicon.glyphicon-remove
+					#PromoWait{:style => "display: none;"}
+						.wait
+				/ %button.cancel_credits
+				/ 	X
+		.promoCode_condition_block_whenApplied
+			%i.promoCode_condition Promo Codes are not applicable on Blackout Days.
