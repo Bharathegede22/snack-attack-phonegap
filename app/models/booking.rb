@@ -644,16 +644,17 @@ class Booking < ActiveRecord::Base
     self.confirmed_credit_payments.collect(&:amount).sum.to_i
   end
 
-  # Returns credit amount for user
+  # Returns credit amount applied for booking
   # Author:: Rohit
   # Date:: 27/10/2014
   #
-  def credits_applicable(fare)
-    if self.user.total_credits.to_i < fare.to_i
-      {:error => 'Insufficient credits, please try again!'}
-    else
-      {:credits => fare.to_i}
-    end
+  def apply_credits(user_credits, discount_applied=0)
+  	return {:error => 'Insufficient credits, please try again!'} if user_credits.to_i <= 0
+  	fare = self.get_fare
+  	credits_applicable = fare[:estimate] - fare[:discount]
+  	credits_applicable -= discount_applied
+  	credits_applicable = user_credits if user_credits.to_i < credits_applicable
+  	{:credits => credits_applicable}
   end
 
 	def sendsms(action, amount,deposit = 0)

@@ -9,7 +9,7 @@ class BookingsController < ApplicationController
 	before_filter :check_booking, :only => [:holddeposit, :cancel, :complete, :dodeposit, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
 	before_filter :check_booking_user, :only => [:holddeposit, :dodeposit, :cancel, :invoice, :payments, :reschedule, :feedback]
 	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :notify, :userdetails]
-	before_filter :check_search_access, :only => [:credits, :docreate, :docreatenotify, :license, :login, :userdetails]
+	before_filter :check_search_access, :only => [:docreate, :docreatenotify, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
 	before_filter :check_blacklist, :only => [:docreate]
 	before_filter :check_promo,		:only => [:checkout]
@@ -55,14 +55,15 @@ class BookingsController < ApplicationController
   # Author:: Rohit
   # Date:: 22/10/2014
   # Expects ::
-  #   <b>params[:fare]</b> credits to apply
+  #   <b>params[:apply_credits]</b>  Integer  1/0
+  # 	<b>params[:remove_credits]</b> Integer  1/0
   #
 	def credits
     @booking.user = current_user
     if params[:apply_credits].to_i > 0
-      result = @booking.credits_applicable(params[:fare])
+      result = @booking.apply_credits(current_user.total_credits)
       if result[:error].nil?
-        session[:credits] = result[:credits]
+        session[:credits] = result[:credits].to_i
       else
         flash[:error] = result[:error]
       end
@@ -118,16 +119,7 @@ class BookingsController < ApplicationController
 		# Defer Deposit
 		@booking.defer_deposit = true if @booking.defer_allowed? && session[:book][:deposit] == 0
 		
-		# Check Credits
-		if !session[:credits].blank? && current_user.total_credits.to_i < session[:credits].to_i
-			session[:credits] = nil
-			flash[:error] = 'Insufficient credits, please try again!'
-			redirect_to checkout_bookings_path(@city.name.downcase)
-			return
-		end
-		
 		# Check Offer
-		
 		promo_params = updated_params(params)
 		if session[:promo_code].present?
   		promo_params[:promo] = session[:promo_code]
@@ -138,6 +130,9 @@ class BookingsController < ApplicationController
 				@booking.offer_id = session[:promo_offer_id]
 			end
 		end
+
+		# Apply credits to booking
+		apply_credits if session[:credits].present?
 		
 		# Corporate Booking
 		if !session[:corporate_id].blank? && current_user.support?
@@ -690,6 +685,14 @@ class BookingsController < ApplicationController
 	
 	def payu_test_params(amount, key )
 		{"mihpayid"=>"4039937155099#{10000 + rand(99999)}", "mode"=>"CC", "status"=>"success", "unmappedstatus"=>"captured", "key"=>"C0Dr8m", "txnid"=>"1bdfe", "amount"=>"6500.00", "discount"=>"0.00", "net_amount_debit"=>"6500", "addedon"=>"2014-08-26 16:13:57", "productinfo"=>"Figo", "firstname"=>"fdsf", "lastname"=>"", "address1"=>"", "address2"=>"", "city"=>"", "state"=>"", "country"=>"", "zipcode"=>"", "email" => PAYU_EMAIL, "phone" => PAYU_PHONE, "udf1"=>"", "udf2"=>"", "udf3"=>"", "udf4"=>"", "udf5"=>"", "udf6"=>"", "udf7"=>"", "udf8"=>"", "udf9"=>"", "udf10"=>"", "hash"=>"5332219dcb4c07661a85d31e4a3da055cf4a63bea9c40c3e3866780bb424238464661868dfb8724816d89937e57867c8f47a2c13f32106078e0b1e50b42d0ed4", "field1"=>"187269", "field2"=>"423820564675", "field3"=>"20140826", "field4"=>"MC", "field5"=>"564675", "field6"=>"00", "field7"=>"0", "field8"=>"3DS", "field9"=>" Successful Verification of Secure Hash:  -- Approved -- Transaction Successful -- Unable to be determined--E219", "payment_source"=>"payu", "PG_TYPE"=>"AXIS", "bank_ref_num"=>"187269", "bankcode"=>"CC", "error"=>"E000", "error_Message"=>"No Error", "name_on_card"=>"ksdfh", "cardnum"=>"512345XXXXXX2346", "cardhash"=>"This field is no longer supported in postback params."}
+	end
+
+	def apply_credits
+		# make credits invalid if user does not have credits
+			session[:credits] = nil if current_user.total_credits.to_i <= 0
+			# recalcuate credits
+			result = @booking.apply_credits(current_user.total_credits.to_i, session[:promo_discount].to_i)
+      session[:credits] = result[:credits] if result[:error].nil?
 	end
 
 end
