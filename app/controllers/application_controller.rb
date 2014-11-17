@@ -160,7 +160,8 @@ class ApplicationController < ActionController::Base
     @city = City.lookup_all(city.downcase)
   end
 
-  def error_with_message(message="Woah, we punctured a tire! ZoomCar encountered an error.", http_status_code = 400)
+  def error_with_message(message="", http_status_code = 400)
+    message = "Woah, we punctured a tire! ZoomCar encountered an error." if message.blank?
     if http_status_code  == 401 && Rails.env.production?
       response.headers["WWW-Authenticate"] = "Basic realm = 'fake'"
       http_status_code = 400
@@ -170,39 +171,12 @@ class ApplicationController < ActionController::Base
   end
 
   def authenticate_user_from_token!
-    
     Rails.logger.debug(current_user.inspect)
     if current_user && !current_user.auth_token_expired?
       # sign_in current_user, store:false
     else
       error_with_message(:tokenNotFound, 401)
     end
-    
   end
   
-  def authenticate_and_create_token
-    
-    email = params[:email]
-    password = params[:password]
-    Rails.logger.debug("-------------Debugging In Users Controller-----------")
-    Rails.logger.debug("email:#{email}")
-    Rails.logger.debug("password:#{password}")
-    
-    if email.present? && password.present?
-      user = User.where(email: email).first
-      if !user.nil?
-        if user.valid_password?(password)
-          @token = user.generate_authentication_token
-          sign_in :user, user
-        else
-          error_with_message("The password entered is incorrect.", 401)
-        end
-      else
-        error_with_message("The email entered is incorrect.",  401)
-      end
-    else
-      error_with_message("Invalid Authentication", 401)
-    end
-    
-  end
 end
