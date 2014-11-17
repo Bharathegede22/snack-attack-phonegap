@@ -224,17 +224,13 @@ class Payment < ActiveRecord::Base
         b.notes += "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs." + self.amount.to_s + " - Payment Received through <u>" + self.through_text + "</u>.<br/>"
         b.save(:validate => false)
         Booking.recalculate(b.id)
-        activities_params = {}
-        activities_params[:user_id] = b.user_id
-        activities_params[:booking_id] = b.id
+        activities_params = {user_id: b.user_id, booking_id: b.id, transferred_via: self}
         if self.through == 'payu'
           wallet_amount = (b.outstanding_without_deposit + self.amount)>=0 ? b.outstanding_without_deposit.abs : self.amount
           if wallet_amount != 0 && b.wallet_security_payment.nil?
             b.add_security_deposit_to_wallet(wallet_amount)
-            activities_params[:activity] = Activity::ACTIVITIES[:security_deposit_paid]
-            activities_params[:amount] = wallet_amount
-            activities_params[:transferred_via] = self
-            Activity.create_activity(activities_params)
+            extra_params = {activity: Activity::ACTIVITIES[:security_deposit_paid], amount: wallet_amount}
+            log_activity(activities_params.merge(extra_params))
             self.update_column(:deposit_available_for_refund, wallet_amount)
             self.update_column(:deposit_paid, wallet_amount)
           end
@@ -249,12 +245,18 @@ class Payment < ActiveRecord::Base
         if b.defer_deposit?
           activities_params.delete(:amount) if !activities_params[:amount].nil?
           activities_params[:activity] = Activity::ACTIVITIES[:defer_deposit]
-        Activity.create_activity(activities_params)
+          log_activity(activities_params)
         end
         BookingMailer.payment(b.id).deliver if old_status==0
       end
 
     end
+  end
+
+  private
+
+  def log_activity(params)
+    Activity.create_activity(params)
   end
 
 end

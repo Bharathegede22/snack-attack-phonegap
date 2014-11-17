@@ -227,10 +227,7 @@ class BookingsController < ApplicationController
 	def holddeposit
 		@booking.update_attribute(:hold, true)
     if @booking.hold_security?
-    activities_params = {}
-    activities_params[:user_id] = @booking.user_id
-    activities_params[:booking_id] = @booking.id
-    activities_params[:activity] = Activity::ACTIVITIES[:on_hold]
+    activities_params = {user_id: @booking.user_id, booking_id: @booking.id, activity: Activity::ACTIVITIES[:on_hold]}
     Activity.create_activity(activities_params)
     end
     respond_to do |format|

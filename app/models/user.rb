@@ -63,12 +63,12 @@ class User < ActiveRecord::Base
   	end
 
   	if Rails.env == 'production'
-  		return Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND #{sql} ORDER BY #{order} LIMIT 10 OFFSET #{page*10}")
+  		return Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND #{sql} ORDER BY #{order}")
   	else
   		if self.support?
-	  		return Booking.find_by_sql("SELECT * FROM bookings WHERE #{sql} ORDER BY #{order} LIMIT 10 OFFSET #{page*10}")
-	  	else
-	  		return Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND #{sql} ORDER BY #{order} LIMIT 10 OFFSET #{page*10}")
+        return Booking.find_by_sql("SELECT * FROM bookings WHERE #{sql} ORDER BY #{order}")
+      else
+	  		return Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND #{sql} ORDER BY #{order}")
 	  	end
   	end
   end

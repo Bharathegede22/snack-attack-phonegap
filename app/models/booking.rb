@@ -422,9 +422,6 @@ class Booking < ActiveRecord::Base
 		self.hold == true
     end
 
-  def defer_deposit?
-    self.defer_deposit == true
-  end
 	
 	def link
 		return "http://" + HOSTNAME + "/bookings/" + self.encoded_id
