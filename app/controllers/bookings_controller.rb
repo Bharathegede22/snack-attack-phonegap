@@ -12,7 +12,6 @@ class BookingsController < ApplicationController
 	before_filter :check_search_access, :only => [:docreate, :docreatenotify, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
 	before_filter :check_blacklist, :only => [:docreate]
-	before_filter :check_promo,		:only => [:checkout]
 
 	def cancel
 		@security = (@booking.hold) ? 0 : (@booking.pricing.mode::SECURITY - @booking.security_amount_remaining)
@@ -29,11 +28,11 @@ class BookingsController < ApplicationController
 	
 	def checkout
 		@booking.user = current_user
-		session[:promo_discount] = 0
 		@wallet_available = @booking.security_amount - @booking.security_amount_remaining
 		redirect_to do_bookings_path(@city.name.downcase) and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		generic_meta
 		@header = 'booking'
+		#binding.pry
 		render :checkoutab
 	end
 	
@@ -178,6 +177,8 @@ class BookingsController < ApplicationController
 			session[:notify] 			= nil
 			session[:book] 				= nil
 			session[:promo_code] 	= nil
+			session[:promo_valid] = false
+			session[:promo_message] = ""
 			session[:credits] 		= nil
 			if !session[:corporate_id].blank? && current_user.support?
 				flash[:notice] = "Corporate Booking is Successful"
@@ -659,11 +660,6 @@ class BookingsController < ApplicationController
 			end
 			return
 		end
-	end
-	
-	def check_promo
-		session[:promo_booking] = nil
-		session[:promo_code] = nil
 	end
 
 	def copy_params
