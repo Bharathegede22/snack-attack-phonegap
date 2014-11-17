@@ -4,6 +4,7 @@ class BookingsController < ApplicationController
 
   before_filter :authenticate_user!, :only => [:checkout]
   before_filter :authenticate_user_from_token!, :only => [:promo, :docreate]
+ 	#before_filter :authenticate_and_create_token, :only => [:login]
   before_filter :copy_params, :only => [:docreate]
 	before_filter :check_booking, :only => [:holddeposit, :cancel, :complete, :dodeposit, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
 	before_filter :check_booking_user, :only => [:holddeposit, :dodeposit, :cancel, :invoice, :payments, :reschedule, :feedback]

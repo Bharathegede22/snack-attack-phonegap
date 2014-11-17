@@ -335,7 +335,7 @@
 			});
 			var grand_total = #{total};  //final amount display on page
 			var tarrif_after_promo = "#{total}";  // total tariff amount
-			var user_credit = #{current_user.total_credits}; // total credits available
+			var user_credit = #{current_user.total_credits.to_i}; // total credits available
 			var final_total = grand_total;  
 
 			$( document ).on( 'click', '#use_tariff', function (){
