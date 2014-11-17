@@ -1,3 +1,5 @@
+/ 2-step checkout page for seamless integration
+/ do not remove - will be used for A/B testing later
 :ruby
 	if !@booking.blank?
 		cargroup = @booking.cargroup
@@ -218,17 +220,26 @@
 									= @booking.deposit_warning(@wallet_available>0 ? "remaining " : '').html_safe
 
 					%tr.bg-6.white.bg-zoom.ribbon
-						%td.p-10.p-l20.text-up.size-16.f-b
+						%td.p-10.p-l30.text-up.size-16.f-b{style: 'width: 250px'}
 							Payable Amount
-						%td.p-10.t-r.p-r20.size-22.outstandingSide
+
+							.ribbon-tl
+							.ribbon-tr
+
+						%td.p-10.t-r.p-r30.size-22.outstandingSide.position-r{style: 'width: 250px'}
 							:ruby
 								if !session[:credits].blank?
 									total = fare[:total] - session[:credits].to_i
 								else
 									total = fare[:total]
 								end
-							#DepositFinal
+							#DepositFinal.DepositFinal
 								₹ #{show_currency(total + @booking.security_amount - @wallet_available)}
+
+
+					%tr.ribbon-after
+						%td{colspan: 2}
+							&nbsp;
 
 					%tr
 						%td.p-5.p-l20.p-t10.size-12
@@ -247,17 +258,57 @@
 						%td.p-5.p-b10.t-r.p-r20.zoom-b.f-b.size-16
 							₹ #{cargroup.excess_kms.to_i} / Km
 
+
+			.payment-options.bg-w.bs-9.m-auto{style: 'display: none'}
+				%table.position-r{width: '100%'}
+					%tr#viewTariffDetails.pointer.bg-6.white.bg-zoom.ribbon
+						%td.p-10.p-l30.text-up.size-16.f-b{style: 'width: 250px'}
+							Payable Amount
+
+							/ .size-10
+							/ 	(view tariff details)
+
+							.ribbon-bl
+							.ribbon-br
+
+						%td.p-10.t-r.p-r30.size-22.outstandingSide.position-r{style: 'width: 250px'}
+							:ruby
+								if !session[:credits].blank?
+									total = fare[:total] - session[:credits].to_i
+								else
+									total = fare[:total]
+								end
+							#DepositFinal.DepositFinal
+								₹ #{show_currency(total + pricing.mode::SECURITY)}
+
+
+					%tr.ribbon-after
+						%td{colspan: 2}
+							&nbsp;
+
+				.payment-partial#payment-partial
+					.fc
+						.wait#loader
+					/ = render :partial => "/bookings/pg/payment_options"
+
 			.t-c
 				.m-auto.p-20{style: "width:400px;"}
 					- if @available == 1 && user && !user.is_blacklisted? && !user.is_underage?
-						%form{:action => "/#{@city.name.downcase}/bookings/docreate", :id => "CheckoutForm", :method => "post"}
+						/ %form{:action => "/#{@city.name.downcase}/bookings/seamless_docreate", :id => "CheckoutForm", :method => "post"}
+						%form{:id => "CheckoutForm"}
 							.hide
 								%input{name: "starts", type: "hidden", value: session[:book][:starts]}
 								%input{name: "ends", type: "hidden", value: session[:book][:ends]}
 								%input{name: "loc", type: "hidden", value: session[:book][:loc]}
 								%input{name: "car", type: "hidden", value: session[:book][:car]}
 								%input{name: "deposit", type: "hidden", value: 1, id: "checkoutDeposit"}
-							%input.button.m-auto{style: "width:200px;", type: "submit", value: "Checkout"}
+
+							%a#proceedToPayment.pointer.inline-block.button.m-auto{style: "width:250px;", onclick: "sleep(1000, createPayment);"}
+								Proceed to Payment
+							%br/
+							%br/
+							/ %input.button.m-auto{style: "width:200px;", type: "submit", value: "Checkout"}
+
 					- else
 						.button-dis Checkout
 					#CheckoutWait{style: 'display:none;'}
@@ -300,7 +351,10 @@
 		/ 				On submitting, you will proceed to payment
 		.fc
 		%br/
+
 :javascript
+	var flag = true;
+	var details;
 	var _adx = {};
 	_adx.xb  = '35BDU410';
 	_adx.xt  = 'conversion';
@@ -315,8 +369,14 @@
 
 	function checkJquery() {
 		if (window.jQuery) {
+			$.getScript("https://api.juspay.in/pay.js", function(){
+				//loading Juspay js file
+			});
 			$('#changeDeposit').change(function() {
 				var $this = $(this);
+				if(!flag){
+					updateDeposit($this.is(':checked'));
+				}
 				if ($this.is(':checked')) {
 					$('#checkoutDeposit').val("1");
 					$('#DepositMessage').hide();
@@ -326,14 +386,98 @@
 					$('#checkoutDeposit').val("0");
 					$('#DepositMessage').show();
 					$("#Deposit").addClass('t-s');
-					$("#DepositFinal").html("₹ #{show_currency(total)}");
+					$(".DepositFinal").html("₹ #{show_currency(total)}");
 				}
 			});
 			$('#applyPromoCode').click(function(){
 				$('#promoCode').toggle();
 			});
+			$('#proceedToPayment').click(function(){
+				$('#proceedToPayment').hide();
+			});
+			$('#viewTariffDetails').click(function(){
+				$('#proceedToPayment').show();
+			});
 		} else {
 			window.setTimeout(checkJquery, 1000);
 		}
 	}
-	checkJquery();
+	function sleep(millis, callback) {
+		setTimeout(function(){ callback(); }, millis);
+	}
+	function createPayment() {
+		if(flag) {
+			var dep;
+			if('#{@booking.defer_allowed?}'==false||$("#changeDeposit").is(':checked')){
+				dep = 1;
+			}
+			else{
+				dep = 0;
+			}
+			$.ajax({
+				url: "/#{@city.name.downcase}/bookings/seamless_docreate",
+				type: "POST",
+				dataType: "json",
+				data: {
+					starts : $("#starts").val(),
+					ends : $("#ends").val(),
+					loc : $("#loc").val(),
+					car : $("#car").val(),
+					deposit : dep
+				},
+				success: function(data, response) {
+					if(response=="success") {
+						details = JSON.parse(JSON.stringify(data));
+						switch(details.response) {
+							case 'created':
+								$('#loader').hide();
+								$('#payment-partial').append("#{j render(:partial => 'bookings/pg/payment_options')}");
+								$('.order_id').val(details.order_id);
+								$('.description').val(details.desc);
+								$('.product_id').val(details.product_id);
+								$('.firstname').val(details.name);
+								$('.customer_email').val(details.email);
+								$('.customer_phone').val(details.phone);
+								$('.amount').val(details.amt);
+								$('.customer_id').val(details.cust_id);
+								$('#hash').val(details.hash);
+								break;
+							case 'corporate':
+								window.location = '/bookings/' + details.id;
+								break;
+							case 'paid':
+								window.location = '/bookings/' + details.id;
+								break;
+							case 'paid license checked':
+								window.location = '/bookings/' + details.id;
+								break;
+							case 'paid no license':
+								window.location = '//#{HOSTNAME}/users/license';
+								break;
+							case 'unavailable':
+							case 'pg error':
+								history.back();
+								break; 
+						}
+						flag = false;
+					}
+					else {
+						alert(JSON.stringify(response));
+					}
+				}
+			});
+		}
+	}
+	function updateDeposit(dep) {
+		$.post( "/bookings/seamless_update_payment", { deposit: dep, id: details.order_id }, 
+			function(data, status){
+				if(status=="success"){
+					var response = JSON.parse(JSON.stringify(data));
+					if(response.status == "success") {
+						$('#hash').val(response.hash);
+						$('#amount').val(response.amt);
+					}
+				}
+			});
+	}
+	checkJquery();	

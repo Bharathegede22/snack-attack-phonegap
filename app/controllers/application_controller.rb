@@ -10,9 +10,10 @@ class ApplicationController < ActionController::Base
   before_filter :check_ref
   before_filter :authenticate_staging
 
-  # def abtest?
-  #   !cookies[:abtestd].blank?
-  # end
+  # => Checks if A/B test cookies are set and renders the checkout page accordingly
+  def abtest?
+    return cookies[:abtestf].present?
+  end
 
   def check_city
     # Checking explicit city in the url

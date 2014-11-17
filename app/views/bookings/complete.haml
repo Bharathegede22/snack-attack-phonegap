@@ -31,7 +31,7 @@
 		var google_conversion_label = "WzjPCOmI-wcQh-n14AM";
 		var google_conversion_value = 0;
 		var google_remarketing_only = false;
-
+		
 		var fb_param = {};
 		fb_param.pixel_id = '6012188478130';
 		fb_param.value = "#{@booking.total_fare.to_i}";
@@ -54,7 +54,7 @@
 			"Karnataka", 
 			"India"
 		]);
-
+		
 		_gaq.push(['_addItem',
 			"#{@booking.confirmation_key}", 
 			"#{cargroup.encoded_id}", 
@@ -64,4 +64,5 @@
 			"1"
 		]);
 		_gaq.push(['_trackTrans']);
+		_gaq.push(['_trackEvent', "1-click checkout", "Booking Done", "Squirrel"]);
 	%script{type: "text/javascript", src: "//www.googleadservices.com/pagead/conversion.js"}
