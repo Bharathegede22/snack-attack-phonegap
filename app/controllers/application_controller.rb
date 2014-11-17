@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
     city = params[:city]
     if city
       city = city.downcase
-      @cityp = City.lookup(city)
+      @cityp = City.lookup_all(city)
     end
     
     # Fallback ip detect
@@ -37,7 +37,7 @@ class ApplicationController < ActionController::Base
 	    end
     end
     if city_prompt
-    	@city = City.lookup(city.downcase)
+    	@city = City.lookup_all(city.downcase)
     else
     	set_cookies_ref(city)
 		end
@@ -157,7 +157,7 @@ class ApplicationController < ActionController::Base
 	def set_cookies_ref(city)
     session[:city] = city.downcase
     cookies[:city] = {:value => city.downcase, :expires => 10.years.from_now, :domain => "." + HOSTNAME.split(':').first.gsub("www.", '')}
-    @city = City.lookup(city.downcase)
+    @city = City.lookup_all(city.downcase)
   end
   
 end

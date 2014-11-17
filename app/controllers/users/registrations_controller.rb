@@ -5,6 +5,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 			build_resource(sign_up_params)
 			resource.ref_initial = session[:ref_initial]
 			resource.ref_immediate = session[:ref_immediate]
+			resource.city_id = params[:user][:city_id].to_i if !params[:user][:city_id].blank?
 			if resource.save
 			  yield resource if block_given?
 			  if resource.active_for_authentication?

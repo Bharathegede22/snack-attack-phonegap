@@ -15,5 +15,6 @@
  *= require common
  *= require custom
  *= require header-new
+ *= require sass/main
  *= require uploadfile.min
  */
