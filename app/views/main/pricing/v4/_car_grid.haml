@@ -1,0 +1,30 @@
+:ruby
+	cars = @object.live
+	width = 100/(cars.length+1)
+	pricing = {}
+	cars.each do |cg|
+		pricing[cg.id.to_s] = cg.active_pricing(@object.city_id)
+	end
+%table.t-c{width: '100%'}
+	%tr
+		%td{width: "#{width}%"} &nbsp;
+		- cars.each do |cg|
+			%td{width: "#{width}%"}
+				= image_tag("cars/#{cg.id}small.jpg", :alt => cg.display_name)
+				%br/
+				.p-t10.p-b10
+					%b.zoom-b.size-16
+						= cg.shortname
+%table.table.t-c
+	%tr.table-hover
+		%td.t-r{width: "#{width}%"}
+			%b.zoom HOURLY
+		- cars.each do |cg|
+			%td{width: "#{width}%"}
+				₹#{show_currency(pricing[cg.id.to_s].hourly_discounted)}
+	%tr
+		%td.t-r
+			%b.zoom DAILY
+		- cars.each do |cg|
+			%td 
+				₹#{show_currency(pricing[cg.id.to_s].daily_discounted)}

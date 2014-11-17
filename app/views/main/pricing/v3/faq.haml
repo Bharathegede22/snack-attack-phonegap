@@ -6,7 +6,7 @@
 .static
 	%h1 Frequently Asked Questions
 
-	#faqs-tabs.solid.border-c
+	#faqs-tabs.tariff-header
 		%a.block.fl.active{:href => "#faqs-1", 'data-toggle' => "tab"}
 			Basics
 		%a.block.fl{:href => "#faqs-2", 'data-toggle' => "tab"}
@@ -23,7 +23,7 @@
 			Security Deposit
 		.fc
 
-	#faqs-body.tab-content
+	#faqs-body.tab-content.solid.border-c.p-20
 		#faqs-1.tab-pane.fade.in.active
 			.f-b.zoom.size-16.m-b5 #{count+=1}) What is Zoomcar?
 			%p
