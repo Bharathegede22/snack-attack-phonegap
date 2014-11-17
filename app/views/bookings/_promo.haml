@@ -31,8 +31,6 @@
 			%i #{session[:promo_message]}
 	- else
 		.p-b5
-			.fl
-				%b Tariff
 			.fr
 				/ %form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 				/ 	#PromoSubmit
@@ -45,7 +43,7 @@
 			.col-md-4.text-right.clearfix.rmpad
 				%b #{session[:promo_code]}
 			.col-md-7.text-right.clearfix.rmpad
-				%b.promo_amount ₹ 1000
+				%b.promo_amount ₹ #{session[:promo_discount]}
 			.col-md-1
 				%form#PromoForm{:action => "javascript:void(0)", "data-ajax" => "false", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoDiv');"}
 					#PromoSubmit
@@ -53,14 +51,6 @@
 							%span.glyphicon.glyphicon-remove.promoRemovespan
 					#PromoWait{:style => "display: none;"}
 						.wait
-			.fc
-		.p-b5
-			Promo code 
-			%b #{session[:promo_code]}
-			has been applied. You will get a discount of 
-			%b Rs. #{session[:promo_discount]}
-		.p-b5.size-12
-			%i #{session[:promo_message]}
 :javascript
 	function checkNextJquery() {
 		if (window.jQuery) {

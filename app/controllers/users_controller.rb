@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
 	
 	before_filter :authenticate_user!, :only => [:license,:license_get_del, :social, :settings, :update, :credits]
-	before_filter :authenticate_and_create_token, :only => [:signin]
+	#before_filter :authenticate_and_create_token, :only => [:signin]
 	skip_before_filter :authenticate_staging
 	
 	def access
@@ -173,32 +173,6 @@ class UsersController < ApplicationController
 	
   def signup_params
     params.require(:user).permit(:name, :phone, :dob, :gender, :country, :pincode, :state, :city, :license)
-  end
-  
-  def authenticate_and_create_token
-    
-    email = params[:email]
-    password = params[:password]
-    Rails.logger.debug("-------------Debugging In Users Controller-----------")
-    Rails.logger.debug("email:#{email}")
-    Rails.logger.debug("password:#{password}")
-    
-    if email.present? && password.present?
-      user = User.where(email: email).first
-      if !user.nil?
-        if user.valid_password?(password)
-          @token = user.generate_authentication_token
-          sign_in :user, user
-        else
-          error_with_message("The password entered is incorrect.", 401)
-        end
-      else
-        error_with_message("The email entered is incorrect.",  401)
-      end
-    else
-      error_with_message("Invalid Authentication", 401)
-    end
-    
   end
 
 end
