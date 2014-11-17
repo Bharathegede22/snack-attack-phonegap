@@ -61,15 +61,11 @@ $width960: 960px;
 /***********************************Delhi-landing-page*******************************/
 
 .topsection_content{
-	//background: $black;
-	//min-height: 230px;
-	overflow: auto;
 	margin-top: -9px;
 	padding-top: 3em;
 	h1, h2{
 		font-family: 'Helvetica', 'Arial', sans-serif;
 	}
-
 	.content_description{
 		h2, p{
 			color: $black;
@@ -99,14 +95,9 @@ $width960: 960px;
 	overflow: auto;
 	margin-top: 1em;
 	padding-top: 1em;
-	//border-top:1px #ccc solid;
 	.services_content{
 		.each_service{
 			padding: 4px 0 65px;
-			//border-bottom: 1px $grey solid;
-			h4{
-				padding-top: 0.8em;
-			}
 		}
 		hr{
 			width: 86%;
@@ -144,12 +135,12 @@ $width960: 960px;
 		margin: -52px -48px;
 }
 .delhi_gate_bg{
-	background: url(<%= asset_path 'delhi_gate.png' %>) no-repeat;
-	width: 371px;
-	height: 434px;
-	position: absolute;
-	left: 0;
-	margin: -10em 0em;
+	//background: url(<%= asset_path 'delhi_gate.png' %>) no-repeat;
+	//width: 371px;
+	//height: 434px;
+	//position: absolute;
+	//left: 0;
+	//margin: -20em 0em;
 }
 .shadow_line{
 	@include shadow_separate_line;
@@ -159,20 +150,21 @@ $width960: 960px;
 		position: relative;
 		padding: 0.3em 0 0;
 		height: 97px;
-		margin-bottom: 1.5em;
-		//-moz-box-shadow: 0 5px 4px -4px rgba(0, 0, 0, 0.4);
-    //-webkit-box-shadow: 0 5px 4px -4px rgba(0, 0, 0, 0.4);
-    //box-shadow: 0 5px 4px -4px rgba(0, 0, 0, 0.4);
+		padding-bottom: 1.5em;
 		.left{
 			background-position:-5em -7.9em;
 			left: 0px;
 			z-index: 30;
 			height: 36px;
+			margin-top: 1em;
 			&:hover{
 				background: url(<%= asset_path 'r.png' %>) no-repeat;
 				height: 36px;
 				background-position:-5em -4.9em;
 			}
+		}
+		.right{
+			margin-top: 1em;
 		}
 		.delhi_reviews_item{
 			padding: 0 1em 0 3em;
@@ -184,7 +176,7 @@ $width960: 960px;
 			}
 		}
 		.week{
-				background-position-y: -8.9em;
+				background-position-y: -7.9em;
 			}
 			.mall{
 				background-position-y: -15.8em;
@@ -196,10 +188,10 @@ $width960: 960px;
 				background-position-y: -30.3em;	
 			}
 			.outstation{
-				background-position-y: -39em;
+				background-position-y: -38em;
 			}
 			.adventure{
-				background-position-y: -46em;	
+				background-position-y: -45em;	
 			}
 		.reviewtext{
 			padding: 0 3em 0 0;
@@ -241,10 +233,6 @@ $width960: 960px;
 }
 
 /***********************************Deals-landing-page*******************************/
-
-.offer_main_container{
-
-}
 
 
 
