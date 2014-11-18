@@ -32,7 +32,7 @@
 	booking.cargroup_id = car.id
 	x = @cars.select{|c| c["id"] == car.id}
 	fare = x[0]["tariff"].symbolize_keys
-	tooltip = "<div class='size-12 t-l'><div class='zoom t-c f-b size-16'>Min. billing is 4 hours</div><table width='200'><tr><td>Tariff</td><td>₹#{fare[:total]}</td></tr><tr class='yellow'><td>Free Kms</td><td>#{fare[:kms]}</td></tr><tr class='yellow'><td>Excess Km Charge</td><td>₹#{x[0][:excess_kms].to_i}/Km</td></tr></table></div>"
+	tooltip = "<div class='size-12 t-l'><div class='zoom t-c f-b size-16'>Min. billing is 4 hours</div><table width='200'><tr><td>Tariff</td><td>₹#{fare[:total]}</td></tr><tr class='yellow'><td>Free Kms</td><td>#{fare[:kms]}</td></tr><tr class='yellow'><td>Excess Km Charge</td><td>₹#{x[0]['excess_kms'].to_i}/Km</td></tr></table></div>"
 	h = (@booking.ends.to_i - @booking.starts.to_i)/3600
 	h += 1 if (@booking.ends.to_i - @booking.starts.to_i) > h*3600
 - if !locs.blank?
