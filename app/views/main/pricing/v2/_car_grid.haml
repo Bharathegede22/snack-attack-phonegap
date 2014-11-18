@@ -34,3 +34,8 @@
 		- cars.each do |cg|
 			%td 
 				₹#{show_currency(pricing[cg.id.to_s].weekly_fare)}
+.t-c.p-5
+	Please visit our 
+	%b
+		%a{href: "/#{@city.name.downcase}/tariff"} tariff page 
+	for complete information

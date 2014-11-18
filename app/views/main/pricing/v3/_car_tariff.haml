@@ -20,3 +20,8 @@
 			%b Weekly
 		%td ₹#{show_currency(pricing.weekly_fare)} / week
 		%td #{pricing.weekly_kms} Kms / week
+.t-c
+	Please visit our 
+	%b
+		%a{href: "/#{@city.name.downcase}/tariff"} tariff page 
+	for complete information

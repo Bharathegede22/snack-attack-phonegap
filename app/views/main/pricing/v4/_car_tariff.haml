@@ -15,3 +15,8 @@
 			%b Daily
 		%td ₹#{show_currency(pricing.daily_discounted)} / day
 		%td #{pricing.daily_kms} Kms / day
+.t-c
+	Please visit our 
+	%b
+		%a{href: "/#{@city.name.downcase}/tariff"} tariff page 
+	for complete information
