@@ -28,6 +28,7 @@ class BookingsController < ApplicationController
 	
 	def checkout
 		@booking.user = current_user
+		apply_credits if session[:credits]
 		@wallet_available = @booking.security_amount - @booking.security_amount_remaining
 		redirect_to do_bookings_path(@city.name.downcase) and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		generic_meta
@@ -165,7 +166,7 @@ class BookingsController < ApplicationController
 		end
 
 		# Using crredits
-		Credit.use_credits(@booking, session[:credits]) if !session[:credits].blank?
+		Credit.use_credits(@booking, session[:credits]) if session[:credits].present?
 		
 		if @booking.status == 11	
 			flash[:notice] = "We will Notify you once the Vehicle is available."
@@ -688,7 +689,7 @@ class BookingsController < ApplicationController
 			session[:credits] = nil if current_user.total_credits.to_i <= 0
 			# recalcuate credits
 			result = @booking.apply_credits(current_user.total_credits.to_i, session[:promo_discount].to_i)
-      session[:credits] = result[:credits] if result[:error].nil?
+      session[:credits] = result[:credits] if result[:err].nil?
 	end
 
 end
