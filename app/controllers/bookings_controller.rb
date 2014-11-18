@@ -4,7 +4,6 @@ class BookingsController < ApplicationController
 
   before_filter :authenticate_user!, :only => [:checkout]
   before_filter :authenticate_user_from_token!, :only => [:promo, :docreate]
- 	before_filter :authenticate_and_create_token, :only => [:login]
   before_filter :copy_params, :only => [:docreate]
 	before_filter :check_booking, :only => [:holddeposit, :cancel, :complete, :dodeposit, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
 	before_filter :check_booking_user, :only => [:holddeposit, :dodeposit, :cancel, :invoice, :payments, :reschedule, :feedback]
@@ -12,6 +11,7 @@ class BookingsController < ApplicationController
 	before_filter :check_search_access, :only => [:docreate, :docreatenotify, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
 	before_filter :check_blacklist, :only => [:docreate]
+	before_filter :check_promo, :only=> [:checkout]
 
 	def cancel
 		@security = (@booking.hold) ? 0 : (@booking.pricing.mode::SECURITY - @booking.security_amount_remaining)
@@ -661,6 +661,13 @@ class BookingsController < ApplicationController
 			end
 			return
 		end
+	end
+
+	def check_promo
+		session[:promo_code] = nil
+		session[:promo_message] = nil
+  	session[:promo_discount] = 0
+  	session[:promo_valid] = false
 	end
 
 	def copy_params
