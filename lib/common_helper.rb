@@ -1,5 +1,7 @@
 module CommonHelper
 	
+	BLACKOUT_TEXT = "Peak Season"
+
 	# Fees
 	SMOKING = 1000
 	OVERSPEEDING = 500

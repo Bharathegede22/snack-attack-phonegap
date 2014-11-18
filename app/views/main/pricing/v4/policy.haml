@@ -14,13 +14,13 @@
 	#fee-body.tab-content
 		#fee-1.tab-pane.fade.in.active
 			%p
-				Zoomcar charges by the hour. Any usage between 1 - 59 minutes is treated as a full hour. Hourly rates are different for Mon-Thu, Fri-Sun and Blackout Days[?]. Please refer the
+				Zoomcar charges by the hour. Any usage between 1 - 59 minutes is treated as a full hour. Hourly rates are different for Mon-Thu, Fri-Sun and #{CommonHelper::BLACKOUT_TEXT}[?]. Please refer the
 				%a{:href => "http://www.zoomcar.com/bangalore/tariff", :target => "_blank"} tariff page
 				for more details. All hours are billed according to the day on which they start. 
 				%u 
 					There is a minimum billing of 
-					%b #{Pricingv3::MIN_HOURS} hours.
-					%i All bookings between 1 to #{Pricingv3::MIN_HOURS-1} hours will be billed at #{Pricingv3::MIN_HOURS} hours.
+					%b #{Pricingv4::MIN_HOURS} hours.
+					%i All bookings between 1 to #{Pricingv3::MIN_HOURS-1} hours will be billed at #{Pricingv4::MIN_HOURS} hours.
 				See the below table for some examples.
 				%br/
 				%table.size-13{:cellpadding => '0', :cellspacing => '0', :border => '0', :aling => 'left', :width => '100%'}
