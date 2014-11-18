@@ -107,7 +107,7 @@ class City < ActiveRecord::Base
 	end
 	
 	def self.active
-		Rails.cache.fetch("cities") do
+		Rails.cache.fetch("cities-active") do
 			City.where(:active => 1).all
 		end
 	end
@@ -124,6 +124,20 @@ class City < ActiveRecord::Base
 		"Self Drive Cars In India"
 	end
 	
+	def self.getall
+		Rails.cache.fetch("cities-all") do
+			City.all.to_a
+		end
+	end
+	
+	def self.getall_hash
+		tmp = {}
+		getall.each do |c|
+			tmp[c.name.downcase] = c
+		end
+		return tmp
+	end
+
 	def self.link
 		"http://#{HOSTNAME}"
 	end
@@ -132,6 +146,10 @@ class City < ActiveRecord::Base
 		return active_hash[name.downcase]
 	end
 	
+	def self.lookup_all(name)
+		return getall_hash[name.downcase]
+	end
+
 	def self.meta_description
 		"Book a self-drive car online in India. Self driving car rental made easy like never before, simply join us for renting a car by the hour, day, week or month. Our tariff includes fuel, insurance & taxes."
 	end

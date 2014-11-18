@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 	
-	before_filter :authenticate_user!, :only => [:license, :social, :settings, :update, :credits]
+	before_filter :authenticate_user!, :only => [:license,:license_get_del, :social, :settings, :update, :credits]
 	skip_before_filter :authenticate_staging
 	
 	def access
@@ -120,7 +120,7 @@ class UsersController < ApplicationController
 			current_user.pincode = user.pincode
 			current_user.state = user.state
 			current_user.city = user.city
-      current_user.city_id = @city.id
+      current_user.city_id = @city.id if current_user.city_id.blank?
 			current_user.signup = true
 			if current_user.save
 				flash[:notice] = 'Details saved, please carry on!' if session[:book].blank?

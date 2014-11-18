@@ -119,7 +119,10 @@
 			- session[:signup] = 1
 		- else
 			.alert.alert-success
-				%b Thanks for providing your details.
+				- if City.find(current_user.city_id).active
+					%b Thanks for providing your details.
+				- else
+					%b Thank you! We will let you know when we reach beautiful Delhi. Your discount code will be in that email.
 			An email has been sent on 
 			%b #{current_user.email},
 			please follow instructions as mentioned in the email to activate your account.

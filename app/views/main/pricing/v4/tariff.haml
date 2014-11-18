@@ -28,7 +28,7 @@
 						= image_tag("cars/#{cargroup.id}small.jpg", :alt => cargroup.display_name)
 						%br/
 						%br/
-					.inline-block.bg-zoomb.p-10.r-5.m-10.tariff_primary_box{style: ''}
+					.inline-block.bg-zoomb.p-10.r-5.m-10.tariff_primary_box
 						.p-b10
 							Hourly Trip
 							%sup *
@@ -44,7 +44,7 @@
 							.fl.col-md-4.text-left
 								(Mon - Thu)
 							.fr.col-md-4.text-right 
-								Blackout Days
+								#{CommonHelper::BLACKOUT_TEXT}
 								%a.tariff_old_blackoutLink{:href => "http://#{HOSTNAME}/holidays", :target => "_blank"} [?]
 
 							.fr.col-md-4
@@ -55,38 +55,6 @@
 							%i Price includes #{show_currency(pricing.hourly_kms)} Kms for every hour booked.
 							%br
 							%i Rs. #{show_currency(pricing.excess_kms)}/km will be charged beyond the usage.
-					.inline-block.bg-zoomb.p-10.r-5.m-10.tariff_old_sideboxes{style: 'width:170px;'}
-						.p-b10
-							Daily Trip 
-							%span.size-10 (>= 24 Hours)
-						.r-10.bg-w.zoom-b.p-5
-							.fl
-								₹ #{show_currency(pricing.daily_discounted)}
-							.fr
-								₹ #{show_currency(pricing.daily_fare)}
-							.fc
-						.p-5.size-10
-							.fl
-								(Mon - Thu)
-							.fr
-								(Fri - Sun)
-							.fc
-						.white
-							%i.size-10 includes
-							#{show_currency(pricing.daily_kms)} Kms
-							%sup #
-					.inline-block.bg-zoomb.p-10.r-5.m-10.tariff_old_sideboxes{style: 'width:170px;'}
-						.p-b10
-							Weekly Trip
-							%span.size-10 (>= 7 Days)
-						.r-10.bg-w.zoom-b.p-5
-							₹ #{show_currency(pricing.weekly_fare)}
-						.p-5.size-10
-							&nbsp;
-						.white
-							%i.size-10 includes
-							#{show_currency(pricing.weekly_kms)} Kms
-							%sup #
 				.row.zoomb
 					.inline-block{style: 'width:150px;'}
 					.inline-block.border-zoomb.solid.p-5.r-5.m-5{style: 'width:750px;'}
@@ -98,11 +66,11 @@
 						%br
 						A fully refundable security deposit of ₹ 5000 will be charged at time of booking.
 						%br
-						Special Offer: Book for 7 days (or more) and get additional 10% Off.
+						Special Offer: Book for 7 days (or more) and get additional #{pricing.weekly_percentage_discount}% Off.
 						%br
 						%b
-							No discount / offers will be applicable on 
-							%a{:href => "http://#{HOSTNAME}/holidays", :target => "_blank"} blackout days
+							No discount / offers will be applicable during 
+							%a{:href => "http://#{HOSTNAME}/holidays", :target => "_blank"} #{CommonHelper::BLACKOUT_TEXT}
 	%br/
 	.row
 		.col-md-6
