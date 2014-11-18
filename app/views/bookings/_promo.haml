@@ -55,16 +55,47 @@
 							%span.glyphicon.glyphicon-remove.promoRemovespan
 					#PromoWait{:style => "display: none;"}
 						.wait
-		
+/ :javascript
+/ 	function checkNextJquery() {
+/ 		if (window.jQuery) {
+/ 			var total_str = $("#DepositFinal").text()
+/ 			total_str = total_str.replace( /[^\d]/g, '' );
+/ 			total_str = parseInt(total_str, 10) - #{session[:promo_discount]};
+/ 			$("#DepositFinal").html("₹ "+total_str);
+/ 		} else {
+/ 			window.setTimeout(checkNextJquery, 1000);
+/ 		}
+/ 	}
+/ 	checkNextJquery();
 :javascript
 	function checkNextJquery() {
 		if (window.jQuery) {
-			var total_str = $("#DepositFinal").text()
-			total_str = total_str.replace( /[^\d]/g, '' );
-			total_str = parseInt(total_str, 10) - #{session[:promo_discount]};
-			$("#DepositFinal").html("₹ "+total_str);
-		} else {
-			window.setTimeout(checkNextJquery, 1000);
+
+					var promo_disount = #{session[:promo_discount].to_i};  // total promo_disount amount
+			    //var promo_disount = 1000;
+					$("#use_tariff").click(function (){
+						var getTotal = $("#final_amount_to_pay").html();  //final amount display on page
+						var grand_total = parseInt(getTotal.replace(/[, ]+/g, "").trim());
+
+						final_total = grand_total - promo_disount;
+
+						document.getElementById("final_amount_to_pay").innerHTML = final_total;
+					});
+
+					$(".cancel_tariff").click(function (){
+
+						var getTotal1 = $("#final_amount_to_pay").html();  //final amount display on page
+						var grand_total1 = parseInt(getTotal1.replace(/[, ]+/g, "").trim());
+
+						final_total = grand_total1 + promo_disount;
+						document.getElementById("final_amount_to_pay").innerHTML = final_total;
+
+					});
+		
+
+
+			} else {
+				window.setTimeout(checkNextJquery, 1000);
+			}
 		}
-	}
-	checkNextJquery();
+			checkNextJquery();
