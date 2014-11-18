@@ -15,7 +15,7 @@
 				#PromoWait{style: "display:none;"}
 					.wait
 				#DetailsNameError.error
-	- elsif session[:promo_code].blank? && !session[:promo_message].blank?
+	- elsif session[:promo_code].blank? && session[:promo_message].present?
 		.p-b5
 			.fl
 				%b Promo Code
@@ -29,16 +29,20 @@
 			.fc
 		.p-b5.size-12
 			%i #{session[:promo_message]}
-	- else
+	- elsif session[:promo_code].present? && session[:promo_discount] == 0
 		.p-b5
-			.fr
-				/ %form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
-				/ 	#PromoSubmit
-				/ 		%button.btn.btn-default.btn-xs{type:"submit"}
-				/ 			%span.glyphicon.glyphicon-remove
-				/ 	#PromoWait{style: "display:none;"}
-				/ 		.wait
-			.fc
+			Promo code 
+			%b #{session[:promo_code]}
+			has been applied. Your discount will be calculated post trip.
+			.col-md-1
+				%form#PromoForm{:action => "javascript:void(0)", "data-ajax" => "false", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoDiv');"}
+					#PromoSubmit
+						%button.btn.btn-default.btn-xs{:type => "submit"}
+							%span.glyphicon.glyphicon-remove.promoRemovespan
+					#PromoWait{:style => "display: none;"}
+						.wait
+	- else			
+		.fc
 		.col-md-12.promoCode-desc-block.clearfix.rmpad
 			.col-md-4.text-right.clearfix.rmpad
 				%b #{session[:promo_code]}
@@ -51,6 +55,7 @@
 							%span.glyphicon.glyphicon-remove.promoRemovespan
 					#PromoWait{:style => "display: none;"}
 						.wait
+		
 :javascript
 	function checkNextJquery() {
 		if (window.jQuery) {

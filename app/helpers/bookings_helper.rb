@@ -62,13 +62,17 @@ module BookingsHelper
 
   def update_sessions(promo)
     session[:promo_message] = promo["message"] if promo["message"].present?
+    cookies[:promo_message] = {:value => promo["message"].downcase, :expires => 1.minutes.from_now, :domain => "." + HOSTNAME.split(':').first.gsub("www.", '')} if session[:promo_message].present?
     session[:promo_valid] = promo["valid"]
+    cookies[:promo_valid] = {:value => promo["valid"], :expires => 1.minutes.from_now, :domain => "." + HOSTNAME.split(':').first.gsub("www.", '')} if session[:promo_valid].present?
     if promo["code"].present? && promo["valid"] == true
       session[:promo_code] = promo["code"] if promo["code"].present?
+      cookies[:promo_code] = {:value => promo["code"].downcase, :expires => 1.minutes.from_now, :domain => "." + HOSTNAME.split(':').first.gsub("www.", '')} if session[:promo_code].present?
       session[:promo_discount] = promo["discount"] if promo["discount"].present?
       session[:promo_offer_id] = promo["offer_id"] if promo["offer_id"].present?
       session[:promo_coupon_id] = promo["coupon_id"] if promo["coupon_id"].present?
-    end   
+    end
+
   end
 
   def update_reschedule_params(params, booking)
@@ -93,8 +97,13 @@ module BookingsHelper
     Rails.logger.debug res
     
     res = JSON.parse(res)
-    promo = res["promo"]
-    return promo    
+    if res.present?
+      promo = res["promo"]
+      return promo
+    else 
+      return false
+    end
+        
   end
 
   def create_reschedule_offer(booking_id, promo, offer_discount)
