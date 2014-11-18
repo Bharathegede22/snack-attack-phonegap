@@ -9,6 +9,7 @@ class ApplicationController < ActionController::Base
   before_filter :check_mobile
   before_filter :check_ref
   before_filter :authenticate_staging
+  force_ssl if: :check_ssl?
 
   # => Checks if A/B test cookies are set and renders the checkout page accordingly
   def abtest?
@@ -100,6 +101,10 @@ class ApplicationController < ActionController::Base
     end
   end
   
+  def check_ssl?
+    (Rails.env.production? || Rails.env.staging?) && params['controller'] == 'bookings' && (params['action'] == 'checkout' || params['action'] == 'show')
+  end
+
   def check_ubid
   	# Assigning unique browser id
   	if session[:ubid].blank?
