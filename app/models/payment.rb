@@ -322,18 +322,20 @@ class Payment < ActiveRecord::Base
 				b.notes += "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs." + self.amount.to_s + " - Payment Received through <u>" + self.through_text + "</u>.<br/>"
 				b.save(:validate => false)
 				Booking.recalculate(b.id)
-				wallet_amount = (b.outstanding_without_deposit + self.amount)>=0 ? b.outstanding_without_deposit.abs : self.amount
-				if wallet_amount != 0 && b.wallet_security_payment.nil?
-						b.add_security_deposit_to_wallet(wallet_amount)
-						self.update_column(:deposit_available_for_refund, wallet_amount)
-						self.update_column(:deposit_paid, wallet_amount)
-				end
-				if !b.defer_payment_allowed?
-					b.add_security_deposit_charge
-				end
-				if !b.defer_payment_allowed? && b.wallet_security_payment.nil?
-					b.update_column(:insufficient_deposit, false)
-					b.make_payment_from_wallet
+				if self.through.in? ['citruspay', 'payu', 'juspay'] #TODO - move PG array to CommonHelper
+					wallet_amount = (b.outstanding_without_deposit + self.amount)>=0 ? b.outstanding_without_deposit.abs : self.amount
+					if wallet_amount != 0 && b.wallet_security_payment.nil?
+							b.add_security_deposit_to_wallet(wallet_amount)
+							self.update_column(:deposit_available_for_refund, wallet_amount)
+							self.update_column(:deposit_paid, wallet_amount)
+					end
+					if !b.defer_payment_allowed?
+						b.add_security_deposit_charge
+					end
+					if !b.defer_payment_allowed? && b.wallet_security_payment.nil?
+						b.update_column(:insufficient_deposit, false)
+						b.make_payment_from_wallet
+					end
 				end
 				BookingMailer.payment(b.id).deliver if old_status==0
 			end
