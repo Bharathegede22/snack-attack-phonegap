@@ -351,22 +351,14 @@ class BookingsController < ApplicationController
   		session[:promo_code] = nil
   		session[:promo_message] = nil
   		session[:promo_valid] = false
-<<<<<<< HEAD
   	end
-		promo_params = updated_params(params)
-		response = make_promo_api_call(promo_params)
-		update_sessions(response)
 
-    render json: {html: render_to_string('_promo_credits.haml', :locals => {:fare => @booking.get_fare, :h => 4, :user => current_user}, layout: false)}
-=======
-  	else
-  		
-  		promo_params = updated_params(params)
-  		promo = make_promo_api_call(promo_params)
-  		update_sessions(promo) if !promo.nil?
-		end
-    render json: {html: render_to_string('_promo.haml', layout: false)}
->>>>>>> include flash error
+		promo_params = updated_params(params)
+		promo = make_promo_api_call(promo_params)
+		update_sessions(promo) unless promo.nil?
+
+    render json: { promo: render_to_string('_promo.haml', layout: false),
+  								 credit: render_to_string('_credits.haml', :locals => {:fare => @booking.get_fare}, layout: false)}
   end
   
   def promo_sql

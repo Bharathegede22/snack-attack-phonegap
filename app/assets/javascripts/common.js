@@ -25,26 +25,46 @@ function autoResize(id,count) {
 	$("#IframeBox").fadeIn();
 }
 
-function applyPromoCode() {
+function formCredits(frm,url,divId) {
 	response = null;
 	$(document).ready(function(){
-		var code = jQuery.trim($("#promo_code_text").val());
-		
-		if (code != "") {
+		var apply_credits = jQuery.trim($("#applyCredits").val());
+		var remove_credits = jQuery.trim($("#removeCredits").val());
+
 		  $.ajax({
 		    type:"POST", 
 		    url: "/bookings/promo",
-		    data: {promo_code:code},
+		    data: {apply_credits: apply_credits,
+		    			remove_credits: remove_credits},
 				dataType: "json"
 		  })
 		  .done(function(json){
-		    $("#promo").empty().append(json.html);
+		    $("#PromoDiv").empty().append(json.promo);
+		    $("#CreditDiv").empty().append(json.credit);
 		  })
-		} else {
-			window.alert("Please input a promo code");
-		}
 	});
 }
+
+function applyPromoCode(frm,url,divId) {
+	response = null;
+	$(document).ready(function(){
+		var promo = jQuery.trim($("#DetailsName").val());
+		var clear = jQuery.trim($("#clearPromo").val());
+
+		  $.ajax({
+		    type:"POST", 
+		    url: "/bookings/promo",
+		    data: {promo: promo,
+		    			clear: clear},
+				dataType: "json"
+		  })
+		  .done(function(json){
+		    $("#PromoDiv").empty().append(json.promo);
+		    $("#CreditDiv").empty().append(json.credit);
+		  })
+	});
+}
+
 
 function bindCountry() {
 	$('.bind-country').bind("change", function() {

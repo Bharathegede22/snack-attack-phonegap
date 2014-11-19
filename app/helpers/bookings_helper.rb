@@ -57,7 +57,7 @@ module BookingsHelper
     params[:ref_initial] = session[:ref_initial] if !session[:ref_initial].blank?
     params[:ref_immediate] = session[:ref_immediate] if !session[:ref_immediate].blank?
     if session[:credits_applied] || params[:apply_credits].present?
-      params[:credits_applied] = true
+      params[:credits_applied] = 1
       params[:remove_credits] = true if params[:remove_credits].present?
       params[:apply_credits] = true if params[:apply_credits].present?
     end
@@ -78,7 +78,7 @@ module BookingsHelper
       session[:promo_coupon_id] = promo["coupon_id"] if promo["coupon_id"].present?
     end
 
-    session[:credits_applied] = credits["is_credit_applied"]
+    session[:credits_applied] = credits["is_credit_applied"].to_i == 1
     session[:credits] = session[:credits_applied] ? credits["credit_applied"] : nil
   end
 

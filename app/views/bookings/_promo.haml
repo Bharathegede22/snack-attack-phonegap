@@ -2,7 +2,7 @@
 	- if flash[:error].present?
 		- render_flash
 	- elsif session[:promo_code].blank? && session[:promo_message].blank?
-		%form.promocode-form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo','PromoCreditsDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+		%form.promocode-form{:id => "PromoForm", :onsubmit => "return applyPromoCode(this,'/bookings/promo','PromoCreditsDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 			.row
 				.col-md-7.text-right.promo-input
 					%input#DetailsName.validate-presence.form-control{:placeholder => "Enter Promo Code" ,name: 'promo', type: "text", value: @promo}
@@ -18,7 +18,8 @@
 			.fl
 				%b Promo Code
 			.fr
-				%form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoCreditsDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+				%form{:id => "PromoForm", :onsubmit => "return applyPromoCode(this,'/bookings/promo?clear=1','PromoCreditsDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+					%input#clearPromo.form-control{name: 'clear', type: "hidden", value: "1" }
 					#PromoSubmit
 						%button.btn.btn-default.btn-xs{type:"submit"}
 							%span.glyphicon.glyphicon-remove
@@ -35,7 +36,8 @@
 			.col-md-7.text-right.clearfix.rmpad
 				%b.promo_amount ₹ #{session[:promo_discount]}
 			.col-md-1
-				%form#PromoForm{:action => "javascript:void(0)", "data-ajax" => "false", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoCreditsDiv');"}
+				%form#PromoForm{:action => "javascript:void(0)", "data-ajax" => "false", :onsubmit => "return applyPromoCode(this,'/bookings/promo?clear=1','PromoDiv');"}
+					%input#clearPromo.form-control{name: 'clear', type: "hidden", value: "1" }
 					#PromoSubmit
 						%button.btn.btn-default.btn-xs{:type => "submit"}
 							%span.glyphicon.glyphicon-remove.promoRemovespan
