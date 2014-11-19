@@ -7,7 +7,7 @@ class BookingsController < ApplicationController
 	before_filter :check_booking, :only => [:holddeposit, :cancel, :complete, :dodeposit, :seamless_dodeposit, :dopayment, :seamless_dopayment, :seamless_payment_options, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
 	before_filter :check_booking_user, :only => [:holddeposit, :dodeposit, :seamless_dodeposit, :cancel, :invoice, :payments, :reschedule, :feedback]
 	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :seamless_docreate, :docreatenotify, :license, :login, :notify, :userdetails]
-	before_filter :check_search_access, :only => [:credits, :docreate, :docreatenotify, :license, :login, :userdetails]
+	before_filter :check_search_access, :only => [:credits, :docreate, :seamless_docreate, :docreatenotify, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :seamless_docreate, :dopayment, :seamless_dopayment, :license, :login, :payment, :userdetails]
 	before_filter :check_blacklist, :only => [:docreate, :seamless_docreate]
 	before_filter :check_promo,		:only => [:checkout]
