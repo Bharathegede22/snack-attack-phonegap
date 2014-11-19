@@ -9,4 +9,4 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-Web::Application.config.secret_key_base = 'f2d81f3198a4dcda010f12361863dcd996283077d31e84975f9745c39209301929a6dbdbb46ddb85f1bda1bef3f378d969b13861f4f29d23e966acb960a4ed55'
+Web::Application.config.secret_key_base = APP_KEY
