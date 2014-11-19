@@ -157,11 +157,11 @@ class BookingsController < ApplicationController
 			params[:booking_id] = @booking.id
 			params[:amount] = session[:promo_discount]
 
+			#create discount charge
 			url = "#{ADMIN_HOSTNAME}/mobile/v3/bookings/create_discount_charge"
-  		uri = URI(url)
-  		uri.query = URI.encode_www_form(params)
-  		res = Net::HTTP.get_response(uri)
-  		#res = JSON.parse(res.body)
+    	res = admin_api_get_call(url, params)
+    	Rails.logger.debug res
+    
 		end
 
 		# Using crredits
@@ -355,9 +355,7 @@ class BookingsController < ApplicationController
   	else
   		
   		promo_params = updated_params(params)
-
   		promo = make_promo_api_call(promo_params)
-
   		update_sessions(promo)
 		end
     render json: {html: render_to_string('_promo.haml', layout: false)}
