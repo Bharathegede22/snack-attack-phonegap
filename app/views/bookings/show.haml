@@ -1,7 +1,6 @@
 :ruby
 	if !flash[:error].blank? && flash[:error].include?('transaction') && flash[:error].include?('failed')
 		survey = true
-		pushEvent('1-click checkout', 'Booking Failed', 'Squirrel');
 	else
 		survey = false
 	end
@@ -400,6 +399,7 @@
 
 - if survey
 	:javascript
+		pushEvent('1-click checkout', 'Booking Failed', '');
 		var _kiq = _kiq || [];
 		(function(){
 			setTimeout(function(){
