@@ -3,14 +3,15 @@ class BookingsController < ApplicationController
   include BookingsHelper
 
   before_filter :authenticate_user!, :only => [:checkout]
+  before_filter :authenticate_user_from_token!, :only => [:promo, :docreate]
   before_filter :copy_params, :only => [:docreate]
 	before_filter :check_booking, :only => [:holddeposit, :cancel, :complete, :dodeposit, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
 	before_filter :check_booking_user, :only => [:holddeposit, :dodeposit, :cancel, :invoice, :payments, :reschedule, :feedback]
-	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :notify, :userdetails]
-	before_filter :check_search_access, :only => [:credits, :docreate, :docreatenotify, :license, :login, :userdetails]
+	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :promo,  :docreate, :docreatenotify, :license, :login, :notify, :userdetails]
+	before_filter :check_search_access, :only => [:docreate, :docreatenotify, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
 	before_filter :check_blacklist, :only => [:docreate]
-	before_filter :check_promo,		:only => [:checkout]
+	before_filter :check_promo, :only=> [:checkout]
 
 	def cancel
 		@security = (@booking.hold) ? 0 : (@booking.pricing.mode::SECURITY - @booking.security_amount_remaining)
@@ -27,6 +28,7 @@ class BookingsController < ApplicationController
 	
 	def checkout
 		@booking.user = current_user
+		apply_credits if session[:credits]
 		@wallet_available = @booking.security_amount - @booking.security_amount_remaining
 		redirect_to do_bookings_path(@city.name.downcase) and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		generic_meta
@@ -46,17 +48,28 @@ class BookingsController < ApplicationController
 		end
 		render json: {html: render_to_string('_corporate.haml', layout: false)}
   end
-	
+
+  # Applies credits to user booking
+  #
+  # Author:: Rohit
+  # Date:: 22/10/2014
+  # Expects ::
+  #   <b>params[:apply_credits]</b>  Integer  1/0
+  # 	<b>params[:remove_credits]</b> Integer  1/0
+  #
 	def credits
-		if current_user.total_credits.to_i < params[:fare].to_i
-			flash[:error] = 'Insufficient credits, please try again!'
-		else
-			session[:credits] = params[:fare].to_i
-			flash[:message] = 'Credits applied, please carry on!'
-		end
-		#@fare = @booking.cargroup.check_fare(@booking.starts, @booking.ends)
-		@fare = "Pricing#{Pricing::DEFAULT_VERSION}".check_fare_calc(@booking.starts, @booking.ends,@booking.cargroup.id,@city.id)
-		render json: {html: render_to_string('_outstanding.haml', layout: false)}
+    @booking.user = current_user
+    if params[:apply_credits].to_i > 0
+      result = @booking.apply_credits(current_user.total_credits)
+      if result[:error].nil?
+        session[:credits] = result[:credits].to_i
+      else
+        flash[:error] = result[:error]
+      end
+    elsif params[:remove_credits].to_i > 0
+      session[:credits] = nil
+    end
+		render json: {html: render_to_string('_credits.haml', :locals => {:fare => @booking.get_fare}, layout: false)}
 	end
 
 	def do
@@ -105,26 +118,20 @@ class BookingsController < ApplicationController
 		# Defer Deposit
 		@booking.defer_deposit = true if @booking.defer_allowed? && session[:book][:deposit] == 0
 		
-		# Check Credits
-		if !session[:credits].blank? && current_user.total_credits.to_i < session[:credits].to_i
-			session[:credits] = nil
-			flash[:error] = 'Insufficient credits, please try again!'
-			redirect_to checkout_bookings_path(@city.name.downcase)
-			return
-		end
-		
 		# Check Offer
-		promo = nil
-		promo = Offer.get(session[:promo_code],@city) if !session[:promo_code].blank?
-		if !session[:promo_booking].blank?
-			@booking = Booking.find(session[:promo_booking])
-			session[:promo_booking] = nil
-			@booking.status = 0
+		promo_params = updated_params(params)
+		if session[:promo_code].present?
+  		promo_params[:promo] = session[:promo_code]
+  		promo = make_promo_api_call(promo_params)
+  		update_sessions(promo)
+			if session[:promo_valid]
+				@booking.promo = session[:promo_code]
+				@booking.offer_id = session[:promo_offer_id]
+			end
 		end
-		if promo
-			@booking.promo = session[:promo_code]
-			@booking.offer_id = promo[:offer].id
-		end
+
+		# Apply credits to booking
+		apply_credits if session[:credits].present?
 		
 		# Corporate Booking
 		if !session[:corporate_id].blank? && current_user.support?
@@ -140,15 +147,25 @@ class BookingsController < ApplicationController
 		@booking.save!
 		
 		# Expiring Coupon Code
-		if promo && promo[:coupon]
-			promo[:coupon].used = 1
-			promo[:coupon].used_at = Time.now	
-			promo[:coupon].booking_id = @booking.id
-			promo[:coupon].save!
+		if session[:promo_valid] && session[:promo_coupon_id].present?
+			Offer.update_coupon(coupon_id, @booking.id)
 		end
 		
+		#create a charge if booking has been created and promocode exist
+		if @booking.id && session[:promo_valid]
+			
+			params[:booking_id] = @booking.id
+			params[:amount] = session[:promo_discount]
+
+			#create discount charge
+			url = "#{ADMIN_HOSTNAME}/mobile/v3/bookings/create_discount_charge"
+    	res = admin_api_get_call(url, params)
+    	Rails.logger.debug res
+    
+		end
+
 		# Using crredits
-		Credit.use_credits(@booking, session[:credits]) if !session[:credits].blank?
+		Credit.use_credits(@booking, session[:credits]) if session[:credits].present?
 		
 		if @booking.status == 11	
 			flash[:notice] = "We will Notify you once the Vehicle is available."
@@ -160,6 +177,8 @@ class BookingsController < ApplicationController
 			session[:notify] 			= nil
 			session[:book] 				= nil
 			session[:promo_code] 	= nil
+			session[:promo_valid] = false
+			session[:promo_message] = ""
 			session[:credits] 		= nil
 			if !session[:corporate_id].blank? && current_user.support?
 				flash[:notice] = "Corporate Booking is Successful"
@@ -328,15 +347,18 @@ class BookingsController < ApplicationController
 	end
   
   def promo
-  	if !params[:clear].blank? && params[:clear].to_i == 1
+  	if params[:clear].to_i == 1
   		session[:promo_code] = nil
-  	else
-			if !params[:promo].blank?
-				@offer = Offer.get(params[:promo],@city)
-				session[:promo_code] = params[:promo].upcase if @offer[:offer] && @offer[:error].blank?
-	    end
-		end
-    render json: {html: render_to_string('_promo.haml', layout: false)}
+  		session[:promo_message] = nil
+  		session[:promo_valid] = false
+  	end
+
+		promo_params = updated_params(params)
+		promo = make_promo_api_call(promo_params)
+		update_sessions(promo) unless promo.nil?
+
+    render json: { promo: render_to_string('_promo.haml', layout: false),
+  								 credit: render_to_string('_credits.haml', :locals => {:fare => @booking.get_fare}, layout: false)}
   end
   
   def promo_sql
@@ -394,6 +416,12 @@ class BookingsController < ApplicationController
 						end
 						flash[:notice] = "Your booking successfully <b>" + @string.downcase.gsub('ing', 'ed') + "</b> by " + tmp.chomp(', ')
 						@booking.update_column(:defer_deposit, false) if !params[:deposit].blank? && params[:deposit].to_i == 1
+						if @booking.offer_id.present? && @booking.promo.present?
+							reschedule_params = update_reschedule_params(params, @booking)
+							promo = make_promo_api_call(reschedule_params)
+							offer_discount = @booking.total_discount
+							create_reschedule_offer_charge(@booking.id, promo, offer_discount)
+						end
 						@success = true
 						@confirm = @string = @fare = nil
 					end
@@ -409,6 +437,11 @@ class BookingsController < ApplicationController
 						flash[:error] = "Sorry, but the car is no longer available"
 					else
 						@confirm = true
+						if @booking.offer_id.present? && @booking.promo.present?
+							reschedule_params = update_reschedule_params(params, @booking)
+							promo = make_promo_api_call(reschedule_params)
+							update_sessions(promo)
+						end
 					end
 				else
 					flash[:error] = "Please fix the error!"
@@ -626,10 +659,12 @@ class BookingsController < ApplicationController
 			return
 		end
 	end
-	
+
 	def check_promo
-		session[:promo_booking] = nil
 		session[:promo_code] = nil
+		session[:promo_message] = nil
+  	session[:promo_discount] = 0
+  	session[:promo_valid] = false
 	end
 
 	def copy_params
@@ -651,6 +686,19 @@ class BookingsController < ApplicationController
 	
 	def payu_test_params(amount, key )
 		{"mihpayid"=>"4039937155099#{10000 + rand(99999)}", "mode"=>"CC", "status"=>"success", "unmappedstatus"=>"captured", "key"=>"C0Dr8m", "txnid"=>"1bdfe", "amount"=>"6500.00", "discount"=>"0.00", "net_amount_debit"=>"6500", "addedon"=>"2014-08-26 16:13:57", "productinfo"=>"Figo", "firstname"=>"fdsf", "lastname"=>"", "address1"=>"", "address2"=>"", "city"=>"", "state"=>"", "country"=>"", "zipcode"=>"", "email" => PAYU_EMAIL, "phone" => PAYU_PHONE, "udf1"=>"", "udf2"=>"", "udf3"=>"", "udf4"=>"", "udf5"=>"", "udf6"=>"", "udf7"=>"", "udf8"=>"", "udf9"=>"", "udf10"=>"", "hash"=>"5332219dcb4c07661a85d31e4a3da055cf4a63bea9c40c3e3866780bb424238464661868dfb8724816d89937e57867c8f47a2c13f32106078e0b1e50b42d0ed4", "field1"=>"187269", "field2"=>"423820564675", "field3"=>"20140826", "field4"=>"MC", "field5"=>"564675", "field6"=>"00", "field7"=>"0", "field8"=>"3DS", "field9"=>" Successful Verification of Secure Hash:  -- Approved -- Transaction Successful -- Unable to be determined--E219", "payment_source"=>"payu", "PG_TYPE"=>"AXIS", "bank_ref_num"=>"187269", "bankcode"=>"CC", "error"=>"E000", "error_Message"=>"No Error", "name_on_card"=>"ksdfh", "cardnum"=>"512345XXXXXX2346", "cardhash"=>"This field is no longer supported in postback params."}
+	end
+
+	# Applies credits to user booking
+  #
+  # Author:: Rohit
+  # Date:: 22/10/2014
+  #
+	def apply_credits
+		# make credits invalid if user does not have credits
+			session[:credits] = nil if current_user.total_credits.to_i <= 0
+			# recalcuate credits
+			result = @booking.apply_credits(current_user.total_credits.to_i, session[:promo_discount].to_i)
+      session[:credits] = result[:credits] if result[:err].nil?
 	end
 
 end

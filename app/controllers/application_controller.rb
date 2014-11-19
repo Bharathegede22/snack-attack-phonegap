@@ -159,5 +159,24 @@ class ApplicationController < ActionController::Base
     cookies[:city] = {:value => city.downcase, :expires => 10.years.from_now, :domain => "." + HOSTNAME.split(':').first.gsub("www.", '')}
     @city = City.lookup_all(city.downcase)
   end
+
+  def error_with_message(message="", http_status_code = 400)
+    message = "Woah, we punctured a tire! ZoomCar encountered an error." if message.blank?
+    if http_status_code  == 401 && Rails.env.production?
+      response.headers["WWW-Authenticate"] = "Basic realm = 'fake'"
+      http_status_code = 400
+    end
+    render inline: "json.errorCode \"#{message}\"; json.error \"#{t(message)}\"; json.status '0'", :status => http_status_code,  type: :jbuilder
+    return
+  end
+
+  def authenticate_user_from_token!
+    Rails.logger.debug(current_user.inspect)
+    if current_user && !current_user.auth_token_expired?
+      # sign_in current_user, store:false
+    else
+      error_with_message(:tokenNotFound, 401)
+    end
+  end
   
 end
