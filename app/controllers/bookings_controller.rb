@@ -350,13 +350,12 @@ class BookingsController < ApplicationController
   	if !params[:clear].blank? && params[:clear].to_i == 1
   		session[:promo_code] = nil
   		session[:promo_message] = nil
-  		session[:promo_discount] = -1 * session[:promo_discount]
   		session[:promo_valid] = false
   	else
   		
   		promo_params = updated_params(params)
   		promo = make_promo_api_call(promo_params)
-  		update_sessions(promo)
+  		update_sessions(promo) if !promo.nil?
 		end
     render json: {html: render_to_string('_promo.haml', layout: false)}
   end

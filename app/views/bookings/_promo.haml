@@ -1,9 +1,9 @@
 #PromoDiv
-	- @offer ||= Offer.get(session[:promo_code],@city) if !session[:promo_code].blank?
-	- if @offer && !@offer[:error].blank?
-		.alert.alert-danger
-			= @offer[:error].html_safe
-	- if session[:promo_code].blank? && session[:promo_message].blank?
+	/.wrapper.bg-f
+	/	.p-10
+	- if flash[:error].present?
+		- render_flash
+	- elsif session[:promo_code].blank? && session[:promo_message].blank?
 		%form.promocode-form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 			.row
 				.col-md-7.text-right.promo-input
@@ -15,7 +15,7 @@
 				#PromoWait{style: "display:none;"}
 					.wait
 				#DetailsNameError.error
-	- elsif session[:promo_code].blank? && session[:promo_message].present?
+	- elsif session[:promo_message].present?
 		.p-b5
 			.fl
 				%b Promo Code
@@ -29,18 +29,6 @@
 			.fc
 		.p-b5.size-12
 			%i #{session[:promo_message]}
-	- elsif session[:promo_code].present? && session[:promo_discount] == 0
-		.p-b5
-			Promo code 
-			%b #{session[:promo_code]}
-			has been applied. Your discount will be calculated post trip.
-			.col-md-1
-				%form#PromoForm{:action => "javascript:void(0)", "data-ajax" => "false", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoDiv');"}
-					#PromoSubmit
-						%button.btn.btn-default.btn-xs{:type => "submit"}
-							%span.glyphicon.glyphicon-remove.promoRemovespan
-					#PromoWait{:style => "display: none;"}
-						.wait
 	- else			
 		.fc
 		.col-md-12.promoCode-desc-block.clearfix.rmpad
