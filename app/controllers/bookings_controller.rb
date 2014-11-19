@@ -157,11 +157,11 @@ class BookingsController < ApplicationController
 			params[:booking_id] = @booking.id
 			params[:amount] = session[:promo_discount]
 
+			#create discount charge
 			url = "#{ADMIN_HOSTNAME}/mobile/v3/bookings/create_discount_charge"
-  		uri = URI(url)
-  		uri.query = URI.encode_www_form(params)
-  		res = Net::HTTP.get_response(uri)
-  		#res = JSON.parse(res.body)
+    	res = admin_api_get_call(url, params)
+    	Rails.logger.debug res
+    
 		end
 
 		# Using crredits
@@ -350,14 +350,23 @@ class BookingsController < ApplicationController
   	if params[:clear].to_i == 1
   		session[:promo_code] = nil
   		session[:promo_message] = nil
-  		session[:promo_discount] = -1 * session[:promo_discount]
   		session[:promo_valid] = false
+<<<<<<< HEAD
   	end
 		promo_params = updated_params(params)
 		response = make_promo_api_call(promo_params)
 		update_sessions(response)
 
     render json: {html: render_to_string('_promo_credits.haml', :locals => {:fare => @booking.get_fare, :h => 4, :user => current_user}, layout: false)}
+=======
+  	else
+  		
+  		promo_params = updated_params(params)
+  		promo = make_promo_api_call(promo_params)
+  		update_sessions(promo) if !promo.nil?
+		end
+    render json: {html: render_to_string('_promo.haml', layout: false)}
+>>>>>>> include flash error
   end
   
   def promo_sql
