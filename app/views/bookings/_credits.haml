@@ -3,7 +3,7 @@
 		:ruby
 			total = fare[:estimate] - fare[:discount] - (session[:promo_valid] ? session[:promo_discount] : 0)
 			total = current_user.total_credits.to_i if current_user.total_credits.to_i < total
-		%form{:id => "CreditForm", :onsubmit => "return SubmitForm(this,'/bookings/credits','OutstandingDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+		%form{:id => "CreditForm", :onsubmit => "return SubmitForm(this,'/bookings/credits','OutstandingDiv');", :action => "javascript:void(0)", "data-remote" => "true"}
 			.col-md-12.promoCode-desc-block.clearfix
 				.col-md-7.text-left.clearfix.aval-credit-amount
 					%i ₹#{current_user.total_credits} in credits available
