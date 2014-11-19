@@ -11,6 +11,7 @@
 // GO AFTER THE REQUIRES BELOW.
 //
 //= require jquery/jquery
+//= require jquery/jquery.payment
 //= require bootstrap
 //= require bootstrap-datetimepicker
 //= require common

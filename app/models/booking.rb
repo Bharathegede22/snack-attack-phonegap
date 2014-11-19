@@ -106,7 +106,7 @@ class Booking < ActiveRecord::Base
 		total = defer_deposit ? self.outstanding_without_deposit : self.outstanding_with_security
 		total = self.outstanding if self.status==5
 		if total > 0
-			payment = Payment.create!(booking_id: self.id, through: 'payu', amount: total)
+			payment = Payment.create!(booking_id: self.id, through: 'na', amount: total)
 		else
 			payment = nil
 		end
@@ -136,6 +136,32 @@ class Booking < ActiveRecord::Base
 		end
 		fare = self.get_fare
 		return [str, fare]
+	end
+
+	def self.create_payment(b)
+		@booking = b
+		@payment = @booking.check_payment
+		if @payment
+			if !Rails.env.production?
+				@booking.user_email = PAYU_EMAIL
+				@booking.user_mobile = PAYU_PHONE
+			end
+
+			# Creating order on juspay
+			data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user_email, customer_mobile: @booking.user_mobile, return_url: "http://#{HOSTNAME}/bookings/pgresponse" }			
+			response = Juspay.create_order(data)
+
+			hash = PAYU_KEY + "|" + @payment.encoded_id + "|" + @payment.amount.to_i.to_s + "|" + @booking.cargroup.display_name + "|" + @booking.user_name.strip + "|" + @booking.user_email + "|||||||||||" + PAYU_SALT
+			
+			if(!response.nil? && response['status'].downcase=='created')
+				json_resp = {:status => 'success', :amt => @payment.amount.to_i, :order_id => @payment.encoded_id, :name => @booking.user_name, :email => @booking.user_email, :phone => @booking.user_mobile, :desc => @booking.cargroup.display_name, :product_id => @booking.cargroup.brand_id, :cust_id => @booking.user.encoded_id, :hash => Digest::SHA512.hexdigest(hash)}
+			else
+				json_resp = {:status=>'error'}
+			end
+		else
+			flash[:notice] = "Booking is already paid for full, no need for a new transaction."
+    	redirect_to "/bookings/" + @booking.encoded_id and return
+		end
 	end
 	
 	def dates_order

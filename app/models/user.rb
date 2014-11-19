@@ -46,6 +46,10 @@ class User < ActiveRecord::Base
   	errors.add(:dob, "can't be less than #{CommonHelper::MIN_AGE} years") if !self.dob.blank? && (self.dob.to_datetime > (Time.zone.now - CommonHelper::MIN_AGE.years))
   end
   
+	def encoded_id
+		CommonHelper.encode('user', self.id)
+	end
+
   def fleet?
 		return self.role >= 5
 	end
