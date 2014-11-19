@@ -98,18 +98,15 @@ module BookingsHelper
 
   def make_promo_api_call(promo_details)
     url = "#{ADMIN_HOSTNAME}/mobile/v3/bookings/promo"
-    #uri = URI(url)
-    #binding.pry
     res = admin_api_get_call(url, promo_details)
-    Rails.logger.debug res
-    
-    res = JSON.parse(res)
-    if res.present?
-      return res
-    else 
-      return false
+    begin
+      res = JSON.parse(res)
+      res
+    rescue Exception => ex
+      Rails.logger.info "JsonParsingError: Error parsing response from search results from api===== #{ex.message}--- BookingsHelper"
+      flash[:error] = "Sorry, our system is busy right now. Please try after some time."
+      {}
     end
-        
   end
 
   def create_reschedule_offer(booking_id, promo, offer_discount)
