@@ -4,7 +4,7 @@
 		.alert.alert-danger
 			= @offer[:error].html_safe
 	- if session[:promo_code].blank? && session[:promo_message].blank?
-		%form.promocode-form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+		%form.promocode-form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo','PromoCreditsDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 			.row
 				.col-md-7.text-right.promo-input
 					%input#DetailsName.validate-presence.form-control{:placeholder => "Enter Promo Code" ,name: 'promo', type: "text", value: @promo}
@@ -20,7 +20,7 @@
 			.fl
 				%b Promo Code
 			.fr
-				%form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+				%form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoCreditsDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 					#PromoSubmit
 						%button.btn.btn-default.btn-xs{type:"submit"}
 							%span.glyphicon.glyphicon-remove

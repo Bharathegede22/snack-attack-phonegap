@@ -7,7 +7,7 @@ class BookingsController < ApplicationController
   before_filter :copy_params, :only => [:docreate]
 	before_filter :check_booking, :only => [:holddeposit, :cancel, :complete, :dodeposit, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
 	before_filter :check_booking_user, :only => [:holddeposit, :dodeposit, :cancel, :invoice, :payments, :reschedule, :feedback]
-	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :notify, :userdetails]
+	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :promo,  :docreate, :docreatenotify, :license, :login, :notify, :userdetails]
 	before_filter :check_search_access, :only => [:docreate, :docreatenotify, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
 	before_filter :check_blacklist, :only => [:docreate]
@@ -347,20 +347,17 @@ class BookingsController < ApplicationController
 	end
   
   def promo
-  	if !params[:clear].blank? && params[:clear].to_i == 1
+  	if params[:clear].to_i == 1
   		session[:promo_code] = nil
   		session[:promo_message] = nil
   		session[:promo_discount] = -1 * session[:promo_discount]
   		session[:promo_valid] = false
-  	else
-  		
-  		promo_params = updated_params(params)
+  	end
+		promo_params = updated_params(params)
+		response = make_promo_api_call(promo_params)
+		update_sessions(response)
 
-  		promo = make_promo_api_call(promo_params)
-
-  		update_sessions(promo)
-		end
-    render json: {html: render_to_string('_promo.haml', layout: false)}
+    render json: {html: render_to_string('_promo_credits.haml', :locals => {:fare => @booking.get_fare, :h => 4, :user => current_user}, layout: false)}
   end
   
   def promo_sql

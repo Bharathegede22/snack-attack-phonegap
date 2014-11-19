@@ -56,11 +56,19 @@ module BookingsHelper
     params[:cargroup_id] = session[:book][:car] if !session[:book].blank? && !session[:book][:car].blank?
     params[:ref_initial] = session[:ref_initial] if !session[:ref_initial].blank?
     params[:ref_immediate] = session[:ref_immediate] if !session[:ref_immediate].blank?
+    if session[:credits_applied] || params[:apply_credits].present?
+      params[:credits_applied] = true
+      params[:remove_credits] = true if params[:remove_credits].present?
+      params[:apply_credits] = true if params[:apply_credits].present?
+    end
+
     params[:platform] = "web"
     return params
   end
 
-  def update_sessions(promo)
+  def update_sessions(args)
+    promo = args["promo"]
+    credits = args['credits']
     session[:promo_message] = promo["message"] if promo["message"].present?
     session[:promo_valid] = promo["valid"]
     if promo["code"].present? && promo["valid"] == true
@@ -70,6 +78,8 @@ module BookingsHelper
       session[:promo_coupon_id] = promo["coupon_id"] if promo["coupon_id"].present?
     end
 
+    session[:credits_applied] = credits["is_credit_applied"]
+    session[:credits] = session[:credits_applied] ? credits["credit_applied"] : nil
   end
 
   def update_reschedule_params(params, booking)
@@ -95,8 +105,7 @@ module BookingsHelper
     
     res = JSON.parse(res)
     if res.present?
-      promo = res["promo"]
-      return promo
+      return res
     else 
       return false
     end

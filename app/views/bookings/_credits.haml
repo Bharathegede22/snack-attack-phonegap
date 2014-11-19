@@ -3,7 +3,7 @@
 		:ruby
 			total = fare[:estimate] - fare[:discount] - (session[:promo_valid] ? session[:promo_discount] : 0)
 			total = current_user.total_credits.to_i if current_user.total_credits.to_i < total
-		%form{:id => "CreditForm", :onsubmit => "return SubmitForm(this,'/bookings/credits','OutstandingDiv');", :action => "javascript:void(0)", "data-remote" => "true"}
+		%form{:id => "CreditForm", :onsubmit => "return SubmitForm(this,'/bookings/promo','PromoCreditsDiv');", :action => "javascript:void(0)", "data-remote" => "true"}
 			.col-md-12.promoCode-desc-block.clearfix
 				.col-md-7.text-left.clearfix.aval-credit-amount
 					%i ₹#{current_user.total_credits} in credits available
@@ -22,7 +22,7 @@
 				%b.credit_amount - ₹ 
 				%span.credits_usable_amt #{session[:credits]}
 			.cancel_creditBtn
-				%form#PromoForm{:action => "javascript:void(0)", "data-ajax" => "false", :onsubmit => "return SubmitForm(this,'/bookings/credits','OutstandingDiv');"}
+				%form#PromoForm{:action => "javascript:void(0)", "data-ajax" => "false", :onsubmit => "return SubmitForm(this,'/bookings/promo','PromoCreditsDiv');"}
 					%input#fare.form-control{name: 'remove_credits', type: "hidden", value: 1 }
 					#PromoSubmit_credits
 						%button.btn.btn-default.btn-xs.cancelCreditsBtn.cancel_credit{:type => "submit"}

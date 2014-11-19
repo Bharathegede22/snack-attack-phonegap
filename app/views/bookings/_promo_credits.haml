@@ -1,3 +1,4 @@
+#PromoCreditsDiv
 %tr.bg-e
 	%td.p-10.p-l20.size-12
 		.fl.text-up
@@ -22,5 +23,5 @@
 - if user && user.total_credits.to_i > 0
 	%tr#credits_block{style: 'display: none'}
 		%td.p-5.p-l20.p-r20.size-12{'colspan' => '2'}
-			.bg-e.p-10.border-c.solid.r-5.available_credits_data#OutstandingDiv
+			.bg-e.p-10.border-c.solid.r-5.available_credits_data
 				= render :partial => "credits", :locals => {:fare => fare}
