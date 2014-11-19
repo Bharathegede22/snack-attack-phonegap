@@ -343,7 +343,7 @@
 	document.getElementById('corpSubmit').style.display = "none";
 	function checkJquery() {
 		if (window.jQuery) {
-			pushEvent('1-click checkout', 'Checkout Page Load', 'Squirrel');
+			pushEvent('1-click checkout', 'Checkout Page Load', '');
 			$.getScript("https://api.juspay.in/pay.js", function(){
 				//loading Juspay js file
 			});
@@ -400,7 +400,7 @@
 						details = JSON.parse(JSON.stringify(data));
 						switch(details.response) {
 							case 'created':
-								pushEvent('1-click checkout', 'Payment Options Load', 'Squirrel');
+								pushEvent('1-click checkout', 'Payment Options Load', '');
 								$('#loader').hide();
 								// $('#tryAgainBtn').hide();
 								$('#paymentOptions').append("#{j render(:partial => 'bookings/pg/payment_options')}");
