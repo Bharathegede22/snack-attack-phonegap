@@ -184,7 +184,7 @@
 		.bg-zoomb.white.p-10.f-b.size-18.p-l10.p-r10
 			Payments Received
 		- total_payment=0
-		- @booking.confirmed_payments.select{|p| p.through=='payu'}.each do |payment|
+		- @booking.confirmed_payments.select{|p| p.through.in? ['citruspay', 'juspay', 'payu']}.each do |payment|
 			.fl.p-10.p-l20.size-12
 				.text-up
 					Amount Paid (#{payment.created_at.strftime('%Y-%m-%d')})
@@ -199,12 +199,12 @@
 			.fr.p-10.t-r.p-r20.zoom-b.f-b.size-20
 				₹ #{show_currency total_payment}
 			.fc
-	- if @booking.confirmed_refunds.select{|p| p.through=='payu' || p.through == 'wallet_refund'}.any?
+	- if @booking.confirmed_refunds.select{|p| p.through.in? ['citruspay', 'juspay', 'payu'] || p.through == 'wallet_refund'}.any?
 		.bg-w.bs-9.m-b20{'style' => 'width: 360px'}
 			.bg-zoomb.white.p-10.f-b.size-18.p-l10.p-r10
 				Refunds Issued
 			- total_refund=0
-			- @booking.confirmed_refunds.select{|p| p.through=='payu' || p.through=='wallet_refund'}.each do |refund|
+			- @booking.confirmed_refunds.select{|p| p.through.in? ['citruspay', 'juspay', 'payu'] || p.through=='wallet_refund'}.each do |refund|
 				.fl.p-10.p-l20.size-12
 					.text-up
 						Amount Refunded (#{refund.created_at.strftime('%Y-%m-%d')})
@@ -306,14 +306,19 @@
 				₹ #{show_currency payable_amount}
 			-if payable_amount>0
 				.fc
-				= form_tag("/bookings/#{@booking.encoded_id}/dodeposit", method: :get) do
+				/ = form_tag("/bookings/#{@booking.encoded_id}/dodeposit", method: :get) do
+				= form_tag() do
 					=hidden_field_tag 'checkoutDeposit', "1"
-					%input#PayNowButton.button.m-auto{style: "width:200px;", type: "submit", value: "Proceed to Payment"}
+					%input#PayNowButton.button.m-auto{style: "width:200px;", type: "button", value: "Proceed to Payment"}
+					/ , onclick: "showModal('Make Payment', '/bookings/pg/payment_options');", :data => { :checkoutDeposit => "document.getElementById('checkoutDeposit').value;" }}
 		.fc
 
 :javascript
 	function checkJquery() {
 		if (window.jQuery) {
+			$.getScript("https://api.juspay.in/pay.js", function(){
+					//loading Juspay js file
+				});
 			$('#holdDeposit').change(function() {
 				var $this = $(this);
 				if ($this.is(':checked')) {
@@ -352,14 +357,49 @@
 			$('#applyPromoCode').click(function(){
 				$('#promoCode').toggle();
 			});
+			$('#PayNowButton').click(function(){
+				$("#PayNowButton").prop("disabled", true);				
+				$.ajax({
+					url: "/bookings/#{@booking.encoded_id}/seamless_dodeposit",
+					type: "POST",
+					dataType: "json",
+					data: $.param({
+						checkoutDeposit: $('#checkoutDeposit').val(), 
+					}), 
+					success: function(data, status){
+						if(status=="success"){
+							var response = JSON.parse(JSON.stringify(data));
+							if(response.status == "success") {
+								var amt = "₹ " + response.amt.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+								showModal('Payable Amount :  ' + amt, '/bookings/seamless_payment_options');
+								$("#DepositFinal").html(amt);
+								setTimeout(function(){ setVal(response); }, 3000);
+								$("#PayNowButton").prop("disabled", false);				
+							}
+						}
+					}
+				});
+			});
 		} else {
 			window.setTimeout(checkJquery, 1000);
 		}
+	}
+	function setVal(resp) {
+		$('.order_id').val(resp.order_id);
+		$('.description').val(resp.desc);
+		$('.product_id').val(resp.product_id);
+		$('.firstname').val(resp.name);
+		$('.customer_email').val(resp.email);
+		$('.customer_phone').val(resp.phone);
+		$('.amount').val(resp.amt);
+		$('.customer_id').val(resp.cust_id);
+		$('#hash').val(resp.hash);
 	}
 	checkJquery();
 
 - if survey
 	:javascript
+		pushEvent('1-click checkout', 'Booking Failed', '');
 		var _kiq = _kiq || [];
 		(function(){
 			setTimeout(function(){
