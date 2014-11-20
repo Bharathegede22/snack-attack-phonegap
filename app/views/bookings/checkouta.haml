@@ -1,5 +1,5 @@
-/ 1-step checkout page for seamless integration
-/ Used for A/B test with checkouta.haml
+/old checkout page - redirection to PayU for making payment
+/Used for A/B test with checkout.haml
 
 :ruby
 	if !@booking.blank?
@@ -221,23 +221,23 @@
 									= @booking.deposit_warning(@wallet_available>0 ? "remaining " : '').html_safe
 
 					%tr.bg-6.white.bg-zoom
-						%td.p-10.p-l30.text-up.size-16.f-b{style: 'width: 250px'}
+						%td.p-10.p-l20.text-up.size-16.f-b{style: 'width: 250px'}
 							Payable Amount
 
-						%td.p-10.t-r.p-r30.size-18.outstandingSide.position-r{style: 'width: 250px'}
+						%td.p-10.t-r.p-r20.size-22.outstandingSide.position-r{style: 'width: 250px'}
 							:ruby
 								if !session[:credits].blank?
 									total = fare[:total] - session[:credits].to_i
 								else
 									total = fare[:total]
 								end
-							#DepositFinal.DepositFinal
+							#DepositFinal
 								₹ #{show_currency(total + @booking.security_amount - @wallet_available)}
 
 					%tr
 						%td.p-5.p-l20.p-t10.size-12
 							.fl.text-up Free Kms
-							.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "All Zoomcar reservations come with free driving kms, which are based on vehicle type and reservation duration."}
+							.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "All Zoomcar reservations comes with free driving kms, which are based on vehicle type and reservation duration."}
 								[?]
 							.fc
 						%td.p-5.t-r.p-r20.p-t10.zoom-b.f-b.size-16
@@ -251,42 +251,22 @@
 						%td.p-5.p-b10.t-r.p-r20.zoom-b.f-b.size-16
 							₹ #{cargroup.excess_kms.to_i} / Km
 
-					/ %tr.bg-6.white.bg-zoom.ribbon
-					/ 	%td.p-10.p-l30.text-up.size-16.f-b{style: 'width: 250px'}
-					/ 		Payment Options
-					/ %tr.ribbon-after
-					/ 	%td{colspan: 2}
-					/ 		&nbsp;
-					/ %tr.bg-e.white
-					/ 	%td#loader.wait
-					/ 	%td#paymentOptions{style: 'width: 100%'}
-
-			/ %br/
-			/ %br/
-			.payment-options.m-auto
-				- if @available == 1 && user && !user.is_blacklisted?
-					.t-c
-						.p-20{style: "width:400px;"}
-							%form{:action => "/#{@city.name.downcase}/bookings/docreate", :id => "CheckoutForm", :method => "post"}
-								.hide
-									%input{name: "starts", type: "hidden", value: session[:book][:starts]}
-									%input{name: "ends", type: "hidden", value: session[:book][:ends]}
-									%input{name: "loc", type: "hidden", value: session[:book][:loc]}
-									%input{name: "car", type: "hidden", value: session[:book][:car]}
-									%input{name: "deposit", type: "hidden", value: 1, id: "checkoutDeposit"}
-								%input.button.m-auto#corpSubmit{style: "width:200px;", type: "submit", value: "Checkout"}
-					%table#paymentPartial.position-r.bg-w.bs-9.p-t20.m-auto{width: '100%'}
-						%tr.bg-6.white.bg-zoom
-							%td.p-10.p-l30.text-up.size-16.f-b{style: 'width: 100%'}
-								Payment Options
-						%tr.bg-w.white.fc{style: 'width: 100%'}
-							%td#paymentOptions
-					#loader.wait.bg-w.p-t20.fc
-				- else
-					.button-dis Checkout
-				#CheckoutWait{style: 'display:none;'}
-					%br/
-					.wait
+			.t-c
+				.m-auto.p-20{style: "width:400px;"}
+					- if @available == 1 && user && !user.is_blacklisted?
+						%form{:action => "/#{@city.name.downcase}/bookings/docreate", :id => "CheckoutForm", :method => "post"}
+							.hide
+								%input{name: "starts", type: "hidden", value: session[:book][:starts]}
+								%input{name: "ends", type: "hidden", value: session[:book][:ends]}
+								%input{name: "loc", type: "hidden", value: session[:book][:loc]}
+								%input{name: "car", type: "hidden", value: session[:book][:car]}
+								%input{name: "deposit", type: "hidden", value: 1, id: "checkoutDeposit"}
+							%input.button.m-auto{style: "width:200px;", type: "submit", value: "Checkout"}
+					- else
+						.button-dis Checkout
+					#CheckoutWait{style: 'display:none;'}
+						%br/
+						.wait
 				= render :partial => "/bookings/blacklist"
 		- else
 			.alert.alert-info.t-c
@@ -324,10 +304,7 @@
 		/ 				On submitting, you will proceed to payment
 		.fc
 		%br/
-
 :javascript
-	var flag = true;
-	var details;
 	var _adx = {};
 	_adx.xb  = '35BDU410';
 	_adx.xt  = 'conversion';
@@ -340,19 +317,10 @@
 		s.parentNode.insertBefore(x, s);
 	})(document);
 
-	document.getElementById('corpSubmit').style.display = "none";
 	function checkJquery() {
 		if (window.jQuery) {
-			pushEvent('1-click checkout', 'Checkout Page Load', '');
-			$.getScript("https://api.juspay.in/pay.js", function(){
-				//loading Juspay js file
-			});
-			createPayment();
 			$('#changeDeposit').change(function() {
 				var $this = $(this);
-				if(!flag){
-					updateDeposit($this.is(':checked'));
-				}
 				if ($this.is(':checked')) {
 					$('#checkoutDeposit').val("1");
 					$('#DepositMessage').hide();
@@ -362,7 +330,7 @@
 					$('#checkoutDeposit').val("0");
 					$('#DepositMessage').show();
 					$("#Deposit").addClass('t-s');
-					$(".DepositFinal").html("₹ #{show_currency(total)}");
+					$("#DepositFinal").html("₹ #{show_currency(total)}");
 				}
 			});
 			$('#applyPromoCode').click(function(){
@@ -372,93 +340,4 @@
 			window.setTimeout(checkJquery, 1000);
 		}
 	}
-	function sleep(millis, callback) {
-		setTimeout(function(){ callback(); }, millis);
-	}
-	function createPayment() {
-		if(flag) {
-			var dep;
-			if('#{@booking.defer_allowed?}'==false||$("#changeDeposit").is(':checked')){
-				dep = 1;
-			}
-			else{
-				dep = 0;
-			}
-			$.ajax({
-				url: "/#{@city.name.downcase}/bookings/seamless_docreate",
-				type: "POST",
-				dataType: "json",
-				data: {
-					starts : $("#starts").val(),
-					ends : $("#ends").val(),
-					loc : $("#loc").val(),
-					car : $("#car").val(),
-					deposit : dep
-				},
-				success: function(data, response) {
-					if(response=="success") {
-						details = JSON.parse(JSON.stringify(data));
-						switch(details.response) {
-							case 'created':
-								pushEvent('1-click checkout', 'Payment Options Load', '');
-								$('#loader').hide();
-								// $('#tryAgainBtn').hide();
-								$('#paymentOptions').append("#{j render(:partial => 'bookings/pg/payment_options')}");
-								$('.order_id').val(details.order_id);
-								$('.description').val(details.desc);
-								$('.product_id').val(details.product_id);
-								$('.firstname').val(details.name);
-								$('.customer_email').val(details.email);
-								$('.customer_phone').val(details.phone);
-								$('.amount').val(details.amt);
-								$('.customer_id').val(details.cust_id);
-								$('#hash').val(details.hash);
-								break;
-							case 'corporate':
-								window.location = '/bookings/' + details.id;
-								break;
-							case 'paid':
-								window.location = '/bookings/' + details.id;
-								break;
-							case 'paid license checked':
-								window.location = '/bookings/' + details.id;
-								break;
-							case 'paid no license':
-								window.location = '//#{HOSTNAME}/users/license';
-								break;
-							case 'unavailable':
-							case 'pg error':
-								// $('#loader').hide();
-								// var tryAgainBtn = $('<a class="pointer inline-block button m-auto" id="tryAgainBtn" onclick="sleep(1000, createPayment);" style="width:250px;"> Click to Try Again </a>');
-								// $('#paymentOptions').append(tryAgainBtn);
-								setTimeout(redirectToBookings, 2000);
-								break; 
-						}
-						flag = false;
-					}
-					else {
-						// $('#loader').hide();
-						alert('Something went wrong. Please check your Internet connection and try again.');
-						window.location = "/#{@city.name.downcase}";
-					}
-				}
-			});
-		}
-	}
-	function redirectToBookings() {
-		alert('Oops! Something went wrong. Please check your Internet connection and try again.');
-		window.location = "/bookings";
-	}
-	function updateDeposit(dep) {
-		$.post( "/bookings/seamless_update_payment", { deposit: dep, id: details.order_id }, 
-			function(data, status){
-				if(status=="success"){
-					var response = JSON.parse(JSON.stringify(data));
-					if(response.status == "success") {
-						$('#hash').val(response.hash);
-						$('#amount').val(response.amt);
-					}
-				}
-			});
-	}
-	checkJquery();	
+	checkJquery();
