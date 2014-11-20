@@ -6,36 +6,25 @@
 	- if session[:promo_code].blank?
 		%form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 			.row
-				.col-md-4
-					%input#DetailsName.validate-presence.form-control{name: 'promo', type: "text", value: @promo}
-				.col-md-5
-					#PromoSubmit
-						%button.btn.btn-default{type:"submit"} Apply Promo Code
-			.promoCode_condition_block
-				%i.promoCode_condition Promo Codes are not applicable during #{CommonHelper::BLACKOUT_TEXT}.
-		#PromoWait{style: "display:none;"}
-			.wait
-		#DetailsNameError.error
+				.col-md-9.text-right.promo-input
+					%input#DetailsName.validate-presence.form-control{:placeholder => "Enter Promo Code" ,name: 'promo', type: "text", value: @promo}
+				.col-md-3.text-left.promo-submit
+					#PromoSubmit_promo
+						%button.btn.btn-default.apply_promocode_btn{type:"submit"} Apply
+
+				#PromoWait{style: "display:none;"}
+					.wait
+				#DetailsNameError.error
 	- else
 		.p-b5
 			.fl
-				%b Promo Code
+				%b Tariff
 			.fr
 				%form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 					#PromoSubmit
 						%button.btn.btn-default.btn-xs{type:"submit"}
 							%span.glyphicon.glyphicon-remove
-					#PromoWait{style: "display:none;"}
+					#PromoWait{:style => "display: none;"}
 						.wait
-			.fc
-		.p-b5
-			Promo code 
-			%b #{session[:promo_code]}
-			has been applied.
-		- if @offer && @offer[:offer]
-			.p-b5.size-12
-				= @offer[:offer].summary.html_safe
-		.p-b5.size-12
-			%i Discount will be manually evaluated and refunded back to your card.
-		.promoCode_condition_block
-			%i.promoCode_condition Promo Codes are not applicable during #{CommonHelper::BLACKOUT_TEXT}.
+			/ .promoCode_condition_block_whenApplied
+			/ 	%i.promoCode_condition Promo Codes are not applicable on Blackout Days.

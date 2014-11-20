@@ -13,8 +13,9 @@ class Booking < ActiveRecord::Base
 	has_many	:payments, :inverse_of => :booking, dependent: :destroy
 	has_many	:refunds, :inverse_of => :booking, dependent: :destroy
 	has_many	:confirmed_payments, -> { where "status = 1 and through != 'wallet_widget'" }, class_name: "Payment"
+  has_many	:confirmed_credit_payments, -> { where("status = 1 AND through = 'credits'") }, class_name: "Payment"
 	has_many	:confirmed_refunds, -> { where "status = 1 and through != 'wallet_widget'" }, class_name: "Refund"
-	has_many 	:credit, :as => :creditable , dependent: :destroy
+  has_many 	:credits, :as => :creditable, dependent: :destroy
 	has_many	:utilizations, -> {where "minutes > 0"}, dependent: :destroy
 	
 	has_one :coupon_code
@@ -213,7 +214,8 @@ class Booking < ActiveRecord::Base
 			note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs."
 			note += data[:refund].to_s + " - Cancellation Refund.<br/>"
 			self.notes += note
-		end
+    end
+
 		if data[:penalty] > 0
 			data[:penalty] = [self.pricing.mode::CHARGE_CAP, data[:penalty]].min #WEB-181 cap cancellation charge to 2500
 			charge = Charge.where(["booking_id = ? AND activity = 'cancellation_charge'", self.id]).first
@@ -662,7 +664,32 @@ class Booking < ActiveRecord::Base
 	
 	def wallet_security_payment
 		payments.where(through: 'wallet', :status=>1).first
-	end
+  end
+
+  def credits_used
+    self.confirmed_credit_payments.collect(&:amount).sum.to_i
+  end
+
+  # Returns credit amount applied for booking
+  # Author:: Rohit
+  # Date:: 27/10/2014
+  # 
+  # Expects
+  # * <b>user_credits<b> total user credits
+  #   <b>discount_applied<b> Amount of discount alrearedy applied
+  # 
+  # Returns
+  # :err
+  # 
+  #
+  def apply_credits(user_credits, discount_applied=0)
+  	return {:err => 'Insufficient credits, please try again!'} if user_credits.to_i <= 0
+  	fare = self.get_fare
+  	credits_applicable = fare[:estimate] - fare[:discount]
+  	credits_applicable -= discount_applied
+  	credits_applicable = user_credits if user_credits.to_i < credits_applicable
+  	{:credits => credits_applicable}
+  end
 
 	def sendsms(action, amount,deposit = 0)
 		message =  case action 
@@ -829,6 +856,20 @@ class Booking < ActiveRecord::Base
 		return total.to_i
 	end
 	
+	def total_discount
+		total = 0
+		self.charges.each do |c|
+			if c.activity.include?('discount')
+				if c.refund > 0
+					total += c.amount
+				else
+					total -= c.amount
+				end
+			end
+		end
+		return total.to_i
+	end
+
 	def total_payments
 		total = 0
 		self.confirmed_payments.each do |p|
