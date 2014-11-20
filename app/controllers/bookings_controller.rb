@@ -121,21 +121,8 @@ class BookingsController < ApplicationController
 		# Defer Deposit
 		@booking.defer_deposit = true if @booking.defer_allowed? && session[:book][:deposit] == 0
 		
-		# Check Offer
-		promo_params = updated_params(params)
-		if session[:promo_code].present?
-  		promo_params[:promo] = session[:promo_code]
-  		promo = make_promo_api_call(promo_params)
-  		update_sessions(promo)
-			if session[:promo_valid]
-				@booking.promo = session[:promo_code]
-				@booking.offer_id = session[:promo_offer_id]
-			end
-		end
+		apply_credits_and_coupons
 
-		# Apply credits to booking
-		apply_credits if session[:credits].present?
-		
 		# Corporate Booking
 		if !session[:corporate_id].blank? && current_user.support?
 			@booking.corporate_id = session[:corporate_id]
@@ -149,26 +136,8 @@ class BookingsController < ApplicationController
 		
 		@booking.save!
 		
-		# Expiring Coupon Code
-		if session[:promo_valid] && session[:promo_coupon_id].present?
-			Offer.update_coupon(coupon_id, @booking.id)
-		end
-		
-		#create a charge if booking has been created and promocode exist
-		if @booking.id && session[:promo_valid]
-			
-			params[:booking_id] = @booking.id
-			params[:amount] = session[:promo_discount]
-
-			#create discount charge
-			url = "#{ADMIN_HOSTNAME}/mobile/v3/bookings/create_discount_charge"
-    	res = admin_api_get_call(url, params)
-    	Rails.logger.debug res
-    
-		end
-
-		# Using crredits
-		Credit.use_credits(@booking, session[:credits]) if session[:credits].present?
+		# Create Credits Payments and Offers Charges
+		create_promo_credit_payments
 		
 		if @booking.status == 11	
 			flash[:notice] = "We will Notify you once the Vehicle is available."
@@ -201,6 +170,42 @@ class BookingsController < ApplicationController
 				end
 			end
 		end
+	end
+
+	# Apply Credits and Offers
+	def apply_credits_and_coupons
+		# Check Offer
+		promo_params = updated_params(params)
+		if session[:promo_code].present?
+  		promo_params[:promo] = session[:promo_code]
+  		promo = make_promo_api_call(promo_params)
+  		update_sessions(promo)
+			if session[:promo_valid]
+				@booking.promo = session[:promo_code]
+				@booking.offer_id = session[:promo_offer_id]
+			end
+		end
+
+		# Apply credits to booking
+		apply_credits if session[:credits].present?
+	end
+
+	# Create Credits Payments and Offers Charges
+	def create_promo_credit_payments
+		# Expiring Coupon Code
+		if session[:promo_valid] && session[:promo_coupon_id].present?
+			Offer.update_coupon(session[:promo_coupon_id], @booking.id)
+		end
+		#create a charge if booking has been created and promocode exist
+		if @booking.id && session[:promo_valid]
+			params[:booking_id] = @booking.id
+			params[:amount] = session[:promo_discount]
+			#create discount charge
+			url = "#{ADMIN_HOSTNAME}/mobile/v3/bookings/create_discount_charge"
+    	res = admin_api_get_call(url, params)
+		end
+		# Using crredits
+		Credit.use_credits(@booking, session[:credits]) if session[:credits].present?
 	end
 	
 	def dodeposit
@@ -518,27 +523,7 @@ class BookingsController < ApplicationController
 		# Defer Deposit
 		@booking.defer_deposit = true if @booking.defer_allowed? && session[:book][:deposit] == 0
 		
-		# Check Credits
-		# TODO won't work with Juspay - 1 click checkout
-		if !session[:credits].blank? && current_user.total_credits.to_i < session[:credits].to_i
-			session[:credits] = nil
-			flash[:error] = 'Insufficient credits, please try again!'
-			redirect_to "/bookings/checkout"
-			return
-		end
-		
-		# Check Offer
-		promo = nil
-		promo = Offer.get(session[:promo_code],@city) if !session[:promo_code].blank?
-		if !session[:promo_booking].blank?
-			@booking = Booking.find(session[:promo_booking])
-			session[:promo_booking] = nil
-			@booking.status = 0
-		end
-		if promo
-			@booking.promo = session[:promo_code]
-			@booking.offer_id = promo[:offer].id
-		end
+		apply_credits_and_coupons()
 		
 		# Corporate Booking
 		if !session[:corporate_id].blank? && current_user.support?
@@ -552,17 +537,9 @@ class BookingsController < ApplicationController
 		end
 		
 		@booking.save!
-		
-		# Expiring Coupon Code
-		if promo && promo[:coupon]
-			promo[:coupon].used = 1
-			promo[:coupon].used_at = Time.now	
-			promo[:coupon].booking_id = @booking.id
-			promo[:coupon].save!
-		end
-		
-		# Using crredits
-		Credit.use_credits(@booking, session[:credits]) if !session[:credits].blank?
+
+		# Create Credits Payments and Offers Charges
+		create_promo_credit_payments
 		
 		if @booking.status == 11	
 			flash[:notice] = "We will Notify you once the Vehicle is available."
