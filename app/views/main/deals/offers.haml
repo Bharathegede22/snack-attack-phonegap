@@ -3,7 +3,9 @@
 		%h3.m-t30.m-b30 Best deals for today
 		.panel.panel-default.offers-panel
 			.panel-heading.offers-heading
-				%h4 Zoomcar Flash deals:
+				%h4.white
+					Zoomcar Flash deals:
+					%span.pull-right #{(Time.now+1.hour).strftime("%a %d-%b-%Y %I:%M %p %H")}
 			.panel-body.offer-panel-body
 				.col-md-12.inline-block.p-b30
 					.col-md-6.pull-left
@@ -38,16 +40,16 @@
 							.col-md-8.border-b-c.p-0.p-l35.location_icon
 								.size-13.p-b5.p-t5.light-grey
 									%span.text-up
-										Pickup location_icon
+										Pickup location
 									.zoom-b.f-b.size-12.m-t5
 										Pimple Saudagar (Kokane Chowk)
 										%span.size-11.help.pointer{:title => ""}
 											(view map)
 							.col-md-8.p-0
-								.col-md-4
-									%h4.t-c.size-14.m-t20.strike-text.lgrey Rs. 2000
-								.col-md-8.p-r0
-									%h4.t-c.fo-helv.f-b.size-26.m-t10 Rs. 5000
+								.col-md-6
+									%h4.t-c.size-18.m-t15.strike-text Rs. 2000
+								.col-md-6
+									%h4.t-c.fo-helv.f-b.size-26.m-t10.red Rs. 5000
 					.col-md-6.pull-right
 						.each-car-offer.r-3
 							.col-md-4.border-r-c
@@ -80,16 +82,16 @@
 							.col-md-8.border-b-c.p-0.p-l35.location_icon
 								.size-13.p-b5.p-t5.light-grey
 									%span.text-up
-										Pickup location_icon
+										Pickup location
 									.zoom-b.f-b.size-12.m-t5
 										Pimple Saudagar (Kokane Chowk)
 										%span.size-11.help.pointer{:title => ""}
 											(view map)
 							.col-md-8.p-0
-								.col-md-4
-									%h4.t-c.size-14.m-t20.strike-text.lgrey Rs. 2000
-								.col-md-8.p-r0
-									%h4.t-c.fo-helv.f-b.size-26.m-t10 Rs. 5000
+								.col-md-6
+									%h4.t-c.size-18.m-t15.strike-text Rs. 2000
+								.col-md-6
+									%h4.t-c.fo-helv.f-b.size-26.m-t10.red Rs. 5000
 				.col-md-12.inline-block
 					.col-md-6.pull-left
 						.each-car-offer.r-3
@@ -123,18 +125,19 @@
 							.col-md-8.border-b-c.p-0.p-l35.location_icon
 								.size-13.p-b5.p-t5.light-grey
 									%span.text-up
-										Pickup location_icon
+										Pickup location
 									.zoom-b.f-b.size-12.m-t5
 										Pimple Saudagar (Kokane Chowk)
 										%span.size-11.help.pointer{:title => ""}
 											(view map)
 							.col-md-8.p-0
-								.col-md-4
-									%h4.t-c.size-14.m-t20.strike-text.lgrey Rs. 2000
-								.col-md-8.p-r0
-									%h4.t-c.fo-helv.f-b.size-26.m-t10 Rs. 5000
+								.col-md-6
+									%h4.t-c.size-18.m-t15.strike-text Rs. 2000
+								.col-md-6
+									%h4.t-c.fo-helv.f-b.size-26.m-t10.red Rs. 5000
 					.col-md-6.pull-right
 						.each-car-offer.r-3
+							.sold-out-tag
 							.col-md-4.border-r-c
 								= image_tag("cars/10small.jpg", :alt => "")
 								.fl.p-t5.p-b10
@@ -142,7 +145,7 @@
 										Scorpio LX
 									.size-14.m-t5.lgrey
 										7 Seater
-										.button.m-t10
+										.button.disable-btn.m-t10
 											Book
 							.col-md-8.border-b-c.p-0
 								.col-md-6
@@ -165,16 +168,16 @@
 							.col-md-8.border-b-c.p-0.p-l35.location_icon
 								.size-13.p-b5.p-t5.light-grey
 									%span.text-up
-										Pickup location_icon
+										Pickup location
 									.zoom-b.f-b.size-12.m-t5
 										Pimple Saudagar (Kokane Chowk)
 										%span.size-11.help.pointer{:title => ""}
 											(view map)
 							.col-md-8.p-0
-								.col-md-4
-									%h4.t-c.size-14.m-t20.strike-text.lgrey Rs. 2000
-								.col-md-8.p-r0
-									%h4.t-c.fo-helv.f-b.size-26.m-t10 Rs. 5000
+								.col-md-6
+									%h4.t-c.size-18.m-t15.strike-text Rs. 2000
+								.col-md-6
+									%h4.t-c.fo-helv.f-b.size-26.m-t10.red Rs. 5000
 		.shadow_line
 		.offers-terms-condition
 			%h4.fo-helv Terms and Conditions:
