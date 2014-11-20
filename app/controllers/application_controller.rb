@@ -9,10 +9,12 @@ class ApplicationController < ActionController::Base
   before_filter :check_mobile
   before_filter :check_ref
   before_filter :authenticate_staging
+  force_ssl if: :check_ssl?
 
-  # def abtest?
-  #   !cookies[:abtestd].blank?
-  # end
+  # => Checks if A/B test cookies are set and renders the checkout page accordingly
+  def abtest?
+    return cookies[:abtestf].present?
+  end
 
   def check_city
     # Checking explicit city in the url
@@ -20,7 +22,7 @@ class ApplicationController < ActionController::Base
     city = params[:city]
     if city
       city = city.downcase
-      @cityp = City.lookup(city)
+      @cityp = City.lookup_all(city)
     end
     
     # Fallback ip detect
@@ -37,7 +39,7 @@ class ApplicationController < ActionController::Base
 	    end
     end
     if city_prompt
-    	@city = City.lookup(city.downcase)
+    	@city = City.lookup_all(city.downcase)
     else
     	set_cookies_ref(city)
 		end
@@ -99,6 +101,10 @@ class ApplicationController < ActionController::Base
     end
   end
   
+  def check_ssl?
+    (Rails.env.production? || Rails.env.staging?) && params['controller'] == 'bookings' && (params['action'] == 'checkout' || params['action'] == 'show')
+  end
+
   def check_ubid
   	# Assigning unique browser id
   	if session[:ubid].blank?
@@ -157,7 +163,7 @@ class ApplicationController < ActionController::Base
 	def set_cookies_ref(city)
     session[:city] = city.downcase
     cookies[:city] = {:value => city.downcase, :expires => 10.years.from_now, :domain => "." + HOSTNAME.split(':').first.gsub("www.", '')}
-    @city = City.lookup(city.downcase)
+    @city = City.lookup_all(city.downcase)
   end
   
 end

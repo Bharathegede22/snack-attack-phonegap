@@ -1,0 +1,22 @@
+- pricing = @object.active_pricing(@city.id)
+%h2 Tariff
+%table.table.table-bordered
+	%tr
+		%th
+		%th Tariff
+		%th Free Kms
+	%tr
+		%td 
+			%b Hourly
+		%td ₹#{show_currency(pricing.hourly_discounted)} / hour
+		%td #{pricing.hourly_kms} Kms / hour
+	%tr
+		%td 
+			%b Daily
+		%td ₹#{show_currency(pricing.daily_discounted)} / day
+		%td #{pricing.daily_kms} Kms / day
+.t-c
+	Please visit our 
+	%b
+		%a{href: "/#{@city.name.downcase}/tariff"} tariff page 
+	for complete information

@@ -1,182 +1,189 @@
-.topsection_content
+.position-r
 	.wrapper
-		.col-md-6.pull-left
-			%h1.zoom-b.size-34.m-t0.m-b3
-				AB DILLI DOOR NAHIN!
-			%h2.size-22.zoom-b.m-t0 Zoomcar's launching in Delhi-NCR soon.
-			.content_description
-				%h2.size-22.m-t30 What is Zoomcar?		
-				%P.size-18 
-					Zoomcar is a Self-Drive car rental service with many locations across a city, and we’re coming soon to your neighborhood. We save you the cost and hassle of owning a car while giving you all the good parts: 
-					%b convenience, 
-					%b mobility, 
-					and 
-					%b independence.
-				%p.size-18 
-					Sold yet?
-					%span.zoom.size-18.f-b{:href => ""} Sign up now and get 20% off on your first booking.
-		.col-md-6.pull-right.sign_form.r-5
-			- @user ||= User.new
-			#SignupDiv
-				%h4.zoom 
-					Sign Up
-					%span.size-14.pull-right (Sign up now and get 20% off)
-				.offer_icon
-				.login.t-c
-					%table.m-auto
-						%tr
-							%td.p-5
-								%a.facebook{:href => "#{user_omniauth_authorize_path(:facebook)}", :onclick => "newUserSessionEvent(window.location.pathname, 'Sign Up', 'Facebook');"}
-									.txt Sign up with Facebook
-							%td.p-5
-								%a.gplus{:href => "#{user_omniauth_authorize_path(:google_oauth2)}", :onclick => "newUserSessionEvent(window.location.pathname, 'Sign Up', 'Google+');"}
-									.txt Sign up with Google+
-					%br/
-					&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; OR &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;
-					%br/
-					%br/
-					- if !current_user.nil?
-						- flash[:notice]="test goes here"
-					- render_flash
-					%form{:id => "LoginForm", :onsubmit => "return SubmitForm(this,'#{registration_path(:user)}','SignupDiv');", :action => "return false;", "data-ajax" => "false"}
-						.form-horizontal
-							.row.form-group
-								.col-sm-4.t-r
-									%label.control-label Email
-								.col-sm-7
-									%input#LoginEmail.validate-presence.form-control{name: 'user[email]', type: "text", value: resource.email, :onclick => "newUserSessionEvent(window.location.pathname, 'Sign Up', 'Email');"}
-									#LoginEmailError.error.t-l
-										= errortxt(@user.errors[:email].uniq.join(', '))
-							.row.form-group
-								.col-sm-4.t-r
-									%label.control-label Password
-								.col-sm-7
-									%input#LoginPass.validate-presence.form-control{name: "user[password]", type: "password", value: resource.password, :onclick => "newUserSessionEvent(window.location.pathname, 'Sign Up', 'Password');"}
-									#LoginPassError.error.t-l
-										= errortxt(@user.errors[:password].uniq.join(', '))
-							%input#LoginCity.form-control{name: "user[city_id]", type: "hidden", value: City.where(:name => "Delhi").first.id, :onclick => "newUserSessionEvent(window.location.pathname, 'Sign Up', 'City Id');"}
-							.row.form-group
-								.col-sm-4.t-r
-									%label.control-label Confirm Password
-								.col-sm-7
-									%input#LoginPassConfirm.validate-presence.form-control{name: "user[password_confirmation]", type: "password", :onclick => "newUserSessionEvent(window.location.pathname, 'Sign Up', 'Confirm Password');"}
-									#LoginPassConfirmError.error.t-l
-										= errortxt(@user.errors[:password_confirmation].join(', '))
-							.row
-								.col-sm-3.col-sm-offset-1
-								.col-sm-4.t-c
-									#LoginSubmit
-										= submit_tag "Submit", :class => 'btn btn-default btn-lg', :onclick => "newUserSessionEvent(window.location.pathname, 'Sign Up', 'Submit');"
-									#LoginWait.p-5.hide
-										.wait
-.shadow_line
-.delhi_gate_bg
-.signup_form_section
-	.wrapper
-		.col-md-6.pull-left
-			.services_content
-				.each_service
-					.col-md-2
-						.fuel-icon
-					.col-md-10
-						%h4.size-17 Our prices include fuel, insurance, gps, and taxes!
-				%hr
-				.each_service
-					.col-md-2
-						.rent-icon
-					.col-md-10
-						%h4.size-17 Rent by the hour, day, week, or month.
-		.col-md-6.pull-right
-			.services_content
-				.each_service
-					.col-md-2
-						.car-icon
-					.col-md-10
-						%h4.size-17 We have a wide range of cars: SUV, luxury, sedan,	hatchback, ...
-				%hr
-				.each_service
-					.col-md-2
-						.click-icon
-					.col-md-10
-						%h4.size-17
-							There’s more! Click 
-							%a{href: "/howitworks"}here 
-							to find out
-.shadow_line
-.signup-content
-	.wrapper
-	.reviews.delhi_reviews
-		#delhiReviewSlider.carousel.slide{'data-ride' => "carousel", 'data-interval' => '40000', 'data-pause' => 'hover'}
-			.carousel-inner
-				.item.col-md-12.delhi_reviews_item.active
-					.col-md-2.pull-left
-						.car8
-					.col-md-10.pull-right
-						%h4.size-20 Grab Meals
-						.reviewtext
-							%span.lquote &nbsp;&nbsp;&nbsp;
-							Loved that my wife and I could just walk over to the Zoomcar location, grab the Honda City, and go out for a lovely dinner!”	
-							%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							%b.black - Manu C.
-				.item.col-md-12.delhi_reviews_item.week
-					.col-md-2.pull-left
-						.car1
-					.col-md-10.pull-right
-						%h4.size-20 Whirlwind Business Week
-						.reviewtext
-							%span.lquote &nbsp;&nbsp;&nbsp;
-							I was in the city for work and booked a Zoomcar for a week. Not only was I able to attend meetings around the city but had the flexibility after work to visit my favorite places and meet friends.	
-							%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							%b.black - Ashu P.
-				.item.col-md-12.delhi_reviews_item.mall
-					.col-md-2.pull-left
-						.car12
-					.col-md-10.pull-right
-						%h4.size-20 Drive to Malls and Movies
-						.reviewtext
-							%span.lquote &nbsp;&nbsp;&nbsp;
-							All five of us could travel together, instead of split over multiple autos. Saw a movie, shopped at the mall. Very happy that Zoomcar is in my city.	
-							%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							%b.black - Jaswant S.
-				.item.col-md-12.delhi_reviews_item.loved
-					.col-md-2.pull-left
-						.car7
-					.col-md-10.pull-right
-						%h4.size-20 Drive With Loved Ones
-						.reviewtext
-							%span.lquote &nbsp;&nbsp;&nbsp;
-							My parents were coming to visit and I didn’t want them to take an auto, nor did I want the 3 of us to ride on my bike. I picked them up in an Ecosport and showed them around the city in AC comfort!
-							%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							%b.black - Andrew J.
-				.item.col-md-12.delhi_reviews_item.needthem
-					.col-md-2.pull-left
-						.car1
-					.col-md-10.pull-right
-						%h4.size-24 Cars When You Need Them
-						.reviewtext
-							%span.lquote &nbsp;&nbsp;&nbsp;
-							Made a plan to drive out to a highway café at 11pm. By 2 am we were already there. The experience with Zoomcar has been excellent.
-							%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							%b.black - Bala K.
-				.item.col-md-12.delhi_reviews_item.outstation
-					.col-md-2.pull-left
-						.car10
-					.col-md-10.pull-right
-						%h4.size-24 Go Outstation
-						.reviewtext
-							%span.lquote &nbsp;&nbsp;&nbsp;
-							Roadtrip to Goa!!!	
-							%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							%b.black - Aalia T.
-				.item.col-md-12.delhi_reviews_item.adventure
-					.col-md-2.pull-left
-						.car9
-					.col-md-10.pull-right
-						%h4.size-24 Have An Adventure
-						.reviewtext
-							%span.lquote &nbsp;&nbsp;&nbsp;
-							Saw the sun rise at Nandi Hills with a cup of chai before work! Only in a Zoomcar.
-							%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							%b.black - Mithun R.
-			%a.left.carousel-control{"data-slide" => "prev", :href => "#delhiReviewSlider", :role => "button"}
-			%a.right.carousel-control{"data-slide" => "next", :href => "#delhiReviewSlider", :role => "button"}
+		.topsection_content
+			.col-md-6.pull-left.p-0.p-t10
+				%h2.zoom-b.size-34.m-t0.m-b3
+					AB DILLI DOOR NAHIN!
+				.size-20.zoom-b.f-b.h1
+					%h1.size-20.zoom-b
+						Launching
+						= @city.h1
+						Soon
+				.content_description
+					%h2.size-22.m-t30 What is Zoomcar?		
+					%P.size-18 
+						Zoomcar is a Self-Drive car rental service with many locations across a city, and we’re coming soon to your neighborhood. We save you the cost and hassle of owning a car while giving you all the good parts: 
+						%b convenience, 
+						%b mobility, 
+						and 
+						%b independence.
+					%p.size-18 
+						Not sold yet?
+						%br/
+						%span.zoom.size-18.f-b Sign up now and get 20% off on your first booking
+						%br/
+			.col-md-6.pull-right.sign_form.r-5
+				- @user ||= User.new
+				#SignupDiv
+					%h4.zoom 
+						Sign Up
+						%span.size-14.pull-right (Sign up now and get 20% off)
+					.offer_icon
+					.login.t-c
+						%table.m-auto
+							%tr
+								%td.p-5
+									%a.facebook{:href => "#{user_omniauth_authorize_path(:facebook)}", :onclick => "newUserSessionEvent(window.location.pathname, 'Sign Up', 'Facebook');"}
+										.txt Sign up with Facebook
+								%td.p-5
+									%a.gplus{:href => "#{user_omniauth_authorize_path(:google_oauth2)}", :onclick => "newUserSessionEvent(window.location.pathname, 'Sign Up', 'Google+');"}
+										.txt Sign up with Google+
+						%br/
+						&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; OR &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;
+						%br/
+						%br/
+						- if !current_user.nil?
+							- render_flash
+						%form{:id => "LoginForm", :onsubmit => "return SubmitForm(this,'#{registration_path(:user)}','SignupDiv');", :action => "return false;", "data-ajax" => "false"}
+							.form-horizontal
+								.row.form-group
+									.col-sm-4.t-r
+										%label.control-label Email
+									.col-sm-7
+										%input#LoginEmail.validate-presence.form-control{name: 'user[email]', type: "text", value: resource.email, :onclick => "newUserSessionEvent(window.location.pathname, 'Sign Up', 'Email');"}
+										#LoginEmailError.error.t-l
+											= errortxt(@user.errors[:email].uniq.join(', '))
+								.row.form-group
+									.col-sm-4.t-r
+										%label.control-label Password
+									.col-sm-7
+										%input#LoginPass.validate-presence.form-control{name: "user[password]", type: "password", value: resource.password, :onclick => "newUserSessionEvent(window.location.pathname, 'Sign Up', 'Password');"}
+										#LoginPassError.error.t-l
+											= errortxt(@user.errors[:password].uniq.join(', '))
+								%input#LoginCity.form-control{name: "user[city_id]", type: "hidden", value: City.where(:name => "Delhi").first.id, :onclick => "newUserSessionEvent(window.location.pathname, 'Sign Up', 'City Id');"}
+								.row.form-group
+									.col-sm-4.t-r
+										%label.control-label Confirm Password
+									.col-sm-7
+										%input#LoginPassConfirm.validate-presence.form-control{name: "user[password_confirmation]", type: "password", :onclick => "newUserSessionEvent(window.location.pathname, 'Sign Up', 'Confirm Password');"}
+										#LoginPassConfirmError.error.t-l
+											= errortxt(@user.errors[:password_confirmation].join(', '))
+								.row
+									.col-sm-3.col-sm-offset-1
+									.col-sm-4.t-c
+										#LoginSubmit
+											= submit_tag "Submit", :class => 'btn btn-default btn-lg', :onclick => "newUserSessionEvent(window.location.pathname, 'Sign Up', 'Submit');"
+										#LoginWait.p-5.hide
+											.wait
+			.fc
+			.shadow_line
+		.signup_form_section
+			.col-md-6.pull-left
+				.services_content
+					.each_service
+						.col-md-2
+							.fuel-icon
+						.col-md-10
+							%h4.size-17.p-t8 Our prices include fuel, insurance, gps, and taxes!
+					%hr
+					.each_service
+						.col-md-2
+							.rent-icon
+						.col-md-10
+							%h4.size-17.p-t15 Rent by the hour, day, week, or month.
+			.col-md-6.pull-right
+				.services_content
+					.each_service
+						.col-md-2
+							.car-icon
+						.col-md-10
+							%h4.size-17.p-t8 We have a wide range of cars: SUV, luxury, sedan,	hatchback, ...
+					%hr
+					.each_service
+						.col-md-2
+							.click-icon
+						.col-md-10
+							%h4.size-17.p-t15
+								There’s more! Click 
+								%a{href: "/howitworks"}here 
+								to find out
+			.fc
+			.shadow_line
+		.signup-content.p-b30
+			.reviews.delhi_reviews
+				#delhiReviewSlider.carousel.slide{'data-ride' => "carousel", 'data-interval' => '40000', 'data-pause' => 'hover'}
+					.carousel-inner
+						.item.col-md-12.delhi_reviews_item.active
+							.col-md-2.pull-left
+								.car8
+							.col-md-8
+								%h4.size-20 Grab Meals
+								.reviewtext
+									%span.lquote &nbsp;&nbsp;&nbsp;
+									Loved that my wife and I could just walk over to the Zoomcar location, grab the Honda City, and go out for a lovely dinner!”	
+									%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									%b.black - Manu C.
+						.item.col-md-12.delhi_reviews_item.week
+							.col-md-2.pull-left
+								.car1
+							.col-md-8
+								%h4.size-20 Whirlwind Business Week
+								.reviewtext
+									%span.lquote &nbsp;&nbsp;&nbsp;
+									I was in the city for work and booked a Zoomcar for a week. Attended meetings around the city, visited my favorite places, and met friends.
+									%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									%b.black - Ashu P.
+						.item.col-md-12.delhi_reviews_item.mall
+							.col-md-2.pull-left
+								.car12
+							.col-md-8
+								%h4.size-20 Drive to Malls and Movies
+								.reviewtext
+									%span.lquote &nbsp;&nbsp;&nbsp;
+									All 5 of us could travel together, instead of split over multiple autos.Saw a movie, shopped at the mall. Very happy Zoomcar is in my city.	
+									%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									%b.black - Jaswant S.
+						.item.col-md-12.delhi_reviews_item.loved
+							.col-md-2.pull-left
+								.car7
+							.col-md-8
+								%h4.size-20 Drive With Loved Ones
+								.reviewtext
+									%span.lquote &nbsp;&nbsp;&nbsp;
+									My parents were coming to visit and I didn’t want them to take an auto or ride on my bike. I picked them up in an Ecosport and showed them around the city in AC comfort!
+									%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									%b.black - Andrew J.
+						.item.col-md-12.delhi_reviews_item.needthem
+							.col-md-2.pull-left
+								.car1
+							.col-md-8
+								%h4.size-24 Cars When You Need Them
+								.reviewtext
+									%span.lquote &nbsp;&nbsp;&nbsp;
+									Made a plan to drive out to a highway café at 11pm. By 2 am we were already there. The experience with Zoomcar has been excellent.
+									%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									%b.black - Bala K.
+						.item.col-md-12.delhi_reviews_item.outstation
+							.col-md-2.pull-left
+								.car10
+							.col-md-8
+								%h4.size-24 Go Outstation
+								.reviewtext
+									%span.lquote &nbsp;&nbsp;&nbsp;
+									Roadtrip to Goa!!!	
+									%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									%b.black - Aalia T.
+						.item.col-md-12.delhi_reviews_item.adventure
+							.col-md-2.pull-left
+								.car9
+							.col-md-8
+								%h4.size-24 Have An Adventure
+								.reviewtext
+									%span.lquote &nbsp;&nbsp;&nbsp;
+									Saw the sun rise at Nandi Hills with a cup of chai before work! Only in a Zoomcar.
+									%span.rquote &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									%b.black - Mithun R.
+					%a.left.carousel-control{"data-slide" => "prev", :href => "#delhiReviewSlider", :role => "button"}
+					%a.right.carousel-control{"data-slide" => "next", :href => "#delhiReviewSlider", :role => "button"}
+	.wrapper.position-a{style: "height: 300px; bottom:0; right:50%; z-index:-1;margin-right: -477px"}
+		.position-a{style: "background:url(#{asset_path 'cities/' + @city.name.downcase + '.png'}) no-repeat left bottom; width:500px; height: 450px; bottom:0; background-size: 29em;"}

@@ -1,6 +1,5 @@
 = render :partial => '/bookings/pg/thanks'
 .hide
-	%iframe{src: "https://ssl.vizury.com/analyze/analyze.php?account_id=VIZVRM2380&param=e500&orderid=#{@booking.confirmation_key}&orderprice=#{@booking.total_fare}&pid1=#{@booking.cargroup.display_name.delete(' ')}&catid1=#{@booking.city.name}&section=1&level=1", scrolling:"no", width:"1", height:"1", marginheight:"0", marginwidth:"0", frameborder:"0"}
 	- if !session[:ref_immediate].blank?
 		- if session[:ref_immediate].downcase.include?('af_tt_')
 			%iframe{src: "http://trootrac.in/p.ashx?o=10364&p=1&t=#{@booking.confirmation_key}", height:"1", width:"1", frameborder:"0"}
@@ -32,7 +31,7 @@
 		var google_conversion_label = "WzjPCOmI-wcQh-n14AM";
 		var google_conversion_value = 0;
 		var google_remarketing_only = false;
-
+		
 		var fb_param = {};
 		fb_param.pixel_id = '6012188478130';
 		fb_param.value = "#{@booking.total_fare.to_i}";
@@ -55,7 +54,7 @@
 			"Karnataka", 
 			"India"
 		]);
-
+		
 		_gaq.push(['_addItem',
 			"#{@booking.confirmation_key}", 
 			"#{cargroup.encoded_id}", 
@@ -65,4 +64,5 @@
 			"1"
 		]);
 		_gaq.push(['_trackTrans']);
+		_gaq.push(['_trackEvent', "1-click checkout", "Booking Done", "Squirrel"]);
 	%script{type: "text/javascript", src: "//www.googleadservices.com/pagead/conversion.js"}

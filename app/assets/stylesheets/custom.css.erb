@@ -56,11 +56,11 @@ a {
 }
 
 .nav-buffer {
-	height:60px;
+	height:62px;
 }
 
 .nav-buffer-big {
-	height:100px;
+	height:98px;
 }
 
 .navbar .logo {
@@ -481,7 +481,7 @@ a {
 	cursor:auto;
 }
 
-.search-header .arrw, .vertical-widget .arrw, .widget-hor .arrw {
+.search-header .arrw, .vertical-widget .arrw, .widget-hor .arrw, .arrw {
 	background:url(<%= asset_path 'r.png' %>) no-repeat;
 	background-position:-270px -80px;
 	width:20px;
@@ -1809,9 +1809,8 @@ a {
 	color: #323a45;
 	text-decoration: none;
 	display:block;
-	width:78px;
 	float:left;
-	padding:15px 0;
+	padding:15px;
 	text-align:center;
 	font-size: 12px;
 }
@@ -2062,7 +2061,25 @@ a {
 	background: url(<%= asset_path 'duration.png' %>) 8px 13px no-repeat;
 }
 .ribbon {
+	position: absolute;
+	left: -10px;
+	right: -10px;
+}
+.ribbon-tl, .ribbon-tr, .ribbon-bl, .ribbon-br {
+	position: absolute;
+	background: url(<%= asset_path 'ribbon-hold.png' %>) no-repeat;
+	display: block;
+	width: 10px;
+	height: 8px;
+}
+.ribbon-tl { background-position: 0 0; top: -8px; left: 0;}
+.ribbon-tr { background-position: -10px 0; top: -8px; right: 0;}
+.ribbon-bl { background-position: 0 -8px; bottom: -8px; left: 0; }
+.ribbon-br { background-position: -10px -8px; bottom: -8px; right: 0; }
 
+.ribbon-after {
+	display: block;
+	height: 46px;
 }
 
 .summary-cell {
@@ -2071,6 +2088,10 @@ a {
 	box-sizing: border-box;
 }
 .tariff-details {
+	width: 480px;
+	margin-top: -10px;
+}
+.payment-options {
 	width: 480px;
 	margin-top: -10px;
 }
@@ -2286,12 +2307,89 @@ a {
 	background-position: 0px -62px;
 }
 
+/* Payment Options */
+#payment-partial {
+	background: #F2F2F2;
+}
+#payment-tabs a {
+	font-size: 13px;
+	font-weight: bold;
+	color: #323A45;
+	text-decoration: none;
+	width: 140px;
+	text-align: left;
+	padding: 15px;
+	background: #F2F2F2;
+	border-bottom: 1px solid #D8D8D8;
+	border-right: 1px solid #D8D8D8;
+}
+#payment-tabs a:hover {
+	background: #EAEBEC;
+}
+#payment-tabs a.active {
+	background: #FFF;
+	border-right: none;
+}
+#payment-body {
+	background: #FFF;
+	padding: 10px 30px;
+	width: 340px;
+}
 
-
+.credit-card-number, .credit-card-name {
+	width: 100%;
+}
+.card-number-bg {
+	background: #FFF url(<%= asset_path 'all-cards.png' %>) no-repeat 98% 50%;
+}
+/*.credit-card-month, .credit-card-year {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    overflow: hidden;
+    background: #fafafa url(<%= asset_path 'dropdown.png' %>) no-repeat 90% 50%;
+}*/
+.credit-card-month { width: 50px; }
+.credit-card-year { width: 70px; }
+/*.credit-card-month-2 select, .credit-card-year select {
+    padding: 5px;
+    width: 130%;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    background-image: none;
+    -webkit-appearance: none;
+}*/
+.credit-card-cvv {
+	width: 50px;
+}
+.amex {
+	background: url(<%= asset_path 'amex.png' %>) no-repeat 98% 50%;
+}
+.dinersclub {
+	background: url(<%= asset_path 'dinersclub.png' %>) no-repeat 98% 50%;
+}
+.maestro {
+	background: url(<%= asset_path 'maestro.png' %>) no-repeat 98% 50%;
+}
+.mastercard {
+	background: url(<%= asset_path 'mastercard.png' %>) no-repeat 98% 50%;
+}
+.visa {
+	background: url(<%= asset_path 'visa.png' %>) no-repeat 98% 50%;
+}
+.generic {
+	background: url(<%= asset_path 'generic.png' %>) no-repeat 98% 50%;
+}
+.credit-card-error {
+	border: 2px solid #dd0000;
+}
+.debit-card-info {
+	background-color:transparent;
+	color:#000000;
+	outline:0;
+}
 
 /* =============== Old Tariff page CSS changes ==============*/ 
-
-
 .tariff_old_sideboxes {
 	display: none;
 }
@@ -2422,6 +2520,7 @@ a {
     margin-top: 10px;
     margin-right: 31px;
     float: left;
+    overflow: hidden;
 }
 
 p.status-tag {
@@ -2569,9 +2668,11 @@ button.delete {
     text-align: center !important;
 }
 
-.ajax-file-upload-statusbar, .block-2 {
+.block-2 {
     display: none;
 }
+
+
 
 .pre_uploaded-img-wrapper:hover .block-2 {
     display: block;
@@ -2649,16 +2750,23 @@ button.delete {
     font-weight: bold;  
 }
 
-.status1-warning, .status3-warning {
+.status1-warning {
     display: none;
     color: #908F8F;
     width: 102%;
     font-size: 13px;
 }
 
+.status3-warning {
+    display: none;
+    color: #CD0505;
+    width: 102%;
+    font-size: 13px;
+}
+
 .status0-moreThan-sixHrs, .status0-lessThan-sixHrs {
 	font-size: 13px;
-	color: #939492;
+	color: #CD0505;
 }
 
 #app-links-block {
@@ -2714,8 +2822,7 @@ button.delete {
 }
 
 .ajax-file-upload-error {
-    display: none;
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
 .ajax-file-upload-green:before {
@@ -2731,5 +2838,24 @@ button.delete {
 		padding-top: 0
 }
 
+/*.ajax-file-upload-statusbar {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	background: url(<%= asset_path 'loading_image.gif' %>) no-repeat;
+	background-position: center;
+	opacity: 0.7;
+	margin-top: -105px;
+	margin-left: -15px;
+}
 
-*/*/
+.ajax-file-upload-statusbar {
+	display: block;
+}
+*/
+
+.ajax-file-upload-statusbar {
+	display: none;
+}
+
+/*/
