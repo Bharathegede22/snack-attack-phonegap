@@ -2,6 +2,7 @@ class Payment < ActiveRecord::Base
 	
 	belongs_to :booking
 	has_one :wallet, as: :transferable
+    has_one :activity, as: :transferred_via
 
 	validates :booking_id, :through, :amount, presence: true
 	#validates :through, uniqueness: {scope: [:booking_id, :key]}
@@ -322,12 +323,15 @@ class Payment < ActiveRecord::Base
 				b.notes += "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs." + self.amount.to_s + " - Payment Received through <u>" + self.through_text + "</u>.<br/>"
 				b.save(:validate => false)
 				Booking.recalculate(b.id)
-				if self.through.in? ['citruspay', 'payu', 'juspay'] #TODO - move PG array to CommonHelper
+        activities_params = {user_id: b.user_id, booking_id: b.id, transferred_via: self}
+        if self.through.in? ['citruspay', 'payu', 'juspay'] #TODO - move PG array to CommonHelper
 					wallet_amount = (b.outstanding_without_deposit + self.amount)>=0 ? b.outstanding_without_deposit.abs : self.amount
 					if wallet_amount != 0 && b.wallet_security_payment.nil?
-							b.add_security_deposit_to_wallet(wallet_amount)
-							self.update_column(:deposit_available_for_refund, wallet_amount)
-							self.update_column(:deposit_paid, wallet_amount)
+						b.add_security_deposit_to_wallet(wallet_amount)
+            extra_params = {activity: Activity::ACTIVITIES[:security_deposit_paid], amount: wallet_amount}
+            log_activity(activities_params.merge(extra_params))
+						self.update_column(:deposit_available_for_refund, wallet_amount)
+						self.update_column(:deposit_paid, wallet_amount)
 					end
 					if !b.defer_payment_allowed?
 						b.add_security_deposit_charge
@@ -337,11 +341,21 @@ class Payment < ActiveRecord::Base
 						b.make_payment_from_wallet
 					end
 				end
+        if b.defer_deposit?
+          activities_params.delete(:amount) if !activities_params[:amount].nil?
+          activities_params[:activity] = Activity::ACTIVITIES[:defer_deposit]
+          log_activity(activities_params)
+        end
 				BookingMailer.payment(b.id).deliver if old_status==0
 			end
-
 		end
 	end
+
+  private
+
+  def log_activity(params)
+    Activity.create_activity(params)
+  end
 	
 end
 
