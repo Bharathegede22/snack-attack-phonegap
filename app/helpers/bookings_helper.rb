@@ -47,7 +47,10 @@ module BookingsHelper
     
   end
 
-  def updated_params(params)  
+  def updated_params(params)
+    if params[:promo].blank? && session[:promo_code].present?
+      params[:promo] = session[:promo_code]
+    end
     params[:city] = @city.name
     params[:auth_token] = @current_user.authentication_token
     params[:starts] = Time.zone.parse(session[:book][:starts]) if !session[:book].blank? && !session[:book][:starts].blank?

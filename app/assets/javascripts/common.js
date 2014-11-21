@@ -99,12 +99,14 @@ function getValue(rawValue){
 function updateCheckoutAmount(credits_new, credits_old, promo_new, promo_old){
 	var total_amount_raw = $("#final_amount_to_pay").html();
 	var total_amount = parseInt(total_amount_raw.replace(/[, ]+/g, "").trim());
+	
 	if (credits_new != credits_old){
-		document.getElementById("final_amount_to_pay").innerHTML = total_amount - (credits_new - credits_old);
+		total_amount = total_amount - (credits_new - credits_old);
 	}
 	if (promo_new != promo_old){
-		document.getElementById("final_amount_to_pay").innerHTML = total_amount - (promo_new - promo_old);
+		 total_amount = total_amount - (promo_new - promo_old);
 	}
+	document.getElementById("final_amount_to_pay").innerHTML = total_amount
 }
 
 function bindCountry() {
