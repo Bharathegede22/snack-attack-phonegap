@@ -19,7 +19,7 @@
 				%b Credits 
 			.col-md-8.text-right.rmpad
 				%b.credit_amount - ₹ 
-				%span.credits_usable_amt #{session[:credits]}
+				%span.credits_usable_amt#creditsUsed #{session[:credits]}
 			.cancel_creditBtn
 				%form#PromoForm{:action => "javascript:void(0)", "data-ajax" => "false", :onsubmit => "return formCredits(this,'/bookings/promo','PromoCreditsDiv');"}
 					%input#removeCredits.form-control{name: 'remove_credits', type: "hidden", value: "1" }
@@ -32,35 +32,3 @@
 				/ 	X
 		.promoCode_condition_block_whenApplied
 			%i.promoCode_condition Promo Codes are not applicable on Blackout Days.
-:javascript
-	function checkNextJquery() {
-		if (window.jQuery) {
-
-			//var avail_credits = {session[:credits]};   
-			var avail_credits = #{session[:credits].to_i};
-			//var payable_amt = $("#final_amount_to_pay").html();
-			//var payable_amt_int = parseInt(payable_amt.replace(/[, ]+/g, "").trim());
-
-			//var credits_final_amt = payable_amt_int;
-
-			$("#use_credit").click(function (){
-					var getTotal3 = $("#final_amount_to_pay").html();  //final amount display on page
-					
-					var grand_total3 = parseInt(getTotal3.replace(/[, ]+/g, "").trim());
-					credits_final_amt = grand_total3 - avail_credits;
-
-					document.getElementById("final_amount_to_pay").innerHTML = credits_final_amt;
-			});
-
-			$(".cancel_credit").click(function (){
-			  var getTotal4 = $("#final_amount_to_pay").html();  //final amount display on page
-				var grand_total4 = parseInt(getTotal4.replace(/[, ]+/g, "").trim());
-				credits_final_amt = grand_total4 + avail_credits;
-				document.getElementById("final_amount_to_pay").innerHTML = credits_final_amt;
-			});
-
-			} else {
-				window.setTimeout(checkNextJquery, 1000);
-			}
-		}
-			checkNextJquery();

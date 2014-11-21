@@ -56,10 +56,11 @@ module BookingsHelper
     params[:cargroup_id] = session[:book][:car] if !session[:book].blank? && !session[:book][:car].blank?
     params[:ref_initial] = session[:ref_initial] if !session[:ref_initial].blank?
     params[:ref_immediate] = session[:ref_immediate] if !session[:ref_immediate].blank?
-    if session[:credits_applied] || params[:apply_credits].present?
+
+    if session[:credits_applied] || params[:apply_credits].to_i == 1
       params[:credits_applied] = 1
-      params[:remove_credits] = true if params[:remove_credits].present?
-      params[:apply_credits] = true if params[:apply_credits].present?
+      params[:credits_applied] = 0 if params[:remove_credits].to_i == 1
+      params[:credits_applied] = 1 if params[:apply_credits].to_i == 1
     end
 
     params[:platform] = "web"
@@ -69,17 +70,20 @@ module BookingsHelper
   def update_sessions(args)
     promo = args["promo"]
     credits = args['credits']
-    session[:promo_message] = promo["message"] if promo["message"].present?
-    session[:promo_valid] = promo["valid"]
-    if promo["code"].present? && promo["valid"] == true
+
+    session[:promo_message] = promo["message"] if promo.present? && promo["message"].present?
+    session[:promo_valid] = promo.present? && promo["valid"]
+    if promo.present? && promo["code"].present? && promo["valid"] == true
       session[:promo_code] = promo["code"] if promo["code"].present?
       session[:promo_discount] = promo["discount"] if promo["discount"].present?
       session[:promo_offer_id] = promo["offer_id"] if promo["offer_id"].present?
       session[:promo_coupon_id] = promo["coupon_id"] if promo["coupon_id"].present?
     end
 
-    session[:credits_applied] = credits["is_credit_applied"].to_i == 1
-    session[:credits] = session[:credits_applied] ? credits["credit_applied"] : nil
+    if credits.present?
+      session[:credits_applied] = credits["is_credit_applied"].to_i == 1
+      session[:credits] = session[:credits_applied] ? credits["applied"] : nil
+    end
   end
 
   def update_reschedule_params(params, booking)

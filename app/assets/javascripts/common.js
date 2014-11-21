@@ -31,6 +31,11 @@ function formCredits(frm,url,divId) {
 		var apply_credits = jQuery.trim($("#applyCredits").val());
 		var remove_credits = jQuery.trim($("#removeCredits").val());
 
+		var credits_old = $("#creditsUsed").text();
+		var promo_old = $("#promoAmount").text();
+		credits_old = getValue(credits_old);
+		promo_old = getValue(promo_old);
+
 		  $.ajax({
 		    type:"POST", 
 		    url: "/bookings/promo",
@@ -41,6 +46,12 @@ function formCredits(frm,url,divId) {
 		  .done(function(json){
 		    $("#PromoDiv").empty().append(json.promo);
 		    $("#CreditDiv").empty().append(json.credit);
+
+		    var credits_new = $("#creditsUsed").text();
+		    var promo_new = $("#promoAmount").text();
+		    credits_new = getValue(credits_new);
+				promo_new = getValue(promo_new);
+				updateCheckoutAmount(credits_new, credits_old, promo_new, promo_old);
 		  })
 	});
 }
@@ -50,6 +61,11 @@ function applyPromoCode(frm,url,divId) {
 	$(document).ready(function(){
 		var promo = jQuery.trim($("#DetailsName").val());
 		var clear = jQuery.trim($("#clearPromo").val());
+
+		var credits_old = $("#creditsUsed").text();
+		var promo_old = $("#promoAmount").text();
+		credits_old = getValue(credits_old);
+		promo_old = getValue(promo_old);
 
 		  $.ajax({
 		    type:"POST", 
@@ -61,10 +77,35 @@ function applyPromoCode(frm,url,divId) {
 		  .done(function(json){
 		    $("#PromoDiv").empty().append(json.promo);
 		    $("#CreditDiv").empty().append(json.credit);
+
+		    var credits_new = $("#creditsUsed").text();
+		    var promo_new = $("#promoAmount").text();
+		    credits_new = getValue(credits_new);
+				promo_new = getValue(promo_new);
+				updateCheckoutAmount(credits_new, credits_old, promo_new, promo_old);
 		  })
 	});
 }
 
+function getValue(rawValue){
+		if (rawValue == ""){
+			return 0;
+		}
+		else{
+			return parseInt(rawValue);
+		}
+}
+
+function updateCheckoutAmount(credits_new, credits_old, promo_new, promo_old){
+	var total_amount_raw = $("#final_amount_to_pay").html();
+	var total_amount = parseInt(total_amount_raw.replace(/[, ]+/g, "").trim());
+	if (credits_new != credits_old){
+		document.getElementById("final_amount_to_pay").innerHTML = total_amount - (credits_new - credits_old);
+	}
+	if (promo_new != promo_old){
+		document.getElementById("final_amount_to_pay").innerHTML = total_amount - (promo_new - promo_old);
+	}
+}
 
 function bindCountry() {
 	$('.bind-country').bind("change", function() {
