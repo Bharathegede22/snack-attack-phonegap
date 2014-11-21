@@ -31,10 +31,11 @@
 	- else			
 		.fc
 		.col-md-12.promoCode-desc-block.clearfix.rmpad
-			.col-md-4.text-right.clearfix.rmpad
+			.col-md-4.text-right.clearfix.rmpad{:style=>"text-align:left;text-transform: uppercase;"}
 				%b #{session[:promo_code]}
 			.col-md-7.text-right.clearfix.rmpad
-				%b.promo_amount ₹ #{session[:promo_discount]}
+				%b.promo_amount - ₹
+				%b.promo_amount#promoAmount #{session[:promo_discount]}
 			.col-md-1
 				%form#PromoForm{:action => "javascript:void(0)", "data-ajax" => "false", :onsubmit => "return applyPromoCode(this,'/bookings/promo?clear=1','PromoDiv');"}
 					%input#clearPromo.form-control{name: 'clear', type: "hidden", value: "1" }
