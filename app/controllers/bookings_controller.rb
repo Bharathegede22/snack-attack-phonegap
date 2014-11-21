@@ -32,9 +32,10 @@ class BookingsController < ApplicationController
 		generic_meta
 		@header = 'booking'
 		if abtest?
+			# payu checkout page
 			render :checkouta
 		else
-			render :checkout
+			render :checkouta
 		end
 	end
 	
