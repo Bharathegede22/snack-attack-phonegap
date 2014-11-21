@@ -324,7 +324,7 @@ class Payment < ActiveRecord::Base
 				b.save(:validate => false)
 				Booking.recalculate(b.id)
         activities_params = {user_id: b.user_id, booking_id: b.id, transferred_via: self}
-        if self.through.in? ['citruspay', 'payu', 'juspay'] #TODO - move PG array to CommonHelper
+        if ['citruspay', 'payu', 'juspay'].include?(self.through) && Refund.where("booking_id = ? AND created_at > ? and through = 'wallet'", b.id, self.created_at).empty? #TODO - move PG array to CommonHelper
 					wallet_amount = (b.outstanding_without_deposit + self.amount)>=0 ? b.outstanding_without_deposit.abs : self.amount
 					if wallet_amount != 0 && b.wallet_security_payment.nil?
 						b.add_security_deposit_to_wallet(wallet_amount)
