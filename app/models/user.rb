@@ -27,6 +27,7 @@ class User < ActiveRecord::Base
   validates :pincode, length: {is: 6, message: 'should be of 6 digits'}, if: Proc.new {|u| !u.pincode.blank?}
   validate :check_dob
   
+  after_save :send_welcome_mail
   before_create :before_create_tasks
 	before_validation :before_validation_tasks
 	
@@ -334,6 +335,12 @@ class User < ActiveRecord::Base
 		end
 		snapshot
 	end 
+
+	def send_welcome_mail
+		if rand(100) < 80 && self.name_was.nil? && self.name_changed?
+			BookingMailer.welcome(self).deliver
+		end
+	end
 	
 	private :before_create_tasks, :before_validation_tasks, :valid_otp_length?
 end
