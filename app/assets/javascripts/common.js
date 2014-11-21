@@ -96,6 +96,13 @@ function getValue(rawValue){
 		}
 }
 
+function commaSeparateNumber(val){
+    while (/(\d+)(\d{3})/.test(val.toString())){
+      val = val.toString().replace(/(\d+)(\d{3})/, '$1'+','+'$2');
+    }
+    return val;
+}
+
 function updateCheckoutAmount(credits_new, credits_old, promo_new, promo_old){
 	var total_amount_raw = $("#final_amount_to_pay").html();
 	var total_amount = parseInt(total_amount_raw.replace(/[, ]+/g, "").trim());
@@ -106,7 +113,7 @@ function updateCheckoutAmount(credits_new, credits_old, promo_new, promo_old){
 	if (promo_new != promo_old){
 		 total_amount = total_amount - (promo_new - promo_old);
 	}
-	document.getElementById("final_amount_to_pay").innerHTML = total_amount
+	document.getElementById("final_amount_to_pay").innerHTML = commaSeparateNumber(total_amount);
 }
 
 function bindCountry() {
