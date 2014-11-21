@@ -616,7 +616,7 @@ class BookingsController < ApplicationController
 	end
 
 	def seamless_update_payment
-		if params[:deposit].present? && params[:id].present?
+		if !params[:deposit].nil? && params[:id].present?
 			resp = Payment.update(params[:id], params[:deposit])
 			render :json => resp
 		else

@@ -234,8 +234,10 @@ class Payment < ActiveRecord::Base
 		end
 		if dep == 'true'
 			payment.amount += pricing.mode::SECURITY
+      booking.update_column(:defer_deposit, false)
 		else
 			payment.amount -= pricing.mode::SECURITY
+      booking.update_column(:defer_deposit, true)
 		end
 		data = { order_id: payment.encoded_id, amount: payment.amount }
 		response = Juspay.update_order(data)
@@ -340,11 +342,14 @@ class Payment < ActiveRecord::Base
 						b.update_column(:insufficient_deposit, false)
 						b.make_payment_from_wallet
 					end
-				end
+        end
         if b.defer_deposit?
-          activities_params.delete(:amount) if !activities_params[:amount].nil?
-          activities_params[:activity] = Activity::ACTIVITIES[:defer_deposit]
-          log_activity(activities_params)
+          activity_obj = Activity.where('booking_id = ? and activity = ?',b.id,Activity::ACTIVITIES[:defer_deposit]).first
+          if activity_obj.nil?
+            activities_params.delete(:amount) if !activities_params[:amount].nil?
+            activities_params[:activity] = Activity::ACTIVITIES[:defer_deposit]
+            log_activity(activities_params)
+          end
         end
 				BookingMailer.payment(b.id).deliver if old_status==0
 			end
