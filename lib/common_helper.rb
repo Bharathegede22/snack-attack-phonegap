@@ -27,6 +27,7 @@ module CommonHelper
 	WEEKDAY_DISCOUNT    = 40
 	BOOKING_WINDOW      = 60
 	MIN_AGE             = 21
+	MIN_PRICE_WELCOME		= 45
 	
 	JIT_DEPOSIT_CANCEL  = 24
 	JIT_DEPOSIT_ALLOW   = 24

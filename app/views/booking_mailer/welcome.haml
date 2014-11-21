@@ -1,0 +1,267 @@
+!!! Strict
+%html{:xmlns => "http://www.w3.org/1999/xhtml"}
+  %head
+    %meta{:content => "text/html; charset=utf-8", "http-equiv" => "Content-Type"}/
+    %meta{:content => "width=device-width, initial-scale=1.0", :name => "viewport"}/
+    %title Template 9
+    :css
+      /* Client-specific Styles */
+      #outlook a {padding:0;} /* Force Outlook to provide a "view in browser" menu link. */
+      body{width:100% !important; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; margin:0; padding:0;}
+      /* Prevent Webkit and Windows Mobile platforms from changing default font sizes, while not breaking desktop design. */
+      .ExternalClass {width:100%;} /* Force Hotmail to display emails at full width */
+      .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div {line-height: 100%;} /* Force Hotmail to display normal line spacing.  */
+      #backgroundTable {margin:0; padding:0; width:100% !important; line-height: 100% !important;}
+      img {outline:none; text-decoration:none;border:none; -ms-interpolation-mode: bicubic;}
+      a img {border:none;}
+      .image_fix {display:block;}
+      p {margin: 0px 0px !important;}
+      table td {border-collapse: collapse;}
+      table { border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; }
+      a {color: #9ec459;text-decoration: none;text-decoration:none!important;}
+      /*STYLES*/
+      table[class=full] { width: 100%; clear: both; }
+      /*IPAD STYLES*/
+      @media only screen and (max-width: 640px) {
+      a[href^="tel"], a[href^="sms"] {
+      text-decoration: none;
+      color: #9ec459; /* or whatever your want */
+      pointer-events: none;
+      cursor: default;
+      }
+      .mobile_link a[href^="tel"], .mobile_link a[href^="sms"] {
+      text-decoration: default;
+      color: #9ec459 !important;
+      pointer-events: auto;
+      cursor: default;
+      }
+      table[class=devicewidth] {width: 100%!important;text-align:center!important;}
+      td[class=devicewidth] {width: 440px!important;text-align:center!important;}
+      img[class=devicewidth] {width: 440px!important;text-align:center!important;}
+      img[class=banner] {width: 440px!important;height:147px!important;}
+      table[class=devicewidthinner] {width: 420px!important;text-align:center!important;}
+      table[class=icontext] {width: 345px!important;text-align:center!important;}
+      img[class="colimg2"] {width:420px!important;height:243px!important;}
+      table[class="emhide"]{display: none!important;}
+      img[class="logo"]{width:440px!important;height:110px!important;}
+      .zoom-heading{
+         padding: 0 20px;
+      }
+      }
+      /*IPHONE STYLES*/
+      @media only screen and (max-width: 480px) {
+      a[href^="tel"], a[href^="sms"] {
+      text-decoration: none;
+      color: #9ec459; /* or whatever your want */
+      pointer-events: none;
+      cursor: default;
+      }
+      .mobile_link a[href^="tel"], .mobile_link a[href^="sms"] {
+      text-decoration: default;
+      color: #9ec459 !important; 
+      pointer-events: auto;
+      cursor: default;
+      }
+      table[class=devicewidth] {width: 100%!important;text-align:center!important;}
+      td[class=devicewidth] {width: 280px!important;text-align:center!important;}
+      img[class=devicewidth] {width: 280px!important;text-align:center!important;}
+      img[class=banner] {width: 280px!important;height:93px!important;}
+      table[class=devicewidthinner] {width: 260px!important;text-align:center!important;}
+      table[class=icontext] {width: 186px!important;text-align:center!important;}
+      img[class="colimg2"] {width:260px!important;height:150px!important;}
+      table[class="emhide"]{display: none!important;}
+      img[class="logo"]{width:280px!important;height:auto!important;}
+      .zoom-heading{
+         padding: 0 20px;
+      }
+      }
+  %body
+    / Start of preheader
+    %table#backgroundTable{:bgcolor => "#6abd19", :border => "0", :cellpadding => "0", :cellspacing => "0", :width => "100%"}
+      %tbody
+        %tr
+          %td
+            %table.devicewidth{:align => "center", :border => "0", :cellpadding => "0", :cellspacing => "0", :width => "600"}
+              %tbody
+                %tr
+                  %td{:width => "100%"}
+                    %table.devicewidth{:align => "center", :border => "0", :cellpadding => "0", :cellspacing => "0", :width => "600"}
+                      %tbody
+                        / Spacing
+                        %tr
+                          %td{:height => "10", :width => "100%"}
+                        / Spacing
+                        %tr
+                          %td
+                            %table.devicewidthinner{:align => "left", :border => "0", :cellpadding => "0", :cellspacing => "0", :width => "50%"}
+                              %tbody
+                                %tr
+                                  %td{:align => "left", :style => "font-family: Helvetica, arial, sans-serif; font-size: 11px;color: #ffffff", :valign => "middle"}
+                                    %a{:href => "http://www.zoomcar.com?ref=CT_WelcomeSU0_Auto", :style => "text-decoration: none; color: #ffffff"}
+                                      %b.zoom-heading Zoomcar: Self-Drive Car Rental
+                            %table.emhide{:align => "right", :border => "0", :cellpadding => "0", :cellspacing => "0", :width => "50%"}
+                              %tbody
+                                %tr
+                                  %td{:align => "right", :style => "font-family: Helvetica, arial, sans-serif; font-size: 11px;color: #ffffff", :valign => "middle"}
+                                    %a{:href => "{PreviewURL}", :style => "color: #ffffff"}
+                                      %b View this e-mail in your browser
+                        / Spacing
+                        %tr
+                          %td{:height => "10", :width => "100%"}
+                        / Spacing
+    / End of preheader
+    / Start of LOGO
+    %table#backgroundTable{:bgcolor => "#e8eaed", :border => "0", :cellpadding => "0", :cellspacing => "0", :width => "100%"}
+      %tbody
+        %tr
+          %td
+            %table.devicewidth{:align => "center", :border => "0", :cellpadding => "0", :cellspacing => "0", :width => "600"}
+              %tbody
+                %tr
+                  %td{:width => "100%"}
+                    %table.devicewidth{:align => "center", :bgcolor => "#e8eaed", :border => "0", :cellpadding => "0", :cellspacing => "0", :width => "600"}
+                      %tbody
+                        %tr
+                          / start of image
+                          %td{:align => "center"}
+                            %a{:href => "http://www.zoomcar.com?ref=CT_WelcomeSU0_Auto", :target => "_blank"}
+                              %img.logo{:alt => "", :border => "0", :height => "300", :src => "https://my.contactology.com/secure/images.skem1.com/client_id_20565/welcomesmall.jpg", :style => "display:block; border:none; outline:none; text-decoration:none;", :width => "600"}/
+                    / end of image
+    / End of LOGO
+    / start textbox-with-title
+    %table#backgroundTable{:bgcolor => "#e8eaed", :border => "0", :cellpadding => "0", :cellspacing => "0", :width => "100%"}
+      %tbody
+        %tr
+          %td
+            %table.devicewidth{:align => "center", :border => "0", :cellpadding => "0", :cellspacing => "0", :width => "600"}
+              %tbody
+                %tr
+                  %td{:width => "100%"}
+                    %table.devicewidth{:align => "center", :bgcolor => "#ffffff", :border => "0", :cellpadding => "0", :cellspacing => "0", :width => "600"}
+                      %tbody
+                        / Spacing
+                        %tr
+                          %td{:height => "20", :width => "100%"}
+                        / Spacing
+                        %tr
+                          %td
+                            %table.devicewidthinner{:align => "center", :border => "0", :cellpadding => "0", :cellspacing => "0", :width => "560"}
+                              %tbody
+                                / Title
+                                / End of Title
+                                / spacing
+                                %tr
+                                  %td{:height => "5"}
+                                / End of spacing
+                                / content
+                                %tr
+                                  %td{:style => "font-family: Helvetica, arial, sans-serif; font-size: 13px; color: #333333; text-align:left;line-height: 18px;"}
+                                    Hi #{@user.name.titleize},
+                                / Spacing
+                                %tr
+                                  %td{:height => "8", :width => "100%"}
+                                / Spacing
+                                %tr
+                                  %td{:style => "font-family: Helvetica, arial, sans-serif; font-size: 13px; color: #333333; text-align:left;line-height: 18px;"}
+                                    Welcome to Zoomcar – we are thrilled to have you on-board!
+                                / Spacing
+                                %tr
+                                  %td{:height => "8", :width => "100%"}
+                                / Spacing
+                                %tr
+                                  %td{:style => "font-family: Helvetica, arial, sans-serif; font-size: 13px; color: #333333; text-align:left;line-height: 18px;"}
+                                    You are all set to take the wheel of a self-driven car – whether for a weekend getaway with friends and family or for a quick dinner and movie in the city!
+                                / Spacing
+                                %tr
+                                  %td{:height => "8", :width => "100%"}
+                                / Spacing
+                                %tr
+                                  %td{:style => "font-family: Helvetica, arial, sans-serif; font-size: 13px; color: #333333; text-align:left;line-height: 18px;"}
+                                    Let's get you started on your journey:
+                                / Spacing
+                                %tr
+                                  %td{:height => "8", :width => "100%"}
+                                / Spacing
+                                %tr
+                                  %td{:style => "font-family: Helvetica, arial, sans-serif; font-size: 13px; color: #333333; text-align:left;line-height: 18px;"}
+                                    %ul{:style => "margin-top:8px;"}
+                                      %li{:style => "margin-bottom:8px;"}
+                                        %a{:href => "http://www.zoomcar.com?ref=CT_WelcomeSU0_Auto", :style => "color:#6abd19;", :target => "_blank"}
+                                          %u
+                                            %b Book your first Zoomcar
+                                        and get behind the wheel of our awesome selection of hatchbacks, sedans, SUVs, and luxury cars. Prices start at
+                                        %a{:href => "http://www.zoomcar.com/tariff?ref=CT_WelcomeSU0_Auto", :style => "color:#6abd19;", :target => "_blank"}
+                                          %u
+                                            %b just Rs. #{CommonHelper::MIN_PRICE_WELCOME}/hour
+                                        and include fuel, insurance, GPS, and even taxes!
+                                      %li{:style => "margin-bottom:8px;"}
+                                        %b Download Zoomcar mobile app
+                                        for
+                                        %a{:href => "https://play.google.com/store/apps/details?id=com.zoomcar&referrer=utm_source%3Demail%26utm_medium%3Ddb%26utm_content%3Dsupermiler%26utm_campaign%3Dsupermilerpune17nov2014", :style => "color:#6abd19;", :target => "_blank"}
+                                          %u
+                                            %b Android
+                                        and
+                                        %a{:href => "https://itunes.apple.com/us/app/zoomcar-self-drive-cars/id889910218?mt=8&utm_source=email&utm_medium=db&utm_content=supermiler&utm_campaign=supermilerpune17nov2014", :style => "color:#6abd19;", :target => "_blank"}
+                                          %u
+                                            %b iPhone
+                                        and book self-drive cars on-the-go, anytime, from anywhere.
+                                      %li{:style => "margin-bottom:0px;"}
+                                        %b Follow-us
+                                        on
+                                        %a{:href => "https://www.facebook.com/zoomcar.in", :style => "color:#6abd19;", :target => "_blank"}
+                                          %u
+                                            %b Facebook
+                                        and
+                                        %a{:href => "https://twitter.com/ZoomCarIndia", :style => "color:#6abd19;", :target => "_blank"}
+                                          %u
+                                            %b Twitter
+                                        for latest updates and get access to exclusive offers!
+                                %tr
+                                  %td{:style => "font-family: Helvetica, arial, sans-serif; font-size: 13px; color: #333333; text-align:left;line-height: 18px;"}
+                                    Cheers for joining India's largest community of self-drive enthusiasts — we hope to see you behind the wheel of a Zoomcar soon.
+                                / End of content
+                                / Spacing
+                                %tr
+                                  %td{:height => "8", :width => "100%"}
+                                / Spacing
+                                / button
+                                %tr
+                                  %td{:style => "font-family: Helvetica, arial, sans-serif; font-size: 16px; font-weight:bold; color: #333333; text-align:left;line-height: 30px;"}
+                                    %p{:style => "text-align:center;"}
+                                      %a{:href => "http://www.zoomcar.com?ref=CT_WelcomeSU0_Auto", :style => "font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; text-decoration:none; color: #FFF; background-color: #6abd19; padding:10px 10px;\r\n\t                    font-weight:bold; margin-right:0px; text-align:center; cursor:pointer;", :target => "_blank"} Let's Zoom!
+                                / /button
+                                / Spacing
+                                %tr
+                                  %td{:height => "20", :width => "100%"}
+                                / Spacing
+    / end of textbox-with-title
+    / Start of postfooter
+    %table#backgroundTable{:bgcolor => "#6abd19", :border => "0", :cellpadding => "0", :cellspacing => "0", :width => "100%"}
+      %tbody
+        %tr
+          %td
+            %table.devicewidth{:align => "center", :border => "0", :cellpadding => "0", :cellspacing => "0", :width => "600"}
+              %tbody
+                %tr
+                  %td{:width => "100%"}
+                    %table.devicewidth{:align => "center", :border => "0", :cellpadding => "0", :cellspacing => "0", :width => "600"}
+                      %tbody
+                        / Spacing
+                        %tr
+                          %td{:height => "0", :width => "100%"}
+                        / Spacing
+                        %tr
+                          %td{:align => "center", :style => "font-family: Helvetica, arial, sans-serif; font-size: 13px;color: #ffffff", :valign => "middle"}
+                            %p{:style => "font-family: Helvetica Neue, Helvetica, Helvetica, Arial, sans-serif; padding:10px; line-height:1.2;font-size:11px;text-align:center;"}
+                              %b Rent a self-drive car on-the-go with Zoomcar mobile app:
+                              %br/
+                              %br/
+                              %a{:href => "https://play.google.com/store/apps/details?id=com.zoomcar&referrer=utm_source%3Demail%26utm_medium%3Ddb%26utm_content%3Dwelcomeemail%26utm_campaign%3Dwelcomesu0auto", :target => "_blank", :title => "ZoomCar App"}
+                                %img{:alt => "Google Play", :border => "0", :height => "38", :src => "https://my.contactology.com/secure/images.skem1.com/client_id_20565/Playstore.png", :width => "122"}/
+                              %a{:href => "https://itunes.apple.com/us/app/zoomcar-self-drive-cars/id889910218?mt=8&utm_source=email&utm_medium=db&utm_content=welcomeemail&utm_campaign=welcomesu0auto", :target => "_blank", :title => "ZoomCar App"}
+                                %img{:alt => "App Store", :border => "0", :height => "38", :src => "https://my.contactology.com/secure/images.skem1.com/client_id_20565/Appstore.jpg", :width => "136"}/
+                        / Spacing
+                        %tr
+                          %td{:height => "0", :width => "100%"}
+                        / Spacing
+    / End of postfooter
