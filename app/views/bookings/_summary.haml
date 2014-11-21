@@ -41,7 +41,7 @@
 					%h4.f-b Payments Received
 				.col-md-2
 	- total_payu=0
-	- @booking.confirmed_payments.where(through: 'payu').each do |p|
+	- @booking.confirmed_payments.where("through IN ('citruspay', 'juspay', 'payu')").each do |p|
 		%tr
 			%td
 				Amount Paid (#{p.created_at.strftime('%Y-%m-%d')})

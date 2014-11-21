@@ -30,15 +30,19 @@ Web::Application.routes.draw do
 			get 'notify'
 			get 'outstanding'
 			get 'payu'
+			get 'pgresponse'
 			get 'timeline'
 			get 'thanks'
 			get 'widget'
+			get 'seamless_payment_options'
 
 			post 'credits'
 			post 'corporate'
 			post 'license'
 			post 'payu'
+			post 'pgresponse'
 			post 'promo'
+			post 'seamless_update_payment'
 		end
 		member do
 			get 'dodeposit'
@@ -53,6 +57,8 @@ Web::Application.routes.draw do
 			post 'feedback'
 
 			post 'cancel'
+			post 'seamless_dodeposit'
+			post 'seamless_dopayment'
 			post 'reschedule'
 		end
 	end
@@ -103,6 +109,7 @@ Web::Application.routes.draw do
 				get 'login'
 				get 'payment'
 				get 'userdetails'
+				post 'seamless_docreate'
 			end
 		end
 	end

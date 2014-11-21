@@ -1,4 +1,4 @@
-= render :partial => '/layouts/tag_manager' if false
+= render :partial => '/layouts/tag_manager' if Rails.env.production?
 #DocTop
 = render :partial => '/main/mobile_redirect' if !@device.blank?
 - if !@header.blank? && @header == 'search'
@@ -19,25 +19,26 @@
 						.fc
 				.links
 					%ul.nav.navbar-nav.fr
-						- if @header.blank? || @header != 'homepage'
+						- if (@header.blank? || @header != 'homepage') && @city.active
 							- cls = (!@header.blank? && (@header == 'search' || @header == 'booking')) ? 'active' : ''
 							%li
 								%a{class: cls, href: "javascript:void(0)", onclick: "showSearch();"} Book Cars
-						%li.dropdown
-							- cls = (!@header.blank? && @header == 'tariff') ? 'dropdown-toggle active' : 'dropdown-toggle'
-							%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}
-								Tariffs
-								%b.caret
-							%ul.dropdown-menu
-								%li
-									%a{href: "/#{@city.name.downcase}/tariff"}
-										Tariffs Details
-								%li
-									%a{href: "javascript:void(0)", onclick: "showModal('Tariff Calculator', '/calculator/tariff');"}
-										Tariff Calculator
-								%li
-									%a{href: "javascript:void(0)", onclick: "showModal('Trip Modification Estimator', '/calculator/reschedule');"}
-										Trip Modification Estimator
+						- if @city.active
+							%li.dropdown
+								- cls = (!@header.blank? && @header == 'tariff') ? 'dropdown-toggle active' : 'dropdown-toggle'
+								%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}
+									Tariffs
+									%b.caret
+								%ul.dropdown-menu
+									%li
+										%a{href: "/#{@city.name.downcase}/tariff"}
+											Tariffs Details
+									%li
+										%a{href: "javascript:void(0)", onclick: "showModal('Tariff Calculator', '/calculator/tariff');"}
+											Tariff Calculator
+									%li
+										%a{href: "javascript:void(0)", onclick: "showModal('Trip Modification Estimator', '/calculator/reschedule');"}
+											Trip Modification Estimator
 						%li.dropdown
 							- cls = (!@header.blank? && @header == 'help') ? 'dropdown-toggle active' : 'dropdown-toggle'
 							%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}
@@ -53,9 +54,10 @@
 								%li
 									%a{href: "/outstation"}
 										Going Outstation?
-								%li
-									%a{href: "/reva"}
-										Zoomcar's Electric!
+								- if @city.active
+									%li
+										%a{href: "/reva"}
+											Zoomcar's Electric!
 								%li
 									%a{href: "/#{@city.name.downcase}/faq"}
 										FAQs
@@ -80,9 +82,10 @@
 								%li
 									%a{href: "/privacy"}
 										Privacy Policy
-						%li
-							- cls = (!@header.blank? && @header == 'offers') ? 'active' : ''
-							%a{class: cls, href: "/#{@city.name.downcase}/offers"} Offers
+						- if @city.active
+							%li
+								- cls = (!@header.blank? && @header == 'offers') ? 'active' : ''
+								%a{class: cls, href: "/#{@city.name.downcase}/offers"} Offers
 					.fc
 				.support
 					= @city.contact_phone

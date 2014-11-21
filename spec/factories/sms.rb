@@ -26,6 +26,7 @@ end
 #  delivered_on  :datetime
 #  created_at    :datetime
 #  updated_at    :datetime
+#  activity      :string(255)
 #
 # Indexes
 #

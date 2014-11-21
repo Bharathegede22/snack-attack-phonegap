@@ -134,7 +134,7 @@
 					%span.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => @booking.deposit_help}
 						[?]
 
-		%tr.bg-6.white.bg-zoom.ribbon
+		%tr.bg-6.white.bg-zoom
 			%td.p-10.p-l20.text-up.size-16.f-b
 				Payable Amount
 			%td.p-10.t-r.p-r20.size-22.outstandingSide{nowrap: ""}
@@ -155,7 +155,7 @@
 					[?]
 				.fc
 			%td.p-5.p-b10.t-r.p-r20.zoom-b.f-b.size-16
-				₹ #{cargroup.excess_kms.to_i} / Km
+				₹ #{pricing.excess_kms.to_i} / Km
 
 - if false
 	%br/

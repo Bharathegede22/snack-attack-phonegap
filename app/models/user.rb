@@ -47,6 +47,10 @@ class User < ActiveRecord::Base
   	errors.add(:dob, "can't be less than #{CommonHelper::MIN_AGE} years") if !self.dob.blank? && (self.dob.to_datetime > (Time.zone.now - CommonHelper::MIN_AGE.years))
   end
   
+	def encoded_id
+		CommonHelper.encode('user', self.id)
+	end
+
   def fleet?
 		return self.role >= 5
 	end
@@ -64,12 +68,12 @@ class User < ActiveRecord::Base
   	end
 
   	if Rails.env == 'production'
-  		return Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND #{sql} ORDER BY #{order} LIMIT 10 OFFSET #{page*10}")
+  		return Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND #{sql} ORDER BY #{order}")
   	else
   		if self.support?
-	  		return Booking.find_by_sql("SELECT * FROM bookings WHERE #{sql} ORDER BY #{order} LIMIT 10 OFFSET #{page*10}")
-	  	else
-	  		return Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND #{sql} ORDER BY #{order} LIMIT 10 OFFSET #{page*10}")
+        return Booking.find_by_sql("SELECT * FROM bookings WHERE #{sql} ORDER BY #{order}")
+      else
+	  		return Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND #{sql} ORDER BY #{order}")
 	  	end
   	end
   end

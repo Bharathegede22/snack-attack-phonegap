@@ -2,6 +2,7 @@ class Payment < ActiveRecord::Base
 	
 	belongs_to :booking
 	has_one :wallet, as: :transferable
+    has_one :activity, as: :transferred_via
 
 	validates :booking_id, :through, :amount, presence: true
 	#validates :through, uniqueness: {scope: [:booking_id, :key]}
@@ -9,6 +10,8 @@ class Payment < ActiveRecord::Base
 	default_scope {where('(status < 5)')}
 	
 	after_save :after_save_tasks
+
+	pg = {1 => 'axis', 2 => 'hdfc', 3 => 'icici', 4 => 'citi', 5 => 'amex', 11 => 'ebs', 12 => 'payu', 20 => 'paypal', 201 => 'hdfc_ivr'}
 	
 	def change_mode(params)
 		if !params['mode'].blank?
@@ -40,6 +43,7 @@ class Payment < ActiveRecord::Base
 						end
 					end
 					self.key = params['mihpayid'] if !params['mihpayid'].blank?
+					self.through = 'payu'
 					self.notes = ''
 					self.notes << "<b>ERROR : </b>" + params['error'] + "<br/>" if !params['error'].blank?
 					self.notes << "<b>ERROR MESSAGE : </b>" + params['error_Message'] + "<br/>" if !params['error_Message'].blank?
@@ -51,6 +55,12 @@ class Payment < ActiveRecord::Base
 					self.save(:validate => false)
 				end
 			end
+		end
+	end
+
+	def change_status_pmt(params, through)
+		if through == 'juspay'
+			self.update_status_juspay(params)
 		end
 	end
 	
@@ -69,7 +79,7 @@ class Payment < ActiveRecord::Base
 		count = 0
 		Payment.find_by_sql("SELECT p.* FROM payments p 
 			INNER JOIN bookings b ON b.id = p.booking_id 
-			WHERE p.through = 'payu' AND p.status = 1 AND b.status = 0 AND p.created_at < '#{(Time.now - 30.minutes).to_s(:db)}'").each do |p|
+			WHERE p.through IN ('citruspay', 'juspay', 'payu') AND p.status = 1 AND b.status = 0 AND p.created_at < '#{(Time.now - 30.minutes).to_s(:db)}'").each do |p|
 			p.update_column(:status, 0)
 			p.status = 1
 			p.save
@@ -79,7 +89,7 @@ class Payment < ActiveRecord::Base
 	end
 	
 	def self.check_mode
-		Payment.find(:all, :conditions => "status = 1 AND through = 'payu' AND mode IS NULL").each do |p|
+		Payment.find(:all, :conditions => "status = 1 AND through IN ('citruspay', juspay', 'payu') AND mode IS NULL").each do |p|
 			resp = Payu.check_status(p.encoded_id)
 			if resp && resp['status'] == 1
       	resp['transaction_details'].each do |k,v|
@@ -95,13 +105,22 @@ class Payment < ActiveRecord::Base
 	
 	def self.check_status
 		Payment.find(:all, :conditions => ["status != 1 AND created_at >= ? AND created_at < ?", Time.now - 1.hours, Time.now - 15.minutes]).each do |p|
-			resp = Payu.check_status(p.encoded_id)
-			if resp && resp['status'] == 1
-      	resp['transaction_details'].each do |k,v|
-	    		str,id = CommonHelper.decode(k.downcase)
-	    		if !str.blank? && str == 'payment'
-						payment = Payment.find(id)
-						payment.change_status(v) if payment
+			resp = Juspay.check_status(p.encoded_id)
+			if resp && resp['status_id'].to_i < 40
+				str,id = CommonHelper.decode(resp['order_id'].downcase)
+				if str.present? && str == 'payment'
+					payment = Payment.find(id)
+					payment.change_status_pmt(resp, 'juspay') if payment
+				end
+			else
+				resp = Payu.check_status(p.encoded_id)
+				if resp && resp['status'] == 1
+	      	resp['transaction_details'].each do |k,v|
+		    		str,id = CommonHelper.decode(k.downcase)
+		    		if !str.blank? && str == 'payment'
+							payment = Payment.find(id)
+							payment.change_status(v) if payment
+						end
 					end
 				end
       end
@@ -109,7 +128,6 @@ class Payment < ActiveRecord::Base
 		Payment.check_mismatch
 		#Payment.check_mode
 	end
-	
 	
 	def self.do_create(params)
 		if !params['status'].blank? && 
@@ -126,7 +144,12 @@ class Payment < ActiveRecord::Base
 				if payment
 					booking = payment.booking
 					booking.user_email = PAYU_EMAIL if !Rails.env.production?
-					hash = PAYU_SALT + "|" + 
+					if params['additionalCharges'].present?
+						hash = params['additionalCharges'] + "|"
+					else
+						hash = ""
+					end
+					hash += PAYU_SALT + "|" + 
 						params['status'] + "|||||||||||" + 
 						booking.user_email + "|" + 
 						booking.user_name + "|" + 
@@ -149,6 +172,7 @@ class Payment < ActiveRecord::Base
 							when 'dc' then 1
 							end
 						end
+						payment.through = 'payu'
 						payment.key = params['mihpayid'] if !params['mihpayid'].blank?
 						payment.notes = ''
 						payment.notes << "<b>ERROR : </b>" + params['error'] + "<br/>" if !params['error'].blank?
@@ -167,6 +191,25 @@ class Payment < ActiveRecord::Base
 		return nil
 	end
 	
+	def self.juspay_create(params)
+		if !params['order_id'].blank? && !params['status'].blank? && !params['status_id'].blank?
+			str, id = CommonHelper.decode(params['order_id'])
+			if !str.blank? && str == 'payment'
+				payment = Payment.find(id)
+				if payment
+					booking = payment.booking
+					booking.user_email = PAYU_EMAIL if !Rails.env.production?
+					response = Juspay.check_status(params['order_id'])
+					if response['amount'] == payment.amount.to_i && params['status'].downcase == response['status'].downcase && response['customer_email'] == booking.user_email && response['customer_id'] == booking.user.encoded_id
+						payment.update_status_juspay(response)
+						return payment
+					end
+				end
+			end
+		end
+		return nil
+	end
+
 	def status_text
 		case self.status
 		when 0 then 'Initiated'
@@ -180,6 +223,64 @@ class Payment < ActiveRecord::Base
 		return self.through.capitalize
 	end
 	
+	def self.update(id, dep)
+		str,id = CommonHelper.decode(id.downcase)
+		payment = Payment.find(id)
+		booking = Booking.find(payment.booking_id)
+		pricing = booking.pricing
+		if !Rails.env.production?
+			booking.user_email = PAYU_EMAIL
+			booking.user_mobile = PAYU_PHONE
+		end
+		if dep == 'true'
+			payment.amount += pricing.mode::SECURITY
+		else
+			payment.amount -= pricing.mode::SECURITY
+		end
+		data = { order_id: payment.encoded_id, amount: payment.amount }
+		response = Juspay.update_order(data)
+		if(response['status'].downcase == 'new')
+			payment.update_attribute(:amount, payment.amount)
+			hash = PAYU_KEY + "|" + payment.encoded_id + "|" + payment.amount.to_i.to_s + "|" + booking.cargroup.display_name + "|" + booking.user_name.strip + "|" + booking.user_email + "|||||||||||" + PAYU_SALT
+			json_resp = {:status=> 'success', :msg => "updated amount", :amt => payment.amount.to_i, :hash => Digest::SHA512.hexdigest(hash)}
+		else
+			json_resp = {:status=> 'error', :msg => "Juspay error", :amt => payment.amount.to_i}
+		end
+	end
+
+		def update_status_juspay(params)
+		if params['amount'] == self.amount.to_i
+			self.status = case params['status'].downcase
+			when 'charged' then 1
+			when 'authentication_failed' then 2
+			when 'authorization_failed' then 2
+			when 'juspay_declined' then 2
+			when 'pending_vbv' then 3
+			when 'started' then 3
+			end
+			self.through = 'juspay'
+			self.key = params['order_id'] if !params['order_id'].blank?
+			self.notes = ''
+			if params['status_id'] == 21
+				if params['card'].present?
+					self.mode = case params['card']['card_type'].downcase
+					when 'cc' then 0
+					when 'dc' then 1
+					end
+				end
+				self.notes << "<b>ERROR : </b>" + params['payment_gateway_response']['resp_code'] + "<br/>" if !params['payment_gateway_response']['resp_code'].blank?
+				self.notes << "<b>ERROR MESSAGE : </b>" + params['payment_gateway_response']['resp_message'] + "<br/>" if !params['payment_gateway_response']['resp_message'].blank?
+				self.notes << "<b>Gateway ID : </b>" + params['gateway_id'].to_s + "<br/>" if !params['gateway_id'].blank?
+				self.notes << "<b>Bank RRN : </b>" + params['payment_gateway_response']['rrn'] + "<br/>" if !params['payment_gateway_response']['rrn'].blank?
+				self.notes << "<b>Auth Id Code : </b>" + params['payment_gateway_response']['auth_id_code'] + "<br/>" if !params['payment_gateway_response']['auth_id_code'].blank?
+				self.notes << "<b>Name On Card : </b>" + params['card']['name_on_card'] + "<br/>" if !params['card']['name_on_card'].blank?
+				self.notes << "<b>Card ISIN : </b>" + params['card']['card_isin'] + "<br/>" if !params['card']['card_isin'].blank?
+				self.notes << "<b>Card Last 4 digits : </b>" + params['card']['last_four_digits'] + "<br/>" if !params['card']['last_four_digits'].blank?
+			end
+			self.save(:validate => false)
+		end
+	end
+
 	protected
 	
 	def after_save_tasks
@@ -222,24 +323,39 @@ class Payment < ActiveRecord::Base
 				b.notes += "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs." + self.amount.to_s + " - Payment Received through <u>" + self.through_text + "</u>.<br/>"
 				b.save(:validate => false)
 				Booking.recalculate(b.id)
-				wallet_amount = (b.outstanding_without_deposit + self.amount)>=0 ? b.outstanding_without_deposit.abs : self.amount
-				if wallet_amount != 0 && b.wallet_security_payment.nil?
+        activities_params = {user_id: b.user_id, booking_id: b.id, transferred_via: self}
+        if self.through.in? ['citruspay', 'payu', 'juspay'] #TODO - move PG array to CommonHelper
+					wallet_amount = (b.outstanding_without_deposit + self.amount)>=0 ? b.outstanding_without_deposit.abs : self.amount
+					if wallet_amount != 0 && b.wallet_security_payment.nil?
 						b.add_security_deposit_to_wallet(wallet_amount)
+            extra_params = {activity: Activity::ACTIVITIES[:security_deposit_paid], amount: wallet_amount}
+            log_activity(activities_params.merge(extra_params))
 						self.update_column(:deposit_available_for_refund, wallet_amount)
 						self.update_column(:deposit_paid, wallet_amount)
+					end
+					if !b.defer_payment_allowed?
+						b.add_security_deposit_charge
+					end
+					if !b.defer_payment_allowed? && b.wallet_security_payment.nil?
+						b.update_column(:insufficient_deposit, false)
+						b.make_payment_from_wallet
+					end
 				end
-				if !b.defer_payment_allowed?
-					b.add_security_deposit_charge
-				end
-				if !b.defer_payment_allowed? && b.wallet_security_payment.nil?
-					b.update_column(:insufficient_deposit, false)
-					b.make_payment_from_wallet
-				end
+        if b.defer_deposit?
+          activities_params.delete(:amount) if !activities_params[:amount].nil?
+          activities_params[:activity] = Activity::ACTIVITIES[:defer_deposit]
+          log_activity(activities_params)
+        end
 				BookingMailer.payment(b.id).deliver if old_status==0
 			end
-
 		end
 	end
+
+  private
+
+  def log_activity(params)
+    Activity.create_activity(params)
+  end
 	
 end
 
