@@ -20,9 +20,9 @@
 			.fr
 				%form{:id => "PromoForm", :onsubmit => "return applyPromoCode(this,'/bookings/promo?clear=1','PromoCreditsDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 					%input#clearPromo.form-control{name: 'clear', type: "hidden", value: "1" }
-					#PromoSubmit
-						%button.btn.btn-default.btn-xs{type:"submit"}
-							%span.glyphicon.glyphicon-remove
+					#PromoSubmit.m-r_15
+						%button.btn.btn-default.btn-xs.promoCodeCancelBtn{type:"submit"}
+							%span.glyphicon.glyphicon-remove.creditRemovespan
 					#PromoWait{style: "display:none;"}
 						.wait
 			.fc
@@ -33,14 +33,14 @@
 		.col-md-12.promoCode-desc-block.clearfix.rmpad
 			.col-md-4.text-right.clearfix.rmpad{:style=>"text-align:left;text-transform: uppercase;"}
 				%b #{session[:promo_code]}
-			.col-md-7.text-right.clearfix.rmpad
+			.col-md-8.text-right.clearfix.rmpad
 				%b.promo_amount - ₹
-				%b.promo_amount#promoAmount #{session[:promo_discount]}
-			.col-md-1
+				%b.promo_amount#promoAmount.size-16 #{session[:promo_discount]}
+			.col-md-1.btn-promocode_cancel
 				%form#PromoForm{:action => "javascript:void(0)", "data-ajax" => "false", :onsubmit => "return applyPromoCode(this,'/bookings/promo?clear=1','PromoDiv');"}
 					%input#clearPromo.form-control{name: 'clear', type: "hidden", value: "1" }
 					#PromoSubmit
-						%button.btn.btn-default.btn-xs{:type => "submit"}
+						%button.btn.btn-default.btn-xs.promoCodeCancelBtn{:type => "submit"}
 							%span.glyphicon.glyphicon-remove.promoRemovespan
 					#PromoWait{:style => "display: none;"}
 						.wait

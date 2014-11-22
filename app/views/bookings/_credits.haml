@@ -19,7 +19,7 @@
 				%b Credits 
 			.col-md-8.text-right.rmpad
 				%b.credit_amount - ₹ 
-				%span.credits_usable_amt#creditsUsed #{session[:credits]}
+				%span.credits_usable_amt#creditsUsed.size-16 #{session[:credits]}
 			.cancel_creditBtn
 				%form#PromoForm{:action => "javascript:void(0)", "data-ajax" => "false", :onsubmit => "return formCredits(this,'/bookings/promo','PromoCreditsDiv');"}
 					%input#removeCredits.form-control{name: 'remove_credits', type: "hidden", value: "1" }
