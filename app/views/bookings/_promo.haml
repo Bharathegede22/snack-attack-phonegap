@@ -4,7 +4,7 @@
 	- elsif session[:promo_code].blank? && session[:promo_message].blank?
 		%form.promocode-form{:id => "PromoForm", :onsubmit => "return applyPromoCode(this,'/bookings/promo','PromoCreditsDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 			.row
-				.col-md-7.text-right
+				.col-md-7.text-right.promocode-input
 					%input#DetailsName.validate-presence.form-control{:placeholder => "Enter Promo Code" ,name: 'promo', type: "text", value: @promo}
 				.col-md-3.text-left.promo-submit
 					#PromoSubmit_promo
@@ -16,7 +16,7 @@
 	- elsif session[:promo_message].present?
 		.p-b5
 			.fl
-				%b Promo Code
+				%b.size-12 PROMO CODE
 			.fr
 				%form{:id => "PromoForm", :onsubmit => "return applyPromoCode(this,'/bookings/promo?clear=1','PromoCreditsDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 					%input#clearPromo.form-control{name: 'clear', type: "hidden", value: "1" }
