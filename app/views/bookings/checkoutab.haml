@@ -258,8 +258,9 @@
 									total = fare[:total]
 								end
 							#DepositFinal.DepositFinal
-								₹ #{show_currency(total + pricing.mode::SECURITY)}
-
+								₹
+								%span#final_amount_to_pay 
+									#{show_currency(total + @booking.security_amount - @wallet_available)}
 
 					%tr.ribbon-after
 						%td{colspan: 2}
