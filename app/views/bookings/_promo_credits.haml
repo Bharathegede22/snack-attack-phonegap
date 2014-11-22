@@ -17,11 +17,11 @@
 		₹ #{show_currency fare[:total]}
 
 %tr#promoCode{style: 'display: none'}
-	%td.p-5.p-l20.p-r20.size-12#promoPartial{'colspan' => '2'}
+	%td.p-5.p-l20.p-r20.size-12#promoPartial#PromoDiv{'colspan' => '2'}
 		= render :partial => "promo"
 
 - if user && user.total_credits.to_i > 0
 	%tr#credits_block{style: 'display: none'}
 		%td.p-5.p-l20.p-r20.size-12#creditPartial{'colspan' => '2'}
-			.bg-e.p-10.border-c.solid.r-5.available_credits_data
+			.bg-e.p-10.border-c.solid.r-5.available_credits_data#CreditDiv
 				= render :partial => "credits", :locals => {:fare => fare}
