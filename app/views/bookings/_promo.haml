@@ -1,10 +1,10 @@
-#PromoDiv
+.p-l17.height34
 	- if flash[:error].present?
 		- render_flash
 	- elsif session[:promo_code].blank? && session[:promo_message].blank?
 		%form.promocode-form{:id => "PromoForm", :onsubmit => "return applyPromoCode(this,'/bookings/promo','PromoCreditsDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 			.row
-				.col-md-7.text-right.promo-input
+				.col-md-7.text-right
 					%input#DetailsName.validate-presence.form-control{:placeholder => "Enter Promo Code" ,name: 'promo', type: "text", value: @promo}
 				.col-md-3.text-left.promo-submit
 					#PromoSubmit_promo
