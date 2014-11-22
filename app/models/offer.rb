@@ -69,7 +69,7 @@ class Offer < ActiveRecord::Base
 		return none
 	end
 
-	def update_coupon(coupon_id, booking_id)
+	def self.update_coupon(coupon_id, booking_id)
 		CouponCode.where(:id => coupon_id).update_all(:used => 1, :used_at => Time.now, :booking_id => booking_id)
 	end
 
