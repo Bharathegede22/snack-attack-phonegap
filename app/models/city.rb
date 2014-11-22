@@ -17,7 +17,7 @@ class City < ActiveRecord::Base
 		when 'attractions' then "Rent Self Drive Cars In & Around #{self.name}"
 		when 'inside' then "Rent Self Drive Cars, Explore #{self.name}"
 		when 'outside' then "Rent Self Drive Cars, Go Beyond #{self.name}"
-		else "Self Drive Cars In #{self.name}"
+		else "Self-Drive Cars In #{self.name}"
 		end
 	end
 	
@@ -188,4 +188,5 @@ end
 #  seo_outside_description :string(255)
 #  seo_outside_keywords    :string(255)
 #  seo_outside_h1          :string(255)
+#  active                  :boolean          default(FALSE)
 #
