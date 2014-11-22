@@ -1,17 +1,17 @@
 .wrapper
 	.offer_main_container
-		%h3.m-t30.m-b30 Best deals for today
-		.panel.panel-default.offers-panel
+		.panel.panel-default.offers-panel.m-t70
 			.panel-heading.offers-heading
-				%h4.white
-					Zoomcar Flash deals:
+				.deals-stamp-icon
+				%h4.white.p-l60
+					Deals of the Day
 					%span.pull-right #{(Time.now+1.hour).strftime("%a %d-%b-%Y %I:%M %p %H")}
 			.panel-body.offer-panel-body
 				.col-md-12.inline-block.p-b30
 					.col-md-6.pull-left
 						.each-car-offer.r-3
 							.col-md-4.border-r-c
-								= image_tag("cars/10small.jpg", :alt => "")
+								= image_tag("cars/7small.jpg", :alt => "")
 								.fl.p-t5.p-b10
 									.size-20.f-b.zoom-b
 										Scorpio LX
@@ -47,9 +47,9 @@
 											(view map)
 							.col-md-8.p-0
 								.col-md-6
-									%h4.t-c.size-18.m-t15.strike-text Rs. 2000
+									%h4.t-c.size-22.m-t12.strike-text Rs. 5000
 								.col-md-6
-									%h4.t-c.fo-helv.f-b.size-26.m-t10.red Rs. 5000
+									%h4.t-c.fo-helv.f-b.size-26.m-t10.red Rs. 2000
 					.col-md-6.pull-right
 						.each-car-offer.r-3
 							.col-md-4.border-r-c
@@ -89,14 +89,14 @@
 											(view map)
 							.col-md-8.p-0
 								.col-md-6
-									%h4.t-c.size-18.m-t15.strike-text Rs. 2000
+									%h4.t-c.size-22.m-t12.strike-text Rs. 5000
 								.col-md-6
-									%h4.t-c.fo-helv.f-b.size-26.m-t10.red Rs. 5000
+									%h4.t-c.fo-helv.f-b.size-26.m-t10.red Rs. 2000
 				.col-md-12.inline-block
 					.col-md-6.pull-left
 						.each-car-offer.r-3
 							.col-md-4.border-r-c
-								= image_tag("cars/10small.jpg", :alt => "")
+								= image_tag("cars/11small.jpg", :alt => "")
 								.fl.p-t5.p-b10
 									.size-20.f-b.zoom-b
 										Scorpio LX
@@ -132,14 +132,14 @@
 											(view map)
 							.col-md-8.p-0
 								.col-md-6
-									%h4.t-c.size-18.m-t15.strike-text Rs. 2000
+									%h4.t-c.size-22.m-t12.strike-text Rs. 5000
 								.col-md-6
-									%h4.t-c.fo-helv.f-b.size-26.m-t10.red Rs. 5000
+									%h4.t-c.fo-helv.f-b.size-26.m-t10.red Rs. 2000
 					.col-md-6.pull-right
 						.each-car-offer.r-3
 							.sold-out-tag
 							.col-md-4.border-r-c
-								= image_tag("cars/10small.jpg", :alt => "")
+								= image_tag("cars/8small.jpg", :alt => "")
 								.fl.p-t5.p-b10
 									.size-20.f-b.zoom-b
 										Scorpio LX
@@ -175,9 +175,9 @@
 											(view map)
 							.col-md-8.p-0
 								.col-md-6
-									%h4.t-c.size-18.m-t15.strike-text Rs. 2000
+									%h4.t-c.size-22.m-t12.strike-text Rs. 5000
 								.col-md-6
-									%h4.t-c.fo-helv.f-b.size-26.m-t10.red Rs. 5000
+									%h4.t-c.fo-helv.f-b.size-26.m-t10.red Rs. 2000
 		.shadow_line
 		.offers-terms-condition
 			%h4.fo-helv Terms and Conditions:
