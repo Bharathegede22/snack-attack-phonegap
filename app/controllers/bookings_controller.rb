@@ -32,9 +32,10 @@ class BookingsController < ApplicationController
 		generic_meta
 		@header = 'booking'
 		if abtest?
+			# payu checkout page
 			render :checkouta
 		else
-			render :checkout
+			render :checkouta
 		end
 	end
 	
@@ -616,7 +617,7 @@ class BookingsController < ApplicationController
 	end
 
 	def seamless_update_payment
-		if params[:deposit].present? && params[:id].present?
+		if !params[:deposit].nil? && params[:id].present?
 			resp = Payment.update(params[:id], params[:deposit])
 			render :json => resp
 		else
