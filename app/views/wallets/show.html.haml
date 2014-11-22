@@ -38,14 +38,16 @@
 			.col-md-6.clearfix.nullPad.text-left.text-alignment-wallet
 				In Wallet
 			.col-md-6.clearfix.nullPad.text-right.amount-desc
-				₹ #{number_with_delimiter(wallet_amount)}
+				%b
+					₹ #{number_with_delimiter(wallet_amount)}
 			%br/
 			.col-md-6.clearfix.text-left.avail-refund-wallet
 				%a{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/show_refund');pushEvent('Wallet', 'Refund Widget Click (My Bookings)');"}
 					Available for Refund
 			.col-md-6.clearfix.nullPad.text-right.avail-refund-amount.amount-desc
-				%a{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/show_refund');pushEvent('Wallet', 'Refund Widget Click (My Bookings)');"}
-					= "₹ "  + number_with_delimiter(current_user.wallet_total_amount)
+				%a{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/show_refund');pushEvent('Wallet', 'Refund Widget Click (My Bookings)');", :style => "font-weight: bold; text-decoration: none" }
+					%b
+						= "₹ "  + number_with_delimiter(current_user.wallet_total_amount)
 
 		.col-md-6.nullPad.security-block-right
 			.credit-top-icon-block
@@ -58,7 +60,8 @@
 			.col-md-6.clearfix.nullPad.text-left.total-wallet-money
 				In Wallet
 			.col-md-6.clearfix.nullPad.text-right.amount-desc
-				₹ #{number_with_delimiter(current_user.total_credits)}
+				%b
+					₹ #{number_with_delimiter(current_user.total_credits)}
 
 	.col-md-12.clearfix
 		.col-md-6.text-center.nullPad.show-history-left
