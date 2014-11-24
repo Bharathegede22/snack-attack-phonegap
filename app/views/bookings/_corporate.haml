@@ -4,7 +4,7 @@
 		.p-b5
 			%b Corporate Booking (Optional)
 		.p-b5
-			%form{:id => "CorporateForm", :onsubmit => "corpBooking(true);return SubmitForm(this,'/bookings/corporate','CorporateDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+			%form{:id => "CorporateForm", :onsubmit => "return SubmitForm(this,'/bookings/corporate','CorporateDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 				.row
 					.col-md-7
 						%select#CorporateId.form-control{name: 'corporate_id'}
@@ -21,7 +21,7 @@
 		.p-b5
 			%b Corporate Booking (Optional)
 		.p-b5
-			%form{:id => "CorporateForm", :onsubmit => "corpBooking(false);return SubmitForm(this,'/bookings/corporate?clear=1','CorporateDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+			%form{:id => "CorporateForm", :onsubmit => "return SubmitForm(this,'/bookings/corporate?clear=1','CorporateDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 				.row
 					.col-md-7
 						.p-t5
@@ -36,16 +36,3 @@
 			#CorporateWait{style: "display:none;"}
 				.wait
 .p-b15
-
-:javascript
-
-	function corpBooking(flag) {
-		if (flag) {//corporate booking
-			$("#paymentPartial").hide();
-			$("#corpSubmit").show();
-		}
-		else {
-			$("#paymentPartial").show();
-			$("#corpSubmit").hide();	
-		}
-	}

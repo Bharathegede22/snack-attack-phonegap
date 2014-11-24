@@ -210,6 +210,8 @@
 											Pay this now
 										%span.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => @booking.deposit_help}
 											[?]
+									.fl.p-l20
+										#loaderdeposit.wait.bg-w.p-t20.fc
 								.fc
 							%td.p-10.t-r.p-r20.zoom-b.f-b.size-16
 								₹ #{show_currency(@booking.security_amount-@wallet_available)}
@@ -341,6 +343,7 @@
 	})(document);
 
 	document.getElementById('corpSubmit').style.display = "none";
+	document.getElementById('loaderDeposit').style.display = "none";
 	function checkJquery() {
 		if (window.jQuery) {
 			pushEvent('1-click checkout', 'Checkout Page Load', '');
@@ -450,6 +453,9 @@
 		window.location = "/bookings";
 	}
 	function updateDeposit(dep) {
+		$("#make_payment_debit").prop('disabled', true);
+		$("#make_payment_credit").prop('disabled', true);
+		$("#changeDeposit").prop('disabled', true);
 		$.post( "/bookings/seamless_update_payment", { deposit: dep, id: details.order_id }, 
 			function(data, status){
 				if(status=="success"){
@@ -457,6 +463,9 @@
 					if(response.status == "success") {
 						$('#hash').val(response.hash);
 						$('#amount').val(response.amt);
+						$("#changeDeposit").prop('disabled', false);
+						$("#make_payment_debit").prop('disabled', false);
+						$("#make_payment_credit").prop('disabled', false);
 					}
 				}
 			});
