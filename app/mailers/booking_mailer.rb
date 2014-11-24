@@ -39,5 +39,10 @@ class BookingMailer < ActionMailer::Base
 		@booking = Booking.find_by_id booking
 		mail(to: @booking.user.email, subject: "Zoomcar goes keyless! And so does your booking")
 	end
+
+	def welcome(user)
+		@user = user
+		mail(to: @user.email, subject: "Welcome To Zoomcar")
+	end
 	
 end
