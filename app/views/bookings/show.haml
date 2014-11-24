@@ -125,7 +125,7 @@
 						= @booking.promo
 						%br/
 						= offer.summary.html_safe
-		- credits_earned = @booking.credits.where(source_name: 'Early Return').collect(&:amount).sum
+		- credits_earned = @booking.credits.where(source_name: Credit::SOURCE_NAME_INVERT['Early Return']).collect(&:amount).sum
 		- if credits_earned > 0
 			.border-b-c
 			.p-t10.p-b10.p-l20.p-r20

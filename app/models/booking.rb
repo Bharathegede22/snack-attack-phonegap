@@ -691,6 +691,33 @@ class Booking < ActiveRecord::Base
   	{:credits => credits_applicable}
   end
 
+  # Removes credit from the booking if already applied
+  # Author:: Rohit
+  # Date:: 24/11/2014
+  # 
+	def revert_credits
+		credit_payments = self.confirmed_credit_payments
+		revert_amount = credit_payments.collect(&:amount).sum
+		#remove the negative credits created for booking.
+		self.allot_credits(amount: revert_amount, source_name: Credit::SOURCE_NAME_INVERT['Checkout Refresh'])
+		#clear the credits payment created for booking.
+		credit_payments.each do |payment|
+			payment.update_attributes!(amount: 0)
+		end
+	end
+
+  # Allots credit to user
+  # Author:: Rohit
+  # Date:: 3/11/2014 
+  #
+  # Expects
+  # * <b>args[:amount]<b> amount for credits
+  # * <b>args[:source_name]<b> Source name for credits
+  #
+  def allot_credits(args)
+    self.credits.create(user_id: self.user_id, amount: args[:amount].to_i, booking_key: self.confirmation_key, action: true, status: true, source_name: args[:source_name])
+  end
+
 	def sendsms(action, amount,deposit = 0)
 		message =  case action 
 		when 'change' then "Zoomcar booking (#{self.confirmation_key}) is changed. #{self.cargroup.display_name} from #{self.starts.strftime('%I:%M %p, %d %b')} till #{self.ends.strftime('%I:%M %p, %d %b')} at #{self.location.shortname}. "
