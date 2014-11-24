@@ -1,10 +1,3 @@
-:ruby
-	cars = @object.live
-	width = 100/(cars.length+1)
-	pricing = {}
-	cars.each do |cg|
-		pricing[cg.id.to_s] = cg.active_pricing(@object.city_id)
-	end
 .landing
 	:ruby
 		if @object.name.downcase.include?('airport')
@@ -15,10 +8,10 @@
 	.atf{:style => style}
 		.wrapper
 			%h1
-				%span
+				%span.size-26
 					= @object.h1
 			%h2
-				%span
+				%span.size-14
 					= @object.h2.html_safe
 			%br/
 			.p-10
@@ -107,35 +100,9 @@
 	#Cars.tab-pane.fade
 		%br/
 		.wrapper
+			= render :partial => "/main/pricing/#{@city.pricing_mode}/car_grid"
+		.wrapper
 			%br/
-			%table.t-c{width: '100%'}
-				%tr
-					%td{width: "#{width}%"} &nbsp;
-					- cars.each do |cg|
-						%td{width: "#{width}%"}
-							= image_tag("cars/#{cg.id}small.jpg", :alt => cg.display_name)
-							%br/
-							%b.zoom.size-18
-								= cg.shortname
-			%table.table.t-c
-				%tr.table-hover
-					%td.t-r{width: "#{width}%"}
-						%b.zoom HOURLY
-					- cars.each do |cg|
-						%td{width: "#{width}%"}
-							₹#{show_currency(pricing[cg.id.to_s].hourly_discounted)}
-				%tr
-					%td.t-r
-						%b.zoom DAILY
-					- cars.each do |cg|
-						%td 
-							₹#{show_currency(pricing[cg.id.to_s].daily_discounted)}
-				%tr
-					%td.t-r
-						%b.zoom WEEKLY
-					- cars.each do |cg|
-						%td 
-							₹#{show_currency(pricing[cg.id.to_s].weekly_fare)}
 			.bg-e.r-5.p-5
 				.f-b.zoom-b.t-c.f-i.size-16.p-5
 					our tariff includes

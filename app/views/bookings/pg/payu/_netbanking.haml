@@ -1,0 +1,33 @@
+:ruby
+	if !Rails.env.production?
+		@booking.user_email = PAYU_EMAIL
+		@booking.user_mobile = PAYU_PHONE
+	end
+	banks = [['AXIB', 'AXIS Bank'], ['BOIB', 'Bank of India'], ['BOMB', 'Bank of India'], ['CBIB', 'Central Bank Of India'], ['CRPB', 'Corporation Bank'], ['DCBB', 'Development Credit Bank'], ['FEDB', 'Federal Bank'], ['HDFB', 'HDFC Bank'], ['ICIB', 'ICICI Netbanking'], ['IDBB', 'Industrial Development Bank of India'], ['INDB', 'Indian Bank'], ['INIB', 'IndusInd Bank'], ['INOB', 'Indian Overseas Bank'], ['JAKB', 'Jammu and Kashmir Bank'], ['KRKB', 'Karnataka Bank'], ['KRVB', 'Karur Vysya'], ['SBBJB', 'State Bank of Bikaner and Jaipur'], ['SBHB', 'State Bank of Hyderabad'], ['SBIB', 'State Bank of India'], ['SBMB', 'State Bank of Mysore'], ['SBTB', 'State Bank of Travancore'], ['SOIB', 'South Indian Bank'], ['UBIB', 'Union Bank of India'], ['UNIB', 'United Bank Of India'], ['VJYB', 'Vijaya Bank'], ['YESB', 'Yes Bank'], ['CUBB', 'CityUnion'], ['CABB', 'Canara Bank'], ['SBPB', 'State Bank of Patiala'], ['CITNB', 'Citi Bank NetBanking'], ['DSHB', 'Deutsche Bank'], ['162B', 'Kotak Bank']]
+
+%form{:action => "#{PAYU_URL}", :id => 'pgForm', :method => "post"}
+	.hidden_field_tag
+		= hidden_field_tag :key, PAYU_KEY
+		= hidden_field_tag :txnid, '', class: 'order_id'
+		= hidden_field_tag :amount, '', class: 'amount'
+		= hidden_field_tag :productinfo, '', class: 'description'
+		= hidden_field_tag :firstname, '', class: 'firstname'
+		= hidden_field_tag :email, '', class: 'customer_email'
+		= hidden_field_tag :phone, '', class: 'customer_phone'
+		= hidden_field_tag :surl, ("http://" + HOSTNAME + "/bookings/pgresponse")
+		= hidden_field_tag :curl, ("http://" + HOSTNAME + "/bookings/pgresponse")
+		= hidden_field_tag :furl, ("http://" + HOSTNAME + "/bookings/pgresponse")
+		= hidden_field_tag :hash, '', class: 'hash'
+		= hidden_field_tag :api_version , '1'
+		= hidden_field_tag :pg, 'NB', class: 'pgnb'
+		.fl
+			%div
+				= label_tag 'selBank', 'Select Bank', :class => 'f-n grey'
+			%div
+				= select_tag 'bankcode', options_for_select(banks.collect { |n, c| [ c, n ] }), :width => '120 px', :class => 'p-5 size-11'
+			%br/
+			%br/
+	%br/
+	.fc
+		%div
+			%input#payNow.button.m-auto.fc{style: "width:200px;", type: "submit", value: "Pay Now", onclick:"pushEvent('1-click checkout', 'Pay Button', '');"}

@@ -31,9 +31,9 @@ Please dont refresh this page or use back button
 				= text_field_tag :firstname, @booking.user_name
 				= text_field_tag :email, @booking.user_email
 				= text_field_tag :phone, @booking.user_mobile
-				= text_field_tag :surl, ("http://" + HOSTNAME + "/bookings/payu")
-				= text_field_tag :curl, ("http://" + HOSTNAME + "/bookings/payu")
-				= text_field_tag :furl, ("http://" + HOSTNAME + "/bookings/payu")
+				= text_field_tag :surl, ("http://" + HOSTNAME + "/bookings/pgresponse")
+				= text_field_tag :curl, ("http://" + HOSTNAME + "/bookings/pgresponse")
+				= text_field_tag :furl, ("http://" + HOSTNAME + "/bookings/pgresponse")
 				= text_field_tag :hash, Digest::SHA512.hexdigest(hash)
 				= text_field_tag :drop_category, 'CASH,EMI,COD'
 				= text_field_tag :api_version , '1'
