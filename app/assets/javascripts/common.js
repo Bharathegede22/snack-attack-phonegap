@@ -35,7 +35,12 @@ function formCredits(frm,url,divId) {
 		var promo_old = $("#promoAmount").text();
 		credits_old = getValue(credits_old);
 		promo_old = getValue(promo_old);
-
+		$('.cancelCreditsBtn:submit').click(function(){
+			$('.cancelCreditsBtn:submit').attr("disabled", true);	
+		});
+		$('#use_credit:submit').click(function(){
+			$('#use_credit:submit').attr("disabled", true);	
+		});
 		  $.ajax({
 		    type:"POST", 
 		    url: "/bookings/promo",
@@ -66,7 +71,12 @@ function applyPromoCode(frm,url,divId) {
 		var promo_old = $("#promoAmount").text();
 		credits_old = getValue(credits_old);
 		promo_old = getValue(promo_old);
-
+		$('.promoCodeCancelBtn:submit').click(function(){
+			$('.promoCodeCancelBtn:submit').attr("disabled", true);	
+		});
+		$('.use_tariff:submit').click(function(){
+			$('.use_tariff:submit').attr("disabled", true);	
+		});
 		  $.ajax({
 		    type:"POST", 
 		    url: "/bookings/promo",
