@@ -122,7 +122,6 @@
 
                 $("#eventsmessage").html($("#eventsmessage").html()+"<br/>Success for: "+JSON.stringify(data));
 
-                alert('upload saved');
                 pushEvent('License Page', 'Image successfully uploaded', 'License Page');
 
                 var output = document.getElementById("result");
@@ -191,7 +190,6 @@
   var parentElId, actionDelRequest;
 
   $( document ).on( 'click', '.delete', function () {
-    alert("Delete button clicked");
     pushEvent('License Page', 'Delete button clicked', 'License Page');
 
     parentElId = $(this).parent().parent().attr('id');
@@ -223,7 +221,6 @@
 
 
   $(document).on('click', '#popup-delete-image',function(){
-    alert("Image successfully deleted");
     pushEvent('License Page', 'Image successfully deleted', 'License Page');
     var delLicence = "#pre_uploaded-img-wrapper" + actionDelRequest;
 
@@ -271,7 +268,6 @@
   });
 
   $(document).on('click', '#popup-donot-delete-image', function(){
-  alert("Cancel button clicked");
   pushEvent('License Page', 'Cancel button clicked', 'License Page');
 
   var cancelDelRequest = "#popover-" + parentElId;
