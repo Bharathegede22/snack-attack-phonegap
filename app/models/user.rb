@@ -339,6 +339,7 @@ class User < ActiveRecord::Base
 	def send_welcome_mail
 		if rand(100) < 80 #&& self.name_was.nil? && self.name_changed?
 			BookingMailer.welcome(self).deliver
+			Email.create(user_id: self.id, activity: 'welcome_mail') 
 		end
 	end
 	
