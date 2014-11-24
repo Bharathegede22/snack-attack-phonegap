@@ -19,7 +19,7 @@
                type: 'post',
                data: image_data1,
                success: function(resp,status)
-                       {   
+                       {
                          display_data(resp);
                        },
                        error: function(error)
@@ -31,7 +31,7 @@
   function display_data(resp) {
 
     var obj = resp;
-    var final_status = obj.image[0].status;      
+    var final_status = obj.image[0].status;
 
     if (final_status == 0) {
       $(".licence-status0").css("display", "block");
@@ -52,7 +52,7 @@
     }
 
     if (obj.image.length != 0) {
-      
+
       total_image_count = obj.image[0].count;
       //console.log(total_image_count);
 
@@ -68,7 +68,7 @@
 
 
             var img_div_pre = document.createElement("div");
-                                
+
                 img_div_pre.className = "pre_uploaded-img-wrapper";
                 img_div_pre.id = "pre_uploaded-img-wrapper" +obj.image[i].image_id;
 
@@ -76,7 +76,7 @@
                 pre_innerDiv.className = 'block-2';
 
                 var delete_btn = document.createElement('button');
-                
+
                 img_div_pre.innerHTML = "<a href='"+obj.image[i].url+"' target='_blank'><img class='dl-preuploaded-img img-responsive' id='"+obj.image[i].image_id+"' src='"+obj.image[i].url+"' /></a>";
 
                 img_div_pre.appendChild(pre_innerDiv);
@@ -96,8 +96,8 @@
 
                 if (final_status == 2) {
                   $(".delete").css("display", "none");
-                }               
-                
+                }
+
         }
     }
     else {
@@ -118,25 +118,26 @@
           showDone:false,
           uploadButtonClass:"ajax-file-upload-green",
           onSuccess:function(files,data,xhr)
-              { 
-                
+              {
+
                 $("#eventsmessage").html($("#eventsmessage").html()+"<br/>Success for: "+JSON.stringify(data));
 
-                //console.log(data.image[0].count);
+                alert('upload saved');
+                pushEvent('License Page', 'Image successfully uploaded', 'License Page');
 
                 var output = document.getElementById("result");
 
                 var img_div = document.createElement("div");
-                    
-                    img_div.id = "pre_uploaded-img-wrapper" + data.image[1].image_id; 
-                   
+
+                    img_div.id = "pre_uploaded-img-wrapper" + data.image[1].image_id;
+
                     img_div.className = "uploaded-img-wrapper";
 
                     var innerDiv = document.createElement('div');
                     innerDiv.className = 'block-2';
 
                     var delete_btn = document.createElement('button');
-                    
+
                     img_div.innerHTML = "<a href='"+data.image[1].url+"'><img class='new-dl-images img-responsive' id='"+data.image[1].image_id+"' src='"+data.image[1].url+"'/></a>";
 
                     var dl_src = $(".uploaded-img-wrapper img").attr('src');
@@ -160,8 +161,8 @@
 
                     $(".uploaded-img-wrapper").insertBefore(".licence-upload-btns");
 
-                      
-                    
+
+
 
                 if (data.image[0].count == 5) {
                   $(".licence-upload-btns").css("display", "none");
@@ -182,14 +183,16 @@
 
               }
 
-              
-          });     
+
+          });
 
   });
 
   var parentElId, actionDelRequest;
-      
+
   $( document ).on( 'click', '.delete', function () {
+    alert("Delete button clicked");
+    pushEvent('License Page', 'Delete button clicked', 'License Page');
 
     parentElId = $(this).parent().parent().attr('id');
      //console.log("parent id: " + parentElId);
@@ -220,6 +223,8 @@
 
 
   $(document).on('click', '#popup-delete-image',function(){
+    alert("Image successfully deleted");
+    pushEvent('License Page', 'Image successfully deleted', 'License Page');
     var delLicence = "#pre_uploaded-img-wrapper" + actionDelRequest;
 
     $.ajax({
@@ -227,8 +232,8 @@
        type: 'post',
        data: {"image_id" : actionDelRequest,"license_delete": true},
        success: function(delStatus)
-                 {   
-
+                 {
+                 //alert("Image successfully deleted");
                  //console.log(delStatus.image[0].count);
                  if (delStatus.image[0].count == 0) {
                     $(".licence-status1").css("display","none");
@@ -239,7 +244,7 @@
                     $(".licence-status0").css("display","block");
                  }
 
-                
+
 
                  if (delStatus.image[0].count == 5) {
                     $(".licence-upload-btns").css("display", "none");
@@ -266,6 +271,8 @@
   });
 
   $(document).on('click', '#popup-donot-delete-image', function(){
+  alert("Cancel button clicked");
+  pushEvent('License Page', 'Cancel button clicked', 'License Page');
 
   var cancelDelRequest = "#popover-" + parentElId;
 
@@ -314,7 +321,7 @@
             %p.license-status1.status1-warning We will check your license shortly.
             %p.licence-status2 Approved
             %p.licence-status3 Declined
-            %p.license-status3.status3-warning Your driver's license picture was not valid. Please upload another picture. 
+            %p.license-status3.status3-warning Your driver's license picture was not valid. Please upload another picture.
       .licence-upload-area
         %div
           %span Licence Images
@@ -323,7 +330,7 @@
         .licence-upload-btns.col-md-4
           / <input id="files" class="custom-file-upload" type="file" multiple/>
           %div#fileuploader Upload Image
-        
+
         #result.clearfix
         .license-loader
         #img-loader
@@ -332,5 +339,5 @@
             Upload your license on the go, just point and shoot. Download the Zoomcar app.
           .app-icon-block
             %a.iphone-dl-page.help{"data-original-title" => "", "data-placement" => "bottom", "data-title" => "Get Zoomcar iPhone App", "data-toggle" => "tooltip", :target => "_blank", :href => "https://itunes.apple.com/us/app/zoomcar-self-drive-cars/id889910218?mt=8&amp;utm_source=home%20page&amp;utm_medium=header%20links&amp;utm_content=iOS&amp;utm_campaign=installs", :title => ""}
-         
+
             %a.android-dl-page.help{"data-original-title" => "", "data-placement" => "bottom", "data-title" => "Get Zoomcar Android App", "data-toggle" => "tooltip", :target => "_blank", :href => "https://play.google.com/store/apps/details?id=com.zoomcar&amp;referrer=utm_source%3Dhome%2520page%26utm_medium%3Dheader%2520links%26utm_content%3Dandroid%26utm_campaign%3Dinstalls", :title => ""}
