@@ -468,7 +468,8 @@ class BookingsController < ApplicationController
 						@booking.update_column(:defer_deposit, false) if !params[:deposit].blank? && params[:deposit].to_i == 1
 						if @booking.offer_id.present? && @booking.promo.present?
 							reschedule_params = update_reschedule_params(params, @booking)
-							promo = make_promo_api_call(reschedule_params)
+							response = make_promo_api_call(reschedule_params)
+							promo = response["promo"]
 							offer_discount = @booking.total_discount
 							create_reschedule_offer_charge(@booking.id, promo, offer_discount)
 						end
@@ -489,8 +490,8 @@ class BookingsController < ApplicationController
 						@confirm = true
 						if @booking.offer_id.present? && @booking.promo.present?
 							reschedule_params = update_reschedule_params(params, @booking)
-							promo = make_promo_api_call(reschedule_params)
-							update_sessions(promo)
+							response = make_promo_api_call(reschedule_params)
+							update_sessions(response)
 						end
 					end
 				else
