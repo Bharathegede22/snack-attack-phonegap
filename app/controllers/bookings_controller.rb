@@ -32,9 +32,9 @@ class BookingsController < ApplicationController
 		generic_meta
 		@header = 'booking'
 		if abtest?
-			# payu checkout page
-			render :checkouta
+			render :checkoutab
 		else
+			# payu checkout page
 			render :checkouta
 		end
 	end
@@ -349,6 +349,13 @@ class BookingsController < ApplicationController
 				if @booking.confirmed_payments.length == 1
 					u = @booking.user
 					#@booking.add_security_deposit_charge if @booking.security_amount_deferred?
+					if session[:book].present?
+						session[:search] 			= nil
+						session[:notify] 			= nil
+						session[:book] 				= nil
+						session[:promo_code] 	= nil
+						session[:credits] 		= nil
+					end
 					if u.check_license
 				  	flash[:notice] = "Thanks for the payment. Please continue."
 				  else
@@ -378,12 +385,17 @@ class BookingsController < ApplicationController
 	end
 
   def promo
+  	b = check_booking_obj
   	if !params[:clear].blank? && params[:clear].to_i == 1
   		session[:promo_code] = nil
+			b.update_column(:promo, nil) if b
   	else
 			if !params[:promo].blank?
 				@offer = Offer.get(params[:promo],@city)
 				session[:promo_code] = params[:promo].upcase if @offer[:offer] && @offer[:error].blank?
+				promo = nil
+				promo = Offer.get(session[:promo_code],@city) if !session[:promo_code].blank?
+      	b.update_column(:promo, session[:promo_code]) if b
 	    end
 		end
     render json: {html: render_to_string('_promo.haml', layout: false)}
@@ -482,6 +494,9 @@ class BookingsController < ApplicationController
 	end
 	
 	def seamless_docreate
+		# check for existing booking with the same details if user reloads checkout page after going for payment
+		@booking = check_booking_obj
+		check_search if @booking.blank?
 		@booking.user_details(current_user)
 		@booking.ref_initial = session[:ref_initial]
 		@booking.ref_immediate = session[:ref_immediate]
@@ -489,8 +504,8 @@ class BookingsController < ApplicationController
 		@booking.status = 11 if session[:notify].present?
 		
 		# Defer Deposit
-		@booking.defer_deposit = true if @booking.defer_allowed? && session[:book][:deposit] == 0
-		
+		@booking.defer_deposit = @booking.defer_allowed? && session[:book][:deposit] == 0
+
 		# Check Credits
 		# TODO won't work with Juspay - 1 click checkout
 		if !session[:credits].blank? && current_user.total_credits.to_i < session[:credits].to_i
@@ -542,16 +557,21 @@ class BookingsController < ApplicationController
 			session[:notify] = nil
 	  	render :json => {:response => 'unavailable'}
 		else
+			session[:book][:id] = @booking.encoded_id
 			session[:booking_id] = @booking.encoded_id
-			session[:search] 			= nil
-			session[:notify] 			= nil
-			session[:book] 				= nil
-			session[:promo_code] 	= nil
-			session[:credits] 		= nil
+			# session[:search] 			= nil
+			# session[:notify] 			= nil
+			# session[:book] 				= nil
+			# session[:promo_code] 	= nil
+			# session[:credits] 		= nil
 			if !session[:corporate_id].blank? && current_user.support?
 				flash[:notice] = "Corporate Booking is Successful"
 				session[:corporate_id] = nil
 				session[:booking_id] = nil
+				session[:search] = nil
+				session[:notify] = nil
+				session[:promo_code] 	= nil
+				session[:book] = nil
 		  	render :json => {:response => 'corporate', :id => @booking.encoded_id}
 			elsif @booking.outstanding > 0
 				@payment = @booking.check_payment
@@ -569,8 +589,7 @@ class BookingsController < ApplicationController
 						render :json => {:response => response['status'].downcase, :amt => @payment.amount.to_i, :order_id => @payment.encoded_id, :name => @booking.user_name, :email => @booking.user_email, :phone => @booking.user_mobile, :desc => @booking.cargroup.display_name, :product_id => @booking.cargroup.brand_id, :cust_id => @booking.user.encoded_id, :hash => Digest::SHA512.hexdigest(hash)}
 					elsif response['status'].downcase == 'error'
 						
-						# reloading page doesn't work because session variables are destroyed. Reload page on client side instead of going back when logic is moved to admin - Aniket
-				  	# flash[:error] = "Something went wrong. Please try again."
+				  	flash[:error] = "Something went wrong. Please try again."
 						render :json => {:response => 'pg error'}
 					end
 
@@ -785,7 +804,7 @@ class BookingsController < ApplicationController
   def check_blacklist
     redirect_to checkout_bookings_path(@city.name.downcase) if current_user && current_user.is_blacklisted? && current_user.is_underage?
   end
-  
+
 	def check_inventory
 		if @booking && @booking.valid?
 			if @booking.jsi.blank? && @booking.status == 0
@@ -843,9 +862,34 @@ class BookingsController < ApplicationController
 	def feedback_params
 		params.require(:review).permit(:comment, :rating_tech, :rating_friendly, :rating_condition, :rating_location)
 	end
-	
+
 	def payu_test_params(amount, key )
 		{"mihpayid"=>"4039937155099#{10000 + rand(99999)}", "mode"=>"CC", "status"=>"success", "unmappedstatus"=>"captured", "key"=>"C0Dr8m", "txnid"=>"1bdfe", "amount"=>"6500.00", "discount"=>"0.00", "net_amount_debit"=>"6500", "addedon"=>"2014-08-26 16:13:57", "productinfo"=>"Figo", "firstname"=>"fdsf", "lastname"=>"", "address1"=>"", "address2"=>"", "city"=>"", "state"=>"", "country"=>"", "zipcode"=>"", "email" => PAYU_EMAIL, "phone" => PAYU_PHONE, "udf1"=>"", "udf2"=>"", "udf3"=>"", "udf4"=>"", "udf5"=>"", "udf6"=>"", "udf7"=>"", "udf8"=>"", "udf9"=>"", "udf10"=>"", "hash"=>"5332219dcb4c07661a85d31e4a3da055cf4a63bea9c40c3e3866780bb424238464661868dfb8724816d89937e57867c8f47a2c13f32106078e0b1e50b42d0ed4", "field1"=>"187269", "field2"=>"423820564675", "field3"=>"20140826", "field4"=>"MC", "field5"=>"564675", "field6"=>"00", "field7"=>"0", "field8"=>"3DS", "field9"=>" Successful Verification of Secure Hash:  -- Approved -- Transaction Successful -- Unable to be determined--E219", "payment_source"=>"payu", "PG_TYPE"=>"AXIS", "bank_ref_num"=>"187269", "bankcode"=>"CC", "error"=>"E000", "error_Message"=>"No Error", "name_on_card"=>"ksdfh", "cardnum"=>"512345XXXXXX2346", "cardhash"=>"This field is no longer supported in postback params."}
 	end
+
+	# Loads booking onject from db if already created
+	#
+	# Author::Aniket
+	# Date:: 22/11/2014
+	def check_booking_obj
+		if !session[:book][:id].blank?
+			b = Booking.find_by(id: CommonHelper.decode(session[:book][:id]))
+			if b.starts == Time.zone.parse(session[:book][:starts]) && b.ends == Time.zone.parse(session[:book][:ends]) && b.location_id == session[:book][:loc].to_i && b.cargroup_id == session[:book][:car].to_i
+			# @booking = Booking.new
+			@booking = b.clone
+			@booking.id = b.id
+			@booking.starts = b.starts
+			@booking.ends = b.ends
+			@booking.location_id = b.location_id
+			@booking.cargroup_id = b.cargroup_id
+			@booking.city_id = b.city_id
+			return @booking
+			else
+				session[:book][:id] = nil
+				return nil
+			end
+		end
+	end
+
 
 end
