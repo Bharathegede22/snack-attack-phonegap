@@ -813,13 +813,6 @@ $('#proceedToPayment').click(function(){
 	return false;
 });
 
-$('#viewTariffDetails').click(function(){
-	$('.tariff-details').slideDown();
-	$('.payment-options').slideUp();
-	return false;
-});
-
-
 function verifyGoDaddySSLSeal()
 {
   var bgHeight = "460";

@@ -626,6 +626,8 @@ class Booking < ActiveRecord::Base
 		pay = Payment.where("booking_id =? and status IN (1)",book.id).order(created_at: :asc)
 		if !pay.blank?
 			(book.starts - pay.first.created_at).to_i
+		else
+			return nil
 		end
 	end
 
