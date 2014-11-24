@@ -3,6 +3,8 @@
 		.panel.panel-default.offers-panel.m-t70
 			.panel-heading.offers-heading
 				.deals-stamp-icon
+				.timer-icon.pull-right
+					%span.glyphicon.glyphicon-time
 				%h4.white.p-l60
 					Deals of the Day
 					%span.pull-right #{(Time.now+1.hour).strftime("%a %d-%b-%Y %I:%M %p %H")}
