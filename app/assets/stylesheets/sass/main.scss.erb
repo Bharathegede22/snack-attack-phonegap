@@ -14,6 +14,13 @@ $green: #6ABD19;
 $grey: #C5C5C5;
 $light-grey:#70757D;
 $width960: 960px;
+$grey-bg:	#eee;
+$border-black1px: 1px #323a45 solid;
+$border-black2px: 2px #323a45 solid;
+$border-black3px: 3px #323a45 solid;
+$border-grey1px: 1px #ccc solid;
+$border-grey2px: 2px #ccc solid;
+$border-grey3px: 3px #ccc solid;
 
 /*==============================*/
  //Silent classes
@@ -26,6 +33,17 @@ $width960: 960px;
   background: red;
   width: 100px;
   height: 50px;
+}
+.clear{
+	clear: both;
+}
+.disable-btn{
+	background: $grey;
+	cursor: default !important;
+	color: $white !important;
+	&:hover{
+		text-shadow: none;
+	}
 }
 /*==============================*/
  //mixins
@@ -233,14 +251,63 @@ $width960: 960px;
 }
 
 /***********************************Deals-landing-page*******************************/
-
-
-
-
-
-
-
-
-
-
-
+.offers-heading{
+	background: $black !important;
+	h4{
+		color: white;
+	}
+}
+.offer-panel-body{
+	background: $grey-bg;
+	padding: 2.5em 0em;
+}
+.each-car-offer{
+	background: $white;
+	display: inline-block;
+	border: $border-grey2px;
+	.time{
+		width: 120px;
+	}
+}
+.location_icon {
+	background: url(<%= asset_path 'location.png' %>) 10px 6px no-repeat;
+}
+.strike-text{
+	text-decoration: line-through;
+}
+.offers-terms-condition{
+	padding: 1em 0 2em;
+}
+.sold-out-tag{
+	background: url(<%= asset_path 'sold_out_tag.png' %>) -9px 6px no-repeat;
+	position: absolute;
+width: 82px;
+height: 72px;
+z-index: 2;
+margin: -27px -25px;
+background-size: 8em;
+}
+.deals-stamp-icon{
+	background: url(<%= asset_path 'deals-stamp.png' %>) 10px 6px no-repeat;
+	height: 145px;
+	position: absolute;
+	z-index: 2;
+	width: 150px;
+	margin: -6em -8em;
+}
+.timer-icon{
+	width: 60px;
+	height: 60px;
+	background: $black;
+	right: 50%;
+	position: absolute;
+	margin: -1.3em -15em;
+	border-radius: 4em;
+	span{
+		margin: 8px 9px;
+		font-size: 3.5em;	
+		color: $white;
+	}
+}
+.countdown-time{
+}

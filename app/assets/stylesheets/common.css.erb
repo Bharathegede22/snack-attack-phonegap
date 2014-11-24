@@ -74,6 +74,9 @@
 .zoom-blue {
 	color: #323a45;
 }
+.light-grey{
+	color: #ccc;
+}
 /******* Common Backgrounds *********/
 .bg-0 {
 	background-color: #000;
@@ -534,6 +537,10 @@
 	margin-left: 10px;
 }
 
+.m-t12 {
+	margin-top: 12px;
+}
+
 .m-15 {
 	margin: 15px;
 }
@@ -588,6 +595,11 @@
 .m-l30 {
 	margin-left: 30px;
 }
+
+.m-t70 {
+	margin-top: 70px;
+}
+
 .p-0 {
 	padding: 0px;
 }
@@ -748,6 +760,10 @@
 	padding-bottom: 20px;
 }
 
+.p-b30 {
+	padding-bottom: 30px;
+}
+
 .p-l20 {
 	padding-left: 20px;
 }
@@ -767,6 +783,15 @@
 .p-l80 {
 	padding-left: 80px;
 }
+
+.p-l60 {
+	padding-left: 60px;
+}
+
+.p-l35{
+	padding-left: 35px;
+}
+
 .pointer {
 	cursor: pointer;
 }
@@ -829,6 +854,14 @@
 	-khtml-border-radius: 2px;
 	-moz-border-radius: 2px;
 	border-radius: 2px;
+	behavior: url(<%= asset_path 'assets/PIE.htc' %>);
+}
+
+.r-3 {
+	-webkit-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
 	behavior: url(<%= asset_path 'assets/PIE.htc' %>);
 }
 
@@ -1123,3 +1156,7 @@ h4, h5, h6 {
 .z-3 { z-index: 3; }
 .z-4 { z-index: 4; }
 .z-5 { z-index: 5; }
+
+.fo-helv{
+	font-family: 'Helvetica', 'Arial', sans-serif;
+}
