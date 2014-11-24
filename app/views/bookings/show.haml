@@ -132,14 +132,14 @@
 				.text-up.size-11.m-b3
 					Credits
 				.zoom-b.f-b.size-14.earned-credit-statement
-					You earned ₹ #{credits_earned} credits from this booking
+					You earned ₹ #{credits_earned} in credits from this booking
 					#showPage-popover-block
-						%button.btn.creditsDescBtn-showPage [?]
+						%button.btn.creditsDescBtn-showPage.p-0 [?]
 
-			.popover.fade.right.in.booking-showPage-popupBox
+			.popover.fade.right.in.booking-showPage-popupBox.m-t15
 				.arrow
 				%h3.popover-title{:style => "display: none;"}
-				.popover-content Your credits have been added to your zoomcar wallet. Use them to pay the fee for your next booking.
+				.popover-content Your credits have been added to your Zoomcar wallet. Use them to pay the fee for your next booking.
 
 	= render :partial => '/bookings/socialshare'
 
