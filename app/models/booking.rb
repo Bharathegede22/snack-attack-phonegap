@@ -16,6 +16,7 @@ class Booking < ActiveRecord::Base
 	has_many	:confirmed_refunds, -> { where "status = 1 and through != 'wallet_widget'" }, class_name: "Refund"
 	has_many 	:credit, :as => :creditable , dependent: :destroy
 	has_many	:utilizations, -> {where "minutes > 0"}, dependent: :destroy
+    has_many  :activities
 	
 	has_one :coupon_code
 	has_one	:review, :inverse_of => :booking, dependent: :destroy
@@ -61,7 +62,7 @@ class Booking < ActiveRecord::Base
 		return if (amount.to_i <= 0)
 		refund = Refund.create!(status: 1, booking_id: self.id, through: 'wallet', amount: amount)
 		Wallet.create!(amount: amount, user_id: self.user_id, status: 1, credit: true, transferable: refund)
-		self.update_column(:hold, false) if amount.to_i >= 5000
+		self.update_column(:hold, false) if amount.to_i >= security_amount
 	end
 
 	def cancellation_charge
@@ -106,7 +107,7 @@ class Booking < ActiveRecord::Base
 		total = defer_deposit ? self.outstanding_without_deposit : self.outstanding_with_security
 		total = self.outstanding if self.status==5
 		if total > 0
-			payment = Payment.create!(booking_id: self.id, through: 'payu', amount: total)
+			payment = Payment.create!(booking_id: self.id, through: 'na', amount: total)
 		else
 			payment = nil
 		end
@@ -136,6 +137,32 @@ class Booking < ActiveRecord::Base
 		end
 		fare = self.get_fare
 		return [str, fare]
+	end
+
+	def self.create_payment(b)
+		@booking = b
+		@payment = @booking.check_payment
+		if @payment
+			if !Rails.env.production?
+				@booking.user_email = PAYU_EMAIL
+				@booking.user_mobile = PAYU_PHONE
+			end
+
+			# Creating order on juspay
+			data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user_email, customer_mobile: @booking.user_mobile, return_url: "http://#{HOSTNAME}/bookings/pgresponse" }			
+			response = Juspay.create_order(data)
+
+			hash = PAYU_KEY + "|" + @payment.encoded_id + "|" + @payment.amount.to_i.to_s + "|" + @booking.cargroup.display_name + "|" + @booking.user_name.strip + "|" + @booking.user_email + "|||||||||||" + PAYU_SALT
+			
+			if(!response.nil? && response['status'].downcase=='created')
+				json_resp = {:status => 'success', :amt => @payment.amount.to_i, :order_id => @payment.encoded_id, :name => @booking.user_name, :email => @booking.user_email, :phone => @booking.user_mobile, :desc => @booking.cargroup.display_name, :product_id => @booking.cargroup.brand_id, :cust_id => @booking.user.encoded_id, :hash => Digest::SHA512.hexdigest(hash)}
+			else
+				json_resp = {:status=>'error'}
+			end
+		else
+			flash[:notice] = "Booking is already paid for full, no need for a new transaction."
+    	redirect_to "/bookings/" + @booking.encoded_id and return
+		end
 	end
 	
 	def dates_order
@@ -419,7 +446,8 @@ class Booking < ActiveRecord::Base
 	
 	def hold_security?
 		self.hold == true
-	end
+    end
+
 	
 	def link
 		return "http://" + HOSTNAME + "/bookings/" + self.encoded_id
@@ -434,7 +462,7 @@ class Booking < ActiveRecord::Base
 		return if amount.to_i <= 0
 		wpayment = Payment.create!(status: 1, booking_id: self.id, through: 'wallet', amount: (amount > self.pricing.mode::SECURITY) ? (self.pricing.mode::SECURITY) : amount)
 		Wallet.create!(amount: amount, user_id: self.user_id, status: 1, credit: false, transferable: wpayment)
-	end
+  end
 	
 	def manage_inventory
 		check = 1
@@ -598,6 +626,8 @@ class Booking < ActiveRecord::Base
 		pay = Payment.where("booking_id =? and status IN (1)",book.id).order(created_at: :asc)
 		if !pay.blank?
 			(book.starts - pay.first.created_at).to_i
+		else
+			return nil
 		end
 	end
 
@@ -950,7 +980,7 @@ end
 #  corporate_id             :integer
 #  city_id                  :integer
 #  pricing_mode             :string(2)
-#  medium                   :string(12)
+#  medium                   :string(20)
 #  shortened                :boolean          default(FALSE)
 #  total_fare               :integer
 #  deposit_status           :integer          default(0)

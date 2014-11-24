@@ -3,13 +3,13 @@ class BookingsController < ApplicationController
   include BookingsHelper
 
   before_filter :authenticate_user!, :only => [:checkout]
-  before_filter :copy_params, :only => [:docreate]
-	before_filter :check_booking, :only => [:holddeposit, :cancel, :complete, :dodeposit, :dopayment, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
-	before_filter :check_booking_user, :only => [:holddeposit, :dodeposit, :cancel, :invoice, :payments, :reschedule, :feedback]
-	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :docreatenotify, :license, :login, :notify, :userdetails]
-	before_filter :check_search_access, :only => [:credits, :docreate, :docreatenotify, :license, :login, :userdetails]
-	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :dopayment, :license, :login, :payment, :userdetails]
-	before_filter :check_blacklist, :only => [:docreate]
+	before_filter :copy_params, :only => [:docreate, :seamless_docreate]
+	before_filter :check_booking, :only => [:holddeposit, :cancel, :complete, :dodeposit, :seamless_dodeposit, :dopayment, :seamless_dopayment, :seamless_payment_options, :failed, :invoice, :payment, :payments, :reschedule, :show, :thanks, :feedback]
+	before_filter :check_booking_user, :only => [:holddeposit, :dodeposit, :seamless_dodeposit, :cancel, :invoice, :payments, :reschedule, :feedback]
+	before_filter :check_search, :only => [:checkout, :checkoutab, :credits, :docreate, :seamless_docreate, :docreatenotify, :license, :login, :notify, :userdetails]
+	before_filter :check_search_access, :only => [:credits, :docreate, :seamless_docreate, :docreatenotify, :license, :login, :userdetails]
+	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :seamless_docreate, :dopayment, :seamless_dopayment, :license, :login, :payment, :userdetails]
+	before_filter :check_blacklist, :only => [:docreate, :seamless_docreate]
 	before_filter :check_promo,		:only => [:checkout]
 
 	def cancel
@@ -31,7 +31,12 @@ class BookingsController < ApplicationController
 		redirect_to do_bookings_path(@city.name.downcase) and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		generic_meta
 		@header = 'booking'
-		render :checkoutab
+		if abtest?
+			render :checkoutab
+		else
+			# payu checkout page
+			render :checkouta
+		end
 	end
 	
 	def complete
@@ -176,7 +181,7 @@ class BookingsController < ApplicationController
 			  	else
 			  	flash[:notice] = "Thanks for the payment. Please upload your license to complete the reservation."
 			  	redirect_to "/users/license"
-			 	end
+				end
 			end
 		end
 	end
@@ -191,7 +196,7 @@ class BookingsController < ApplicationController
 		end
 		redirect_to "/bookings/#{@booking.encoded_id}/dopayment"
 	end
-  	
+  
 	def dopayment
 		session[:booking_id] = @booking.encoded_id
 		redirect_to payment_bookings_path(@city.name.downcase)
@@ -226,7 +231,11 @@ class BookingsController < ApplicationController
 	
 	def holddeposit
 		@booking.update_attribute(:hold, true)
-		respond_to do |format|
+    if @booking.hold_security?
+    activities_params = {user_id: @booking.user_id, booking_id: @booking.id, activity: Activity::ACTIVITIES[:on_hold]}
+    Activity.create_activity(activities_params)
+    end
+    respond_to do |format|
 			format.json {render :json =>{:error=>'', :messag=> 'Hold Successful'}}
 			format.html {redirect_to '/bookings'}
 		end
@@ -326,14 +335,67 @@ class BookingsController < ApplicationController
 			redirect_to '/' and return
 		end
 	end
-  
+
+	def pgresponse
+		if params['order_id'].present?		#juspay
+			@payment = Payment.juspay_create(params)
+		elsif params['mihpayid'].present?	#payu
+			@payment = Payment.do_create(params)
+		end
+		if @payment
+			@booking = @payment.booking
+			session[:booking_id] = @booking.encoded_id
+			if @payment.status == 1
+				if @booking.confirmed_payments.length == 1
+					u = @booking.user
+					#@booking.add_security_deposit_charge if @booking.security_amount_deferred?
+					if session[:book].present?
+						session[:search] 			= nil
+						session[:notify] 			= nil
+						session[:book] 				= nil
+						session[:promo_code] 	= nil
+						session[:credits] 		= nil
+					end
+					if u.check_license
+				  	flash[:notice] = "Thanks for the payment. Please continue."
+				  else
+				  	flash[:notice] = "Thanks for the payment. Please upload your license to complete the reservation."
+				  end
+		  		redirect_to "/#{@city.name.downcase}/bookings/complete"
+		  	else
+		  		flash[:notice] = "Thanks for the payment. Please continue."
+		  		redirect_to thanks_bookings_path
+		  		# redirect_to "/bookings/thanks"
+		  	end
+		  elsif @payment.status == 3
+		    flash[:error] = "Your transaction is subject to manual approval by the payment gateway. We will keep you updated about the same through email."
+		  	if @booking.confirmed_payments.length == 0
+		  		redirect_to "/#{@city.name.downcase}/bookings/complete"
+		  	else
+		  		redirect_to "/bookings/thanks"
+		  	end
+		  else
+		    flash[:error] = "Your transaction has failed. Please do a fresh transaction."
+		  	redirect_to "/bookings/failed"
+		  	# redirect_to failed_bookings_path(@city.name.downcase)
+		  end
+		else
+			redirect_to '/' and return
+		end
+	end
+
   def promo
+  	b = check_booking_obj
   	if !params[:clear].blank? && params[:clear].to_i == 1
   		session[:promo_code] = nil
+			b.update_column(:promo, nil) if b
   	else
 			if !params[:promo].blank?
 				@offer = Offer.get(params[:promo],@city)
 				session[:promo_code] = params[:promo].upcase if @offer[:offer] && @offer[:error].blank?
+				promo = nil
+				promo = Offer.get(session[:promo_code],@city) if !session[:promo_code].blank?
+      	b.update_column(:promo, session[:promo_code]) if b
 	    end
 		end
     render json: {html: render_to_string('_promo.haml', layout: false)}
@@ -431,6 +493,158 @@ class BookingsController < ApplicationController
 		end
 	end
 	
+	def seamless_docreate
+		# check for existing booking with the same details if user reloads checkout page after going for payment
+		@booking = check_booking_obj
+		check_search if @booking.blank?
+		@booking.user_details(current_user)
+		@booking.ref_initial = session[:ref_initial]
+		@booking.ref_immediate = session[:ref_immediate]
+		@booking.through_signup = true
+		@booking.status = 11 if session[:notify].present?
+		
+		# Defer Deposit
+		@booking.defer_deposit = @booking.defer_allowed? && session[:book][:deposit] == 0
+
+		# Check Credits
+		# TODO won't work with Juspay - 1 click checkout
+		if !session[:credits].blank? && current_user.total_credits.to_i < session[:credits].to_i
+			session[:credits] = nil
+			flash[:error] = 'Insufficient credits, please try again!'
+			redirect_to "/bookings/checkout"
+			return
+		end
+		
+		# Check Offer
+		promo = nil
+		promo = Offer.get(session[:promo_code],@city) if !session[:promo_code].blank?
+		if !session[:promo_booking].blank?
+			@booking = Booking.find(session[:promo_booking])
+			session[:promo_booking] = nil
+			@booking.status = 0
+		end
+		if promo
+			@booking.promo = session[:promo_code]
+			@booking.offer_id = promo[:offer].id
+		end
+		
+		# Corporate Booking
+		if !session[:corporate_id].blank? && current_user.support?
+			@booking.corporate_id = session[:corporate_id]
+			if @booking.manage_inventory == 1
+				@booking.status = 1
+			else
+				Inventory.block(@booking.cargroup_id, @booking.location_id, @booking.starts, @booking.ends)
+				@booking.status = 6
+			end
+		end
+		
+		@booking.save!
+		
+		# Expiring Coupon Code
+		if promo && promo[:coupon]
+			promo[:coupon].used = 1
+			promo[:coupon].used_at = Time.now	
+			promo[:coupon].booking_id = @booking.id
+			promo[:coupon].save!
+		end
+		
+		# Using crredits
+		Credit.use_credits(@booking, session[:credits]) if !session[:credits].blank?
+		
+		if @booking.status == 11	
+			flash[:notice] = "We will Notify you once the Vehicle is available."
+			session[:notify] = nil
+	  	render :json => {:response => 'unavailable'}
+		else
+			session[:book][:id] = @booking.encoded_id
+			session[:booking_id] = @booking.encoded_id
+			# session[:search] 			= nil
+			# session[:notify] 			= nil
+			# session[:book] 				= nil
+			# session[:promo_code] 	= nil
+			# session[:credits] 		= nil
+			if !session[:corporate_id].blank? && current_user.support?
+				flash[:notice] = "Corporate Booking is Successful"
+				session[:corporate_id] = nil
+				session[:booking_id] = nil
+				session[:search] = nil
+				session[:notify] = nil
+				session[:promo_code] 	= nil
+				session[:book] = nil
+		  	render :json => {:response => 'corporate', :id => @booking.encoded_id}
+			elsif @booking.outstanding > 0
+				@payment = @booking.check_payment
+				if @payment
+					if !Rails.env.production?
+						@booking.user_email = PAYU_EMAIL
+						@booking.user_mobile = PAYU_PHONE
+					end
+					# Creating order on juspay
+					data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user_email, customer_mobile: @booking.user_mobile, return_url: "http://#{HOSTNAME}/bookings/pgresponse" }
+					response = Juspay.create_order(data)
+
+					if response['status'].downcase == 'created' || response['status'].downcase == 'new'
+						hash = PAYU_KEY + "|" + @payment.encoded_id + "|" + @payment.amount.to_i.to_s + "|" + @booking.cargroup.display_name + "|" + @booking.user_name.strip + "|" + @booking.user_email + "|||||||||||" + PAYU_SALT
+						render :json => {:response => response['status'].downcase, :amt => @payment.amount.to_i, :order_id => @payment.encoded_id, :name => @booking.user_name, :email => @booking.user_email, :phone => @booking.user_mobile, :desc => @booking.cargroup.display_name, :product_id => @booking.cargroup.brand_id, :cust_id => @booking.user.encoded_id, :hash => Digest::SHA512.hexdigest(hash)}
+					elsif response['status'].downcase == 'error'
+						
+				  	flash[:error] = "Something went wrong. Please try again."
+						render :json => {:response => 'pg error'}
+					end
+
+				else
+					flash[:notice] = "Booking is already paid for full, no need for a new transaction."
+			  	render :json => {:response => 'paid', :id => @booking.encoded_id}
+		    end
+			else
+				u = @booking.user
+				if u.check_license	
+			  	flash[:notice] = "Thanks for the payment. Please continue."
+			  	render :json => {:response => 'paid license checked', :id => @booking.encoded_id}
+			  	else
+			  	flash[:notice] = "Thanks for the payment. Please upload your license to complete the reservation."
+			  	render :json => {:response => 'paid no license', :id => @booking.encoded_id}
+			 	end
+			end
+		end
+	end
+
+	def seamless_dodeposit
+		if params[:checkoutDeposit] == "1"
+			@booking.update_column(:defer_deposit, false)
+		elsif params[:checkoutDeposit] == "0"
+			@booking.update_column(:defer_deposit, true)
+		end
+		if !@booking.defer_allowed?
+			@booking.add_security_deposit_charge
+			@booking.make_payment_from_wallet
+		end
+		session[:booking_id] = @booking.encoded_id
+		resp = Booking.create_payment(@booking)
+		render :json=> resp
+	end
+
+	def seamless_dopayment
+		session[:booking_id] = @booking.encoded_id
+		resp = Booking.create_payment(@booking)
+		render :json=> resp
+	end
+
+	def seamless_payment_options
+		render :json => {html: render_to_string('/bookings/pg/_payment_options.haml', layout: false)}
+	end
+
+	def seamless_update_payment
+		if !params[:deposit].nil? && params[:id].present?
+			resp = Payment.update(params[:id], params[:deposit])
+			render :json => resp
+		else
+			render :json => {:status=> 'error', :msg => "param deposit or id missing"}
+		end
+	end
+
+
   def search
     @meta_title = "Zoom - Car Rental in #{@city.name}"
     @meta_description = "Enjoy the Freedom of Four Wheels with self-drive car rental by the hour or by the day. Now in #{@city.name}!"
@@ -544,7 +758,7 @@ class BookingsController < ApplicationController
 	def widget
 		render json: {html: render_to_string('_widget.haml', layout: false)}
 	end
-	
+
 	private
 	
 	def check_booking
@@ -590,7 +804,7 @@ class BookingsController < ApplicationController
   def check_blacklist
     redirect_to checkout_bookings_path(@city.name.downcase) if current_user && current_user.is_blacklisted? && current_user.is_underage?
   end
-  
+
 	def check_inventory
 		if @booking && @booking.valid?
 			if @booking.jsi.blank? && @booking.status == 0
@@ -648,9 +862,34 @@ class BookingsController < ApplicationController
 	def feedback_params
 		params.require(:review).permit(:comment, :rating_tech, :rating_friendly, :rating_condition, :rating_location)
 	end
-	
+
 	def payu_test_params(amount, key )
 		{"mihpayid"=>"4039937155099#{10000 + rand(99999)}", "mode"=>"CC", "status"=>"success", "unmappedstatus"=>"captured", "key"=>"C0Dr8m", "txnid"=>"1bdfe", "amount"=>"6500.00", "discount"=>"0.00", "net_amount_debit"=>"6500", "addedon"=>"2014-08-26 16:13:57", "productinfo"=>"Figo", "firstname"=>"fdsf", "lastname"=>"", "address1"=>"", "address2"=>"", "city"=>"", "state"=>"", "country"=>"", "zipcode"=>"", "email" => PAYU_EMAIL, "phone" => PAYU_PHONE, "udf1"=>"", "udf2"=>"", "udf3"=>"", "udf4"=>"", "udf5"=>"", "udf6"=>"", "udf7"=>"", "udf8"=>"", "udf9"=>"", "udf10"=>"", "hash"=>"5332219dcb4c07661a85d31e4a3da055cf4a63bea9c40c3e3866780bb424238464661868dfb8724816d89937e57867c8f47a2c13f32106078e0b1e50b42d0ed4", "field1"=>"187269", "field2"=>"423820564675", "field3"=>"20140826", "field4"=>"MC", "field5"=>"564675", "field6"=>"00", "field7"=>"0", "field8"=>"3DS", "field9"=>" Successful Verification of Secure Hash:  -- Approved -- Transaction Successful -- Unable to be determined--E219", "payment_source"=>"payu", "PG_TYPE"=>"AXIS", "bank_ref_num"=>"187269", "bankcode"=>"CC", "error"=>"E000", "error_Message"=>"No Error", "name_on_card"=>"ksdfh", "cardnum"=>"512345XXXXXX2346", "cardhash"=>"This field is no longer supported in postback params."}
 	end
+
+	# Loads booking onject from db if already created
+	#
+	# Author::Aniket
+	# Date:: 22/11/2014
+	def check_booking_obj
+		if !session[:book][:id].blank?
+			b = Booking.find_by(id: CommonHelper.decode(session[:book][:id]))
+			if b.starts == Time.zone.parse(session[:book][:starts]) && b.ends == Time.zone.parse(session[:book][:ends]) && b.location_id == session[:book][:loc].to_i && b.cargroup_id == session[:book][:car].to_i
+			# @booking = Booking.new
+			@booking = b.clone
+			@booking.id = b.id
+			@booking.starts = b.starts
+			@booking.ends = b.ends
+			@booking.location_id = b.location_id
+			@booking.cargroup_id = b.cargroup_id
+			@booking.city_id = b.city_id
+			return @booking
+			else
+				session[:book][:id] = nil
+				return nil
+			end
+		end
+	end
+
 
 end

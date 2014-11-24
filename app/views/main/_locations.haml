@@ -66,6 +66,9 @@
 						$("#HomepageMapZoom").slideDown();
 						map.set('styles', '');
 					});
+					google.maps.event.addListenerOnce(map, 'click', function() {
+						pushEvent('Maps','' , 'Home Page');
+					});
 					google.maps.event.addListener(map, 'dragend', function() {
 						$("#HomepageMapHelp").slideUp();
 						$("#HomepageMapZoom").slideDown();

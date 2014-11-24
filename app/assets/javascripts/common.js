@@ -718,7 +718,7 @@ checkJail();
 initializeDatePicker();
 checkUser();
 
-/* Tariff Details& FAQ Tabs */
+/* Tariff Details, FAQ, Fee and Payment Tabs */
 $(function () {
 	$('#tariff-header a, #faqs-tabs a, #fee-tabs a').click(function (e) {
   		e.preventDefault();
@@ -804,3 +804,33 @@ $('#ContinueToSite').click(function(){
 	$('#MobileRedirect').remove();
 	$('meta[name=viewport]').remove();
 });
+
+$('#proceedToPayment').click(function(){
+	$('.tariff-details').slideUp();
+
+	$('.payment-options').slideDown();
+
+	return false;
+});
+
+function verifyGoDaddySSLSeal()
+{
+  var bgHeight = "460";
+	var bgWidth = "593";
+	if (document.location.hostname === "www.zoomcar.com") {
+		var sealId = "Ny6EijIfOSXkAo0dlbSlYNs0ZFMtzRvqFfiLzW78jh8vlbbgLpcc7s";
+	}
+	else{
+		var sealId = "3yCVbZLiXFziOzM9ZKtu3FP5qb8hkkipd76ehYTJzYmggPqLSbF1u4Vn";
+	}
+	var url = "https:\/\/seal.godaddy.com\/verifySeal?sealID=" + sealId;
+	window.open(url,'SealVerfication','menubar=no,toolbar=no,personalbar=no,location=yes,status=no,resizable=yes,fullscreen=no,scrollbars=no,width=' + bgWidth + ',height=' + bgHeight);
+}
+// $('input.credit-card-cvv')
+// 	.payment('formatCardCVC')
+// 	.focus(function(){
+// 	$('#credit-card-cvv-icon').fadeIn();
+// })
+// 	.blur(function(){
+// 	$('#credit-card-cvv-icon').fadeOut();
+// });

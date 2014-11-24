@@ -27,6 +27,7 @@ class User < ActiveRecord::Base
   validates :pincode, length: {is: 6, message: 'should be of 6 digits'}, if: Proc.new {|u| !u.pincode.blank?}
   validate :check_dob
   
+  after_create :send_welcome_mail
   before_create :before_create_tasks
 	before_validation :before_validation_tasks
 	
@@ -46,6 +47,10 @@ class User < ActiveRecord::Base
   	errors.add(:dob, "can't be less than #{CommonHelper::MIN_AGE} years") if !self.dob.blank? && (self.dob.to_datetime > (Time.zone.now - CommonHelper::MIN_AGE.years))
   end
   
+	def encoded_id
+		CommonHelper.encode('user', self.id)
+	end
+
   def fleet?
 		return self.role >= 5
 	end
@@ -63,12 +68,12 @@ class User < ActiveRecord::Base
   	end
 
   	if Rails.env == 'production'
-  		return Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND #{sql} ORDER BY #{order} LIMIT 10 OFFSET #{page*10}")
+  		return Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND #{sql} ORDER BY #{order}")
   	else
   		if self.support?
-	  		return Booking.find_by_sql("SELECT * FROM bookings WHERE #{sql} ORDER BY #{order} LIMIT 10 OFFSET #{page*10}")
-	  	else
-	  		return Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND #{sql} ORDER BY #{order} LIMIT 10 OFFSET #{page*10}")
+        return Booking.find_by_sql("SELECT * FROM bookings WHERE #{sql} ORDER BY #{order}")
+      else
+	  		return Booking.find_by_sql("SELECT * FROM bookings WHERE user_id = #{self.id} AND #{sql} ORDER BY #{order}")
 	  	end
   	end
   end
@@ -330,6 +335,13 @@ class User < ActiveRecord::Base
 		end
 		snapshot
 	end 
+
+	def send_welcome_mail
+		if rand(100) < 80 #&& self.name_was.nil? && self.name_changed?
+			BookingMailer.welcome(self).deliver
+			Email.create(user_id: self.id, activity: 'welcome_mail') 
+		end
+	end
 	
 	private :before_create_tasks, :before_validation_tasks, :valid_otp_length?
 end
