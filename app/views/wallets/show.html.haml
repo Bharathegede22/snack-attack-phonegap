@@ -61,7 +61,7 @@
 				In Wallet
 			.col-md-6.clearfix.nullPad.text-right.amount-desc
 				%b
-					₹ #{number_with_delimiter(current_user.total_credits)}
+					₹ #{number_with_delimiter(current_user.total_credits.to_i)}
 
 	.col-md-12.clearfix
 		.col-md-6.text-center.nullPad.show-history-left
