@@ -3088,8 +3088,8 @@ button.delete {
 }
 
 .icon-currency {
-	width: 25px;
-	height: 22px;
+	width: 22px;
+	height: auto;
 }
 
 .credits-icon-area, .credits-heading-area, .credits-popover-mark {
@@ -3127,6 +3127,7 @@ button.delete {
 	font-size: 16px;
 	cursor: pointer;
 	margin-top: -8px;
+	margin-left: 3px;
 }
 
 .credits-icon-area {
@@ -3140,8 +3141,8 @@ button.delete {
 }
 
 .icon-securityBadge {
-	width: 15px;
-	height: 18px;
+	width: 16px;
+	height: auto;
 }
 
 .credits-popover {
@@ -3158,6 +3159,8 @@ button.delete {
 
 .coinsIcon {
 	margin-left: 12px;
+	position: relative;
+	left: 10px;
 }
 
 .credits_rightBlock {
@@ -3235,6 +3238,11 @@ button.delete {
 	display: inline-block;
 }
 
+.promocode-input input::-webkit-input-placeholder { font-style: italic; }
+.promocode-input input::-moz-placeholder { font-style: italic; }
+.promocode-input input:-moz-placeholder{ font-style: italic; }
+.promocode-input input:-ms-input-placeholder { font-style: italic; }
+
 .creditsDescBtn-showPage, .creditsDescBtn-showPage:focus {
 	background: #fff;
 	border: none;
@@ -3246,7 +3254,7 @@ button.delete {
 	text-decoration: underline;
 }
 .avail-refund-wallet a:hover {
-	color: #6ABD19;
+	color: #000;
 	text-decoration: none;
 }
 .cancel_creditBtn, .cancal_PromoBtn {

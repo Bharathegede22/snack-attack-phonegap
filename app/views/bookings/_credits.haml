@@ -6,7 +6,7 @@
 		%form{:id => "CreditForm", :onsubmit => "return formCredits(this,'/bookings/promo','PromoCreditsDiv');", :action => "javascript:void(0)", "data-remote" => "true"}
 			.col-md-12.promoCode-desc-block.clearfix.p-l0
 				.col-md-7.text-left.clearfix.aval-credit-amount.m-r12
-					%i ₹#{current_user.total_credits} in credits available
+					%b.size-12 ₹#{current_user.total_credits} in credits available
 					%input#applyCredits.form-control{name: 'apply_credits', type: "hidden", value: "1" }
 				.col-md-4.text-left.clearfix.useCredit
 					%button.btn.btn-default.use-credits-submit#use_credit{type:"submit"} Use
