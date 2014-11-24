@@ -116,7 +116,7 @@ module BookingsHelper
     end
   end
 
-  def create_reschedule_offer(booking_id, promo, offer_discount)
+  def create_reschedule_offer_charge(booking_id, promo, offer_discount)
     c = Charge.new
     c.booking_id = booking_id
     if promo["valid"] == true
