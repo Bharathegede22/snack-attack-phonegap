@@ -99,6 +99,42 @@ class BookingsController < ApplicationController
 			redirect_to login_bookings_path(@city.name.downcase)
 		end
 	end
+
+	def do_flash_booking
+		if !params[:car].blank? && !params[:loc].blank? && !params[:starts].blank? && !params[:ends].blank? && !params[:flash_discount].blank?
+			session[:book] = {:starts => params[:starts], :ends => params[:ends], :loc => params[:loc], :car => params[:car]}
+			if params[:notify].present?
+				session[:notify] = true
+			end
+			
+			if user_signed_in?
+				#if current_user.check_details
+				#	if current_user.check_license
+				#		session[:book][:steps] = 2
+				#	else
+				#		session[:book][:steps] = 3
+				#	end
+				#else
+					session[:book][:steps] = 4
+				#end
+			else
+				session[:book][:steps] = 2
+			end
+		elsif session[:book].blank?
+			redirect_to "/" and return
+		end
+		if user_signed_in?
+			if session[:notify].present?
+				redirect_to "/bookings/notify"
+			elsif current_user.check_details
+				redirect_to checkout_bookings_path(@city.name.downcase)
+			else
+				redirect_to userdetails_bookings_path(@city.name.downcase)
+			end
+		else
+			redirect_to login_bookings_path(@city.name.downcase)
+		end
+	end
 	
 	def docreate
 		@booking.user_details(current_user)

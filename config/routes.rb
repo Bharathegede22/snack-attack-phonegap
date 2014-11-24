@@ -104,6 +104,7 @@ Web::Application.routes.draw do
 				get 'checkoutab'
 				get 'complete'
 				get 'do'
+				get 'do_flash_booking'
 				get 'docreate'
 				post 'docreate'
 				get 'failed'
