@@ -16,3 +16,4 @@
 //= require bootstrap-datetimepicker
 //= require common
 //= require jquery/jquery.uploadfile.min
+//= require jquery/jquery.countdown.min.js
