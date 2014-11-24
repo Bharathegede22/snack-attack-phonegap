@@ -16,6 +16,7 @@ class Booking < ActiveRecord::Base
 	has_many	:confirmed_refunds, -> { where "status = 1 and through != 'wallet_widget'" }, class_name: "Refund"
 	has_many 	:credit, :as => :creditable , dependent: :destroy
 	has_many	:utilizations, -> {where "minutes > 0"}, dependent: :destroy
+    has_many  :activities
 	
 	has_one :coupon_code
 	has_one	:review, :inverse_of => :booking, dependent: :destroy
@@ -61,7 +62,7 @@ class Booking < ActiveRecord::Base
 		return if (amount.to_i <= 0)
 		refund = Refund.create!(status: 1, booking_id: self.id, through: 'wallet', amount: amount)
 		Wallet.create!(amount: amount, user_id: self.user_id, status: 1, credit: true, transferable: refund)
-		self.update_column(:hold, false) if amount.to_i >= 5000
+		self.update_column(:hold, false) if amount.to_i >= security_amount
 	end
 
 	def cancellation_charge
@@ -445,7 +446,8 @@ class Booking < ActiveRecord::Base
 	
 	def hold_security?
 		self.hold == true
-	end
+    end
+
 	
 	def link
 		return "http://" + HOSTNAME + "/bookings/" + self.encoded_id
@@ -460,7 +462,7 @@ class Booking < ActiveRecord::Base
 		return if amount.to_i <= 0
 		wpayment = Payment.create!(status: 1, booking_id: self.id, through: 'wallet', amount: (amount > self.pricing.mode::SECURITY) ? (self.pricing.mode::SECURITY) : amount)
 		Wallet.create!(amount: amount, user_id: self.user_id, status: 1, credit: false, transferable: wpayment)
-	end
+  end
 	
 	def manage_inventory
 		check = 1
@@ -624,6 +626,8 @@ class Booking < ActiveRecord::Base
 		pay = Payment.where("booking_id =? and status IN (1)",book.id).order(created_at: :asc)
 		if !pay.blank?
 			(book.starts - pay.first.created_at).to_i
+		else
+			return nil
 		end
 	end
 

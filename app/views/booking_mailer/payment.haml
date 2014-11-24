@@ -148,7 +148,7 @@ Please review the details of your reservation:
 			#{fare[:kms]}
 		free Kms**. Any excess kms will be charged at 
 		%b
-			Rs #{cargroup.excess_kms}/Km**.
+			Rs #{cargroup.active_pricing(city).excess_kms}/Km**.
 		%br/
 		%i
 			** - Free kms limit and excess km charge may change and will be governed by the zoom policies at the time of vehicle dropoff. See our 

@@ -103,6 +103,11 @@
 						pushEvent('Locations Selected', '#{l.shortname}', 'Search Page Map');
 					});
 		:plain
+				google.maps.event.addListenerOnce(map, 'idle', function() {
+					google.maps.event.addListenerOnce(map, 'click', function() {
+						pushEvent('Maps','' , 'Search Page');
+					});
+				});
 			}
 			function checkJquery() {
 				if (window.jQuery) {
