@@ -121,6 +121,13 @@
 						%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
 							We're Hiring
 						.fc
+				- if @city.id === 2
+					.unlimited
+						%a{href: "/#{@city.name.downcase}/offers"}
+							%span.info-text
+								Unlimited kms free! #wherewillyougo
+							%span.info-img
+								%img{:src => "http://#{HOSTNAME}/assets/ecosport-car.png"}/
 				.fc
 	- cls = (!@header.blank? && @header == 'search') ? '' : 'hide'
 	- if !@header.blank? && @header == 'search'
