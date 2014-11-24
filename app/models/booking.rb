@@ -706,6 +706,13 @@ class Booking < ActiveRecord::Base
 		end
 	end
 
+	
+	def revert_promo
+		# Make charge charge inactive
+		# if a Promo then -> Remove the associaton with booking
+		# if a Coupon Code -> revert userd status and disassociate booking
+	end
+
   # Allots credit to user
   # Author:: Rohit
   # Date:: 3/11/2014 
