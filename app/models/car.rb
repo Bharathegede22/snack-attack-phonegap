@@ -59,7 +59,7 @@ class Car < ActiveRecord::Base
 				carmovements << [Carmovement.find(:all, :conditions => ["car_id = ? AND ((starts <= ? AND ends > ?) OR (starts >= ? AND starts <= ?))", self.id, start_time, start_time, start_time, end_time]), start_time, end_time]
 			end
 			Inventory.connection.clear_query_cache
-			ActiveRecord::Base.connection.execute("LOCK TABLES inventories READ")
+			#ActiveRecord::Base.connection.execute("LOCK TABLES inventories READ")
 			carmovements.uniq.each do |ar|
 				starts_tmp = ar[1]
 				ends_tmp = ar[2]
@@ -72,7 +72,7 @@ class Car < ActiveRecord::Base
 					end
 				end
 			end
-			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+			#ActiveRecord::Base.connection.execute("UNLOCK TABLES")
 		end
 		return check
 	end
@@ -152,7 +152,7 @@ class Car < ActiveRecord::Base
 		end
 		
 		Inventory.connection.clear_query_cache
-		ActiveRecord::Base.connection.execute("LOCK TABLES inventories READ")
+		#ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
 		# Check Inventory
 		if block
 			carmovements.uniq.each do |ar|
@@ -186,7 +186,7 @@ class Car < ActiveRecord::Base
 				end
 			end
 		end
-		ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+		#ActiveRecord::Base.connection.execute("UNLOCK TABLES")
 		return check
 	end
 	
