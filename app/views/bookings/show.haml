@@ -277,7 +277,7 @@
 				\- ₹ #{show_currency payment.amount.tap{|a| total-=a}}
 			.fc
 		- @booking.confirmed_refunds.select{|p| p.through=='credits'}.each do |refund|
-			- next if payment.amount.to_i == 0
+			- next if refund.amount.to_i == 0
 			.fl.p-10.p-l20.size-12
 				.text-up
 					Credits Refunded (#{refund.created_at.strftime('%Y-%m-%d')})
