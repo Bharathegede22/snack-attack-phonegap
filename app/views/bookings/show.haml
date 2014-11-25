@@ -132,14 +132,14 @@
 				.text-up.size-11.m-b3
 					Credits
 				.zoom-b.f-b.size-14.earned-credit-statement
-					You earned ₹ #{credits_earned} credits from this booking
+					You earned ₹ #{credits_earned} in credits from this booking
 					#showPage-popover-block
-						%button.btn.creditsDescBtn-showPage [?]
+						%button.btn.creditsDescBtn-showPage.p-0 [?]
 
-			.popover.fade.right.in.booking-showPage-popupBox
+			.popover.fade.right.in.booking-showPage-popupBox.m-t15
 				.arrow
 				%h3.popover-title{:style => "display: none;"}
-				.popover-content Your credits have been added to your zoomcar wallet. Use them to pay the fee for your next booking.
+				.popover-content Your credits have been added to your Zoomcar wallet. Use them to pay the fee for your next booking.
 
 	= render :partial => '/bookings/socialshare'
 
@@ -240,7 +240,7 @@
 			.fl
 				Zoomcar Wallet
 
-				%span.pointer.pop.size-12.white{'href' => '#', 'data-toggle' => "popover",  'data-placement' => "top", 'data-html' => "true", 'data-content' => "<div class='grey size-12 f-n'>Your Zoomcar Wallet is where your Security Deposit is kept. This allows you to use the same deposit across multiple bookings. <a href='/faq#faq-42'>Learn more</a> in our FAQs.</div>"}
+				%span.pointer.pop.size-12.white{'href' => '#', 'data-toggle' => "popover",  'data-placement' => "top", 'data-html' => "true", 'data-content' => "<div class='grey size-12 f-n'>Your Zoomcar Wallet is where your Security Deposit and Credits are kept. This allows you to use the same deposit across multiple bookings. <a href='/faq#faq-42'>Learn more</a> in our FAQs.</div>", 'style' => 'position: relative; top: -2px;'}
 					[?]
 			.fr
 				%a.white.size-12{href: "javascript:void(0)", onclick: "showModal('Transaction History', '/wallets/history');pushEvent('Wallet', 'Transaction History Pop Up (Bookings Summary)');"}
