@@ -709,8 +709,13 @@ class Booking < ActiveRecord::Base
 	
 	def revert_promo
 		# Make charge charge inactive
+		Charge.where(:booking_id => self.id, :activity => "discount").update_all(:amount => 0)
 		# if a Promo then -> Remove the associaton with booking
+		self.promo = nil if self.promo.present?
+		self.offer_id = nil if self.offer_id.present?
 		# if a Coupon Code -> revert userd status and disassociate booking
+		CouponCode.where(:booking_id => self.id).update_all(:used => 0, :used_at => NULL, :booking_id => NULL)
+		self.save
 	end
 
   # Allots credit to user
