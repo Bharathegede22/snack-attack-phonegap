@@ -683,8 +683,7 @@ class Booking < ActiveRecord::Base
   #   <b>discount_applied<b> Amount of discount alrearedy applied
   # 
   # Returns
-  # :err
-  # 
+  # :err => 'Insufficient credits, please try again!'
   #
   def apply_credits(user_credits, discount_applied=0)
   	return {:err => 'Insufficient credits, please try again!'} if user_credits.to_i <= 0
@@ -695,31 +694,37 @@ class Booking < ActiveRecord::Base
   	{:credits => credits_applicable}
   end
 
-  # Removes credit from the booking if already applied
+  # Removes credit from the booking
   # Author:: Rohit
   # Date:: 24/11/2014
   # 
 	def revert_credits
 		credit_payments = self.confirmed_credit_payments
 		revert_amount = credit_payments.collect(&:amount).sum
+		return unles revert_amount > 0 
 		#remove the negative credits created for booking.
-		self.allot_credits(amount: revert_amount, source_name: Credit::SOURCE_NAME_INVERT['Checkout Refresh'])
+		self.allot_credits(amount: revert_amount, source_name: Credit::SOURCE_NAME_INVERT['Checkout Refresh']) if revert_amount > 0
 		#clear the credits payment created for booking.
 		credit_payments.each do |payment|
 			payment.update_attributes!(amount: 0)
 		end
 	end
 
-	
+	# Removes credit from the booking
+  # Author:: Natasha
+  # Date:: 24/11/2014
+  # 
 	def revert_promo
-		# Make charge charge inactive
-		Charge.where(:booking_id => self.id, :activity => "discount").update_all(:amount => 0)
-		# if a Promo then -> Remove the associaton with booking
-		self.promo = nil if self.promo.present?
-		self.offer_id = nil if self.offer_id.present?
-		# if a Coupon Code -> revert userd status and disassociate booking
-		CouponCode.where(:booking_id => self.id).update_all(:used => 0, :used_at => NULL, :booking_id => NULL)
-		self.save
+		if self.offer_id.present?
+			# Make charge charge inactive
+			Charge.where(:booking_id => self.id, :activity => "discount").update_all(:amount => 0)
+			# if a Promo then -> Remove the associaton with booking
+			self.promo = nil if self.promo.present?
+			self.offer_id = nil if self.offer_id.present?
+			# if a Coupon Code -> revert userd status and disassociate booking
+			CouponCode.where(:booking_id => self.id).update_all(:used => 0, :used_at => nil, :booking_id => nil)
+			self.save
+		end
 	end
 
   # Allots credit to user

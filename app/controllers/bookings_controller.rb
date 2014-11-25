@@ -10,7 +10,7 @@ class BookingsController < ApplicationController
 	before_filter :check_search_access, :only => [:docreate, :seamless_docreate, :docreatenotify, :license, :login, :userdetails]
 	before_filter :check_inventory, :only => [:checkout, :checkoutab, :docreate, :seamless_docreate, :dopayment, :seamless_dopayment, :license, :login, :payment, :userdetails]
 	before_filter :check_blacklist, :only => [:docreate, :seamless_docreate]
-	before_filter :check_promo,		:only => [:checkout]
+	before_filter :clear_credit_and_offers, :only => [:checkout]
 
 	def cancel
 		@security = (@booking.hold) ? 0 : (@booking.pricing.mode::SECURITY - @booking.security_amount_remaining)
@@ -879,22 +879,34 @@ class BookingsController < ApplicationController
 	# Author::Aniket
 	# Date:: 22/11/2014
 	def check_booking_obj
-		if !session[:book][:id].blank?
+		if session[:book][:id].present?
 			b = Booking.find_by(id: CommonHelper.decode(session[:book][:id]))
 			if b.starts == Time.zone.parse(session[:book][:starts]) && b.ends == Time.zone.parse(session[:book][:ends]) && b.location_id == session[:book][:loc].to_i && b.cargroup_id == session[:book][:car].to_i
-			# @booking = Booking.new
-			@booking = b.clone
-			@booking.id = b.id
-			@booking.starts = b.starts
-			@booking.ends = b.ends
-			@booking.location_id = b.location_id
-			@booking.cargroup_id = b.cargroup_id
-			@booking.city_id = b.city_id
-			return @booking
+				# @booking = Booking.new
+				@booking = b.clone
+				@booking.id = b.id
+				@booking.starts = b.starts
+				@booking.ends = b.ends
+				@booking.location_id = b.location_id
+				@booking.cargroup_id = b.cargroup_id
+				@booking.city_id = b.city_id
+				@booking
 			else
 				session[:book][:id] = nil
-				return nil
+				nil
 			end
+		end
+	end
+
+	def clear_credit_and_offers
+		Rails.logger.debug("============================= Clearning the Credits and Offers ============")
+		booking = check_booking_obj
+		# Clear Promos
+		check_promo
+		# Clear Promot and Credit Entries if Created by Seamless Checkout
+		if booking
+			booking.revert_credits
+			booking.revert_promo
 		end
 	end
 
