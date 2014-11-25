@@ -239,6 +239,7 @@ class Payment < ActiveRecord::Base
 			payment.amount -= pricing.mode::SECURITY
       booking.update_column(:defer_deposit, true)
 		end
+		booking.save!
 		data = { order_id: payment.encoded_id, amount: payment.amount }
 		response = Juspay.update_order(data)
 		if(response['status'].downcase == 'new')
@@ -266,8 +267,8 @@ class Payment < ActiveRecord::Base
 			if params['status_id'] == 21
 				if params['card'].present?
 					self.mode = case params['card']['card_type'].downcase
-					when 'cc' then 0
-					when 'dc' then 1
+					when 'credit' then 0
+					when 'debit' then 1
 					end
 				end
 				self.notes << "<b>ERROR : </b>" + params['payment_gateway_response']['resp_code'] + "<br/>" if !params['payment_gateway_response']['resp_code'].blank?

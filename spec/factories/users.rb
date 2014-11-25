@@ -74,6 +74,7 @@ end
 #  license_validity                :date
 #  wallet_total_amount             :integer
 #  city_id                         :integer
+#  license_updated_at              :datetime
 #
 # Indexes
 #
