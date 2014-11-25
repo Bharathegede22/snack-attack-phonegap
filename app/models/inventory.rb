@@ -42,7 +42,7 @@ class Inventory < ActiveRecord::Base
 	
 	def self.do_block(city, cargroup, location, starts, ends, change_max=false)
 		Inventory.connection.clear_query_cache
-		ActiveRecord::Base.connection.execute("LOCK TABLES inventories READ")
+		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
 		tmp = check(city, cargroup, location, starts, ends)
 		block(cargroup, location, starts, ends, change_max) if tmp == 1
 		ActiveRecord::Base.connection.execute("UNLOCK TABLES")
@@ -51,7 +51,7 @@ class Inventory < ActiveRecord::Base
 	
 	def self.do_check(city, cargroup, location, starts, ends)
 		Inventory.connection.clear_query_cache
-		ActiveRecord::Base.connection.execute("LOCK TABLES inventories READ, cargroups READ")
+		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE, cargroups READ")
 		tmp = check(city, cargroup, location, starts, ends)
 		ActiveRecord::Base.connection.execute("UNLOCK TABLES")
 		return tmp
@@ -59,7 +59,7 @@ class Inventory < ActiveRecord::Base
 	
 	def self.do_release(cargroup, location, starts, ends, change_max=false)
 		Inventory.connection.clear_query_cache
-		ActiveRecord::Base.connection.execute("LOCK TABLES inventories READ")
+		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
 		release(cargroup, location, starts, ends, change_max)
 		ActiveRecord::Base.connection.execute("UNLOCK TABLES")
 	end
@@ -86,7 +86,7 @@ class Inventory < ActiveRecord::Base
 		starts = Time.today if starts < Time.today
 		if ends > Time.today || ends <= Time.today + CommonHelper::BOOKING_WINDOW.days
 			Inventory.connection.clear_query_cache
-			ActiveRecord::Base.connection.execute("LOCK TABLES inventories READ")
+			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
 			temp = Inventory.find_by_sql("SELECT slot, total FROM inventories 
 				WHERE cargroup_id = #{cargroup} AND location_id = #{location} AND 
 				slot >= '#{starts.to_s(:db)}' AND 
@@ -139,7 +139,7 @@ class Inventory < ActiveRecord::Base
 			end_date += c.wait_period.minutes
 			
 			Inventory.connection.clear_query_cache
-			ActiveRecord::Base.connection.execute("LOCK TABLES inventories READ")
+			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
 			Inventory.find_by_sql("SELECT slot, total, location_id FROM inventories 
 				WHERE cargroup_id = #{c.id} AND 
 				location_id IN (#{locs.collect {|l| l.id}.join(',')}) AND 

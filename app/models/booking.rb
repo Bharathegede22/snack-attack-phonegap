@@ -81,7 +81,7 @@ class Booking < ActiveRecord::Base
 		if self.car_id.blank?
 			cargroup = self.cargroup
 			Inventory.connection.clear_query_cache
-			ActiveRecord::Base.connection.execute("LOCK TABLES inventories READ")
+			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
 			if self.starts != self.starts_last || self.ends != self.ends_last
 				if self.starts > self.ends_last + cargroup.wait_period.minutes || self.ends < self.starts_last - cargroup.wait_period.minutes
 					# Non Overlapping Reschedule
@@ -471,7 +471,7 @@ class Booking < ActiveRecord::Base
 		cargroup = self.actual_cargroup
 		if self.car_id.blank?
 			Inventory.connection.clear_query_cache
-			ActiveRecord::Base.connection.execute("LOCK TABLES inventories READ")
+			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
 			if !self.starts_last.blank? && (self.starts != self.starts_last || self.ends != self.ends_last)
 				if self.starts > self.ends_last + cargroup.wait_period.minutes || self.ends < self.starts_last - cargroup.wait_period.minutes
 					# Non Overlapping Reschedule
