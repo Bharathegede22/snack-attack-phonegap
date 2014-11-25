@@ -256,7 +256,6 @@ ActiveRecord::Schema.define(version: 20141110191216) do
     t.integer  "avatar_file_size"
     t.datetime "avatar_updated_at"
     t.integer  "view_image"
-  end
 
   add_index "car_images", ["car_imageable_type", "car_imageable_id"], name: "index_car_images_on_car_imageable_type_and_car_imageable_id", using: :btree
 
@@ -436,7 +435,6 @@ ActiveRecord::Schema.define(version: 20141110191216) do
     t.string   "medium",             limit: 20, default: "1"
     t.integer  "car_id",             limit: 2
     t.string   "initial_answer"
-  end
 
   create_table "checklists", force: true do |t|
     t.text     "header"
@@ -759,6 +757,21 @@ ActiveRecord::Schema.define(version: 20141110191216) do
     t.string   "summary"
     t.text     "instructions"
     t.datetime "valid_till"
+    t.string   "discount_type"
+    t.integer  "value"
+    t.datetime "creation_starts"
+    t.datetime "creation_ends"
+    t.datetime "trip_start_date"
+    t.datetime "trip_end_date"
+    t.text     "cargroup"
+    t.integer  "min_amount"
+    t.integer  "max_amount"
+    t.string   "locations"
+    t.integer  "no_of_usage"
+    t.boolean  "is_mobile_allowed",           default: false
+    t.boolean  "is_web_allowed",              default: false
+    t.string   "ref_initial"
+    t.string   "ref_immediate"
   end
 
   create_table "operations_costs", force: true do |t|
@@ -807,7 +820,6 @@ ActiveRecord::Schema.define(version: 20141110191216) do
     t.datetime "updated_at"
     t.decimal  "remaining_cash",           precision: 7, scale: 2
     t.integer  "fleet_id",       limit: 3
-  end
 
   add_index "petty_cashes", ["location_id"], name: "index_petty_cashes_on_location_id", using: :btree
 
@@ -1047,7 +1059,6 @@ ActiveRecord::Schema.define(version: 20141110191216) do
     t.decimal  "wallet_total_amount",                         precision: 10, scale: 0
     t.integer  "city_id",                         limit: 2
     t.datetime "license_updated_at"
-  end
 
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
   add_index "users", ["email"], name: "index_users_on_email", using: :btree

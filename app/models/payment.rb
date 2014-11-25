@@ -159,7 +159,7 @@ class Payment < ActiveRecord::Base
 						PAYU_KEY
 					if params['amount'].to_i == payment.amount.to_i && 
 						params['firstname'] == booking.user_name.strip && 
-						params['email'] == booking.user_email && 
+						params['email'] == booking.user_email &&
 						Digest::SHA512.hexdigest(hash) == params['hash']
 						payment.status = case params['status'].downcase
 						when 'success' then 1

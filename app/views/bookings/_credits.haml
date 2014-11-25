@@ -1,24 +1,34 @@
-.p-b5
-	%b Use Credits (Optional)
-#CreditDiv
+.p-l15
 	- if session[:credits].blank?
 		:ruby
-			total = @fare[:estimate] - @fare[:discount]
+			total = fare[:estimate] - fare[:discount] - (session[:promo_valid] ? session[:promo_discount] : 0)
 			total = current_user.total_credits.to_i if current_user.total_credits.to_i < total
-		%form{:id => "CreditForm", :onsubmit => "return SubmitForm(this,'/bookings/credits','OutstandingDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
-			.row
-				.col-md-7
-					.p-t10
-						Available Credits :
-						₹#{current_user.total_credits}
-						%input#fare.form-control{name: 'fare', type: "hidden", value: ("#{total}") }
-				.col-md-5	
-					%button.btn.btn-default{type:"submit"} Apply #{total} Credits
+		%form{:id => "CreditForm", :onsubmit => "return formCredits(this,'/bookings/promo','PromoCreditsDiv');", :action => "javascript:void(0)", "data-remote" => "true"}
+			.col-md-12.promoCode-desc-block.clearfix.p-l0
+				.col-md-7.text-left.clearfix.aval-credit-amount.m-r12
+					%b.size-12 ₹#{current_user.total_credits.to_i} in credits available
+					%input#applyCredits.form-control{name: 'apply_credits', type: "hidden", value: "1" }
+				.col-md-4.text-left.clearfix.useCredit
+					%button.btn.btn-default.use-credits-submit#use_credit{type:"submit"} Use
 			#CreditWait{style: "display:none;"}
 				.wait
 		#DetailsNameError.error
 	- else
-		.p-b5
-			Your 
-			%b ₹#{session[:credits]}
-			credits has been used.
+		.col-md-12.clearfix.rmpad.used_credits_sec
+			.col-md-4.text-left.rmpad
+				%b Credits 
+			.col-md-8.text-right.rmpad
+				%b.credit_amount - ₹ 
+				%span.credits_usable_amt#creditsUsed.size-16 #{session[:credits]}
+			.cancel_creditBtn
+				%form#PromoForm{:action => "javascript:void(0)", "data-ajax" => "false", :onsubmit => "return formCredits(this,'/bookings/promo','PromoCreditsDiv');"}
+					%input#removeCredits.form-control{name: 'remove_credits', type: "hidden", value: "1" }
+					#PromoSubmit_credits
+						%button.btn.btn-default.btn-xs.cancelCreditsBtn.cancel_credit{:type => "submit"}
+							%span.glyphicon.glyphicon-remove.creditRemovespan
+					#PromoWait{:style => "display: none;"}
+						.wait
+				/ %button.cancel_credits
+				/ 	X
+		.promoCode_condition_block_whenApplied
+			%i.promoCode_condition Promo Codes are not applicable on Blackout Days.

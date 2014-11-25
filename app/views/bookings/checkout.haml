@@ -128,30 +128,8 @@
 						#CorporateDiv
 							= render :partial => 'corporate'
 				%table.position-r{width: '100%'}
-					%tr.bg-e
-						%td.p-10.p-l20.size-12
-							.fl.text-up
-								Tariff
-							- if h < 4
-								.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Minimum billing is 4 hours."}
-									[?]
-							.fl.p-l20
-								%a.pointer#applyPromoCode
-									Apply Promo Code
-							.fc
-						%td.p-10.t-r.p-r20.zoom-b.f-b.size-16
-							₹ #{show_currency fare[:total]}
-
-					%tr#promoCode{style: 'display: none'}
-						%td.p-5.p-l20.p-r20.size-12{'colspan' => '2'}
-							= render :partial => "promoab"
-
-					- if user && user.total_credits.to_i > 0
-						%tr
-							%td.p-5.p-l20.p-r20.size-12{'colspan' => '2'}
-								.bg-e.p-10.border-c.solid.r-5
-									= render :partial => "credits"
-
+					.bg-e.p-10.border-c.solid.r-5.available_credits_data
+						= render :partial => "promo_credits", :locals => {:fare => fare, :h => h, :user => user}
 					/ %tr
 					/ 	%td.p-5.p-l20.text-up.size-12
 					/ 		Discount
@@ -233,8 +211,13 @@
 								else
 									total = fare[:total]
 								end
-							#DepositFinal.DepositFinal
-								₹ #{show_currency(total + @booking.security_amount - @wallet_available)}
+							#DepositFinal
+								₹
+								%span#final_amount_to_pay 
+									#{show_currency(total + @booking.security_amount - @wallet_available)}
+					/ %tr.ribbon-after
+					/ 	%td{colspan: 2}
+					/ 		&nbsp;
 
 					%tr
 						%td.p-5.p-l20.p-t10.size-12
@@ -368,8 +351,65 @@
 					$(".DepositFinal").html("₹ #{show_currency(total)}");
 				}
 			});
+			
+			if (!($("#credits_block").length)) {
+					$("#applyPromoCode").css("display", "none");
+					$("#promo_without_credits").css("display", "block");
+					$('#applyPromoCode_withoutCredits').click(function(){
+					$('#promoCode').toggle();
+					$('#credits_block').toggle();
+					if ($.trim($(this).text()) === 'Apply Promo Code') {
+				        $(this).text('Hide Promo Code');
+				    } else {
+				        $(this).text('Apply Promo Code');
+				    }
+				});
+			}
+
+			$( document ).on( 'click', '.apply_promocode_btn', function (){
+				$("body").addClass("promoCodeClass");
+				$(".applyCodeText").css("display", "none");
+		
+			});
+			
+			$( document ).on( 'click', '.promoCodeCancelBtn', function (){
+				$("body").removeClass("promoCodeClass");
+				if ($(".creditUseClass").length) {
+				$(".applyCodeText").css("display", "none");
+			} else {
+				$(".applyCodeText").css("display", "block");
+			}
+			});
+
+			$( document ).on( 'click', '.use-credits-submit', function (){
+				$(".wrapper").addClass('creditUseClass');
+				$(".applyCodeText").css("display", "none");
+			
+			});
+
+			$( document ).on( 'click', '.cancelCreditsBtn', function (){
+				$(".wrapper").removeClass("creditUseClass");
+				if ($(".promoCodeClass").length) {
+				$(".applyCodeText").css("display", "none");
+			} else {
+				$(".applyCodeText").css("display", "block");
+			}
+			});
+
 			$('#applyPromoCode').click(function(){
 				$('#promoCode').toggle();
+				$('#credits_block').toggle();
+				if ($.trim($(this).text()) === 'Apply Promo Code or Use Credits') {
+			        $(this).text('Hide Promo Code and Credits Options');
+			    } else {
+			        $(this).text('Apply Promo Code or Use Credits');        
+			    }
+			});
+			$('#proceedToPayment').click(function(){
+				$('#proceedToPayment').hide();
+			});
+			$('#viewTariffDetails').click(function(){
+				$('#proceedToPayment').show();
 			});
 		} else {
 			window.setTimeout(checkJquery, 1000);
@@ -470,4 +510,4 @@
 				}
 			});
 	}
-	checkJquery();	
+	checkJquery();
