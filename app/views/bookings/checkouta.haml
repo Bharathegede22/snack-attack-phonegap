@@ -5,6 +5,7 @@
 	if !@booking.blank?
 		cargroup = @booking.cargroup
 		location = @booking.location
+		deal = @booking.promo == 'SQUIRREL' ? @booking.promo : ''
 	else
 		cargroup = Cargroup.random(@city)
 		location = Location.random(@city)
@@ -18,6 +19,7 @@
 	end
 	fare = @booking.get_fare
 	pricing = @booking.pricing
+	discnt = deal.present? ? fare[:total].to_i*@discount/100 : 0
 	tmp = ''
 	h = (@booking.ends.to_i - @booking.starts.to_i)/3600
 	h += 1 if (@booking.ends.to_i - @booking.starts.to_i) > h*3600
@@ -136,8 +138,9 @@
 								.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Minimum billing is 4 hours."}
 									[?]
 							.fl.p-l20
-								%a.pointer#applyPromoCode
-									Apply Promo Code
+								- if deal != 'SQUIRREL'
+									%a.pointer#applyPromoCode
+										Apply Promo Code
 							.fc
 						%td.p-10.t-r.p-r20.zoom-b.f-b.size-16
 							₹ #{show_currency fare[:total]}
@@ -145,7 +148,12 @@
 					%tr#promoCode{style: 'display: none'}
 						%td.p-5.p-l20.p-r20.size-12{'colspan' => '2'}
 							= render :partial => "promoab"
-
+					- if discnt > 0
+						%tr
+							%td.p-10.p-l20.p-b10.text-up.size-12
+								Deal Discount
+							%td.p-10.t-r.p-r20.p-b10.zoom.f-b.size-16
+								\- ₹ #{show_currency discnt}
 					- if user && user.total_credits.to_i > 0
 						%tr
 							%td.p-5.p-l20.p-r20.size-12{'colspan' => '2'}
@@ -202,7 +210,7 @@
 								.fl.text-up
 									Deposit Due
 								
-								- if @booking.defer_allowed? && !(@wallet_available>= @booking.security_amount)
+								- if deal != 'SQUIRREL' && @booking.defer_allowed? && !(@wallet_available>= @booking.security_amount)
 									.fl.p-l20
 										%span
 											%input{checked: "checked", id: "changeDeposit", name: "securityDeposit", type: "checkbox", value: "yes"}
@@ -232,7 +240,7 @@
 									total = fare[:total]
 								end
 							#DepositFinal
-								₹ #{show_currency(total + @booking.security_amount - @wallet_available)}
+								₹ #{show_currency(total + @booking.security_amount - @wallet_available - discnt)}
 
 					%tr
 						%td.p-5.p-l20.p-t10.size-12
