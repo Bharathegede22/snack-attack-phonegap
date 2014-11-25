@@ -557,6 +557,8 @@ class BookingsController < ApplicationController
 		# Create Credits Payments and Offers Charges
 		create_promo_credit_payments
 		
+		@booking.reload
+
 		if @booking.status == 11	
 			flash[:notice] = "We will Notify you once the Vehicle is available."
 			session[:notify] = nil
