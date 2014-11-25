@@ -688,7 +688,7 @@ class Booking < ActiveRecord::Base
   def apply_credits(user_credits, discount_applied=0)
   	return {:err => 'Insufficient credits, please try again!'} if user_credits.to_i <= 0
   	fare = self.get_fare
-  	credits_applicable = fare[:estimate] - fare[:discount]
+  	credits_applicable = fare[:total]
   	credits_applicable -= discount_applied
   	credits_applicable = user_credits if user_credits.to_i < credits_applicable
   	{:credits => credits_applicable}
