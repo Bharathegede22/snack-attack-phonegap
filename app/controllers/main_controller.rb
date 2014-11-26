@@ -137,6 +137,18 @@ class MainController < ApplicationController
 		render "main/deals/#{params[:id]}"
 	end
 
+	def deals_of_the_day
+		@deal = Deal.where("offer_start < ? AND offer_end > ?", Time.now, Time.now)
+		@location = Array.new
+		@cargroup = Array.new
+		@deal.each_with_index do |d, i|
+			@location[i] = Location.where(id: d.location_id).first.name
+			@cargroup[i] = Cargroup.where(id: d.cargroup_id).first
+		end
+		
+		render "main/deals/offers"
+	end
+
 	def device
 		render json: {html: ''}
 	end
