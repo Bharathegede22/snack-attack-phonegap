@@ -32,7 +32,7 @@ class BookingsController < ApplicationController
 		if params['deal']
 			deal_id = CommonHelper.decode(params['deal'])
 			@booking.promo = 'SQUIRREL'
-			deal = FlashDeals.find_by(id: deal_id)
+			deal = Deal.find_by(id: deal_id)
 			@discount = deal.discount if deal.present?
 		end
 		generic_meta
@@ -108,9 +108,9 @@ class BookingsController < ApplicationController
 
 	def do_flash_booking
 		if params[:flash_deal].present?#!params[:car].blank? && !params[:loc].blank? && !params[:starts].blank? && !params[:ends].blank? && !params[:flash_discount].blank?
-			deal = FlashDeals.find_by(id: params[:flash_deal])
+			deal = Deal.find_by(id: params[:flash_deal])
 			if deal && deal.offer_start <= DateTime.now && deal.offer_end >= DateTime.now && deal.booking_id.blank?
-				session[:book] = {:starts => deal.starts.to_s, :ends => deal.ends.to_s, :loc => deal.location_id, :car => deal.car_id}
+				session[:book] = {:starts => deal.starts.to_s, :ends => deal.ends.to_s, :loc => deal.location_id, :car => deal.cargroup_id}
 			elsif deal.booking_id.present?
 				flash[:alert] = 'Deal has already been taken. Please check back again after some time.'
 				redirect_to '/deals/offers' and return
@@ -179,7 +179,7 @@ class BookingsController < ApplicationController
 		end
 		
 		@booking.save!
-		
+
 		# check for flash deal
 		deal = @booking.promo
 		if deal.present? && deal.include?('SQUIRREL')
@@ -936,12 +936,13 @@ class BookingsController < ApplicationController
 		end
 	end
 
-	def find_deal_and_create_charge(flash_deal)
-		str, id = CommonHelper.decode(flash_deal)
+	def find_deal_and_create_charge(deal_code)
+		str, id = CommonHelper.decode(deal_code)
 		if str == 'deal' 
-			@deal = FlashDeals.find_by(id: id)
+			@deal = Deal.find_by(id: id)
 			if @deal.booking_id.blank? && !@deal.sold_out
-				return @booking.promo = 'SQUIRREL' + flash_deal
+				@booking.car_id = @deal.car_id
+				return @booking.promo = 'SQUIRREL' + deal_code
 			end
 		end
 	end

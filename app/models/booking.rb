@@ -445,7 +445,7 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def flash_discount(deal)
-		charge = Charge.new(booking_id: self.id, activity: 'flash_discount')
+		charge = Charge.new(booking_id: self.id, activity: 'deal_discount')
 		charge.refund = 1
 		discount = self.outstanding*deal.discount/100
 		charge.discount = discount
@@ -453,7 +453,7 @@ class Booking < ActiveRecord::Base
 		if charge.save
 			deal.update_column(:booking_id, self.id)
 			note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs."
-			note += discount.to_s + " - Flash Discount.<br/>"
+			note += discount.to_s + " - Deal Discount.<br/>"
 			self.notes += note
 			self.save(validate: false)
 		end
