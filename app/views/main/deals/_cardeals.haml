@@ -1,21 +1,18 @@
-%form{:action => "javascript:checkoutNow();", :id => "CheckoutForm"}
+- 
 .col-md-6.pull-left
 	.each-car-offer.r-3
 		.col-md-4.border-r-c
-			= image_tag("cars/7small.jpg", :alt => "")
+			= image_tag("cars/#{cargroup}small.jpg", :alt => "")
 			.fl.p-t5.p-b10
 				.size-20.f-b.zoom-b
 					Scorpio LX
 				.size-14.m-t5.lgrey
 					7 Seater
-					.hide
-						%input{id: "starts", value: '01/12/2014 14:00'}
-						%input{id: "ends", value: '01/12/2014 22:00'}
-						%input{id: "loc", value: 25}
-						%input{id: "car", value: 1}
-						%input{id: "disc", value: 1}
-					.m-t10.btn-book
-						%input.button{type: "submit", value: "Book"}
+					%form{:action => "/#{@city.name.downcase}/bookings/do_flash_booking", :id => "CheckoutForm"}
+						.hide
+							%input{name: "deal", type: "hidden", value: "#{deal}"}
+						.m-t10.btn-book
+							%input.button{type: "submit", value: "Book"}
 		.col-md-8.border-b-c.p-0
 			.col-md-6
 				.text-up.size-12.p-b2.p-t5.t-c.light-grey
@@ -27,19 +24,25 @@
 			.col-md-6.p-l0.p-r0
 				.text-up.size-14.p-b10.p-t10.t-c
 					.fo-helv.f-b
-						30 Dec, 2014
-						%br 11:30 PM
+						= starts.strftime("%d %b, %Y")
+						/ 30 Dec, 2014
+						%br 
+							= starts.strftime('%I:%M %P')
+							/ 11:30 PM
 			.col-md-6.border-l-c.p-l0.p-r0
 				.text-up.size-14.p-b10.p-t10.t-c
 					.fo-helv.f-b
-						04 Jan, 2015 
-						%br 11:30 PM
+						= ends.strftime("%d %b, %Y")
+						/ 04 Jan, 2015 
+						%br 
+							= ends.strftime('%I:%M %P')
+							/ 11:30 PM
 		.col-md-8.border-b-c.p-0.p-l35.location_icon
 			.size-13.p-b5.p-t5.light-grey
 				%span.text-up
 					Pickup location
 				.zoom-b.f-b.size-12.m-t5
-					Pimple Saudagar (Kokane Chowk)
+					= loc
 					%span.size-11.help.pointer{:title => ""}
 						(view map)
 		.col-md-8.p-0
