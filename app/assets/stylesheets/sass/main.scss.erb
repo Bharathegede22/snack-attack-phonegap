@@ -264,18 +264,20 @@ $border-grey3px: 3px #ccc solid;
 }
 .offer-panel-body{
 	background: $grey-bg;
-	padding: 2.5em 0em;
+	padding: 2.5em 0em 0;
 }
 .each-car-offer{
 	background: $white;
 	display: inline-block;
 	border: $border-grey2px;
+	margin-bottom: 2.5em;
 	.time{
 		width: 120px;
 	}
 }
 .location_icon {
 	background: url(<%= asset_path 'location.png' %>) 10px 6px no-repeat;
+	height: 62px;
 }
 .strike-text{
 	text-decoration: line-through;
