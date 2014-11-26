@@ -12,13 +12,14 @@
 						Next Deal Starts in
 					%span.pull-right#clock.countdown-time
 			.panel-body.offer-panel-body
-				.col-md-12.inline-block
+				.col-md-12.inline-block.p-b30
 					- @deal.each_with_index do |d, i|
 						- loc = @location[i]
-						- car_name = @cargroup[i].shortname
+						- cargroup = @cargroup[i]
 						- car_seating = @cargroup[i].seating
 						- sold_out = @sold_out[i]
-						= render :partial => "main/deals/cardeals", :locals => {:deal => CommonHelper.encode('deal', d.id), :loc => loc, :car_name => car_name, :seating => car_seating, :starts => d.starts, :ends => d.ends, :cargroup => d.cargroup_id, :sold_out => sold_out}
+						- discount = @discount[i]
+						= render :partial => "main/deals/cardeals", :locals => {:deal => CommonHelper.encode('deal', d.id), :location => loc, :cargroup => cargroup, :starts => d.starts, :ends => d.ends, :sold_out => sold_out, :discount => discount}
 		.shadow_line
 		.offers-terms-condition
 			%h4.fo-helv Terms and Conditions:
