@@ -1,12 +1,5 @@
-- deal = Deal.where("offer_start < ? AND offer_end > ?", Time.now, Time.now)
-- location = Array.new
-- cargroup = Array.new
-- deal.each_with_index do |d, i|
-	- location[i] = Location.where(id: d.location_id).first.name
-	- cargroup[i] = Cargroup.where(id: d.cargroup_id).first
-
+- render_flash
 .wrapper
-	- render_flash
 	.offer_main_container
 		.panel.panel-default.offers-panel.m-t70
 			.panel-heading.offers-heading
@@ -20,10 +13,10 @@
 					%span.pull-right#clock.countdown-time
 			.panel-body.offer-panel-body
 				.col-md-12.inline-block.p-b30
-					- deal.each_with_index do |d, i|
-						- loc = location[i]
-						- car_name = cargroup[i].name
-						- car_seating = cargroup[i].seating
+					- @deal.each_with_index do |d, i|
+						- loc = @location[i]
+						- car_name = @cargroup[i].name
+						- car_seating = @cargroup[i].seating
 						= render :partial => "main/deals/cardeals", :locals => {:deal => CommonHelper.encode('deal', d.id), :loc => loc, :name => car_name, :seating => car_seating, :starts => d.starts, :ends => d.ends, :cargroup => d.cargroup_id}
 		.shadow_line
 		.offers-terms-condition
