@@ -1,14 +1,24 @@
+:ruby
+	b = Booking.new
+	b.starts = starts
+	b.ends = ends
+	b.location_id = location.id
+	b.cargroup_id = cargroup.id
+	b.city_id = @city.id
+	b.valid?
+	fare = b.get_fare
+	disc = fare[:total] - fare[:total]*discount/100
 .col-md-6.pull-left
 	- if sold_out
 		.sold-out-tag
 	.each-car-offer.r-3
 		.col-md-4.border-r-c
-			= image_tag("cars/#{cargroup}small.jpg", :alt => "")
+			= image_tag("cars/#{cargroup.id}small.jpg", :alt => "")
 			.fl.p-t5.p-b10
 				.size-20.f-b.zoom-b.t-c
-					= car_name
+					= cargroup.shortname
 				.size-14.m-t5.lgrey.t-c
-					= seating.to_s + " Seater"
+					= cargroup.seating.to_s + " Seater"
 					%form{:action => "/#{@city.name.downcase}/bookings/do_flash_booking", :id => "CheckoutForm"}
 						.hide
 							%input{name: "deal", type: "hidden", value: "#{deal}"}
@@ -39,11 +49,11 @@
 				%span.text-up
 					Pickup location
 				.zoom-b.f-b.size-12.m-t5
-					= loc
+					= location.name
 					%span.size-11.help.pointer{:title => ""}
 						(view map)
 		.col-md-8.p-0
 			.col-md-6
-				%h4.t-c.size-22.m-t12.strike-text Rs. 5000
+				%h4.t-c.size-22.m-t12.strike-text Rs. #{fare[:total]}
 			.col-md-6
-				%h4.t-c.fo-helv.f-b.size-26.m-t10.red Rs. 2000
+				%h4.t-c.fo-helv.f-b.size-26.m-t10.red Rs. #{disc}
