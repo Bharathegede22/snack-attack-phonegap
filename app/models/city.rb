@@ -21,6 +21,10 @@ class City < ActiveRecord::Base
 		end
 	end
 	
+	def inactive?
+		!self.active || self.prelaunch
+	end
+	
 	def link(action=nil)
 		return "http://" + HOSTNAME + "/" + CommonHelper.escape(self.name.downcase) + case action
 		when 'attractions' then "/attractions"

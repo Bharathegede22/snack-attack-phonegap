@@ -23,7 +23,7 @@
 							- cls = (!@header.blank? && (@header == 'search' || @header == 'booking')) ? 'active' : ''
 							%li
 								%a{class: cls, href: "javascript:void(0)", onclick: "showSearch();"} Book Cars
-						- if @city.active
+						- if !@city.prelaunch
 							%li.dropdown
 								- cls = (!@header.blank? && @header == 'tariff') ? 'dropdown-toggle active' : 'dropdown-toggle'
 								%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}
@@ -96,10 +96,10 @@
 						url = request.fullpath
 						url = "/#{@city.name.downcase}" if true # !url.include?(@city.name.downcase)
 					- City.active.each do |city|
-						- if @city.id == city.id
-							= link_to city.name, "/#{city.name.downcase}", class: 'active'
-						- else
-							= link_to city.name, url.gsub("/#{@city.name.downcase}", "/#{city.name.downcase}")
+						:ruby
+							cls = ''
+							cls = 'active' if @city.id == city.id
+						= link_to city.name, "/#{city.name.downcase}", class: cls
 					.fc
 				.info
 					#UserBar
@@ -122,6 +122,7 @@
 							We're Hiring
 						.fc
 				.fc
+		.fc
 	- cls = (!@header.blank? && @header == 'search') ? '' : 'hide'
 	- if !@header.blank? && @header == 'search'
 		#SH

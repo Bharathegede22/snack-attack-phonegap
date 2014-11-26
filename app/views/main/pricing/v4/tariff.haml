@@ -1,77 +1,87 @@
 - @cargroup = Cargroup.list(@city)
 .static
-	%h1 Zoomcar Standard Tariffs
-	.m-t10.size-20.t-c
-		%i Zoomcar offers the simplest, easiest to understand car-rental tariff in India
-	%br/
-	#tariff-header.tariff-header
-		- @cargroup.each_with_index do |cargroup, index|
-			- if index == 0
-				%a.block.active{:href => "#car#{cargroup.id}", 'data-toggle' => "tab", :onclick => "pushEvent('Cars Selected', '#{cargroup.shortname}', 'Tariff Page');"}
-					#{cargroup.display_name}
-			- else
-				%a.block{:href => "#car#{cargroup.id}", 'data-toggle' => "tab", :onclick => "pushEvent('Cars Selected', '#{cargroup.shortname}', 'Tariff Page');"}
-					#{cargroup.display_name}
-		.fc
-	#tariff-body.p-10.t-c.tab-content.solid.border-c
-		- @cargroup.each_with_index do |cargroup, index|
-			:ruby
-				if index == 0
-					cls = 'tab-pane fade in active'
-				else
-					cls = 'tab-pane fade'
-				end
-				pricing = cargroup.active_pricing(@city.id)
-			%div{:class => cls, :id => "car#{cargroup.id}"}
-				.row.white
-					.inline-block{style: 'width:150px;'}
-						= image_tag("cars/#{cargroup.id}small.jpg", :alt => cargroup.display_name)
-						%br/
-						%br/
-					.inline-block.bg-zoomb.p-10.r-5.m-10.tariff_primary_box
-						.p-b10
-							Hourly Trip
-							%sup *
-						.r-10.bg-w.zoom-b.p-5.col-md-12
-							.fl.col-md-4.text-left
-								₹ #{show_currency(pricing.hourly_discounted)}
-							.fr.col-md-4.text-right
-								₹ #{show_currency(pricing.hourly_bod_fare)}
-							.fr.col-md-4.text-center
-								₹ #{show_currency(pricing.hourly_fare)}
-							.fc
-						.p-5.size-10.col-md-12
-							.fl.col-md-4.text-left
-								(Mon - Thu)
-							.fr.col-md-4.text-right 
-								#{CommonHelper::BLACKOUT_TEXT}
-								%a.tariff_old_blackoutLink{:href => "http://#{HOSTNAME}/holidays", :target => "_blank"} [?]
-
-							.fr.col-md-4
-								(Fri - Sun)
-							
-							.fc
-						.white
-							%i Price includes #{show_currency(pricing.hourly_kms)} Kms for every hour booked.
+	%h1 Zoomcar's #{@city.name} Tariff
+	- if @city.prelaunch
+		.p-10.t-c.size-20.zoom-b
+			Tariff Coming Soon!
+			%br/
+			%br/
+		.m-t10.size-20.t-c
+			%i Zoomcar offers the simplest, easiest to understand car-rental tariff in India
+		%br/
+	- else
+		.m-t10.size-20.t-c
+			%i Zoomcar offers the simplest, easiest to understand car-rental tariff in India
+		%br/
+		#tariff-header.tariff-header
+			- @cargroup.each_with_index do |cargroup, index|
+				- if index == 0
+					%a.block.active{:href => "#car#{cargroup.id}", 'data-toggle' => "tab", :onclick => "pushEvent('Cars Selected', '#{cargroup.shortname}', 'Tariff Page');"}
+						#{cargroup.display_name}
+				- else
+					%a.block{:href => "#car#{cargroup.id}", 'data-toggle' => "tab", :onclick => "pushEvent('Cars Selected', '#{cargroup.shortname}', 'Tariff Page');"}
+						#{cargroup.display_name}
+			.fc
+		#tariff-body.p-10.t-c.tab-content.solid.border-c
+			- @cargroup.each_with_index do |cargroup, index|
+				:ruby
+					if index == 0
+						cls = 'tab-pane fade in active'
+					else
+						cls = 'tab-pane fade'
+					end
+					pricing = cargroup.active_pricing(@city.id)
+				%div{:class => cls, :id => "car#{cargroup.id}"}
+					.row.white
+						.inline-block{style: 'width:150px;'}
+							= image_tag("cars/#{cargroup.id}small.jpg", :alt => cargroup.display_name)
+							%br/
+							%br/
+						.inline-block.bg-zoomb.p-10.r-5.m-10.tariff_primary_box
+							.p-b10
+								Hourly Trip
+								%sup *
+							.r-10.bg-w.zoom-b.p-5.col-md-12
+								.fl.col-md-4.text-left
+									₹ #{show_currency(pricing.hourly_discounted)}
+								- if !@city.promo_pricing
+									.fr.col-md-4.text-right
+										₹ #{show_currency(pricing.hourly_bod_fare)}
+								.fr.col-md-4.text-center
+									₹ #{show_currency(pricing.hourly_fare)}
+								.fc
+							.p-5.size-10.col-md-12
+								.fl.col-md-4.text-left
+									(Mon - Thu)
+								- if !@city.promo_pricing
+									.fr.col-md-4.text-right 
+										#{CommonHelper::BLACKOUT_TEXT}
+										%a.tariff_old_blackoutLink{:href => "http://#{HOSTNAME}/holidays", :target => "_blank"} [?]
+								.fr.col-md-4
+									(Fri - Sun)
+								.fc
+							.white
+								%i Price includes #{show_currency(pricing.hourly_kms)} Kms for every hour booked.
+								%br
+								%i Rs. #{show_currency(pricing.excess_kms)}/km will be charged beyond the usage.
+					.row.zoomb
+						.inline-block{style: 'width:150px;'}
+						.inline-block.border-zoomb.solid.p-5.r-5.m-5{style: 'width:750px;'}
+							%b
+								* 
+							Minimum billing is for 
+							%b #{pricing.mode::MIN_HOURS} hours.
+							%i All bookings between 1 to #{pricing.mode::MIN_HOURS-1} hours will be billed at #{pricing.mode::MIN_HOURS} hours.
 							%br
-							%i Rs. #{show_currency(pricing.excess_kms)}/km will be charged beyond the usage.
-				.row.zoomb
-					.inline-block{style: 'width:150px;'}
-					.inline-block.border-zoomb.solid.p-5.r-5.m-5{style: 'width:750px;'}
-						%b
-							* 
-						Minimum billing is for 
-						%b #{pricing.mode::MIN_HOURS} hours.
-						%i All bookings between 1 to #{pricing.mode::MIN_HOURS-1} hours will be billed at #{pricing.mode::MIN_HOURS} hours.
-						%br
-						A fully refundable security deposit of ₹ 5000 will be charged at time of booking.
-						%br
-						Special Offer: Book for 7 days (or more) and get additional #{pricing.weekly_percentage_discount}% Off.
-						%br
-						%b
-							No discount / offers will be applicable during 
-							%a{:href => "http://#{HOSTNAME}/holidays", :target => "_blank"} #{CommonHelper::BLACKOUT_TEXT}
-	%br/
+							A fully refundable security deposit of ₹ 5000 will be charged at time of booking.
+							%br
+							Special Offer: Book for 7 days (or more) and get additional #{pricing.weekly_percentage_discount}% Off.
+							%br
+							- if !@city.promo_pricing
+								%b
+									No discount / offers will be applicable during 
+									%a{:href => "http://#{HOSTNAME}/holidays", :target => "_blank"} #{CommonHelper::BLACKOUT_TEXT}
+		%br/
 	.row
 		.col-md-6
 			.border-c.solid
@@ -91,16 +101,14 @@
 					Routine maintenance & cleaning
 				.p-10.border-b-c.tick
 					GPS technology
-				.p-10.border-b-c.tick
-					24-hour customer support
 				.p-10.tick
-					Child seat on request
+					24-hour customer support
 		.col-md-6
 			.border-c.solid
 				.header.bg-zoomb.white.p-10.f-b
 					Excluded from Zoomcar Tariff
 				.p-10.border-b-c.cross
-					More than the requisite Km cap associated with an hourly, daily or weekly booking
+					More than the requisite Km cap associated with a booking
 				.p-10.border-b-c.cross
 					Tolls and road taxes (in-state & out-state) **
 				.p-10.border-b-c.cross

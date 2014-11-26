@@ -83,16 +83,17 @@
 							%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}
 								Tariffs
 								%b.caret
-							%ul.dropdown-menu
-								%li
-									%a{href: "/#{@city.name.downcase}/tariff"}
-										Tariffs Details
-								%li
-									%a{href: "javascript:void(0)", onclick: "showModal('Tariff Calculator', '/calculator/tariff');"}
-										Tariff Calculator
-								%li
-									%a{href: "javascript:void(0)", onclick: "showModal('Trip Modification Estimator', '/calculator/reschedule');"}
-										Trip Modification Estimator
+							- if !@city.prelaunch
+								%ul.dropdown-menu
+									%li
+										%a{href: "/#{@city.name.downcase}/tariff"}
+											Tariffs Details
+									%li
+										%a{href: "javascript:void(0)", onclick: "showModal('Tariff Calculator', '/calculator/tariff');"}
+											Tariff Calculator
+									%li
+										%a{href: "javascript:void(0)", onclick: "showModal('Trip Modification Estimator', '/calculator/reschedule');"}
+											Trip Modification Estimator
 						%li.dropdown
 							- cls = (!@header.blank? && @header == 'help') ? 'dropdown-toggle active' : 'dropdown-toggle'
 							%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}

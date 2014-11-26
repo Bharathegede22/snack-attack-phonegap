@@ -1,105 +1,103 @@
-- if @city.blank?
-- else
-	- @cargroup = Cargroup.list(@city)
-	.homepage
-		.afold
-			.cars
-				.h1
-					%h1
-						%span
-							- if @cityp.blank?
-								= City.h1
+- @cargroup = Cargroup.list(@city)
+.homepage
+	.afold
+		.cars
+			.h1
+				%h1
+					%span
+						- if @cityp.blank?
+							= City.h1
+						- else
+							= @city.h1
+				%p
+					%span
+						Zoom in the City and Outstation
+			.slider
+				#CarSlider.carousel.slide{'data-ride' => "carousel", 'data-interval' => '7000', 'data-pause' => 'click'}
+					%ol.carousel-indicators
+						- count = 0
+						- @cargroup.each do |cargroup|
+							- next if cargroup.id == 4
+							- if cargroup == @cargroup.first
+								%li.active{'data-target' => "#CarSlider", 'data-slide-to' => "#{count}", :onclick => "pushEvent('Cars Selected', '#{cargroup.shortname}', 'Home Page');"}
+									= cargroup.shortname.gsub(' LX','')
 							- else
-								= @city.h1
-					%p
-						%span
-							Zoom in the City and Outstation
-				.slider
-					#CarSlider.carousel.slide{'data-ride' => "carousel", 'data-interval' => '7000', 'data-pause' => 'click'}
-						%ol.carousel-indicators
-							- count = 0
-							- @cargroup.each do |cargroup|
-								- next if cargroup.id == 4
-								- if cargroup == @cargroup.first
-									%li.active{'data-target' => "#CarSlider", 'data-slide-to' => "#{count}", :onclick => "pushEvent('Cars Selected', '#{cargroup.shortname}', 'Home Page');"}
-										= cargroup.shortname.gsub(' LX','')
-								- else
-									- x = cargroup.shortname
-									%li{'data-target' => "#CarSlider", 'data-slide-to' => "#{count}", :onclick => "pushEvent('Cars Selected', '#{cargroup.shortname}', 'Home Page');"}
-										= cargroup.shortname.gsub(' LX','')
-								- count += 1
-						.carousel-inner
-							- @cargroup.each do |cargroup|
-								- next if cargroup.id == 4
-								- pricing = cargroup.active_pricing(@city.id)
-								:ruby
-									if cargroup == @cargroup.first
-										style = "background:url(#{asset_path 'cars/' + cargroup.id.to_s + '.jpg'}) no-repeat center top;"
-										databg = ''
-										cls = 'active'
-									else
-										style = ""
-										databg = asset_path 'cars/' + cargroup.id.to_s + '.jpg'
-										cls = ''
-									end
-								.item{:class => cls}
-									.lazy{:style => style, 'data-background' => databg}
-										.cars-content
-											.car-tariff
-												%table.m-auto.car-bg.r-5
-													%tr
-														%td
-															.car-name
-																= cargroup.name
-														%td
-															.car-help
-																%i starts at
-														%td
-															.item.r-5
-																.fare
-																	%b ₹#{show_currency(pricing.hourly_discounted)}/hour
-														%td
-															.item.r-5
-																.fare
-																	%b ₹#{show_currency(pricing.daily_discounted)}/day
-			.tariff.tariff-includes
-				.includes
-					#BubbleAllIn.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>No Hidden Costs</b><br/>Here at Zoomcar, you will get what you pay for. Following items are standard in all our cars.", :onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'NoHiddenCosts');"}
+								- x = cargroup.shortname
+								%li{'data-target' => "#CarSlider", 'data-slide-to' => "#{count}", :onclick => "pushEvent('Cars Selected', '#{cargroup.shortname}', 'Home Page');"}
+									= cargroup.shortname.gsub(' LX','')
+							- count += 1
+					.carousel-inner
+						- @cargroup.each do |cargroup|
+							- next if cargroup.id == 4
+							- pricing = cargroup.active_pricing(@city.id)
+							:ruby
+								if cargroup == @cargroup.first
+									style = "background:url(#{asset_path 'cars/' + cargroup.id.to_s + '.jpg'}) no-repeat center top;"
+									databg = ''
+									cls = 'active'
+								else
+									style = ""
+									databg = asset_path 'cars/' + cargroup.id.to_s + '.jpg'
+									cls = ''
+								end
+							.item{:class => cls}
+								.lazy{:style => style, 'data-background' => databg}
+									.cars-content
+										.car-tariff
+											%table.m-auto.car-bg.r-5
+												%tr
+													%td
+														.car-name
+															= cargroup.name
+													%td
+														.car-help
+															%i starts at
+													%td
+														.item.r-5
+															.fare
+																%b ₹#{show_currency(pricing.hourly_discounted)}/hour
+													%td
+														.item.r-5
+															.fare
+																%b ₹#{show_currency(pricing.daily_discounted)}/day
+		.tariff.tariff-includes
+			.includes
+				#BubbleAllIn.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>No Hidden Costs</b><br/>Here at Zoomcar, you will get what you pay for. Following items are standard in all our cars.", :onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'NoHiddenCosts');"}
+					.p-10
+						.all-in
+				#BubbleFuel.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Fuel is Ours</b><br/>All Zoomcar reservations come with unlimited fuel as part of the tariff. If you need more fuel, just fill up the tank, keep the receipt and <b><u><i>we will refund the amount!</i></u></b>.", :onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'fuel');"}
+					.p-10
+						.fuel
+				#BubbleInsurance.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>No Worries, You're All Covered</b><br/>All Zoomcar reservations are covered with full comprehensive insurance, as long as a Zoomcar member is driving the car. <b><u><i>Maximum liability</i></u> for any damage for a Zoomcar member <u><i>is Rs.5000</i></u></b>.", :onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'Insurance');"}
+					.p-10
+						.insurance
+				#BubbleTaxes.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>We Get Govt. Off Your Back</b><br/>Tariff includes all taxes, except the relevant tolls/taxes one has to pay while visiting another state.", :onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'Taxes');"}
+					.p-10
+						.taxes
+				#BubbleNav.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Zip Zap Zoom</b><br/>All Zoomcar vehicles are fitted with a 3G enabled tablet to guide you on your journey.", :onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'Navigation');"}
+					.p-10
+						.navigation
+				- if @city.mode::SECURITY == 0
+					#BubbleDeposit.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>In You We Trust</b><br/>The start of our relationship is not with a bag of money. Just pay the rental and you are good to zoom.", :onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'NoDeposit');"}
 						.p-10
-							.all-in
-					#BubbleFuel.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Fuel is Ours</b><br/>All Zoomcar reservations come with unlimited fuel as part of the tariff. If you need more fuel, just fill up the tank, keep the receipt and <b><u><i>we will refund the amount!</i></u></b>.", :onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'fuel');"}
+							.deposit
+				- else
+					#BubbleDeposit.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Refundable Security Deposit</b><br/>We take a small, fully refundable security deposit of ₹ #{@city.mode::SECURITY}. It will take 4-5 business days before the refund reflects in your account.", :onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'Deposit');"}
 						.p-10
-							.fuel
-					#BubbleInsurance.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>No Worries, You're All Covered</b><br/>All Zoomcar reservations are covered with full comprehensive insurance, as long as a Zoomcar member is driving the car. <b><u><i>Maximum liability</i></u> for any damage for a Zoomcar member <u><i>is Rs.5000</i></u></b>.", :onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'Insurance');"}
+							.deposit
+				- if false
+					#BubbleParking.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Parking, On Zoomcar!</b><br/>Drive your own car or 2 wheeler to our vehicle site. Free parking for your vehicle at our site during your reservation, courtesy Zoomcar!",        	:onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'Parking');"}
 						.p-10
-							.insurance
-					#BubbleTaxes.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>We Get Govt. Off Your Back</b><br/>Tariff includes all taxes, except the relevant tolls/taxes one has to pay while visiting another state.", :onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'Taxes');"}
-						.p-10
-							.taxes
-					#BubbleNav.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Zip Zap Zoom</b><br/>All Zoomcar vehicles are fitted with a 3G enabled tablet to guide you on your journey.", :onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'Navigation');"}
-						.p-10
-							.navigation
-					- if @city.mode::SECURITY == 0
-						#BubbleDeposit.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>In You We Trust</b><br/>The start of our relationship is not with a bag of money. Just pay the rental and you are good to zoom.", :onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'NoDeposit');"}
-							.p-10
-								.deposit
-					- else
-						#BubbleDeposit.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Refundable Security Deposit</b><br/>We take a small, fully refundable security deposit of ₹ #{@city.mode::SECURITY}. It will take 4-5 business days before the refund reflects in your account.", :onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'Deposit');"}
-							.p-10
-								.deposit
-					- if false
-						#BubbleParking.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Parking, On Zoomcar!</b><br/>Drive your own car or 2 wheeler to our vehicle site. Free parking for your vehicle at our site during your reservation, courtesy Zoomcar!",        	:onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'Parking');"}
-							.p-10
-								.parking
-			#HomepageForm
-				.wrapper
-					.widget-hor
-						.search-form.r-5.p-10
-							#SearchFormDiv.form
-								= render :partial => '/bookings/widget_homepage'
-	= render :partial => '/main/locations'
-	= render :partial => '/main/reviews'
-	= render :partial => '/main/press'
+							.parking
+		#HomepageForm
+			.wrapper
+				.widget-hor
+					.search-form.r-5.p-10
+						#SearchFormDiv.form
+							= render :partial => '/bookings/widget_homepage'
+= render :partial => '/main/locations'
+= render :partial => '/main/reviews'
+= render :partial => '/main/press'
 :javascript
 	function checkJquery() {
 		if(window.jQuery) {
