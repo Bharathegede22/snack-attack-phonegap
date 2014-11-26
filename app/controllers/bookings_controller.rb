@@ -29,6 +29,12 @@ class BookingsController < ApplicationController
 		@booking.user = current_user
 		@wallet_available = @booking.security_amount - @booking.security_amount_remaining
 		redirect_to do_bookings_path(@city.name.downcase) and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
+		if params['deal']
+			deal_id = CommonHelper.decode(params['deal'])
+			@booking.promo = 'SQUIRREL'
+			deal = Deal.find_by(id: deal_id)
+			@discount = deal.discount if deal.present?
+		end
 		generic_meta
 		@header = 'booking'
 		if abtest?
@@ -101,38 +107,28 @@ class BookingsController < ApplicationController
 	end
 
 	def do_flash_booking
-		if !params[:car].blank? && !params[:loc].blank? && !params[:starts].blank? && !params[:ends].blank? && !params[:flash_discount].blank?
-			session[:book] = {:starts => params[:starts], :ends => params[:ends], :loc => params[:loc], :car => params[:car]}
-			if params[:notify].present?
-				session[:notify] = true
+		if params[:flash_deal].present?#!params[:car].blank? && !params[:loc].blank? && !params[:starts].blank? && !params[:ends].blank? && !params[:flash_discount].blank?
+			deal = Deal.find_by(id: params[:flash_deal])
+			if deal && deal.offer_start <= DateTime.now && deal.offer_end >= DateTime.now && deal.booking_id.blank?
+				session[:book] = {:starts => deal.starts.to_s, :ends => deal.ends.to_s, :loc => deal.location_id, :car => deal.cargroup_id}
+			elsif deal.booking_id.present?
+				flash[:alert] = 'Deal has already been taken. Please check back again after some time.'
+				redirect_to '/deals/offers' and return
 			end
-			
+		# elsif session[:book].blank?
+			# redirect_to '/deals/offers' and return
 			if user_signed_in?
-				#if current_user.check_details
-				#	if current_user.check_license
-				#		session[:book][:steps] = 2
-				#	else
-				#		session[:book][:steps] = 3
-				#	end
-				#else
-					session[:book][:steps] = 4
-				#end
+				# if session[:notify].present?
+				# 	redirect_to "/bookings/notify"
+				id = CommonHelper.encode('deal', deal.id)
+				if current_user.check_details
+					redirect_to checkout_bookings_path(@city.name.downcase, deal: id)
+				else
+					redirect_to userdetails_bookings_path(@city.name.downcase, deal: id)
+				end
 			else
-				session[:book][:steps] = 2
+				redirect_to login_bookings_path(@city.name.downcase, deal: id)
 			end
-		elsif session[:book].blank?
-			redirect_to "/" and return
-		end
-		if user_signed_in?
-			if session[:notify].present?
-				redirect_to "/bookings/notify"
-			elsif current_user.check_details
-				redirect_to checkout_bookings_path(@city.name.downcase)
-			else
-				redirect_to userdetails_bookings_path(@city.name.downcase)
-			end
-		else
-			redirect_to login_bookings_path(@city.name.downcase)
 		end
 	end
 	
@@ -166,6 +162,10 @@ class BookingsController < ApplicationController
 			@booking.promo = session[:promo_code]
 			@booking.offer_id = promo[:offer].id
 		end
+
+		if params['deal'].present?
+			@booking.promo = find_deal_and_create_charge(params['deal'])
+		end
 		
 		# Corporate Booking
 		if !session[:corporate_id].blank? && current_user.support?
@@ -179,7 +179,16 @@ class BookingsController < ApplicationController
 		end
 		
 		@booking.save!
-		
+
+		# check for flash deal
+		deal = @booking.promo
+		if deal.present? && deal.include?('SQUIRREL')
+			str, deal = CommonHelper.decode(deal[8, deal.length])
+			if str == 'deal' && deal == @deal.id
+				@booking.flash_discount(@deal)
+			end
+		end
+
 		# Expiring Coupon Code
 		if promo && promo[:coupon]
 			promo[:coupon].used = 1
@@ -903,7 +912,7 @@ class BookingsController < ApplicationController
 		{"mihpayid"=>"4039937155099#{10000 + rand(99999)}", "mode"=>"CC", "status"=>"success", "unmappedstatus"=>"captured", "key"=>"C0Dr8m", "txnid"=>"1bdfe", "amount"=>"6500.00", "discount"=>"0.00", "net_amount_debit"=>"6500", "addedon"=>"2014-08-26 16:13:57", "productinfo"=>"Figo", "firstname"=>"fdsf", "lastname"=>"", "address1"=>"", "address2"=>"", "city"=>"", "state"=>"", "country"=>"", "zipcode"=>"", "email" => PAYU_EMAIL, "phone" => PAYU_PHONE, "udf1"=>"", "udf2"=>"", "udf3"=>"", "udf4"=>"", "udf5"=>"", "udf6"=>"", "udf7"=>"", "udf8"=>"", "udf9"=>"", "udf10"=>"", "hash"=>"5332219dcb4c07661a85d31e4a3da055cf4a63bea9c40c3e3866780bb424238464661868dfb8724816d89937e57867c8f47a2c13f32106078e0b1e50b42d0ed4", "field1"=>"187269", "field2"=>"423820564675", "field3"=>"20140826", "field4"=>"MC", "field5"=>"564675", "field6"=>"00", "field7"=>"0", "field8"=>"3DS", "field9"=>" Successful Verification of Secure Hash:  -- Approved -- Transaction Successful -- Unable to be determined--E219", "payment_source"=>"payu", "PG_TYPE"=>"AXIS", "bank_ref_num"=>"187269", "bankcode"=>"CC", "error"=>"E000", "error_Message"=>"No Error", "name_on_card"=>"ksdfh", "cardnum"=>"512345XXXXXX2346", "cardhash"=>"This field is no longer supported in postback params."}
 	end
 
-	# Loads booking onject from db if already created
+	# Loads booking object from db if already created
 	#
 	# Author::Aniket
 	# Date:: 22/11/2014
@@ -927,5 +936,15 @@ class BookingsController < ApplicationController
 		end
 	end
 
+	def find_deal_and_create_charge(deal_code)
+		str, id = CommonHelper.decode(deal_code)
+		if str == 'deal' 
+			@deal = Deal.find_by(id: id)
+			if @deal.booking_id.blank? && !@deal.sold_out
+				@booking.car_id = @deal.car_id
+				return @booking.promo = 'SQUIRREL' + deal_code
+			end
+		end
+	end
 
 end

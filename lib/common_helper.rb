@@ -94,6 +94,7 @@ module CommonHelper
 		    #when 'payment' then 30000000
 		    when 'cargroup' then 40000000
 		    when 'location' then 50000000
+		    when 'deal' then 70000000
 		    when 'booking' then 10000000000000
 		    when 'payment' then 20000000000000
 		    when 'user' then 30000000000000
@@ -107,6 +108,7 @@ module CommonHelper
 		    when 'cargroup' then 40000000
 		    when 'location' then 50000000
 		    when 'user' then 60000000
+		    when 'deal' then 70000000
 		    when 'booking' then 10000000000000
 		    #when 'payment' then 20000000000000
 		    else 0
@@ -143,6 +145,7 @@ module CommonHelper
 		  	return ['user',id-30000000000000] if id > 30000000000000
 				return ['payment',id-20000000000000] if id > 20000000000000
 				return ['booking',id-10000000000000] if id > 10000000000000
+				return ['deal',id-70000000] if id > 70000000
 				return ['location',id-50000000] if id > 50000000
 				return ['cargroup',id-40000000] if id > 40000000
 				#return ['payment',id-30000000] if id > 30000000
@@ -152,6 +155,7 @@ module CommonHelper
 		  else
 		  	#return ['payment',id-20000000000000] if id > 20000000000000
 				return ['booking',id-10000000000000] if id > 10000000000000
+				return ['deal',id-70000000] if id > 70000000
 		  	return ['user',id-60000000] if id > 60000000
 				return ['location',id-50000000] if id > 50000000
 				return ['cargroup',id-40000000] if id > 40000000
