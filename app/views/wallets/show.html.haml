@@ -46,8 +46,8 @@
 					Available for Refund
 			.col-md-6.clearfix.nullPad.text-right.avail-refund-amount.amount-desc
 				%a{href: "javascript:void(0)", onclick: "showModal('Request Refund', '/wallets/show_refund');pushEvent('Wallet', 'Refund Widget Click (My Bookings)');", :style => "font-weight: bold; text-decoration: none" }
-					%b
-						= "₹ "  + number_with_delimiter(current_user.wallet_total_amount)
+				%b
+					= "₹ "  + number_with_delimiter(current_user.wallet_total_amount)
 
 		.col-md-6.nullPad.security-block-right
 			.credit-top-icon-block
@@ -57,9 +57,9 @@
 					%button.btn.credits-popover  [?]
 				.credits-icon-area.text-left.coinsIcon
 					%img.img-responsive.icon-currency{:src => asset_path('Coins.png')}
-			.col-md-6.clearfix.nullPad.text-left.total-wallet-money
+			.col-md-5.clearfix.nullPad.text-left.total-wallet-money
 				In Wallet
-			.col-md-6.clearfix.nullPad.text-right.amount-desc
+			.col-md-7.clearfix.nullPad.text-right.amount-desc.inwallet-text
 				%b
 					₹ #{number_with_delimiter(current_user.total_credits.to_i)}
 
