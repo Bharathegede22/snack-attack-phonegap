@@ -86,6 +86,10 @@ module BookingsHelper
     if credits.present?
       session[:credits_applied] = credits["is_credit_applied"].to_i == 1
       session[:credits] = session[:credits_applied] ? credits["applied"] : nil
+      if session[:credits_applied]
+        session[:credits] = credits["applied"]
+        session[:credits_hash] = credits_hash
+      end
     end
   end
 
@@ -136,6 +140,16 @@ module BookingsHelper
       c.refund = 0
     end
     c.save!
+  end
+
+  def credits_hash
+    return if @booking.nil?
+    md5 = Digest::MD5.new
+    md5 << @booking.starts.to_s
+    md5 << @booking.ends.to_s
+    md5 << @booking.location_id.to_s
+    md5 << @booking.cargroup_id.to_s
+    md5.hexdigest
   end
 
 end

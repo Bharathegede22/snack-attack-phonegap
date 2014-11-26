@@ -27,7 +27,6 @@ class BookingsController < ApplicationController
 	
 	def checkout
 		@booking.user = current_user
-		apply_credits if session[:credits]
 		@wallet_available = @booking.security_amount - @booking.security_amount_remaining
 		redirect_to do_bookings_path(@city.name.downcase) and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		generic_meta
@@ -902,6 +901,13 @@ class BookingsController < ApplicationController
 
 	def clear_credit_and_offers
 		Rails.logger.debug("============================= Clearning the Credits and Offers ============")
+		# Clear Session if user is on a different booking
+		if session[:credits] && same_booking?
+			apply_credits
+		else
+			session[:credits] = nil
+			session[:credits_hash] = nil
+		end
 		booking = check_booking_obj
 		# Clear Promos
 		check_promo
@@ -919,9 +925,19 @@ class BookingsController < ApplicationController
   #
 	def apply_credits
 		# make credits invalid if user does not have credits
-			session[:credits] = nil if current_user.total_credits.to_i <= 0
+		if current_user.total_credits.to_i <= 0 || !same_booking?
+			session[:credits] = nil
+			return
+		end
 			# recalcuate credits
-			result = @booking.apply_credits(current_user.total_credits.to_i, session[:promo_discount].to_i)
-      session[:credits] = result[:credits] if result[:err].nil?
+		result = @booking.apply_credits(current_user.total_credits.to_i, session[:promo_discount].to_i)
+    if result[:err].nil?
+    	session[:credits] = result[:credits]
+    	session[:credits_hash] = credits_hash
+    end
+	end
+
+	def same_booking?
+		session[:credits_hash] == credits_hash
 	end
 end
