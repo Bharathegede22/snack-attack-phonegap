@@ -5,12 +5,10 @@
 		.col-md-4.border-r-c
 			= image_tag("cars/#{cargroup}small.jpg", :alt => "")
 			.fl.p-t5.p-b10
-				.size-20.f-b.zoom-b
+				.size-20.f-b.zoom-b.t-c
 					= car_name
-					/ Scorpio LX
-				.size-14.m-t5.lgrey
+				.size-14.m-t5.lgrey.t-c
 					= seating.to_s + " Seater"
-					/ 7 Seater
 					%form{:action => "/#{@city.name.downcase}/bookings/do_flash_booking", :id => "CheckoutForm"}
 						.hide
 							%input{name: "deal", type: "hidden", value: "#{deal}"}
@@ -28,18 +26,14 @@
 				.text-up.size-14.p-b10.p-t10.t-c
 					.fo-helv.f-b
 						= starts.strftime("%d %b, %Y")
-						/ 30 Dec, 2014
 						%br 
 							= starts.strftime('%I:%M %P')
-							/ 11:30 PM
 			.col-md-6.border-l-c.p-l0.p-r0
 				.text-up.size-14.p-b10.p-t10.t-c
 					.fo-helv.f-b
 						= ends.strftime("%d %b, %Y")
-						/ 04 Jan, 2015 
 						%br 
 							= ends.strftime('%I:%M %P')
-							/ 11:30 PM
 		.col-md-8.border-b-c.p-0.p-l35.location_icon
 			.size-13.p-b5.p-t5.light-grey
 				%span.text-up
