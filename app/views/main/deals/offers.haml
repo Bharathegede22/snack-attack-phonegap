@@ -12,7 +12,7 @@
 						Next Deal Starts in
 					%span.pull-right#clock.countdown-time
 			.panel-body.offer-panel-body
-				.col-md-12.inline-block.p-b30
+				.col-md-12.inline-block
 					- @deal.each_with_index do |d, i|
 						- loc = @location[i]
 						- car_name = @cargroup[i].name

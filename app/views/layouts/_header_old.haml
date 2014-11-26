@@ -102,6 +102,8 @@
 							= link_to city.name, url.gsub("/#{@city.name.downcase}", "/#{city.name.downcase}")
 					.fc
 				.info
+					%a.deals.f-b.pointer{href: "/main/deals/offer"}
+						Deals
 					#UserBar
 						.broadcast.fr
 							.dropdown.fr
