@@ -365,6 +365,7 @@
 
 	function checkJquery() {
 		if (window.jQuery) {
+			pushEvent('1-click checkout', 'Checkout Page Load', '');
 			$.getScript("https://api.juspay.in/pay.js", function(){
 				//loading Juspay js file
 			});
@@ -406,6 +407,7 @@
 	}
 	function createPayment() {
 		if(flag) {
+			pushEvent('1-click checkout', 'Payment Options Load', '');
 			var dep;
 			if('#{@booking.defer_allowed?}'==false||$("#changeDeposit").is(':checked')){
 				dep = 1;
