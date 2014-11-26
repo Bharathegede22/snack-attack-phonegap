@@ -15,9 +15,10 @@
 				.col-md-12.inline-block
 					- @deal.each_with_index do |d, i|
 						- loc = @location[i]
-						- car_name = @cargroup[i].name
+						- car_name = @cargroup[i].shortname
 						- car_seating = @cargroup[i].seating
-						= render :partial => "main/deals/cardeals", :locals => {:deal => CommonHelper.encode('deal', d.id), :loc => loc, :name => car_name, :seating => car_seating, :starts => d.starts, :ends => d.ends, :cargroup => d.cargroup_id}
+						- sold_out = @sold_out[i]
+						= render :partial => "main/deals/cardeals", :locals => {:deal => CommonHelper.encode('deal', d.id), :loc => loc, :car_name => car_name, :seating => car_seating, :starts => d.starts, :ends => d.ends, :cargroup => d.cargroup_id, :sold_out => sold_out}
 		.shadow_line
 		.offers-terms-condition
 			%h4.fo-helv Terms and Conditions:

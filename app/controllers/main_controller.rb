@@ -141,9 +141,11 @@ class MainController < ApplicationController
 		@deal = Deal.where("offer_start < ? AND offer_end > ?", Time.now, Time.now)
 		@location = Array.new
 		@cargroup = Array.new
+		@sold_out = Array.new
 		@deal.each_with_index do |d, i|
 			@location[i] = Location.where(id: d.location_id).first.name
 			@cargroup[i] = Cargroup.where(id: d.cargroup_id).first
+			@sold_out[i] = d.sold_out
 		end
 		
 		render "main/deals/offers"
