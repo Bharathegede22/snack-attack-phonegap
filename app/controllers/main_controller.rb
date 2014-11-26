@@ -138,14 +138,18 @@ class MainController < ApplicationController
 	end
 
 	def deals_of_the_day
+		@meta_title = "Zoomcar Deals Zone"
+		@meta_keywords = "zoomcar deals"
 		@deal = Deal.where("offer_start < ? AND offer_end > ?", Time.now, Time.now)
 		@location = Array.new
 		@cargroup = Array.new
 		@sold_out = Array.new
+		@discount = Array.new
 		@deal.each_with_index do |d, i|
-			@location[i] = Location.where(id: d.location_id).first.name
+			@location[i] = Location.where(id: d.location_id).first
 			@cargroup[i] = Cargroup.where(id: d.cargroup_id).first
 			@sold_out[i] = d.sold_out
+			@discount[i] = d.discount
 		end
 		
 		render "main/deals/offers"
