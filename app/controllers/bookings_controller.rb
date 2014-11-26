@@ -162,6 +162,10 @@ class BookingsController < ApplicationController
 			@booking.promo = session[:promo_code]
 			@booking.offer_id = promo[:offer].id
 		end
+
+		if params['deal'].present?
+			@booking.promo = find_deal_and_create_charge(params['deal'])
+		end
 		
 		# Corporate Booking
 		if !session[:corporate_id].blank? && current_user.support?
@@ -176,6 +180,15 @@ class BookingsController < ApplicationController
 		
 		@booking.save!
 		
+		# check for flash deal
+		deal = @booking.promo
+		if deal.present? && deal.include?('SQUIRREL')
+			str, deal = CommonHelper.decode(deal[8, deal.length])
+			if str == 'deal' && deal == @deal.id
+				@booking.flash_discount(@deal)
+			end
+		end
+
 		# Expiring Coupon Code
 		if promo && promo[:coupon]
 			promo[:coupon].used = 1
@@ -923,5 +936,14 @@ class BookingsController < ApplicationController
 		end
 	end
 
+	def find_deal_and_create_charge(flash_deal)
+		str, id = CommonHelper.decode(flash_deal)
+		if str == 'deal' 
+			@deal = FlashDeals.find_by(id: id)
+			if @deal.booking_id.blank? && !@deal.sold_out
+				return @booking.promo = 'SQUIRREL' + flash_deal
+			end
+		end
+	end
 
 end
