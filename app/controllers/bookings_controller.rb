@@ -107,27 +107,30 @@ class BookingsController < ApplicationController
 	end
 
 	def do_flash_booking
-		if params[:flash_deal].present?#!params[:car].blank? && !params[:loc].blank? && !params[:starts].blank? && !params[:ends].blank? && !params[:flash_discount].blank?
-			deal = Deal.find_by(id: params[:flash_deal])
-			if deal && deal.offer_start <= DateTime.now && deal.offer_end >= DateTime.now && deal.booking_id.blank?
-				session[:book] = {:starts => deal.starts.to_s, :ends => deal.ends.to_s, :loc => deal.location_id, :car => deal.cargroup_id}
-			elsif deal.booking_id.present?
-				flash[:alert] = 'Deal has already been taken. Please check back again after some time.'
-				redirect_to '/deals/offers' and return
-			end
-		# elsif session[:book].blank?
-			# redirect_to '/deals/offers' and return
-			if user_signed_in?
-				# if session[:notify].present?
-				# 	redirect_to "/bookings/notify"
-				id = CommonHelper.encode('deal', deal.id)
-				if current_user.check_details
-					redirect_to checkout_bookings_path(@city.name.downcase, deal: id)
-				else
-					redirect_to userdetails_bookings_path(@city.name.downcase, deal: id)
+		if params[:deal].present?#!params[:car].blank? && !params[:loc].blank? && !params[:starts].blank? && !params[:ends].blank? && !params[:flash_discount].blank?
+			str, id = CommonHelper.decode(params['deal'])
+			if str == 'deal'
+				deal = Deal.find_by(id: id)
+				if deal && deal.offer_start <= DateTime.now && deal.offer_end >= DateTime.now && deal.booking_id.blank?
+					session[:book] = {:starts => deal.starts.to_s, :ends => deal.ends.to_s, :loc => deal.location_id, :car => deal.cargroup_id}
+				elsif deal.booking_id.present?
+					flash[:alert] = 'Deal has already been taken. Please check back again after some time.'
+					redirect_to '/deals/offers' and return
 				end
-			else
-				redirect_to login_bookings_path(@city.name.downcase, deal: id)
+			# elsif session[:book].blank?
+				# redirect_to '/deals/offers' and return
+				if user_signed_in?
+					# if session[:notify].present?
+					# 	redirect_to "/bookings/notify"
+					id = CommonHelper.encode('deal', deal.id)
+					if current_user.check_details
+						redirect_to checkout_bookings_path(@city.name.downcase, deal: id)
+					else
+						redirect_to userdetails_bookings_path(@city.name.downcase, deal: id)
+					end
+				else
+					redirect_to login_bookings_path(@city.name.downcase, deal: id)
+				end
 			end
 		end
 	end

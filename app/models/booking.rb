@@ -451,7 +451,10 @@ class Booking < ActiveRecord::Base
 		charge.discount = discount
 		charge.amount = discount
 		if charge.save
-			deal.update_column(:booking_id, self.id)
+			deal.booking_id = self.id
+			deal.logged_at = Time.now
+			deal.save!
+			# deal.update_column(:booking_id, self.id)
 			note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs."
 			note += discount.to_s + " - Deal Discount.<br/>"
 			self.notes += note
