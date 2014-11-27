@@ -270,6 +270,7 @@
 								%input{name: "car", type: "hidden", value: session[:book][:car]}
 								%input{name: "deposit", type: "hidden", value: 1, id: "checkoutDeposit"}
 							%input.button.m-auto{style: "width:200px;", type: "submit", value: "Checkout"}
+							%h4.size-16.m-t10 You have 10 mins to book this deal. Hurry!
 					- else
 						.button-dis Checkout
 					#CheckoutWait{style: 'display:none;'}
