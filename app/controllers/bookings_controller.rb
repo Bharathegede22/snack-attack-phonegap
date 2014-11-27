@@ -947,7 +947,7 @@ class BookingsController < ApplicationController
 				return @booking.promo = 'SQUIRREL' + deal_code
 			elsif @deal.booking_id.present? || @deal.sold_out
 				flash.keep[:notice] = 'Deal has already been taken. Please check back again after some time.'
-				redirect_to '/deals and return
+				redirect_to '/deals' and return
 			end
 		end
 	end
