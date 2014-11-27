@@ -109,11 +109,11 @@ class BookingsController < ApplicationController
 				if deal && deal.offer_start <= DateTime.now && deal.offer_end >= DateTime.now && deal.booking_id.blank?
 					session[:book] = {:starts => deal.starts.to_s, :ends => deal.ends.to_s, :loc => deal.location_id, :car => deal.cargroup_id}
 				elsif deal.booking_id.present?
-					flash[:alert] = 'Deal has already been taken. Please check back again after some time.'
-					redirect_to '/deals/offers' and return
+					flash.keep[:notice] = 'Deal has already been taken. Please check back again after some time.'
+					redirect_to '/deals' and return
 				end
 			# elsif session[:book].blank?
-				# redirect_to '/deals/offers' and return
+				# redirect_to '/deals' and return
 				id = CommonHelper.encode('deal', deal.id)
 				session[:deal] = id
 				if user_signed_in?
@@ -210,6 +210,7 @@ class BookingsController < ApplicationController
 			session[:book] 				= nil
 			session[:promo_code] 	= nil
 			session[:credits] 		= nil
+			session[:deal] = nil
 			if !session[:corporate_id].blank? && current_user.support?
 				flash[:notice] = "Corporate Booking is Successful"
 				session[:corporate_id] = nil
@@ -944,6 +945,9 @@ class BookingsController < ApplicationController
 			if @deal.booking_id.blank? && !@deal.sold_out
 				@booking.car_id = @deal.car_id
 				return @booking.promo = 'SQUIRREL' + deal_code
+			elsif @deal.booking_id.present? || @deal.sold_out
+				flash.keep[:notice] = 'Deal has already been taken. Please check back again after some time.'
+				redirect_to '/deals' and return
 			end
 		end
 	end
