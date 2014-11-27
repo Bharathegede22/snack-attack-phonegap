@@ -78,4 +78,8 @@
 		return date;
 	}
 
+	function showMap(lat, lng, name) {
+		showModal(name, '/map?lat=' + lat + '&lng=' + lng + '&title=' + name);
+	}
+
 	checkJquery();

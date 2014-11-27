@@ -2,7 +2,7 @@
 	.sold-out-tag
 	.each-car-offer.r-3
 		.col-md-4.border-r-c
-			= image_tag("cars/11small.jpg", :alt => "")
+			= image_tag("cars/2small.jpg", :alt => "")
 			.fl.p-t5.p-b10
 				.size-20.f-b.zoom-b
 					Scorpio LX
@@ -27,7 +27,7 @@
 				.text-up.size-14.p-b10.p-t10.t-c
 					.fo-helv.f-b
 						= Time.now.strftime("%d %b, %Y")
-						%br 10:00 PM
+						%br 08:00 PM
 		.col-md-8.border-b-c.p-0.p-l35.location_icon
 			.size-13.p-b5.p-t5.light-grey
 				%span.text-up
@@ -35,10 +35,10 @@
 				.zoom-b.f-b.size-12.m-t5
 					Marathalli (Sireesh Auto)
 					%br
-					%a.size-11.help.pointer{:href => "javascript:showModal(name, '/map?lat=12.951530718193473&lng=77.70201437166179&title=Marathalli%20(Sireesh Auto));"}
+					%a.size-11.help.pointer{:href => "javascript:showMap(12.951530718193473, 77.70201437166179, 'Marathalli (Sireesh Auto)');"}
 						(view map)
 		.col-md-8.p-0
 			.col-md-6
-				%h4.t-c.size-22.m-t12.strike-text Rs. 2000
+				%h4.t-c.size-22.m-t12.strike-text Rs. 1100
 			.col-md-6
-				%h4.t-c.fo-helv.f-b.size-26.m-t10.red Rs. 5000
+				%h4.t-c.fo-helv.f-b.size-26.m-t10.red Rs. 880

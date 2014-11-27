@@ -88,6 +88,7 @@ class BookingsController < ApplicationController
 		elsif session[:book].blank?
 			redirect_to "/" and return
 		end
+		session[:deal] = nil
 		if user_signed_in?
 			if session[:notify].present?
 				redirect_to "/bookings/notify"
@@ -128,6 +129,8 @@ class BookingsController < ApplicationController
 					redirect_to login_bookings_path(@city.name.downcase, deal: id)
 				end
 			end
+		else
+			redirect_to '/deals' and return
 		end
 	end
 	
