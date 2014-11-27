@@ -151,7 +151,7 @@ class MainController < ApplicationController
 			@sold_out[i] = d.sold_out
 			@discount[i] = d.discount
 		end
-		
+		session[:deal] = nil
 		render "main/deals/offers"
 	end
 

@@ -29,12 +29,7 @@ class BookingsController < ApplicationController
 		@booking.user = current_user
 		@wallet_available = @booking.security_amount - @booking.security_amount_remaining
 		redirect_to do_bookings_path(@city.name.downcase) and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
-		if params['deal']
-			deal_id = CommonHelper.decode(params['deal'])
-			@booking.promo = 'SQUIRREL'
-			deal = Deal.find_by(id: deal_id)
-			@discount = deal.discount if deal.present?
-		end
+		check_deal
 		generic_meta
 		@header = 'booking'
 		if abtest?
@@ -119,10 +114,11 @@ class BookingsController < ApplicationController
 				end
 			# elsif session[:book].blank?
 				# redirect_to '/deals/offers' and return
+				id = CommonHelper.encode('deal', deal.id)
+				session[:deal] = id
 				if user_signed_in?
 					# if session[:notify].present?
 					# 	redirect_to "/bookings/notify"
-					id = CommonHelper.encode('deal', deal.id)
 					if current_user.check_details
 						redirect_to checkout_bookings_path(@city.name.downcase, deal: id)
 					else
@@ -166,8 +162,8 @@ class BookingsController < ApplicationController
 			@booking.offer_id = promo[:offer].id
 		end
 
-		if params['deal'].present?
-			@booking.promo = find_deal_and_create_charge(params['deal'])
+		if session[:deal].present?
+			@booking.promo = find_deal_and_create_charge(session[:deal])
 		end
 		
 		# Corporate Booking
@@ -330,6 +326,7 @@ class BookingsController < ApplicationController
 	
 	def login
 		redirect_to do_bookings_path(@city.name.downcase) and return if user_signed_in?
+		check_deal
 		generic_meta
 		@header = 'booking'
 		
@@ -799,6 +796,7 @@ class BookingsController < ApplicationController
 	
 	def userdetails
 		redirect_to do_bookings_path(@city.name.downcase) and return if !user_signed_in? || (current_user && current_user.check_details)
+		check_deal
 		generic_meta
 		@header = 'booking'
 	end
@@ -946,6 +944,17 @@ class BookingsController < ApplicationController
 			if @deal.booking_id.blank? && !@deal.sold_out
 				@booking.car_id = @deal.car_id
 				return @booking.promo = 'SQUIRREL' + deal_code
+			end
+		end
+	end
+
+	def check_deal
+		if session[:deal].present?
+			str, id = CommonHelper.decode(session[:deal])
+			if str == 'deal'
+				@booking.promo = 'SQUIRREL'
+				deal = Deal.find_by(id: id)
+				@discount = deal.discount if deal.present?
 			end
 		end
 	end

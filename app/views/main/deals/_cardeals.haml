@@ -50,11 +50,15 @@
 					Pickup location
 				.zoom-b.f-b.size-12.m-t5
 					= location.name
-					%br
-					%span.size-11.help.pointer{:title => ""}
+					%a.size-11.help.pointer{:href => "javascript:showMap(#{location.lat}, #{location.lng}, '#{location.name}')"}
 						(view map)
 		.col-md-8.p-0
 			.col-md-6
 				%h4.t-c.size-22.m-t12.strike-text Rs. #{fare[:total]}
 			.col-md-6
 				%h4.t-c.fo-helv.f-b.size-26.m-t10.red Rs. #{disc}
+
+:javascript
+	function showMap(lat, lng, name) {
+		showModal(name, '/map?lat=' + lat + '&lng=' + lng + '&title=' + name);
+	}
