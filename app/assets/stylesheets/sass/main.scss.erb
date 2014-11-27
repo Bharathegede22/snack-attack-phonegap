@@ -258,6 +258,7 @@ $border-grey3px: 3px #ccc solid;
 }
 .offers-heading{
 	background: $black !important;
+	overflow: auto;
 	h4{
 		color: white;
 	}
@@ -299,9 +300,9 @@ background-size: 8em;
 .deals-stamp-icon{
 	background: url(<%= asset_path 'deals-stamp.png' %>) 10px 6px no-repeat;
 	height: 145px;
+	width:	145px;
 	position: absolute;
 	z-index: 2;
-	width: 150px;
 	margin: -6em -8em;
 }
 .timer-icon{
@@ -310,7 +311,7 @@ background-size: 8em;
 	background: $black;
 	right: 50%;
 	position: absolute;
-	margin: -1.3em -13em;
+	margin: -1.3em -12em;
 	border-radius: 4em;
 	span{
 		margin: 8px 9px;
