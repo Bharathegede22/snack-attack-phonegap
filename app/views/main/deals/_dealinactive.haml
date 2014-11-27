@@ -21,21 +21,21 @@
 			.col-md-6.p-l0.p-r0
 				.text-up.size-14.p-b10.p-t10.t-c
 					.fo-helv.f-b
-						30 Dec, 2014
-						%br 11:30 PM
+						= Time.now.strftime("%d %b, %Y")
+						%br 10:00 AM
 			.col-md-6.border-l-c.p-l0.p-r0
 				.text-up.size-14.p-b10.p-t10.t-c
 					.fo-helv.f-b
-						04 Jan, 2015 
-						%br 11:30 PM
+						= Time.now.strftime("%d %b, %Y")
+						%br 10:00 PM
 		.col-md-8.border-b-c.p-0.p-l35.location_icon
 			.size-13.p-b5.p-t5.light-grey
 				%span.text-up
 					Pickup location
 				.zoom-b.f-b.size-12.m-t5
-					Pimple Saudagar (Kokane Chowk)
+					Marathalli (Sireesh Auto)
 					%br
-					%span.size-11.help.pointer{:title => ""}
+					%a.size-11.help.pointer{:href => "javascript:showModal(name, '/map?lat=12.951530718193473&lng=77.70201437166179&title=Marathalli%20(Sireesh Auto));"}
 						(view map)
 		.col-md-8.p-0
 			.col-md-6

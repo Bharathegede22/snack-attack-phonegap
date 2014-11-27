@@ -4,7 +4,7 @@
 	if !@booking.blank?
 		cargroup = @booking.cargroup
 		location = @booking.location
-		deal = @booking.promo.present? && @booking.promo.include?('SQUIRREL') ? @booking.promo : ''
+		deal = @booking.promo.present? && @booking.promo.include?('SQUIRREL') ? 'SQUIRREL' : ''
 	else
 		cargroup = Cargroup.random(@city)
 		location = Location.random(@city)
@@ -53,7 +53,8 @@
 					.fl
 						Booking Summary
 					.fr
-						.glyphicon.glyphicon-pencil.pointer.help{onclick: "showSearch();", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Change your booking"}
+						- if deal != 'SQUIRREL'
+							.glyphicon.glyphicon-pencil.pointer.help{onclick: "showSearch();", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Change your booking"}
 					.fc
 
 				.summary-cell.fl.border-r-c
