@@ -1,8 +1,8 @@
 Web::Application.routes.draw do
 	get 'mydeposits' => "wallets#show"
-  get 'bookings'  => "wallets#show"
+  	get 'bookings'  => "wallets#show"
 	get 'device'  => "main#device"
-	get 'deals/offers' => "main#deals_of_the_day"
+	get 'deals' => "main#deals_of_the_day"
 
 	devise_for :users, 
 		:controllers => {
