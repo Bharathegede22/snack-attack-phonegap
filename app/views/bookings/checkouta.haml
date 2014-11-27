@@ -260,7 +260,7 @@
 							₹ #{pricing.excess_kms.to_i} / Km
 
 			.t-c
-				.m-auto.p-20{style: "width:400px;"}
+				.m-auto.p-t10.p-b20{style: "width:400px;"}
 					- if @available == 1 && user && !user.is_blacklisted?
 						- flash_param = deal == 'SQUIRREL' ? "?deal=" + session[:deal] : ''
 						%form{:action => "/#{@city.name.downcase}/bookings/docreate" + flash_param, :id => "CheckoutForm", :method => "post"}
@@ -270,9 +270,9 @@
 								%input{name: "loc", type: "hidden", value: session[:book][:loc]}
 								%input{name: "car", type: "hidden", value: session[:book][:car]}
 								%input{name: "deposit", type: "hidden", value: 1, id: "checkoutDeposit"}
-							%input.button.m-auto{style: "width:200px;", type: "submit", value: "Checkout"}
 							- if deal == 'SQUIRREL'
-								%h4.size-14.m-t10.d-grey You have 10 mins to book this deal. Hurry!
+								%h4.size-14.m-b10.d-grey You have 10 mins to book this deal. Hurry!
+							%input.button.m-auto{style: "width:200px;", type: "submit", value: "Checkout"}
 					- else
 						.button-dis Checkout
 					#CheckoutWait{style: 'display:none;'}

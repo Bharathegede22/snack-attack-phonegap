@@ -187,7 +187,7 @@ class Booking < ActiveRecord::Base
   end
 
   def defer_payment_allowed?
-    self.starts > (Time.now + CommonHelper::JIT_DEPOSIT_ALLOW.hours + 30.minutes)
+    (self.starts > (Time.now + CommonHelper::JIT_DEPOSIT_ALLOW.hours + 30.minutes) && !self.promo.include?('SQUIRREL')) 
   end
 	
 	def deposit_help
