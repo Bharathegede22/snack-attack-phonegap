@@ -9,6 +9,7 @@
 	outstanding_amount = @booking.outstanding_without_deposit
 	security_remaining = @booking.security_amount_remaining
 	payable_amount = outstanding_amount>=0 ? (outstanding_amount + security_remaining) : security_remaining
+	binding.pry
 - render_flash
 
 - unless @booking.corporate_id.nil?										
@@ -24,7 +25,7 @@
 				= "Booking #" + @booking.encoded_id.upcase
 			.fr.size-14
 				
-				- if @booking.paid?
+				- if @booking.paid? && !(@booking.promo.present? && @booking.promo.include?('SQUIRREL'))
 					- case @booking.status?
 					- when 'live'
 						%a.white.pointer.inline-block.m-l15{onclick: "showModal('Extend Your Booking', '/bookings/#{@booking.encoded_id}/reschedule');"}

@@ -4,7 +4,7 @@
 	if !@booking.blank?
 		cargroup = @booking.cargroup
 		location = @booking.location
-		deal = @booking.promo.include?('SQUIRREL') ? @booking.promo : ''
+		deal = @booking.promo.present? && @booking.promo.include?('SQUIRREL') ? @booking.promo : ''
 	else
 		cargroup = Cargroup.random(@city)
 		location = Location.random(@city)
