@@ -23,7 +23,8 @@
 						- sold_out = @sold_out[i]
 						- discount = @discount[i]
 						= render :partial => "main/deals/cardeals", :locals => {:deal => CommonHelper.encode('deal', d.id), :location => loc, :cargroup => cargroup, :starts => d.starts, :ends => d.ends, :sold_out => sold_out, :discount => discount}
-						/= render :partial => "main/deals/dealinactive"
+					- if @deal.count % 2 == 1
+						= render :partial => "main/deals/dealinactive"
 		.shadow_line
 		.offers-terms-condition
 			%h4.fo-helv Terms and Conditions:
