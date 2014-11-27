@@ -1,5 +1,5 @@
-- render_flash
 .wrapper
+	- render_flash
 	.offer_main_container
 		.panel.panel-default.offers-panel.m-t70
 			.panel-heading.offers-heading
@@ -7,7 +7,7 @@
 				.timer-icon.pull-right
 					%span.glyphicon.glyphicon-time
 				.col-md-7.pull-left
-					%h4.white.p-l60
+					%h4.white.p-l35
 						Deals of the Day
 				.col-md-5.pull-right.p-l75
 					%h4
@@ -15,7 +15,7 @@
 							Next Deal Starts in
 							%span.pull-right#clock.countdown-time
 			.panel-body.offer-panel-body
-				.col-md-12.inline-block.p-b30
+				.col-md-12.inline-block
 					- @deal.each_with_index do |d, i|
 						- loc = @location[i]
 						- cargroup = @cargroup[i]
