@@ -3,7 +3,7 @@
 	location = @booking.location
 	fare = @booking.get_fare
 	pricing = @booking.pricing
-	deal = @booking.promo.present? && @booking.promo.include?('SQUIRREL') ? @booking.promo : ''
+	deal = @booking.promo.present? && @booking.promo.include?('SQUIRREL') ? 'SQUIRREL' : ''
 	discnt = deal.present? ? fare[:total].to_i*@discount/100 : 0
 	tmp = ''
 	h = (@booking.ends.to_i - @booking.starts.to_i)/3600
@@ -25,7 +25,8 @@
 		.fl
 			Booking Summary
 		.fr
-			.glyphicon.glyphicon-pencil.pointer.help{onclick: "showSearch();", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Change your booking"}
+			- if deal != 'SQUIRREL'
+				.glyphicon.glyphicon-pencil.pointer.help{onclick: "showSearch();", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Change your booking"}
 		.fc
 	.p-r20.p-l30.size-16.border-b-c
 		.fl.m-l20.colored
