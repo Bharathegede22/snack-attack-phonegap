@@ -271,7 +271,7 @@
 								%input{name: "car", type: "hidden", value: session[:book][:car]}
 								%input{name: "deposit", type: "hidden", value: 1, id: "checkoutDeposit"}
 							- if deal == 'SQUIRREL'
-								%h4.size-14.m-b10.d-grey You have 10 mins to book this deal. Hurry!
+								%h4.size-14.m-b10.l-red.lh-n Once you click checkout, you will get 10 minutes to book the deal !
 							%input.button.m-auto{style: "width:200px;", type: "submit", value: "Checkout"}
 					- else
 						.button-dis Checkout
