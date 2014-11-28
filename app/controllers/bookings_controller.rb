@@ -88,12 +88,16 @@ class BookingsController < ApplicationController
 		elsif session[:book].blank?
 			redirect_to "/" and return
 		end
-		session[:deal] = nil
+		# session[:deal] = nil
 		if user_signed_in?
 			if session[:notify].present?
 				redirect_to "/bookings/notify"
 			elsif current_user.check_details
-				redirect_to checkout_bookings_path(@city.name.downcase)
+				if session[:deal].present?
+					redirect_to bookings_do_flash_booking_path(deal: session[:deal])
+				else
+					redirect_to checkout_bookings_path(@city.name.downcase)
+				end
 			else
 				redirect_to userdetails_bookings_path(@city.name.downcase)
 			end
@@ -103,8 +107,8 @@ class BookingsController < ApplicationController
 	end
 
 	def do_flash_booking
-		if params[:deal].present?#!params[:car].blank? && !params[:loc].blank? && !params[:starts].blank? && !params[:ends].blank? && !params[:flash_discount].blank?
-			str, id = CommonHelper.decode(params['deal'])
+		if params[:deal].present? || session[:deal].present?#!params[:car].blank? && !params[:loc].blank? && !params[:starts].blank? && !params[:ends].blank? && !params[:flash_discount].blank?
+			str, id = params[:deal].present? ? CommonHelper.decode(params['deal']) : CommonHelper.decode(session[:deal])
 			if str == 'deal'
 				deal = Deal.find_by(id: id)
 				if deal && deal.offer_start <= DateTime.now && deal.offer_end >= DateTime.now && deal.booking_id.blank?
@@ -116,7 +120,7 @@ class BookingsController < ApplicationController
 			# elsif session[:book].blank?
 				# redirect_to '/deals' and return
 				id = CommonHelper.encode('deal', deal.id)
-				session[:deal] = id
+					session[:deal] = id
 				if user_signed_in?
 					# if session[:notify].present?
 					# 	redirect_to "/bookings/notify"
@@ -167,8 +171,9 @@ class BookingsController < ApplicationController
 
 		if session[:deal].present?
 			@booking.promo = find_deal_and_create_charge(session[:deal])
+			redirect_to '/deals' and return if @booking.promo == "taken"
 		end
-		
+
 		# Corporate Booking
 		if !session[:corporate_id].blank? && current_user.support?
 			@booking.corporate_id = session[:corporate_id]
@@ -708,6 +713,7 @@ class BookingsController < ApplicationController
       @booking.cargroup_id = params[:car] if !params[:car].blank?
       # @booking.valid?
       session[:search] = {:starts => params[:starts], :ends => params[:ends], :loc => params[:loc], :car => params[:car]}
+      session[:deal] = nil
       if params[:id] == 'homepage'
         render json: {html: render_to_string('_widget_homepage.haml', layout: false)}
       else
@@ -950,7 +956,7 @@ class BookingsController < ApplicationController
 				return @booking.promo = 'SQUIRREL' + deal_code
 			elsif @deal.booking_id.present? || @deal.sold_out
 				flash.keep[:notice] = 'Deal has already been taken. Please check back again after some time.'
-				redirect_to '/deals' and return
+				"taken"
 			end
 		end
 	end

@@ -3,6 +3,9 @@ Web::Application.routes.draw do
   	get 'bookings'  => "wallets#show"
 	get 'device'  => "main#device"
 	get 'deals' => "main#deals_of_the_day"
+	scope "/(:city)", constraints: {city: /bangalore|delhi|pune/} do
+		get 'bookings/do_flash_booking' => 'bookings#do_flash_booking'
+	end
 
 	devise_for :users, 
 		:controllers => {
@@ -103,7 +106,7 @@ Web::Application.routes.draw do
 				get 'checkoutab'
 				get 'complete'
 				get 'do'
-				get 'do_flash_booking'
+				# get 'do_flash_booking'
 				get 'docreate'
 				post 'docreate'
 				get 'failed'
