@@ -149,13 +149,13 @@ class Booking < ActiveRecord::Base
 			end
 
 			# Creating order on juspay
-			data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user_email, customer_mobile: @booking.user_mobile, return_url: "http://#{HOSTNAME}/bookings/pgresponse" }			
+			data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user.email, customer_mobile: @booking.user.phone, return_url: "http://#{HOSTNAME}/bookings/pgresponse" }
 			response = Juspay.create_order(data)
 
-			hash = PAYU_KEY + "|" + @payment.encoded_id + "|" + @payment.amount.to_i.to_s + "|" + @booking.cargroup.display_name + "|" + @booking.user_name.strip + "|" + @booking.user_email + "|||||||||||" + PAYU_SALT
+			hash = PAYU_KEY + "|" + @payment.encoded_id + "|" + @payment.amount.to_i.to_s + "|" + @booking.cargroup.display_name + "|" + @booking.user.name.strip + "|" + @booking.user.email + "|||||||||||" + PAYU_SALT
 			
 			if(!response.nil? && response['status'].downcase=='created')
-				json_resp = {:status => 'success', :amt => @payment.amount.to_i, :order_id => @payment.encoded_id, :name => @booking.user_name, :email => @booking.user_email, :phone => @booking.user_mobile, :desc => @booking.cargroup.display_name, :product_id => @booking.cargroup.brand_id, :cust_id => @booking.user.encoded_id, :hash => Digest::SHA512.hexdigest(hash)}
+				json_resp = {:status => 'success', :amt => @payment.amount.to_i, :order_id => @payment.encoded_id, :name => @booking.user.name, :email => @booking.user.email, :phone => @booking.user.phone, :desc => @booking.cargroup.display_name, :product_id => @booking.cargroup.brand_id, :cust_id => @booking.user.encoded_id, :hash => Digest::SHA512.hexdigest(hash)}
 			else
 				json_resp = {:status=>'error'}
 			end
@@ -694,8 +694,8 @@ class Booking < ActiveRecord::Base
 			end
 		end
 		message << "#{self.city.contact_phone} : Zoomcar Support." if action != 'cancel'
-		#SmsSender.perform_async(self.user_mobile, message, self.id) if Rails.env.production?
-		SmsTask::message_exotel(self.user_mobile, message, self.id)
+		#SmsSender.perform_async(self.user.phone, message, self.id) if Rails.env.production?
+		SmsTask::message_exotel(self.user.phone, message, self.id)
 	end
 	
 	def set_fare
