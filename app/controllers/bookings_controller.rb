@@ -582,11 +582,11 @@ class BookingsController < ApplicationController
 						@booking.user_mobile = PAYU_PHONE
 					end
 					# Creating order on juspay
-					data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user_email, customer_mobile: @booking.user.phone, return_url: "http://#{HOSTNAME}/bookings/pgresponse" }
+					data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user.email, customer_mobile: @booking.user.phone, return_url: "http://#{HOSTNAME}/bookings/pgresponse" }
 					response = Juspay.create_order(data)
 
 					if response['status'].downcase == 'created' || response['status'].downcase == 'new'
-						hash = PAYU_KEY + "|" + @payment.encoded_id + "|" + @payment.amount.to_i.to_s + "|" + @booking.cargroup.display_name + "|" + @booking.user.name.strip + "|" + @booking.useremail + "|||||||||||" + PAYU_SALT
+						hash = PAYU_KEY + "|" + @payment.encoded_id + "|" + @payment.amount.to_i.to_s + "|" + @booking.cargroup.display_name + "|" + @booking.user.name.strip + "|" + @booking.user.email + "|||||||||||" + PAYU_SALT
 						render :json => {:response => response['status'].downcase, :amt => @payment.amount.to_i, :order_id => @payment.encoded_id, :name => @booking.user.name, :email => @booking.user.email, :phone => @booking.user.phone, :desc => @booking.cargroup.display_name, :product_id => @booking.cargroup.brand_id, :cust_id => @booking.user.encoded_id, :hash => Digest::SHA512.hexdigest(hash)}
 					elsif response['status'].downcase == 'error'
 						
