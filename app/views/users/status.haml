@@ -23,7 +23,7 @@
 					%a{:href => "javascript:void(0)", :onclick => "logOut('#{destroy_user_session_path}');"}
 						Logout
 	- if @city.name.downcase == 'bangalore'
-		%a.hiring.fr.ts-3.f-b.pointer{href: "/deals"}
+		%a.hiring.fr.ts-3.f-b.pointer{href: "/deals", onclick: "pushEvent('Squirrel', 'Deals Tab - Header', '');"}
 			Deals
 	- else
 		%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
@@ -47,7 +47,7 @@
 						Forgot Password
 	%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
 		We're Hiring
-	%a.hiring.fr.ts-3.f-b.pointer{href: "/deals"}
+	%a.hiring.fr.ts-3.f-b.pointer{href: "/deals", onclick: "pushEvent('Squirrel', 'Deals Tab - Header', '');"}
 		Deals
 	.fc
 - if user_signed_in? && !session[:social_signup].blank?
