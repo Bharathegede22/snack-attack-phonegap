@@ -46,11 +46,11 @@
 			.f-b.zoom.size-16.m-b5 #{count+=1}) Do the vehicles have manual or automatic transmission?
 			%p
 				The Figos, Ventos, Scorpios, Ecosport, Honda City, Mahindra XUV W6 have manual transmission. The BMWs, Mercedes and Revas have automatic transmission.
-			.f-b.zoom.size-16.m-b5 #{count+=1}) What is #{CommonHelper::BLACKOUT_TEXT}? Are the prices different during #{CommonHelper::BLACKOUT_TEXT}?
-			%p
-				Hourly rates are different for Mon-Thu, Fri-Sun and #{CommonHelper::BLACKOUT_TEXT}. Please have a look at the dates for #{CommonHelper::BLACKOUT_TEXT} <a>here</a>. The prices are mentioned on the
-				%a{:href => "http://www.zoomcar.com/bangalore/tariff", :target => "_blank"} tariff page.
-
+			- if !@city.promo_pricing
+				.f-b.zoom.size-16.m-b5 #{count+=1}) What is #{CommonHelper::BLACKOUT_TEXT}? Are the prices different during #{CommonHelper::BLACKOUT_TEXT}?
+				%p
+					Hourly rates are different for Mon-Thu, Fri-Sun and #{CommonHelper::BLACKOUT_TEXT}. Please have a look at the dates for #{CommonHelper::BLACKOUT_TEXT} <a>here</a>. The prices are mentioned on the
+					%a{:href => "http://www.zoomcar.com/bangalore/tariff", :target => "_blank"} tariff page.
 		#faqs-2.tab-pane.fade
 			.f-b.zoom.size-16.m-b5 #{count+=1}) How do I become a member?
 			%p

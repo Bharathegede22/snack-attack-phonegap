@@ -15,9 +15,9 @@
 			%h4.f-b Fare Breakdown
 	- total_charge = 0
 	- @booking.charges.each do |charge|
-		- total_charge += charge.refund==0 ? charge.amount : -charge.amount
 		%tr
 			-if !['early_return_charge','early_return_refund'].include? charge.activity
+				- total_charge += charge.refund==0 ? charge.amount : -charge.amount
 				-if !['security_deposit'].include? charge.activity
 					%td
 						= charge.activity.titleize

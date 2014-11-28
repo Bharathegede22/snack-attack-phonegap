@@ -1,4 +1,5 @@
 class BookingsController < ApplicationController
+  
   include ApplicationHelper
   include BookingsHelper
 
@@ -666,24 +667,29 @@ class BookingsController < ApplicationController
       end
     else
       redirect_to '/' and return if session[:search].blank?
-      @booking = Booking.new
-      @booking.city_id = @city.id
-      @booking.starts = Time.zone.parse(session[:search][:starts]) if !session[:search].blank? && !session[:search][:starts].blank?
-      @booking.ends = Time.zone.parse(session[:search][:ends]) if !session[:search].blank? && !session[:search][:ends].blank?
-      @booking.location_id = session[:search][:loc] if !session[:search].blank? && !session[:search][:loc].blank?
-      @booking.cargroup_id = session[:search][:car] if !session[:search].blank? && !session[:search][:car].blank?
-	      Rails.logger.info "Calling admin for search results: ========"
-	      search_results_from_admin = admin_api_get_call "#{admin_hostname}/mobile/#{admin_api_version}/bookings/search",
-	                                                  {
-	                                                              starts: session[:search][:starts],
-	                                                              ends: session[:search][:ends],
-	                                                              city: @city.name,
-	                                                              location_id: @booking.location_id,
-	                                                              platform: "web"
-	                                                            }
-	        Rails.logger.info "API call over: ======== "
-	      	@inventory,@cars = get_inventory_from_json search_results_from_admin
-	      	@header = 'search'
+      if @city.inactive?
+      	@inventory,@cars = [nil,nil]
+      	@header = 'search'
+      else
+	      @booking = Booking.new
+	      @booking.city_id = @city.id
+	      @booking.starts = Time.zone.parse(session[:search][:starts]) if !session[:search].blank? && !session[:search][:starts].blank?
+	      @booking.ends = Time.zone.parse(session[:search][:ends]) if !session[:search].blank? && !session[:search][:ends].blank?
+	      @booking.location_id = session[:search][:loc] if !session[:search].blank? && !session[:search][:loc].blank?
+	      @booking.cargroup_id = session[:search][:car] if !session[:search].blank? && !session[:search][:car].blank?
+		      Rails.logger.info "Calling admin for search results: ========"
+		      search_results_from_admin = admin_api_get_call "#{admin_hostname}/mobile/#{admin_api_version}/bookings/search",
+		                                                  {
+		                                                              starts: session[:search][:starts],
+		                                                              ends: session[:search][:ends],
+		                                                              city: @city.name,
+		                                                              location_id: @booking.location_id,
+		                                                              platform: "web"
+		                                                            }
+		        Rails.logger.info "API call over: ======== "
+		      	@inventory,@cars = get_inventory_from_json search_results_from_admin
+		      	@header = 'search'
+		  end
     end
   end
 
@@ -825,8 +831,10 @@ class BookingsController < ApplicationController
 			@booking.ends = Time.zone.parse(session[:book][:ends])
 			@booking.location_id = session[:book][:loc]
 			@booking.cargroup_id = session[:book][:car]
-			@booking.city_id = @city.id
+			city = @booking.location.city
+			@booking.city_id = city.id
 			@booking.valid?
+			redirect_to request.fullpath.gsub(@city.name.downcase, city.name.downcase) and return if city.id != @city.id
 		end
 	end
 	
@@ -890,6 +898,5 @@ class BookingsController < ApplicationController
 			end
 		end
 	end
-
 
 end

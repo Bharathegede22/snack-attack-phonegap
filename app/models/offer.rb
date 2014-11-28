@@ -4,6 +4,7 @@ class Offer < ActiveRecord::Base
 	has_many :coupon_codes
 	has_many :city_offers
 	has_many :cities, through: :city_offers
+	
 	def check_output_condition
 		return true if self.output_condition.nil?
 		output_condition = self.output_condition.gsub(/\w+/){|word| @replace.fetch(word,word)}
