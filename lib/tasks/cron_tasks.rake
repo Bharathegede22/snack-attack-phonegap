@@ -21,7 +21,8 @@ namespace :cron_tasks do
 			:host => database[env]["host"],
 			:port => database[env]["port"]
   	)
-    sql = "UPDATE deals SET booking_id = NULL, logged_at = NULL WHERE booking_id IS NOT NULL AND sold_out = 0 AND logged_at < (NOW() - INTERVAL 10 MINUTE)"
+    sql = "UPDATE deals SET booking_id = NULL, logged_at = NULL WHERE booking_id IS NOT NULL AND sold_out = 0 AND logged_at < '#{(Time.now.utc - 10.minutes).to_s(:db)}'"
+    p sql
     ActiveRecord::Base.connection.execute(sql)
 	end
 end

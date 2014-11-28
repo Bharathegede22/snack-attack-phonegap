@@ -117,13 +117,9 @@ class BookingsController < ApplicationController
 					flash.keep[:notice] = 'Deal has already been taken. Please check back again after some time.'
 					redirect_to '/deals' and return
 				end
-			# elsif session[:book].blank?
-				# redirect_to '/deals' and return
 				id = CommonHelper.encode('deal', deal.id)
 					session[:deal] = id
 				if user_signed_in?
-					# if session[:notify].present?
-					# 	redirect_to "/bookings/notify"
 					if current_user.check_details
 						redirect_to checkout_bookings_path(@city.name.downcase, deal: id)
 					else
@@ -169,9 +165,10 @@ class BookingsController < ApplicationController
 			@booking.offer_id = promo[:offer].id
 		end
 
-		if session[:deal].present?
+		if session[:deal].present? && @booking.promo.nil?
 			@booking.promo = find_deal_and_create_charge(session[:deal])
 			redirect_to '/deals' and return if @booking.promo == "taken"
+			@booking.promo = nil if @booking.promo == "taken"
 		end
 
 		# Corporate Booking
@@ -862,7 +859,7 @@ class BookingsController < ApplicationController
   end
 
 	def check_inventory
-		if @booking && @booking.valid?
+		if @booking && @booking.valid? && !(session[:deal].present?)
 			if @booking.jsi.blank? && @booking.status == 0
 				cargroup = @booking.cargroup
 				@available = Inventory.do_check(@city.id, @booking.cargroup_id, @booking.location_id, (@booking.starts - cargroup.wait_period.minutes), (@booking.ends + cargroup.wait_period.minutes))
@@ -871,6 +868,8 @@ class BookingsController < ApplicationController
 					redirect_to(:back) and return
 				end
 			end
+		elsif session[:deal].present?
+			@available = 1
 		end
 	end
 
@@ -947,27 +946,35 @@ class BookingsController < ApplicationController
 		end
 	end
 
+	# Finds deal and creates a refnd charge for discount amount if deal is valid and available
+	# Author::Aniket
 	def find_deal_and_create_charge(deal_code)
 		str, id = CommonHelper.decode(deal_code)
 		if str == 'deal' 
 			@deal = Deal.find_by(id: id)
-			if @deal.booking_id.blank? && !@deal.sold_out
+			if @deal.booking_id.blank? && !@deal.sold_out && @deal.starts == session[:book][:starts] && @deal.ends == session[:book][:ends] && @deal.cargroup_id == session[:book][:car] && @deal.location_id == session[:book][:loc]
 				@booking.car_id = @deal.car_id
 				return @booking.promo = 'SQUIRREL' + deal_code
 			elsif @deal.booking_id.present? || @deal.sold_out
 				flash.keep[:notice] = 'Deal has already been taken. Please check back again after some time.'
 				"taken"
+			else
+				"nodeal"
 			end
 		end
 	end
 
+	# checks if deal is present and valid, updates promo column with 'SQUIRREL' if true
+	# Author::Aniket
 	def check_deal
 		if session[:deal].present?
 			str, id = CommonHelper.decode(session[:deal])
 			if str == 'deal'
-				@booking.promo = 'SQUIRREL'
 				deal = Deal.find_by(id: id)
-				@discount = deal.discount if deal.present?
+				if deal.present? && deal.booking_id.blank? && !deal.sold_out && deal.starts == session[:book][:starts] && deal.ends == session[:book][:ends] && deal.cargroup_id == session[:book][:car] && deal.location_id == session[:book][:loc]
+					@booking.promo = 'SQUIRREL'
+					@discount = deal.discount
+				end
 			end
 		end
 	end
