@@ -22,8 +22,12 @@
 				%li
 					%a{:href => "javascript:void(0)", :onclick => "logOut('#{destroy_user_session_path}');"}
 						Logout
-	%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
-		We're Hiring
+	- if @city.name.downcase == 'bangalore'
+		%a.hiring.fr.ts-3.f-b.pointer{href: "/deals"}
+			Deals
+	- else
+		%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
+			We're Hiring
 	.fc
 - else
 	- if current_user && current_user.unsafe_bookings.any?
@@ -44,8 +48,12 @@
 				%li
 					%a{:href => "javascript:void(0)", :onclick => "showModal('Sign In', '/users/forgot');"}
 						Forgot Password
-	%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
-		We're Hiring
+	- if @city.name.downcase == 'bangalore'
+		%a.hiring.fr.ts-3.f-b.pointer{href: "/deals"}
+			Deals
+	- else
+		%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
+			We're Hiring
 	.fc
 - if user_signed_in? && !session[:social_signup].blank?
 	- if session[:social_signup] == 0
