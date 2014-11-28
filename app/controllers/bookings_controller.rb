@@ -952,7 +952,7 @@ class BookingsController < ApplicationController
 		str, id = CommonHelper.decode(deal_code)
 		if str == 'deal' 
 			@deal = Deal.find_by(id: id)
-			if @deal.booking_id.blank? && !@deal.sold_out && @deal.starts == session[:book][:starts] && @deal.ends == session[:book][:ends] && @deal.cargroup_id == session[:book][:car] && @deal.location_id == session[:book][:loc]
+			if @deal.booking_id.blank? && !@deal.sold_out && @deal.starts == session[:book][:starts] && @deal.ends == session[:book][:ends] && @deal.cargroup_id.to_s == session[:book][:car] && @deal.location_id.to_s == session[:book][:loc]
 				@booking.car_id = @deal.car_id
 				return @booking.promo = 'SQUIRREL' + deal_code
 			elsif @deal.booking_id.present? || @deal.sold_out
