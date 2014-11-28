@@ -148,7 +148,7 @@ class MainController < ApplicationController
 		@deal.each_with_index do |d, i|
 			@location[i] = Location.where(id: d.location_id).first
 			@cargroup[i] = Cargroup.where(id: d.cargroup_id).first
-			@sold_out[i] = d.booking_id.present?
+			@sold_out[i] = d.booking_id.present? || d.sold_out
 			@discount[i] = d.discount
 		end
 		render "main/deals/offers"

@@ -296,16 +296,25 @@ class Payment < ActiveRecord::Base
 					b.carry = true if (self.amount > b.outstanding)
 					if !b.car_id.blank?
 						if b.promo.present? && b.promo.include?('SQUIRREL')
+							# booking is deal booking
 							str, id = CommonHelper.decode(b.promo[8, b.promo.length])
 							if str == 'deal'
 								deal = Deal.find_by(id: id)
-								if deal.booking_id == b.id
+								if !deal.sold_out
 									b.status = 1
-									deal.update_column(:sold_out, true)
+									deal.sold_out = true
+									deal.booking_id = b.id
+									deal.save!
 								else
-									# double booking?
+									# deal double booking
+									b.status = 6
+									# b.auto_cancel = true
+									# b.valid?
+									# b.do_cancellation
 								end
 							end
+						else
+							b.status = 1
 						end
 					elsif b.manage_inventory == 1
 						b.status = 1

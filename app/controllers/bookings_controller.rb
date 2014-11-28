@@ -168,7 +168,7 @@ class BookingsController < ApplicationController
 		if session[:deal].present? && @booking.promo.nil?
 			@booking.promo = find_deal_and_create_charge(session[:deal])
 			redirect_to '/deals' and return if @booking.promo == "taken"
-			@booking.promo = nil if @booking.promo == "taken"
+			@booking.promo = nil if @booking.promo == "nodeal"
 		end
 
 		# Corporate Booking
@@ -946,7 +946,7 @@ class BookingsController < ApplicationController
 		end
 	end
 
-	# Finds deal and creates a refnd charge for discount amount if deal is valid and available
+	# Finds deal and creates a refund charge for discount amount if deal is valid and available
 	# Author::Aniket
 	def find_deal_and_create_charge(deal_code)
 		str, id = CommonHelper.decode(deal_code)
