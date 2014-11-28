@@ -23,7 +23,7 @@
 						.hide
 							%input{name: "deal", type: "hidden", value: "#{deal}"}
 						.m-t10.btn-book.m-b3
-							%input{type: "submit", value: "Book", :class => [("button-dis" if sold_out), ("button" unless sold_out)], :disabled => sold_out}
+							%input{type: "submit", value: "Book", :class => [("button-dis" if sold_out), ("button" unless sold_out)], :disabled => sold_out, :onclick => "pushEvent('Squirrel', 'Book Now', '');"}
 		.col-md-8.border-b-c.p-0
 			.col-md-6
 				.text-up.size-12.p-b2.p-t5.t-c.light-grey

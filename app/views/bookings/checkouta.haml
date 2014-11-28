@@ -271,8 +271,8 @@
 								%input{name: "car", type: "hidden", value: session[:book][:car]}
 								%input{name: "deposit", type: "hidden", value: 1, id: "checkoutDeposit"}
 							- if deal == 'SQUIRREL'
-								%h4.size-14.m-b10.l-red.lh-n Once you click checkout, you will get 10 minutes to book the deal !
-							%input.button.m-auto{style: "width:200px;", type: "submit", value: "Checkout"}
+								%h4.size-13.m-b10.l-red.lh-n Once you click checkout, you will get 10 minutes to book the deal !
+							%input.button.m-auto{style: "width:200px;", type: "submit", value: "Checkout", onclick: "squirrelEvent();"}
 					- else
 						.button-dis Checkout
 					#CheckoutWait{style: 'display:none;'}
@@ -330,6 +330,9 @@
 
 	function checkJquery() {
 		if (window.jQuery) {
+			if('#{deal}' == 'SQUIRREL') {
+				pushEvent('Squirrel', 'Checkout Page Load', '');
+			}
 			$('#changeDeposit').change(function() {
 				var $this = $(this);
 				if ($this.is(':checked')) {
@@ -349,6 +352,12 @@
 			});
 		} else {
 			window.setTimeout(checkJquery, 1000);
+		}
+	}
+	function squirrelEvent() {
+		if('#{deal}' == 'SQUIRREL') {
+			alert();
+			pushEvent('Squirrel', 'Checkout', '');
 		}
 	}
 	checkJquery();

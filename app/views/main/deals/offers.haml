@@ -41,6 +41,7 @@
 	function checkJquery() {
 		if (window.jQuery) {
 			setCountdown();
+			pushEvent('Squirrel', 'Page Load', '');
 		}
 		else {
 			window.setTimeout(checkJquery, 1000);
@@ -79,6 +80,7 @@
 	}
 
 	function showMap(lat, lng, name) {
+		pushEvent('Squirrel', 'Map', '');
 		showModal(name, '/map?lat=' + lat + '&lng=' + lng + '&title=' + name);
 	}
 
