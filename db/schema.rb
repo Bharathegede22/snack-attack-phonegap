@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141110191216) do
+ActiveRecord::Schema.define(version: 20141120092606) do
 
   create_table "accidents", force: true do |t|
     t.boolean  "active",                                                            default: true
@@ -114,6 +114,16 @@ ActiveRecord::Schema.define(version: 20141110191216) do
   end
 
   add_index "attractions", ["city_id"], name: "index_attractions_on_city_id", using: :btree
+
+  create_table "bankcodes", force: true do |t|
+    t.string   "bankName"
+    t.string   "issuerCode"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "active",     default: true
+  end
+
+  add_index "bankcodes", ["issuerCode"], name: "index_bankcodes_on_issuerCode", using: :btree
 
   create_table "bookings", force: true do |t|
     t.integer  "car_id",                   limit: 2
@@ -282,17 +292,20 @@ ActiveRecord::Schema.define(version: 20141110191216) do
 
   add_index "carblocks", ["car_id"], name: "index_carblocks_on_car_id", using: :btree
 
+  create_table "cargroup_offers", force: true do |t|
+    t.integer "cargroup_id"
+    t.integer "offer_id"
+  end
+
   create_table "cargroups", force: true do |t|
     t.integer "brand_id",         limit: 2
     t.integer "model_id",         limit: 2
     t.string  "name"
     t.string  "display_name"
-    t.boolean "status",                                              default: false
+    t.boolean "status",                      default: false
     t.integer "priority",         limit: 1
     t.integer "seating",          limit: 1
     t.integer "wait_period",      limit: 2
-    t.integer "daily_fare",       limit: 2
-    t.integer "hourly_fare",      limit: 2
     t.string  "disclaimer"
     t.text    "description"
     t.integer "cartype",          limit: 1
@@ -321,20 +334,13 @@ ActiveRecord::Schema.define(version: 20141110191216) do
     t.boolean "smoking"
     t.boolean "pet"
     t.boolean "handicap"
-    t.integer "hourly_km_limit",  limit: 2,                          default: 40
-    t.integer "daily_km_limit",   limit: 2,                          default: 200
-    t.decimal "excess_kms",                  precision: 5, scale: 2
-    t.integer "weekly_fare"
-    t.integer "monthly_fare"
-    t.integer "weekly_km_limit"
-    t.integer "monthly_km_limit"
     t.float   "kmpl"
     t.string  "seo_title"
     t.string  "seo_description"
     t.string  "seo_keywords"
     t.string  "seo_h1"
     t.string  "seo_link"
-    t.boolean "kle",                                                 default: false
+    t.boolean "kle",                         default: false
   end
 
   create_table "carmovements", force: true do |t|
@@ -673,6 +679,19 @@ ActiveRecord::Schema.define(version: 20141110191216) do
     t.datetime "updated_at"
   end
 
+  create_table "landing_pages", force: true do |t|
+    t.string   "title"
+    t.text     "content"
+    t.boolean  "active",     default: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "location_offers", force: true do |t|
+    t.integer "location_id"
+    t.integer "offer_id"
+  end
+
   create_table "locations", force: true do |t|
     t.integer  "city_id",         limit: 2
     t.string   "name"
@@ -748,9 +767,9 @@ ActiveRecord::Schema.define(version: 20141110191216) do
     t.string   "heading"
     t.text     "description"
     t.string   "promo_code"
-    t.boolean  "status",                      default: true
+    t.boolean  "status",                                 default: true
     t.text     "disclaimer"
-    t.integer  "visibility",        limit: 1, default: 0
+    t.integer  "visibility",                   limit: 1, default: 0
     t.text     "user_condition"
     t.text     "booking_condition"
     t.text     "output_condition"
@@ -759,6 +778,21 @@ ActiveRecord::Schema.define(version: 20141110191216) do
     t.string   "summary"
     t.text     "instructions"
     t.datetime "valid_till"
+    t.string   "discount_type"
+    t.integer  "value"
+    t.datetime "creation_starts"
+    t.datetime "creation_ends"
+    t.datetime "trip_start_date"
+    t.datetime "trip_end_date"
+    t.boolean  "is_mobile_allowed",                      default: false
+    t.boolean  "is_web_allowed",                         default: false
+    t.integer  "min_amount"
+    t.integer  "max_amount"
+    t.integer  "used_count"
+    t.string   "ref_initial"
+    t.string   "ref_immediate"
+    t.boolean  "booking_condition_return_nil",           default: true
+    t.string   "weekdays"
   end
 
   create_table "operations_costs", force: true do |t|
@@ -793,6 +827,8 @@ ActiveRecord::Schema.define(version: 20141110191216) do
     t.decimal  "refunded_amount",                         precision: 10, scale: 0, default: 0
     t.decimal  "deposit_available_for_refund",            precision: 10, scale: 0, default: 0
     t.decimal  "deposit_paid",                            precision: 10, scale: 0, default: 0
+    t.string   "rrn"
+    t.string   "auth_id"
   end
 
   add_index "payments", ["booking_id"], name: "index_payments_on_booking_id", using: :btree
