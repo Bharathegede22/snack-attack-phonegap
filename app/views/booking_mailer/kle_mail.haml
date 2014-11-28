@@ -2,7 +2,7 @@
 	cargroup = @booking.cargroup
 	location = @booking.location
 %br/
-Hi #{@booking.user_name},
+Hi #{@booking.user.name},
 %br/
 %br/
 %br/
@@ -40,7 +40,7 @@ You can now enter a Zoomcar at the start of your booking or exit it at the end k
 		The car auto-locks 5 minutes after you submit the return checklist. You are now all set! See you again soon at the wheel of another Zoomcar.
 %br/
 %br/
-Please make sure the number linked with your Zoomcar account is your correct number: #{@booking.user_mobile}. We will text your car’s details on this number, and also allow unlocking the car via SMS through only this number. Do also update your Zoomcar app to enjoy the latest keyless features!
+Please make sure the number linked with your Zoomcar account is your correct number: #{@booking.user.phone}. We will text your car’s details on this number, and also allow unlocking the car via SMS through only this number. Do also update your Zoomcar app to enjoy the latest keyless features!
 %br/
 %br/
 Best,
