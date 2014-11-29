@@ -55,9 +55,11 @@
 									%a{href: "/outstation"}
 										Going Outstation?
 								- if @city.active
-									%li
-										%a{href: "/reva"}
-											Zoomcar's Electric!
+									- car = Cargroup.find(5)
+									- if !car.blank? && !car.active_pricing(@city.id).blank?
+										%li
+											%a{href: "/reva"}
+												Zoomcar's Electric!
 								%li
 									%a{href: "/#{@city.name.downcase}/faq"}
 										FAQs
