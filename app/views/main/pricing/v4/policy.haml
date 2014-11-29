@@ -14,7 +14,11 @@
 	#fee-body.tab-content
 		#fee-1.tab-pane.fade.in.active
 			%p
-				Zoomcar charges by the hour. Any usage between 1 - 59 minutes is treated as a full hour. Hourly rates are different for Mon-Thu, Fri-Sun and #{CommonHelper::BLACKOUT_TEXT}[?]. Please refer the
+				Zoomcar charges by the hour. Any usage between 1 - 59 minutes is treated as a full hour. Hourly rates are different for
+				- if @city.promo_pricing
+					Mon-Thu and Fri-Sun. Please refer the
+				- else
+					Mon-Thu, Fri-Sun and #{CommonHelper::BLACKOUT_TEXT}[?]. Please refer the
 				%a{:href => "http://www.zoomcar.com/bangalore/tariff", :target => "_blank"} tariff page
 				for more details. All hours are billed according to the day on which they start. 
 				%u 
