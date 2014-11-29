@@ -13,9 +13,7 @@
 	= javascript_tag do
 		:plain
 			function initializeMap() {
-				myLatlng = new google.maps.LatLng(#{@city.lat}, #{@city.lng});
 				mapOptions = {
-					center: myLatlng,
 					mapTypeId: google.maps.MapTypeId.ROADMAP, 
 					scrollwheel: true, 
 					streetViewControl: false,
@@ -36,7 +34,6 @@
 				map.set('scrollwheel', false);
 				map.set('panControl', false);
 				bounds = new google.maps.LatLngBounds ();
-				bounds.extend (myLatlng);
 		- Location.live(@city).each do |l|
 			- if !l.lat.blank? && !l.lng.blank?
 				:plain
@@ -67,7 +64,7 @@
 						map.set('styles', '');
 					});
 					google.maps.event.addListenerOnce(map, 'click', function() {
-						pushEvent('Maps','' , 'Home Page');
+						pushEvent('Maps','First Click', 'Home Page');
 					});
 					google.maps.event.addListener(map, 'dragend', function() {
 						$("#HomepageMapHelp").slideUp();

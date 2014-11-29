@@ -23,7 +23,7 @@
 							- cls = (!@header.blank? && (@header == 'search' || @header == 'booking')) ? 'active' : ''
 							%li
 								%a{class: cls, href: "javascript:void(0)", onclick: "showSearch();"} Book Cars
-						- if @city.active
+						- if !@city.prelaunch
 							%li.dropdown
 								- cls = (!@header.blank? && @header == 'tariff') ? 'dropdown-toggle active' : 'dropdown-toggle'
 								%a{class: cls, href: "javascript:void(0)", 'data-toggle' => "dropdown"}
@@ -55,9 +55,11 @@
 									%a{href: "/outstation"}
 										Going Outstation?
 								- if @city.active
-									%li
-										%a{href: "/reva"}
-											Zoomcar's Electric!
+									- car = Cargroup.find(5)
+									- if !car.blank? && !car.active_pricing(@city.id).blank?
+										%li
+											%a{href: "/reva"}
+												Zoomcar's Electric!
 								%li
 									%a{href: "/#{@city.name.downcase}/faq"}
 										FAQs
@@ -96,10 +98,10 @@
 						url = request.fullpath
 						url = "/#{@city.name.downcase}" if true # !url.include?(@city.name.downcase)
 					- City.active.each do |city|
-						- if @city.id == city.id
-							= link_to city.name, "/#{city.name.downcase}", class: 'active'
-						- else
-							= link_to city.name, url.gsub("/#{@city.name.downcase}", "/#{city.name.downcase}")
+						:ruby
+							cls = ''
+							cls = 'active' if @city.id == city.id
+						= link_to city.name, "/#{city.name.downcase}", class: cls
 					.fc
 				.info
 					#UserBar
@@ -118,14 +120,23 @@
 									%li
 										%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/forgot');"}
 											Forgot Password
-						- if @city.name.downcase == 'bangalore'
-							%a.hiring.fr.ts-3.f-b.pointer{href: "/deals"}
+											
+						- if @city.name.downcase == 'bangalore' && Time.now > Date.new(2014,11,30).beginning_of_day
+							%a.hiring.fr.ts-3.f-b.pointer{href: "/deals", onclick: "pushEvent('Squirrel', 'Deals Tab - Header', '');"}
 								Deals
 						- else
 							%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
 								We're Hiring
 						.fc
+				- if @city.id === 2
+					.unlimited{:style => "margin-right:220px;margin-top:-20px;"}
+						%a{href: "/#{@city.name.downcase}/offers"}
+							%span.info-text
+								Unlimited kms free! #wherewillyougo
+							%span.info-img
+								= image_tag("ecosport-car.png")
 				.fc
+		.fc
 	- cls = (!@header.blank? && @header == 'search') ? '' : 'hide'
 	- if !@header.blank? && @header == 'search'
 		#SH

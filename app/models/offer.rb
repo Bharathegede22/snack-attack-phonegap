@@ -4,6 +4,7 @@ class Offer < ActiveRecord::Base
 	has_many :coupon_codes
 	has_many :city_offers
 	has_many :cities, through: :city_offers
+	
 	def check_output_condition
 		return true if self.output_condition.nil?
 		output_condition = self.output_condition.gsub(/\w+/){|word| @replace.fetch(word,word)}
@@ -75,19 +76,34 @@ end
 #
 # Table name: offers
 #
-#  id                :integer          not null, primary key
-#  heading           :string(255)
-#  description       :text
-#  promo_code        :string(255)
-#  status            :boolean          default(TRUE)
-#  disclaimer        :text
-#  visibility        :integer          default(0)
-#  user_condition    :text
-#  booking_condition :text
-#  output_condition  :text
-#  created_at        :datetime
-#  updated_at        :datetime
-#  summary           :string(255)
-#  instructions      :text
-#  valid_till        :datetime
+#  id                           :integer          not null, primary key
+#  heading                      :string(255)
+#  description                  :text
+#  promo_code                   :string(255)
+#  status                       :boolean          default(TRUE)
+#  disclaimer                   :text
+#  visibility                   :integer          default(0)
+#  user_condition               :text
+#  booking_condition            :text
+#  output_condition             :text
+#  created_at                   :datetime
+#  updated_at                   :datetime
+#  summary                      :string(255)
+#  instructions                 :text
+#  valid_till                   :datetime
+#  discount_type                :string(255)
+#  value                        :integer
+#  creation_starts              :datetime
+#  creation_ends                :datetime
+#  trip_start_date              :datetime
+#  trip_end_date                :datetime
+#  is_mobile_allowed            :boolean          default(FALSE)
+#  is_web_allowed               :boolean          default(FALSE)
+#  min_amount                   :integer
+#  max_amount                   :integer
+#  used_count                   :integer
+#  ref_initial                  :string(255)
+#  ref_immediate                :string(255)
+#  booking_condition_return_nil :boolean          default(TRUE)
+#  weekdays                     :string(255)
 #

@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
 
   # => Checks if A/B test cookies are set and renders the checkout page accordingly
   def abtest?
-    cookies[:abtestg].present?
+    cookies[:abtesth].present?
   end
 
   def check_city
@@ -154,6 +154,8 @@ class ApplicationController < ActionController::Base
     #  city = 'mumbai'
     if lat >= 18.18 && lat <= 18.88 && lon >= 73.52 && lon <= 74.22
       city = 'pune'
+    elsif lat >= 28.32 && lat <= 29.02 && lon >= 76.87 && lon <= 77.57
+      city = 'delhi'
     else
       city = 'bangalore'
     end

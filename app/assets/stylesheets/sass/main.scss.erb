@@ -15,6 +15,7 @@ $grey: #C5C5C5;
 $dark-grey: #666;
 $light-grey:#70757D;
 $width960: 960px;
+$dark-grey: #666;
 $grey-bg:	#eee;
 $border-black1px: 1px #323a45 solid;
 $border-black2px: 2px #323a45 solid;
@@ -82,13 +83,19 @@ $border-grey3px: 3px #ccc solid;
 .topsection_content{
 	margin-top: -9px;
 	padding-top: 3em;
+	font-family: 'Droid Sans', 'Arsial', sans-serif;
+	color: $dark-grey;
+	h1{
+		color: $dark-grey ;
+	}
 	h1, h2{
-		font-family: 'Helvetica', 'Arial', sans-serif;
+		// font-family: 'Helvetica', 'Arial', sans-serif;
+		// font-family: 'Droid Sans', 'Arial', sans-serif;
 	}
 	.content_description{
-		h2, p{
-			color: $black;
-		}
+		// h2, p{
+		// 	color: $black ;
+		// }
 		p{
 			padding: 0 2em 0 0em;
 		}
@@ -118,9 +125,13 @@ $border-grey3px: 3px #ccc solid;
 		.each_service{
 			padding: 4px 0 65px;
 		}
+		h4{
+			color: $dark-grey;
+		}
 		hr{
 			width: 86%;
 			margin: 6px auto;
+			border-top: 2px solid #eeeeee;
 		}
 		.fuel-icon{
 			@include Service_icons_set;
@@ -190,8 +201,14 @@ $border-grey3px: 3px #ccc solid;
 			@include delhi_reviews_item_background;
 			height: 97px;
 			background-position-y: 0.2em;
-		img{
-				width: 120px;
+			img{
+					width: 120px;
+				}
+			h4 {
+				color: $dark-grey;
+			}
+			.reviewtext {
+				color: $dark-grey;
 			}
 		}
 		.week{
@@ -213,7 +230,7 @@ $border-grey3px: 3px #ccc solid;
 				background-position-y: -45em;	
 			}
 		.reviewtext{
-			padding: 0 3em 0 0;
+			padding: 0 4em 0 0;
 		}
 	}
 	.car1{
@@ -317,6 +334,8 @@ background-size: 8em;
 	width: 60px;
 	height: 60px;
 	background-color: $black;
+	width: 60px;
+	height: 60px;
 	right: 50%;
 	position: absolute;
 	margin: -1.3em -12em;
