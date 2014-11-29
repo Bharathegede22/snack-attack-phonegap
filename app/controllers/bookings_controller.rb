@@ -216,7 +216,7 @@ class BookingsController < ApplicationController
 			session[:book] 				= nil
 			session[:promo_code] 	= nil
 			session[:credits] 		= nil
-			session[:deal] = nil
+      session[:deal] = nil if !(deal.present? && @booking.promo.include?('SQUIRREL'))
 			if !session[:corporate_id].blank? && current_user.support?
 				flash[:notice] = "Corporate Booking is Successful"
 				session[:corporate_id] = nil
