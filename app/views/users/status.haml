@@ -22,7 +22,7 @@
 				%li
 					%a{:href => "javascript:void(0)", :onclick => "logOut('#{destroy_user_session_path}');"}
 						Logout
-	- if @city.name.downcase == 'bangalore'
+	- if @city.name.downcase == 'bangalore' && Time.now > Date.new(2014,11,30).beginning_of_day
 		%a.hiring.fr.ts-3.f-b.pointer{href: "/deals", onclick: "pushEvent('Squirrel', 'Deals Tab - Header', '');"}
 			Deals
 	- else
