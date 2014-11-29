@@ -28,7 +28,7 @@ gem 'sprockets-image_compressor'
 gem 'paper_trail', '~> 3.0.1'
 gem 'geoip'
 gem "browser"
-gem 'whenever', :require => false
+gem 'whenever'
 
 group :development do
 	gem 'capistrano'
