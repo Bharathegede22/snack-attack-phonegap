@@ -383,6 +383,8 @@ end
 #  refunded_amount              :integer          default(0)
 #  deposit_available_for_refund :integer          default(0)
 #  deposit_paid                 :integer          default(0)
+#  rrn                          :string(255)
+#  auth_id                      :string(255)
 #
 # Indexes
 #
