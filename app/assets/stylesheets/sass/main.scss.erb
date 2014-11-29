@@ -313,9 +313,10 @@ background-size: 8em;
 	background-size: 11em;
 }
 .timer-icon{
+	background: url(<%= asset_path 'timer-icon.png' %>) 6px 6px no-repeat;
 	width: 60px;
 	height: 60px;
-	background: $black;
+	background-color: $black;
 	right: 50%;
 	position: absolute;
 	margin: -1.3em -12em;
@@ -325,6 +326,9 @@ background-size: 8em;
 		font-size: 3.5em;	
 		color: $white;
 	}
+}
+.timer-width{
+	width: 307px;
 }
 .countdown-time{
 	color: $green;
