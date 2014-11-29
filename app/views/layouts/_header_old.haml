@@ -55,9 +55,11 @@
 									%a{href: "/outstation"}
 										Going Outstation?
 								- if @city.active
-									%li
-										%a{href: "/reva"}
-											Zoomcar's Electric!
+									- car = Cargroup.find(5)
+									- if !car.blank? && !car.active_pricing(@city.id).blank?
+										%li
+											%a{href: "/reva"}
+												Zoomcar's Electric!
 								%li
 									%a{href: "/#{@city.name.downcase}/faq"}
 										FAQs
@@ -118,8 +120,12 @@
 									%li
 										%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/forgot');"}
 											Forgot Password
-						%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
-							We're Hiring
+						- if @city.name.downcase == 'bangalore' && Time.now > Date.new(2014,11,30).beginning_of_day
+							%a.hiring.fr.ts-3.f-b.pointer{href: "/deals", onclick: "pushEvent('Squirrel', 'Deals Tab - Header', '');"}
+								Deals
+						- else
+							%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
+								We're Hiring
 						.fc
 				- if @city.id === 2
 					.unlimited

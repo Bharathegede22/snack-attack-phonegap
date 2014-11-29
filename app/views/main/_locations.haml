@@ -64,7 +64,7 @@
 						map.set('styles', '');
 					});
 					google.maps.event.addListenerOnce(map, 'click', function() {
-						pushEvent('Maps','' , 'Home Page');
+						pushEvent('Maps','First Click', 'Home Page');
 					});
 					google.maps.event.addListener(map, 'dragend', function() {
 						$("#HomepageMapHelp").slideUp();
