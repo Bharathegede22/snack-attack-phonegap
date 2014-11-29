@@ -5,15 +5,14 @@
 			.panel-heading.offers-heading
 				.deals-stamp-icon
 				.timer-icon.pull-right
-					%span.glyphicon.glyphicon-time
 				.col-md-7.pull-left
 					%h4.white.p-l35
 						Deals of the Day
 				.col-md-5.pull-right.p-l75
-					%h4
+					%h4.timer-width
 						%span.white
 							Next Deal Starts in
-							%span.pull-right#clock.countdown-time
+						%span.pull-right#clock.countdown-time
 			.panel-body.offer-panel-body
 				.col-md-12.inline-block
 					- @deal.each_with_index do |d, i|
