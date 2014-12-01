@@ -123,10 +123,10 @@ Web::Application.routes.draw do
 	
 	get '/job/:id' => 'main#job'
 	get '/get_locations_map/:id' => 'main#get_locations_map'
- 	get ':action' => 'main', constraints: {action: /about|careers|contact|eligibility|handover|holidays|howitworks|signup|howtozoom|map|member|outstation|reva|privacy|mobile_redirect/}
+ 	get ':action' => 'main', constraints: {action: /about|careers|eligibility|handover|holidays|howitworks|signup|howtozoom|map|member|outstation|reva|privacy|mobile_redirect/}
  	
  	# Redirect
- 	get ':id' => 'main#redirect', constraints: {id: /join|login|mybookings|myaccount|selfdrivecarrental/}
+ 	get ':id' => 'main#redirect', constraints: {id: /contact|join|login|mybookings|myaccount|selfdrivecarrental/}
  	get '/jsi/:key/:id' => 'main#redirect'
  	get ':city/:id' => 'main#redirect', constraints: {city: /Pune|Bangalore/}
  	
@@ -138,6 +138,7 @@ Web::Application.routes.draw do
 		get '/explore' => 'seo#explore'
 		get '/faq'=>'main#faq'
 		get '/fees'=>'main#fees'
+		get '/contact'=>'main#contact'
 		get '/offers' => 'main#offers'
 		get '/nearby' => 'seo#nearby'
 		get '/tariff'=>'main#tariff'

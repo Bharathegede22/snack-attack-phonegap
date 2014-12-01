@@ -269,7 +269,7 @@
 				- if @available == 1 && user && !user.is_blacklisted?
 					.t-c
 						.p-20{style: "width:400px;"}
-							%form{:action => "/#{@city.name.downcase}/bookings/docreate", :id => "CheckoutForm", :method => "post"}
+							%form{:action => "/#{@city.link_name.downcase}/bookings/docreate", :id => "CheckoutForm", :method => "post"}
 								.hide
 									%input{name: "starts", type: "hidden", value: session[:book][:starts]}
 									%input{name: "ends", type: "hidden", value: session[:book][:ends]}
@@ -388,7 +388,7 @@
 				dep = 0;
 			}
 			$.ajax({
-				url: "/#{@city.name.downcase}/bookings/seamless_docreate",
+				url: "/#{@city.link_name.downcase}/bookings/seamless_docreate",
 				type: "POST",
 				dataType: "json",
 				data: {
@@ -442,7 +442,7 @@
 					else {
 						// $('#loader').hide();
 						alert('Something went wrong. Please check your Internet connection and try again.');
-						window.location = "/#{@city.name.downcase}";
+						window.location = "/#{@city.link_name.downcase}";
 					}
 				}
 			});

@@ -29,7 +29,7 @@ class BookingsController < ApplicationController
 	def checkout
 		@booking.user = current_user
 		@wallet_available = @booking.security_amount - @booking.security_amount_remaining
-		redirect_to do_bookings_path(@city.name.downcase) and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
+		redirect_to do_bookings_path(@city.link_name.downcase) and return if @booking && (!user_signed_in? || (current_user && !current_user.check_details))
 		check_deal
 		generic_meta
 		@header = 'booking'
@@ -97,13 +97,13 @@ class BookingsController < ApplicationController
 				if session[:deal].present?
 					redirect_to bookings_do_flash_booking_path(deal: session[:deal])
 				else
-					redirect_to checkout_bookings_path(@city.name.downcase)
+					redirect_to checkout_bookings_path(@city.link_name.downcase)
 				end
 			else
-				redirect_to userdetails_bookings_path(@city.name.downcase)
+				redirect_to userdetails_bookings_path(@city.link_name.downcase)
 			end
 		else
-			redirect_to login_bookings_path(@city.name.downcase)
+			redirect_to login_bookings_path(@city.link_name.downcase)
 		end
 	end
 
@@ -122,12 +122,12 @@ class BookingsController < ApplicationController
 					session[:deal] = id
 				if user_signed_in?
 					if current_user.check_details
-						redirect_to checkout_bookings_path(@city.name.downcase, deal: id)
+						redirect_to checkout_bookings_path(@city.link_name.downcase, deal: id)
 					else
-						redirect_to userdetails_bookings_path(@city.name.downcase, deal: id)
+						redirect_to userdetails_bookings_path(@city.link_name.downcase, deal: id)
 					end
 				else
-					redirect_to login_bookings_path(@city.name.downcase, deal: id)
+					redirect_to login_bookings_path(@city.link_name.downcase, deal: id)
 				end
 			end
 		else
@@ -149,7 +149,7 @@ class BookingsController < ApplicationController
 		if !session[:credits].blank? && current_user.total_credits.to_i < session[:credits].to_i
 			session[:credits] = nil
 			flash[:error] = 'Insufficient credits, please try again!'
-			redirect_to checkout_bookings_path(@city.name.downcase)
+			redirect_to checkout_bookings_path(@city.link_name.downcase)
 			return
 		end
 		
@@ -223,7 +223,7 @@ class BookingsController < ApplicationController
 				session[:booking_id] = nil
 		  	redirect_to "/bookings/#{@booking.encoded_id}"
 			elsif @booking.outstanding_with_security > 0
-				redirect_to payment_bookings_path(@city.name.downcase)
+				redirect_to payment_bookings_path(@city.link_name.downcase)
 			else
 				u = @booking.user
 				if u.check_license
@@ -250,7 +250,7 @@ class BookingsController < ApplicationController
   
 	def dopayment
 		session[:booking_id] = @booking.encoded_id
-		redirect_to payment_bookings_path(@city.name.downcase)
+		redirect_to payment_bookings_path(@city.link_name.downcase)
 	end
 	
 	def failed
@@ -301,7 +301,7 @@ class BookingsController < ApplicationController
 	end
 	
 	def license
-		redirect_to do_bookings_path(@city.name.downcase) and return if user_signed_in? && current_user.check_license
+		redirect_to do_bookings_path(@city.link_name.downcase) and return if user_signed_in? && current_user.check_license
 		if request.post?
 			if !params[:image].blank?
 				image = Image.new(image_params)
@@ -314,14 +314,14 @@ class BookingsController < ApplicationController
 						current_user.save(validate: false)
 					end
 					flash[:notice] = 'Thanks for uploading your license image.'
-					redirect_to do_bookings_path(@city.name.downcase) and return
+					redirect_to do_bookings_path(@city.link_name.downcase) and return
 				else
 					if image.errors[:avatar_content_type].length > 0
 						flash[:error] = 'Please attach a valid license image. Only allow formats are jpg, jpeg, gif and png.'
 					else
 						flash[:error] = 'Please attach a valid license image. Maximum allowedd file size is 2 MB.'
 					end
-					redirect_to do_bookings_path(@city.name.downcase) and return
+					redirect_to do_bookings_path(@city.link_name.downcase) and return
 				end
 			else
 				flash[:error] = 'Please attach a license image'
@@ -332,7 +332,7 @@ class BookingsController < ApplicationController
 	end
 	
 	def login
-		redirect_to do_bookings_path(@city.name.downcase) and return if user_signed_in?
+		redirect_to do_bookings_path(@city.link_name.downcase) and return if user_signed_in?
 		check_deal
 		generic_meta
 		@header = 'booking'
@@ -367,7 +367,7 @@ class BookingsController < ApplicationController
 				  else
 				  	flash[:notice] = "Thanks for the payment. Please upload your license to complete the reservation."
 				  end
-		  		redirect_to "/#{@city.name.downcase}/bookings/complete" #complete_bookings_path(@city.name.downcase)
+		  		redirect_to "/#{@city.link_name.downcase}/bookings/complete" #complete_bookings_path(@city.link_name.downcase)
 		  	else
 		  		flash[:notice] = "Thanks for the payment. Please continue."
 		  		redirect_to thanks_bookings_path
@@ -375,13 +375,13 @@ class BookingsController < ApplicationController
 		  elsif @payment.status == 3
 		    flash[:error] = "Your transaction is subject to manual approval by the payment gateway. We will keep you updated about the same through email."
 		  	if @booking.confirmed_payments.length == 0
-		  		redirect_to "/#{@city.name.downcase}/bookings/complete" #complete_bookings_path(@city.name.downcase)
+		  		redirect_to "/#{@city.link_name.downcase}/bookings/complete" #complete_bookings_path(@city.link_name.downcase)
 		  	else
 		  		redirect_to thanks_bookings_path
 		  	end
 		  else
 		    flash[:error] = "Your transaction has failed. Please do a fresh transaction."
-		  	redirect_to failed_bookings_path(@city.name.downcase)
+		  	redirect_to failed_bookings_path(@city.link_name.downcase)
 		  end
 		else
 			redirect_to '/' and return
@@ -413,7 +413,7 @@ class BookingsController < ApplicationController
 				  else
 				  	flash[:notice] = "Thanks for the payment. Please upload your license to complete the reservation."
 				  end
-		  		redirect_to "/#{@city.name.downcase}/bookings/complete"
+		  		redirect_to "/#{@city.link_name.downcase}/bookings/complete"
 		  	else
 		  		flash[:notice] = "Thanks for the payment. Please continue."
 		  		redirect_to thanks_bookings_path
@@ -422,14 +422,14 @@ class BookingsController < ApplicationController
 		  elsif @payment.status == 3
 		    flash[:error] = "Your transaction is subject to manual approval by the payment gateway. We will keep you updated about the same through email."
 		  	if @booking.confirmed_payments.length == 0
-		  		redirect_to "/#{@city.name.downcase}/bookings/complete"
+		  		redirect_to "/#{@city.link_name.downcase}/bookings/complete"
 		  	else
 		  		redirect_to "/bookings/thanks"
 		  	end
 		  else
 		    flash[:error] = "Your transaction has failed. Please do a fresh transaction."
 		  	redirect_to "/bookings/failed"
-		  	# redirect_to failed_bookings_path(@city.name.downcase)
+		  	# redirect_to failed_bookings_path(@city.link_name.downcase)
 		  end
 		else
 			redirect_to '/' and return
@@ -701,7 +701,7 @@ class BookingsController < ApplicationController
     @meta_title = "Zoom - Car Rental in #{@city.name}"
     @meta_description = "Enjoy the Freedom of Four Wheels with self-drive car rental by the hour or by the day. Now in #{@city.name}!"
     @meta_keywords = "car hire, car rental, car rent, car sharing, car share, shared car, car club, rental car, car-sharing, hire car, renting a car, #{@city.name}, #{@city.name} car hire, #{@city.name} car rental, #{@city.name} car rent, #{@city.name} car sharing, #{@city.name} car share, #{@city.name} car club, #{@city.name} rental car, #{@city.name} car-sharing, #{@city.name} hire car,#{@city.name} renting a car, India, Indian, Indian car-sharing, India car-sharing, Indian car-share, India car-share, India car club, Indian car club, India car sharing, Indian car, Zoomcar, Zoom car, travel india, travel #{@city.name}, explore india, explore #{@city.name}, travel, explore, self-drive, self drive, self-drive #{@city.name}, self drive #{@city.name}"
-    @canonical = "https://www.zoomcar.com/#{@city.name}/search"
+    @canonical = "https://www.zoomcar.com/#{@city.link_name}/search"
     if request.post?
       @booking = Booking.new
       @booking.city_id = @city.id
@@ -734,7 +734,7 @@ class BookingsController < ApplicationController
 		                                                  {
 		                                                              starts: session[:search][:starts],
 		                                                              ends: session[:search][:ends],
-		                                                              city: @city.name,
+		                                                              city: @city.link_name,
 		                                                              location_id: @booking.location_id,
 		                                                              platform: "web"
 		                                                            }
@@ -808,7 +808,7 @@ class BookingsController < ApplicationController
   end
 	
 	def userdetails
-		redirect_to do_bookings_path(@city.name.downcase) and return if !user_signed_in? || (current_user && current_user.check_details)
+		redirect_to do_bookings_path(@city.link_name.downcase) and return if !user_signed_in? || (current_user && current_user.check_details)
 		check_deal
 		generic_meta
 		@header = 'booking'
@@ -861,7 +861,7 @@ class BookingsController < ApplicationController
 	end
 	
   def check_blacklist
-    redirect_to checkout_bookings_path(@city.name.downcase) if current_user && current_user.is_blacklisted? && current_user.is_underage?
+    redirect_to checkout_bookings_path(@city.link_name.downcase) if current_user && current_user.is_blacklisted? && current_user.is_underage?
   end
 
 	def check_inventory
@@ -889,7 +889,7 @@ class BookingsController < ApplicationController
 			city = @booking.location.city
 			@booking.city_id = city.id
 			@booking.valid?
-			redirect_to request.fullpath.gsub(@city.name.downcase, city.name.downcase) and return if city.id != @city.id
+			redirect_to request.fullpath.gsub(@city.link_name.downcase, city.link_name.downcase) and return if city.id != @city.id
 		end
 	end
 	
@@ -898,7 +898,7 @@ class BookingsController < ApplicationController
 			if request.xhr?
 				render json: {html: "<div class='alert alert-danger' role='alert'>Bad Request!</div>"}
 			else
-				redirect_to search_path(@city.name.downcase)
+				redirect_to search_path(@city.link_name.downcase)
 			end
 			return
 		end
