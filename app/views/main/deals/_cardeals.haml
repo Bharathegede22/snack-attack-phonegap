@@ -19,7 +19,7 @@
 					= cargroup.shortname
 				.size-14.m-t8.lgrey.t-c
 					= cargroup.seating.to_s + " Seater"
-					%form{:action => "/#{@city.name.downcase}/bookings/do_flash_booking", :id => "CheckoutForm"}
+					%form{:action => "/#{@city.link_name.downcase}/bookings/do_flash_booking", :id => "CheckoutForm"}
 						.hide
 							%input{name: "deal", type: "hidden", value: "#{deal}"}
 						.m-t10.btn-book.m-b3

@@ -289,7 +289,7 @@
 			.t-c
 				.m-auto.p-20{style: "width:400px;"}
 					- if @available == 1 && user && !user.is_blacklisted? && !user.is_underage?
-						/ %form{:action => "/#{@city.name.downcase}/bookings/seamless_docreate", :id => "CheckoutForm", :method => "post"}
+						/ %form{:action => "/#{@city.link_name.downcase}/bookings/seamless_docreate", :id => "CheckoutForm", :method => "post"}
 						%form{:id => "CheckoutForm"}
 							.hide
 								%input{name: "starts", type: "hidden", value: session[:book][:starts]}
@@ -417,7 +417,7 @@
 			}
 			flag = false;
 			$.ajax({
-				url: "/#{@city.name.downcase}/bookings/seamless_docreate",
+				url: "/#{@city.link_name.downcase}/bookings/seamless_docreate",
 				type: "POST",
 				dataType: "json",
 				data: {

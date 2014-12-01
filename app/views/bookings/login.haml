@@ -7,7 +7,7 @@
 				- if user_signed_in?
 					- if current_user.check_details
 						:javascript
-							window.location = "/#{@city.name.downcase}/bookings/do";
+							window.location = "/#{@city.link_name.downcase}/bookings/do";
 					- else
 						.p-20.f-b.t-c.size-16.grey
 							Please complete your registration
