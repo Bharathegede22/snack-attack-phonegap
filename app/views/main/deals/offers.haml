@@ -53,8 +53,8 @@
 		starts = $("#starts").val();
 		ends = $("#ends").val();
 		disc = $("#discId").val();
-		// alert("//#{HOSTNAME}/#{@city.name.downcase}/bookings/do_flash_booking?car=" + carId + "&loc=" + locId + "&starts=" + starts + "&ends=" + ends + "&flash_discount=" + disc);
-		window.location = "//#{HOSTNAME}/#{@city.name.downcase}/bookings/do_flash_booking";
+		// alert("//#{HOSTNAME}/#{@city.link_name.downcase}/bookings/do_flash_booking?car=" + carId + "&loc=" + locId + "&starts=" + starts + "&ends=" + ends + "&flash_discount=" + disc);
+		window.location = "//#{HOSTNAME}/#{@city.link_name.downcase}/bookings/do_flash_booking";
 	}
 
 	function setCountdown() {
