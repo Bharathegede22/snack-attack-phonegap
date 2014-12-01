@@ -4,7 +4,7 @@
 	b.ends = ends
 	b.location_id = location.id
 	b.cargroup_id = cargroup.id
-	b.city_id = @city.id
+	b.city_id = location.city_id
 	b.valid?
 	fare = b.get_fare
 	disc = fare[:total] - fare[:total]*discount/100
