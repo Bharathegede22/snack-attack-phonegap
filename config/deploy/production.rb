@@ -77,8 +77,14 @@ namespace :generic do
     run "cd #{release_path} ; bundle exec rails runner -e production \"Lacquer::Varnish.new.purge('.*')\""
     run "cd #{release_path} ; bundle exec rails runner -e production \"Rails.cache.clear\""
   end
+
+  desc "Update Cron from schedule.rb"
+  task :update_cron, :roles => [:app] do
+    run "cd #{release_path} && bundle exec whenever --update-crontab whenever_schedule"
+  end
 end
 before "deploy:assets:precompile", "generic:configs"
 after "deploy", "generic:unicorn_restart"
 after "deploy", "deploy:cleanup"
 after "deploy", "generic:clear_cache"
+after "deploy", "generic:update_cron"

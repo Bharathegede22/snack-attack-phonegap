@@ -149,7 +149,7 @@ class Booking < ActiveRecord::Base
 			end
 
 			# Creating order on juspay
-			data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user_email, customer_mobile: @booking.user_mobile, return_url: "http://#{HOSTNAME}/bookings/pgresponse" }			
+			data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user_email, customer_mobile: @booking.user_mobile, return_url: "http://#{HOSTNAME}/bookings/pgresponse", udf1: "web", udf2: "desktop" }			
 			response = Juspay.create_order(data)
 
 			hash = PAYU_KEY + "|" + @payment.encoded_id + "|" + @payment.amount.to_i.to_s + "|" + @booking.cargroup.display_name + "|" + @booking.user_name.strip + "|" + @booking.user_email + "|||||||||||" + PAYU_SALT
@@ -187,7 +187,7 @@ class Booking < ActiveRecord::Base
   end
 
   def defer_payment_allowed?
-    self.starts > (Time.now + CommonHelper::JIT_DEPOSIT_ALLOW.hours + 30.minutes)
+    (self.starts > (Time.now + CommonHelper::JIT_DEPOSIT_ALLOW.hours + 30.minutes) && !(self.promo.present? && self.promo.include?('SQUIRREL'))) 
   end
 	
 	def deposit_help
@@ -444,6 +444,25 @@ class Booking < ActiveRecord::Base
 		return "Pricing#{self.pricing.version}".constantize.check(self)
 	end
 	
+	def flash_discount(deal)
+		charge = Charge.new(booking_id: self.id, activity: 'deal_discount')
+		charge.refund = 1
+		discount = self.outstanding*deal.discount/100
+		charge.discount = discount
+		charge.amount = discount
+		if charge.save
+			deal.booking_id = self.id
+			deal.logged_at = Time.now
+			deal.save!
+			# deal.update_column(:booking_id, self.id)
+			note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs."
+			note += discount.to_s + " - Deal Discount.<br/>"
+			self.notes += note
+			self.save(validate: false)
+		end
+	end
+
+
 	def hold_security?
 		self.hold == true
     end

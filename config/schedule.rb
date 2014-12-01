@@ -18,6 +18,10 @@
 # end
 
 # Learn more: http://github.com/javan/whenever
-every '00 00   3 * *' do
-	rake "cron_tasks:geocity"
+# every '00 00   3 * *' do
+# 	rake "cron_tasks:geocity"
+# end
+
+every 2.minutes, :roles => [:app] do
+	rake "cron_tasks:check_deal_booking_status", :output => {:error => '/var/www/web/shared/log/check_deal_booking_status.log', :standard => '/var/www/web/shared/log/check_deal_booking_status.log'}
 end
