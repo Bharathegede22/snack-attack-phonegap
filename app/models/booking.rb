@@ -149,7 +149,7 @@ class Booking < ActiveRecord::Base
 			end
 
 			# Creating order on juspay
-			data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user.email, customer_mobile: @booking.user.phone, return_url: "http://#{HOSTNAME}/bookings/pgresponse" }
+			data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user_email, customer_mobile: @booking.user_mobile, return_url: "http://#{HOSTNAME}/bookings/pgresponse", udf1: "web", udf2: "desktop" }
 			response = Juspay.create_order(data)
 
 			hash = PAYU_KEY + "|" + @payment.encoded_id + "|" + @payment.amount.to_i.to_s + "|" + @booking.cargroup.display_name + "|" + @booking.user.name.strip + "|" + @booking.user.email + "|||||||||||" + PAYU_SALT
