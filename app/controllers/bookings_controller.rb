@@ -637,8 +637,8 @@ class BookingsController < ApplicationController
 					response = Juspay.create_order(data)
 
 					if response['status'].downcase == 'created' || response['status'].downcase == 'new'
-						hash = PAYU_KEY + "|" + @payment.encoded_id + "|" + @payment.amount.to_i.to_s + "|" + @booking.cargroup.display_name + "|" + @booking.user_name.strip + "|" + @booking.user_email + "|||||||||||" + PAYU_SALT
-						render :json => {:response => response['status'].downcase, :amt => @payment.amount.to_i, :order_id => @payment.encoded_id, :name => @booking.user_name, :email => @booking.user_email, :phone => @booking.user_mobile, :desc => @booking.cargroup.display_name, :product_id => @booking.cargroup.brand_id, :cust_id => @booking.user.encoded_id, :hash => Digest::SHA512.hexdigest(hash)}
+						hash = PAYU_KEY + "|" + @payment.encoded_id + "|" + @payment.amount.to_i.to_s + "|" + @booking.cargroup.display_name + "|" + @booking.user.name.strip + "|" + @booking.user.email + "|||||||||||" + PAYU_SALT
+						render :json => {:response => response['status'].downcase, :amt => @payment.amount.to_i, :order_id => @payment.encoded_id, :name => @booking.user.name, :email => @booking.user.email, :phone => @booking.user.phone, :desc => @booking.cargroup.display_name, :product_id => @booking.cargroup.brand_id, :cust_id => @booking.user.encoded_id, :hash => Digest::SHA512.hexdigest(hash)}
 					elsif response['status'].downcase == 'error'
 						
 				  	flash[:error] = "Something went wrong. Please try again."
