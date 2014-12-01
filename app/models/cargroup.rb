@@ -30,7 +30,7 @@ class Cargroup < ActiveRecord::Base
 	end
 	
 	def link(city)
-		return "http://" + HOSTNAME + "/" + CommonHelper.escape(city.name.downcase) + "/" + CommonHelper.escape(self.name.downcase) + "-car-rental_" + self.encoded_id
+		return "http://" + HOSTNAME + "/" + CommonHelper.escape(city.link_name.downcase) + "/" + CommonHelper.escape(self.name.downcase) + "-car-rental_" + self.encoded_id
 	end
 	
 	def locations(city)
