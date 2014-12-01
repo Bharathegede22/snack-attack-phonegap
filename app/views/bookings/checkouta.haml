@@ -263,7 +263,7 @@
 				.m-auto.p-t10.p-b20{style: "width:400px;"}
 					- if @available == 1 && user && !user.is_blacklisted?
 						- flash_param = deal == 'SQUIRREL' ? "?deal=" + session[:deal] : ''
-						%form{:action => "/#{@city.name.downcase}/bookings/docreate" + flash_param, :id => "CheckoutForm", :method => "post"}
+						%form{:action => "/#{@city.link_name.downcase}/bookings/docreate" + flash_param, :id => "CheckoutForm", :method => "post"}
 							.hide
 								%input{name: "starts", type: "hidden", value: session[:book][:starts]}
 								%input{name: "ends", type: "hidden", value: session[:book][:ends]}

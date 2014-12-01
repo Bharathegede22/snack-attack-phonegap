@@ -130,7 +130,7 @@
 						.fc
 				- if @city.id === 2
 					.unlimited{:style => "margin-right:220px;margin-top:-20px;"}
-						%a{href: "/#{@city.name.downcase}/offers"}
+						%a{href: "/#{@city.link_name.downcase}/offers"}
 							%span.info-text
 								Unlimited kms free! #wherewillyougo
 							%span.info-img
