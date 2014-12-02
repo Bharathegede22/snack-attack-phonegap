@@ -33,7 +33,7 @@
 						%b Zoomcar Location
 					%td.p-10.t-c.bg-zoomb.white
 						%b Mobile No.
-				- Location.live(@city).each do |l|
+				- Location.live(@city).sort_by(&:name).each do |l|
 					- if !l.mobile.blank?
 						%tr.p-l10
 							%td.p-5.p-l20
@@ -53,6 +53,28 @@
 			%tr.border-b-c
 				%td.p-5
 					= image_tag("manufacturers/ford.jpg", :alt => "Ford")
+				%td 
+					.p-5
+						%span.zoom.f-b 1-800-425-2500 
+						(Mon-Fri 9am-6pm)
+					.p-5
+						%span.zoom.f-b 1-800-102-2020 
+						National toll free number (24/7)
+
+			%tr.border-b-c
+				%td.p-5
+					= image_tag("manufacturers/honda.jpg", :alt => "Ford")
+				%td 
+					.p-5
+						%span.zoom.f-b 1-800-425-2500 
+						(Mon-Fri 9am-6pm)
+					.p-5
+						%span.zoom.f-b 1-800-102-2020 
+						National toll free number (24/7)
+
+			%tr.border-b-c
+				%td.p-5
+					= image_tag("manufacturers/tata.jpg", :alt => "Ford")
 				%td 
 					.p-5
 						%span.zoom.f-b 1-800-425-2500 
@@ -83,9 +105,19 @@
 						%span.zoom.f-b 1-800-102-0909 
 						National toll free number (24/7)
 
-			%tr
+			%tr.border-b-c
 				%td.p-5
 					= image_tag("manufacturers/bmw.jpg", :alt => "BMW")
+				%td
+					.p-5 
+						%span.zoom.f-b +91 95919 99406 
+						Bangalore helpline number (24/7)
+					.p-5 
+						%span.zoom.f-b 1-800-103-2211 
+						National toll free number (24/7)
+			%tr
+				%td.p-5
+					= image_tag("manufacturers/benz.jpg", :alt => "BMW")
 				%td
 					.p-5 
 						%span.zoom.f-b +91 95919 99406 
