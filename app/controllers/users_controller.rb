@@ -7,10 +7,11 @@ class UsersController < ApplicationController
 		flash[:error] = "<b>Access Denied!</b>"
 	end
 
-	def credits
-		@total_credits = current_user.total_credits
-	    @earned_credits = current_user.credits.where(:action=> true).order(:created_at => :desc)
-	    @used_credits = current_user.credits.where(:action=> false).order(:created_at => :desc)
+	# Shows User Credits in the modal box
+	def credit_history
+    @total_credits = current_user.total_credits
+    @user_credits = current_user.credits.order(:created_at => :desc).to_a
+    render json: {html: render_to_string('_credit_history.haml', layout: false)}
 	end
 
 	def forgot
@@ -172,5 +173,5 @@ class UsersController < ApplicationController
   def signup_params
     params.require(:user).permit(:name, :phone, :dob, :gender, :country, :pincode, :state, :city, :license)
   end
-  
+
 end
