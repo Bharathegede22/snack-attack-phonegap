@@ -9,7 +9,6 @@ module BookingsHelper
     ADMIN_API_VERSION
   end
 
-
   def get_inventory_from_json json_data
     begin
       json_result = JSON.parse(json_data)
@@ -51,7 +50,7 @@ module BookingsHelper
     if params[:promo].blank? && session[:promo_code].present?
       params[:promo] = session[:promo_code]
     end
-    params[:city] = @city.name
+    params[:city] = @city.link_name
     params[:auth_token] = @current_user.authentication_token
     params[:starts] = Time.zone.parse(session[:book][:starts]) if !session[:book].blank? && !session[:book][:starts].blank?
     params[:ends] = Time.zone.parse(session[:book][:ends]) if !session[:book].blank? && !session[:book][:ends].blank?
@@ -113,11 +112,11 @@ module BookingsHelper
     res = admin_api_get_call(url, promo_details)
     begin
       res = JSON.parse(res)
-      res
+      return res
     rescue Exception => ex
       Rails.logger.info "JsonParsingError: Error parsing response from search results from api===== #{ex.message}--- BookingsHelper"
       flash[:error] = "Sorry, our system is busy right now. Please try after some time."
-      {}
+      return {}
     end
   end
 

@@ -469,37 +469,12 @@ class BookingsController < ApplicationController
 		promo = make_promo_api_call(promo_params)
 		update_sessions(promo) unless promo.nil?
 
-    render json: { promo: render_to_string('_promo.haml', layout: false),
-  								 credit: render_to_string('_credits.haml', :locals => {:fare => @booking.get_fare}, layout: false)}
+    render json: { 
+    	promo: render_to_string('_promo.haml', layout: false),
+  		credit: render_to_string('_credits.haml', :locals => {:fare => @booking.get_fare}, layout: false)
+  	}
   end
   
-  def promo_sql
-  	if !params[:clear].blank? && params[:clear].to_i == 1
-  		session[:promo_code] = nil
-  		session[:promo_booking] = nil
-  	else
-			if !params[:promo].blank?
-				@offer = Offer.get(params[:promo],@city)
-				render json: {html: render_to_string('_promo.haml', layout: false)} and return unless @offer[:error].blank?
-
-				if session[:promo_booking].blank?
-					check_search
-					if @booking.blank?
-						@offer[:error] = "Session expired" 
-					end	
-					@booking.user_details(current_user)
-					@booking.status = -1
-					@booking.save!
-					session[:promo_booking] = @booking.id
-				end
-			
-				@offer[:error] += @offer[:offer].validate_offer(current_user.id,session[:promo_booking]) 
-				session[:promo_code] = params[:promo].upcase if @offer[:error].blank?					
-	  	end
-		end
-    render json: {html: render_to_string('_promo.haml', layout: false)}
-  end
-
   def reschedule
 		@confirm = !params[:confirm].blank?
 		if request.post?
