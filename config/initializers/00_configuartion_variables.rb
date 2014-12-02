@@ -34,7 +34,7 @@ SIDEKIQ_CLIENT = configurations['sidekiq_client']
 SIDEKIQ_SERVER = configurations['sidekiq_server']
 SIDEKIQ_NAMESPACE = configurations['sidekiq_namespace']
 
-MAIL_INTERCEPTOR = configurations['mail_interceptor']
+# MAIL_INTERCEPTOR = configurations['mail_interceptor']
 
 DELIVERY_OPTIONS = {user_name: configurations['mandrill_user_name'],
 	password: configurations['mandrill_password'],
