@@ -30,7 +30,7 @@ class Credit < ActiveRecord::Base
 
   def history_description
   	return "Booking Fee" if !self.action && self.booking_key.present?
-  	self.action ? "Credits Added" : "Credits Removed"
+  	self.action ? "Credits Added" : "Credits Correction"
   end
 
 	protected
