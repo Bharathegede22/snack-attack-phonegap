@@ -15,9 +15,15 @@ Web::Application.configure do
   config.action_controller.perform_caching = false
 
   # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
   #config.action_mailer.delivery_method = :amazon_ses
-  config.action_mailer.delivery_method = :letter_opener
+  config.action_mailer.delivery_method = :smtp#:letter_opener
+  config.action_mailer.smtp_settings = {
+  :address => "smtp.mandrillapp.com",
+  :port => 587, # ports 587 and 2525 are also supported with STARTTLS
+  :user_name => 'tavvayaswanth567@gmail.com',
+  :password => 'h_Nt9SDZ9IUJ75kAFt2LeQ' # SMTP password is any valid API key
+  } 
   config.console = Pry
 
   config.action_mailer.default_url_options = {:host => HOSTNAME}
