@@ -25,12 +25,15 @@
 						.m-t10.btn-book.m-b3
 							%input{type: "submit", value: "Book", :class => [("button-dis" if sold_out), ("button" unless sold_out)], :disabled => sold_out, :onclick => "pushEvent('Squirrel', 'Book Now', '');"}
 		.col-md-8.border-b-c.p-0
-			.col-md-6
+			.col-md-4
 				.text-up.size-12.p-b2.p-t5.t-c.light-grey
 					Pickup Time
-			.col-md-6.border-l-c
+			.col-md-4.border-l-c
 				.text-up.size-12.p-b2.p-t5.t-c.light-grey
 					Dropoff Time
+			.col-md-4.border-l-c
+				.text-up.size-12.p-b2.p-t5.t-c.light-grey
+					Duration
 		.col-md-8.border-b-c.p-0
 			.col-md-6.p-l0.p-r0
 				.text-up.size-14.p-b10.p-t10.t-c
@@ -44,6 +47,11 @@
 						= ends.strftime("%d %b, %Y")
 						%br 
 							= ends.strftime('%I:%M %P')
+			.col-md-6.border-l-c.p-l0.p-r0
+				.text-up.size-14.p-b10.p-t10.t-c
+					.fo-helv.f-b
+						= ((ends - starts)/1.hour).round 
+						Hrs
 		.col-md-8.border-b-c.p-0.p-l35.location_icon
 			.size-13.p-b5.p-t5.light-grey
 				%span.text-up
@@ -57,4 +65,4 @@
 			.col-md-6
 				%h4.t-c.size-22.m-t12.strike-text Rs. #{fare[:total]}
 			.col-md-6
-				%h4.t-c.fo-helv.f-b.size-26.m-t10.red Rs. #{disc}
+				%h4.t-c.fo-helv.f-b.size-26.m-t10.red Rs. #{disc} #{discount}% off
