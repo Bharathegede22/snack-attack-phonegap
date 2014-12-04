@@ -11,23 +11,30 @@
 					.m-t10.btn-book
 						%input.button-dis{value: "Book"}
 		.col-md-8.border-b-c.p-0
-			.col-md-6
+			.col-md-4
 				.text-up.size-12.p-b2.p-t5.t-c.light-grey
 					Pickup Time
-			.col-md-6.border-l-c
+			.col-md-4.border-l-c
 				.text-up.size-12.p-b2.p-t5.t-c.light-grey
 					Dropoff Time
+			.col-md-4.border-l-c
+				.text-up.size-12.p-b2.p-t5.t-c.light-grey
+					Duration
 		.col-md-8.border-b-c.p-0
 			.col-md-6.p-l0.p-r0
 				.text-up.size-14.p-b10.p-t10.t-c
 					.fo-helv.f-b
-						= Time.now.strftime("%d %b, %Y")
+						= 1.day.from_now.strftime("%d %b, %Y")
 						%br 10:00 AM
 			.col-md-6.border-l-c.p-l0.p-r0
 				.text-up.size-14.p-b10.p-t10.t-c
 					.fo-helv.f-b
-						= Time.now.strftime("%d %b, %Y")
+						= 1.day.from_now.strftime("%d %b, %Y")
 						%br 08:00 PM
+			.col-md-6.border-l-c.p-l0.p-r0
+				.text-up.size-14.p-b10.p-t10.t-c
+					.fo-helv.f-b
+						10 Hrs 
 		.col-md-8.border-b-c.p-0.p-l35.location_icon
 			.size-13.p-b5.p-t5.light-grey
 				%span.text-up
@@ -41,4 +48,4 @@
 			.col-md-6
 				%h4.t-c.size-22.m-t12.strike-text Rs. 1100
 			.col-md-6
-				%h4.t-c.fo-helv.f-b.size-26.m-t10.red Rs. 880
+				%h4.t-c.fo-helv.f-b.size-26.m-t10.red Rs. 880 20% off
