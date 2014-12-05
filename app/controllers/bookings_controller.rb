@@ -33,12 +33,13 @@ class BookingsController < ApplicationController
 		check_deal
 		generic_meta
 		@header = 'booking'
-		if abtest?
-			render :checkoutab
-		else
-			# payu checkout page
-			render :checkouta
-		end
+		# if abtest?
+		# 	render :checkoutab
+		# else
+		# 	# payu checkout page
+		# 	render :checkouta
+		# end
+		render :checkouta
 	end
 	
 	def complete
@@ -52,6 +53,39 @@ class BookingsController < ApplicationController
 			session[:corporate_id] = params[:corporate_id] if !params[:corporate_id].blank?
 		end
 		render json: {html: render_to_string('_corporate.haml', layout: false)}
+  end
+
+	# creates order for payment on juspay
+	#
+	# Author:: Aniket
+	# Date:: 05/12/2014
+	#  
+  def createorder
+  	bstr, bid = CommonHelper.decode(params[:booking])
+  	pstr, pid = CommonHelper.decode(params[:payment])
+  	if bstr == 'booking' && pstr == 'payment'
+	  	@booking = Booking.find(bid)
+	  	@payment = Payment.find(pid)
+	  else
+	  	return
+	  end
+  	if !Rails.env.production?
+			@booking.user_email = PAYU_EMAIL
+			@booking.user_mobile = PAYU_PHONE
+		end
+		# Creating order on juspay
+		data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user_email, customer_mobile: @booking.user_mobile, return_url: "http://#{HOSTNAME}/bookings/pgresponse" }
+		response = Juspay.create_order(data)
+
+		if response['status'].downcase == 'created' || response['status'].downcase == 'new'
+			render :json => {status: 'success'}
+			# hash = PAYU_KEY + "|" + @payment.encoded_id + "|" + @payment.amount.to_i.to_s + "|" + @booking.cargroup.display_name + "|" + @booking.user_name.strip + "|" + @booking.user_email + "|||||||||||" + PAYU_SALT
+			# render :json => {:response => response['status'].downcase, :amt => @payment.amount.to_i, :order_id => @payment.encoded_id, :name => @booking.user_name, :email => @booking.user_email, :phone => @booking.user_mobile, :desc => @booking.cargroup.display_name, :product_id => @booking.cargroup.brand_id, :cust_id => @booking.user.encoded_id, :hash => Digest::SHA512.hexdigest(hash)}
+		elsif response['status'].downcase == 'error'
+			
+			flash[:error] = "Something went wrong. Please try again."
+			render :json => {:response => 'pg error'}
+		end
   end
 
   # Applies credits to user booking
@@ -389,6 +423,7 @@ class BookingsController < ApplicationController
 	def payment
 		@payment = @booking.check_payment
 		if @payment
+			@newflow = true ? true : false # abtest
 			render :layout => 'plain'
 		else
 			flash[:notice] = "Booking is already paid for full, no need for a new transaction."
@@ -396,6 +431,10 @@ class BookingsController < ApplicationController
     end
 	end
 	
+	def payment_options
+		render partial: '/bookings/pg/payment_options', layout: 'plain'
+	end
+
 	def payments
 		render layout: 'users'
 	end

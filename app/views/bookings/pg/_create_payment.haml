@@ -1,0 +1,56 @@
+:ruby
+	if !Rails.env.production?
+		@booking.user_email = PAYU_EMAIL
+		@booking.user_mobile = PAYU_PHONE
+	end
+%b.size-24 Please wait while we process your request
+%br
+Please dont refresh this page or use back button
+%br/
+%br/
+%img{:src => "http://#{HOSTNAME}/images/loader.gif", :alt => '', :border => '0'}
+%br/
+%br/
+#Hide{:style => "display:none;"}
+	Use the below button if you are not redirected within 10 seconds
+	.p-t10
+
+:javascript
+	function checkJquery() {
+		alert("#{@newflow}");
+		if (window.jQuery) {
+			alert("#{@newflow} with jquery");
+			if ("#{@newflow}" == "true") {
+				$.ajax({
+					url: "/#{@city.link_name}/bookings/createorder",
+					type: "GET",
+					dataType: "json",
+					data: {
+						booking : '#{@booking.encoded_id}',
+						payment : '#{@payment.encoded_id}'
+					},
+					success: function(data, response) {
+						if(response=="success") {
+							var data = JSON.parse(JSON.stringify(data));
+							if(data.status == 'success') {
+								// alert('success!');
+								// window.location = "/#{@city.link_name}/bookings/payment_options";
+							}
+							else {//if(data.status == 'pg error')
+							// alert("fail200\n" + response);
+								window.location = "/bookings/#{@booking.encoded_id}";
+							}
+						}
+					},
+					error: function(data, response) {
+						// alert("fail\n" + response);
+						window.location = "/bookings/#{@booking.encoded_id}";
+					}
+				});
+			}
+		}
+		else {
+			window.setTimeout(checkJquery, 1000);
+		}
+	}
+	checkJquery();
