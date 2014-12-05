@@ -1,14 +1,20 @@
+.deals-bg
 .wrapper
 	- render_flash
+	.deals-banner
+		.deals-stamp-icon.pull-left
+		.deals-banner-text.fo-helv.f-b.size-54.white.p-t40.fl.m-l20
+			EXCITING DEALS 
+		.deals-banner-text-horizontal.fo-helv.size-20.white.f-b.fl.p-t48.m-l10
+			EVERY
+			%br
+			DAY
+		.deals-banner-img.fr
 	.offer_main_container
-		.panel.panel-default.offers-panel.m-t70
+		.panel.panel-default.offers-panel
 			.panel-heading.offers-heading
-				.deals-stamp-icon
 				.timer-icon.pull-right
-				.col-md-7.pull-left
-					%h4.white.p-l35
-						Deals of the Day
-				.col-md-5.pull-right.p-l75
+				.col-md-5.p-l45.col-md-offset-4
 					%h4.timer-width
 						%span.white
 							Next Deal Starts in
