@@ -3,6 +3,7 @@ Web::Application.routes.draw do
   	get 'bookings'  => "wallets#show"
 	get 'device'  => "main#device"
 	get 'deals' => "main#deals_of_the_day"
+	get 'newpay'  => "main#new_payment"
 	scope "/(:city)", constraints: {city: /bangalore|delhi|pune/} do
 		get 'bookings/do_flash_booking' => 'bookings#do_flash_booking'
 	end

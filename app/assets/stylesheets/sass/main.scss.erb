@@ -9,6 +9,7 @@
  //variables
 /*==============================*/
 $black: #323a45;
+$blue: #00AEEF;
 $white: #fff;
 $green: #6ABD19;
 $grey: #C5C5C5;
@@ -274,6 +275,30 @@ $border-grey3px: 3px #ccc solid;
 		width: 100%;
 	}
 }
+.deals-bg{
+	background:$green url(<%= asset_path 'deal-bg.jpg' %>);
+	height: 278px;
+	background-repeat-y: no-repeat;
+	position: absolute;
+	width: 100%;
+	z-index: -2;
+}
+.deals-banner{
+	margin-top: 0em;
+	display: inline-block;
+	width: 100%;
+}
+.deals-banner-text{
+
+}
+.deals-banner-text-horizontal{
+
+}
+.deals-banner-img{
+	background: url(<%= asset_path 'deals-cars.png' %>) 10px 6px no-repeat;
+	width: 244px;
+	height: 136px;
+}
 .offers-heading{
 	background: $black !important;
 	overflow: auto;
@@ -295,15 +320,21 @@ $border-grey3px: 3px #ccc solid;
 	}
 	.button{
 		width: 113px;
+		font-size: 16px;
+		margin: 7px 0 3px;
+		padding: 10px 0;
 	}
 	.button-dis{
 		width: 113px;
 		text-shadow: none;
+		font-size: 16px;
+		margin: 7px 0 3px;
+		padding: 10px 0;
 	}
 }
 .location_icon {
 	background: url(<%= asset_path 'location.png' %>) 10px 6px no-repeat;
-	height: 68px;
+	height: 70.5px;
 }
 .strike-text{
 	text-decoration: line-through;
@@ -314,20 +345,17 @@ $border-grey3px: 3px #ccc solid;
 .sold-out-tag{
 	background: url(<%= asset_path 'sold_out_tag.png' %>) -9px 6px no-repeat;
 	position: absolute;
-width: 82px;
-height: 72px;
-z-index: 2;
-margin: -27px -25px;
-background-size: 8em;
+	width: 82px;
+	height: 72px;
+	z-index: 2;
+	margin: -27px -25px;
+	background-size: 8em;
 }
 .deals-stamp-icon{
-	background: url(<%= asset_path 'deals-stamp.png' %>) 10px 6px no-repeat;
-	height: 145px;
-	width:	145px;
-	position: absolute;
-	z-index: 2;
-	margin: -7em -9em;
-	background-size: 11em;
+	background: url(<%= asset_path 'deals-stamp.png' %>) -12px -3px no-repeat;
+	height: 130px;
+	width: 139px;
+	margin-top: 10px;
 }
 .timer-icon{
 	background: url(<%= asset_path 'timer-icon.png' %>) 6px 6px no-repeat;
@@ -338,7 +366,7 @@ background-size: 8em;
 	height: 60px;
 	right: 50%;
 	position: absolute;
-	margin: -1.3em -12em;
+	margin: -1.3em 10em;
 	border-radius: 4em;
 	span{
 		margin: 8px 9px;
@@ -358,5 +386,112 @@ background-size: 8em;
 .deal-inactive{
 	.button-dis{
 		text-shadow: none !important;
+	}
+}
+.duration-hrs{
+	padding: 13.5px 0;
+}
+/***********************************New-payment-page*******************************/
+.payment-wrapper{
+	width: 713px;
+	margin-left: auto;
+	margin-right: auto;
+}
+.payment-order-summary{
+	background: $green;
+	display: inline-block;
+	width: 100%;
+}
+.payment-method-banner{
+	border: 1px #ccc solid;
+	margin-top: -3px;
+}
+.payment-options {
+	border: 1px #ccc solid;
+	margin-top: -1px;
+}
+.payment-tab{
+	min-height: 367px;
+	background: #F9F9F9;
+}
+
+#payment-partial {
+	background: #F2F2F2;
+}
+#payment-tabs a {
+	font-size: 13px;
+	font-weight: normal;
+	color: #323A45;
+	text-decoration: none;
+	width: 150px;
+	text-align: left;
+	padding: 15px;
+	background: #F2F2F2;
+	border-bottom: 1px solid #D8D8D8;
+	border-right: 1px solid #D8D8D8;
+}
+#payment-tabs a:hover {
+	background: #EAEBEC;
+}
+#payment-tabs a.active {
+	background: #FFF;
+	border-right: none;
+	border-left: 2px #666 solid;
+	font-weight: bold;
+
+}
+#payment-body {
+	background: #FFF;
+	padding: 10px 30px;
+	//width: 340px;
+	margin-left: 2em;
+}
+
+.credit-card-number, .credit-card-name {
+	width: 100%;
+}
+.card-number-bg {
+	background: #FFF url(<%= asset_path 'all-cards.png' %>) no-repeat 98% 50%;
+}
+.credit-card-month { width: 50px; }
+.credit-card-year { width: 70px; }
+
+.credit-card-cvv {
+	width: 50px;
+}
+.amex {
+	background: url(<%= asset_path 'amex.png' %>) no-repeat 98% 50%;
+}
+.dinersclub {
+	background: url(<%= asset_path 'dinersclub.png' %>) no-repeat 98% 50%;
+}
+.maestro {
+	background: url(<%= asset_path 'maestro.png' %>) no-repeat 98% 50%;
+}
+.mastercard {
+	background: url(<%= asset_path 'mastercard.png' %>) no-repeat 98% 50%;
+}
+.visa {
+	background: url(<%= asset_path 'visa.png' %>) no-repeat 98% 50%;
+}
+.generic {
+	background: url(<%= asset_path 'generic.png' %>) no-repeat 98% 50%;
+}
+.credit-card-error {
+	border: 2px solid #dd0000;
+}
+.debit-card-info {
+	background-color:transparent;
+	color:#000000;
+	outline:0;
+}
+.note-msg{
+	margin: 2.5em 0px;
+	p{
+		//font-weight: bold;
+	}
+	span{
+		color: $blue;
+		font-weight: bold;
 	}
 }

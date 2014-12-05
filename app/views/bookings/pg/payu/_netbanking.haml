@@ -1,4 +1,5 @@
 :ruby
+	@booking = Booking.last
 	if !Rails.env.production?
 		@booking.user_email = PAYU_EMAIL
 		@booking.user_mobile = PAYU_PHONE
@@ -22,7 +23,7 @@
 		= hidden_field_tag :pg, 'NB', class: 'pgnb'
 		.fl
 			%div
-				= label_tag 'selBank', 'Select Bank', :class => 'f-n grey'
+				= label_tag 'selBank', 'Select Bank', :class => 'f-b grey'
 			%div
 				= select_tag 'bankcode', options_for_select(banks.collect { |n, c| [ c, n ] }), :width => '120 px', :class => 'p-5 size-11'
 			%br/
