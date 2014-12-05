@@ -16,3 +16,10 @@
 			%b.size-13 Choose a payment method
 		.payment-options
 			= render :partial => "bookings/pg/payment_options"
+		.p-t5.p-b10.payment-footer-logo
+			.fc.inline-block{:style => "margin-left: 0px"}
+				%div
+					= image_tag asset_path('godaddy.gif'), :size => '131x32', :onclick => 'verifyGoDaddySSLSeal();'
+			.fr
+				%div.f-n.grey.m-t15
+					We do not store your card details.

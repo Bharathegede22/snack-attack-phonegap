@@ -31,4 +31,9 @@
 	%br/
 	.fc
 		%div
-			%input#payNow.button.m-auto.fc{style: "width:200px;", type: "submit", value: "Pay Now", onclick:"pushEvent('1-click checkout', 'Pay Button', '');"}
+			%input#payNow.button.m-auto.fc.make_payment{style: "width:200px;", type: "submit", value: "Pay Now", onclick:"pushEvent('1-click checkout', 'Pay Button', '');"}
+	%p.t-c.m-t20
+		%span{:style => "display:block;margin-top:10px;"}
+			or Go back to
+			%a{:href => "cancel?mihpayid=4f84ac24317c6cc904a2f79297a3996eff59bdfe30c43ac8bf4a9231f71d66fc&amp;status=cancel"}
+				www.zoomcar.com

@@ -6,7 +6,6 @@
 	%a.block#netbanking{:href => "#payment-3", 'data-toggle' => "tab", :onclick => "pushEvent('1-click checkout', 'Netbanking', '');makeactive('#netbanking', '#credit', '#debit');"}
 		Netbanking
 	%a.block.active.hide{}
-
 #payment-body.fl.tab-content
 	#payment-1.tab-pane.fade.in.active
 		%form{:id => 'ccForm', class: 'juspay-inline-form-credit'}
@@ -27,7 +26,7 @@
 					.credit-card-year.inline-block
 						= text_field_tag :ccexpyr, '', :size => 4, :placeholder => "YYYY", required: true, :class => 'p-5 size-16 expyr', name: '', :maxlength => 4, :onKeyup => "validateExpiry(this, 'y');autotab(this, '#ccvv');"
 
-				.fr{:style => "margin-left: 40px"}
+				.fl{:style => "margin-left: 40px"}
 					%div
 						= label_tag 'ccvv', 'CVV', class: 'f-b grey'
 					= text_field_tag :ccvv, '', :type => 'password', :autocomplete => 'off', :maxlength => 3, :size =>3, :placeholder => '', required: true, :class => 'p-5 size-16 credit-card-cvv', name: '', :onKeyup => "autotab(this, '#ccard_name');"
@@ -37,25 +36,14 @@
 				= label_tag 'ccname', 'Name on Card', class: 'f-b grey'
 				= text_field_tag :ccard_name, '', :maxlength => 32, :size =>26, required: true, :placeholder => '', :class => 'p-5 size-16 credit-card-name', :name => ''
 			/ .p-t5.p-b10
-			.note-msg
-				%p 
-					%span 
-						Note: 
-					In the next step you will be redirected to your bank's website to verify yourself.
-
 			%input.button.m-auto#make_payment_credit{style: "width:200px;", type: "submit", value: "Pay Now", class: 'make_payment', onclick:"pushEvent('1-click checkout', 'Pay Button', '');"}
 			%br/
 			%br/
-			.p-t5.p-b10
-				.fc.inline-block{:style => "margin-left: 0px"}
-					%div
-						= image_tag asset_path('godaddy.gif'), :size => '131x32', :onclick => 'verifyGoDaddySSLSeal();'
-				.fr
-					%div.f-n.grey
-						We do not store your
-						%br/
-						card details.
-
+			%p.t-c
+				%span{:style => "display:block;margin-top:10px;"}
+					or Go back to
+					%a{:href => "cancel?mihpayid=4f84ac24317c6cc904a2f79297a3996eff59bdfe30c43ac8bf4a9231f71d66fc&amp;status=cancel"}
+						www.zoomcar.com                                                                  
 	#payment-2.tab-pane.fade
 		%form{:id => 'dcForm', class: 'juspay-inline-form-debit'}
 			.hidden_field_tag
@@ -78,7 +66,7 @@
 					.credit-card-year.inline-block
 						= text_field_tag :dcexpyr, '', :size => 4, :placeholder => "YYYY", :class => 'p-5 size-16 expyr', name: '', :maxlength => 4, :onKeyup => "validateExpiry(this, 'y');autotab(this, '#dcvv');"
 
-				.fr{:style => "margin-left: 40px"}
+				.fl{:style => "margin-left: 40px"}
 					%div
 						= label_tag 'dcvv', 'CVV', class: 'f-b grey'
 					= text_field_tag :dcvv, '', :type => 'password', :autocomplete => 'off', :maxlength => 3, :size =>3, :placeholder => '', :class => 'p-5 size-16 credit-card-cvv', :name => '', :onKeyup => "autotab(this, '#dcard_name');"
@@ -90,25 +78,14 @@
 				= label_tag 'dcname', 'Name on Card', class: 'f-b grey'
 				= text_field_tag :dcard_name, '', :maxlength => 32, :size =>26, required: true, :placeholder => '', :name => '', :class => 'p-5 size-16 credit-card-name'
 			/ .p-t5.p-b10
-			.note-msg
-				%p 
-				%span 
-					Note: 
-				In the next step you will be redirected to your bank's website to verify yourself.
-
 			%input.button.m-auto#make_payment_debit{style: "width:200px;", type: "submit", value: "Pay Now", class: 'make_payment', onclick:"pushEvent('1-click checkout', 'Pay Button', '');"}
 			%br/
 			%br/
-			.p-t5.p-b10
-				.fc.inline-block{:style => "margin-left: 0px"}
-					%div
-						= image_tag asset_path('godaddy.gif'), :size => '131x32', :onclick => 'verifyGoDaddySSLSeal();'
-				.fr
-					%div.f-n.grey
-						We do not store your
-						%br/
-						card details.
-
+			%p.t-c
+				%span{:style => "display:block;margin-top:10px;"}
+					or Go back to
+					%a{:href => "cancel?mihpayid=4f84ac24317c6cc904a2f79297a3996eff59bdfe30c43ac8bf4a9231f71d66fc&amp;status=cancel"}
+						www.zoomcar.com
 	#payment-3.tab-pane.fade
 	/ #payment-4.tab-pane.fade
 	/ 	Iron Price
