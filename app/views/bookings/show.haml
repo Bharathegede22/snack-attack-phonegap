@@ -24,7 +24,7 @@
 				= "Booking #" + @booking.encoded_id.upcase
 			.fr.size-14
 				
-				- if @booking.paid?
+				- if @booking.paid? && !(@booking.promo.present? && @booking.promo.include?('SQUIRREL'))
 					- case @booking.status?
 					- when 'live'
 						%a.white.pointer.inline-block.m-l15{onclick: "showModal('Extend Your Booking', '/bookings/#{@booking.encoded_id}/reschedule');"}
@@ -125,6 +125,21 @@
 						= @booking.promo
 						%br/
 						= offer.summary.html_safe
+		- credits_earned = @booking.credits.where(source_name: Credit::SOURCE_NAME_INVERT['Early Return']).collect(&:amount).sum
+		- if credits_earned > 0
+			.border-b-c
+			.p-t10.p-b10.p-l20.p-r20
+				.text-up.size-11.m-b3
+					Credits
+				.zoom-b.f-b.size-14.earned-credit-statement
+					You earned ₹ #{credits_earned} in credits from this booking
+					#showPage-popover-block
+						%button.btn.creditsDescBtn-showPage.p-0 [?]
+
+			.popover.fade.right.in.booking-showPage-popupBox.m-t15.earn-credit
+				.arrow
+				%h3.popover-title{:style => "display: none;"}
+				.popover-content.size-12 Your credits have been added to your Zoomcar wallet. Use them to pay the fee for your next booking.
 
 	= render :partial => '/bookings/socialshare'
 
@@ -199,15 +214,15 @@
 			.fr.p-10.t-r.p-r20.zoom-b.f-b.size-20
 				₹ #{show_currency total_payment}
 			.fc
-	- if @booking.confirmed_refunds.select{|p| p.through.in? ['citruspay', 'juspay', 'payu'] || p.through == 'wallet_refund'}.any?
+	- if @booking.confirmed_refunds.select{|p| p.through.in? ['citruspay', 'juspay', 'payu', 'cheque'] || p.through == 'wallet_refund'}.any?
 		.bg-w.bs-9.m-b20{'style' => 'width: 360px'}
 			.bg-zoomb.white.p-10.f-b.size-18.p-l10.p-r10
 				Refunds Issued
 			- total_refund=0
-			- @booking.confirmed_refunds.select{|p| p.through.in? ['citruspay', 'juspay', 'payu'] || p.through=='wallet_refund'}.each do |refund|
+			- @booking.confirmed_refunds.select{|p| p.through.in? ['citruspay', 'juspay', 'payu', 'cheque'] || p.through=='wallet_refund'}.each do |refund|
 				.fl.p-10.p-l20.size-12
 					.text-up
-						Amount Refunded (#{refund.created_at.strftime('%Y-%m-%d')})
+						#{refund.through == 'cheque' ? "BY CHEQUE" : "Amount Refunded"} (#{refund.created_at.strftime('%Y-%m-%d')})
 				.fr.p-10.t-r.p-r20.grey.f-b.size-16
 					₹ #{show_currency refund.amount.tap{|p| total_refund+=p}}
 				.fc
@@ -225,7 +240,7 @@
 			.fl
 				Zoomcar Wallet
 
-				%span.pointer.pop.size-12.white{'href' => '#', 'data-toggle' => "popover",  'data-placement' => "top", 'data-html' => "true", 'data-content' => "<div class='grey size-12 f-n'>Your Zoomcar Wallet is where your Security Deposit is kept. This allows you to use the same deposit across multiple bookings. <a href='/faq#faq-42'>Learn more</a> in our FAQs.</div>"}
+				%span.pointer.pop.size-12.white{'href' => '#', 'data-toggle' => "popover",  'data-placement' => "top", 'data-html' => "true", 'data-content' => "<div class='grey size-12 f-n'>Your Zoomcar Wallet is where your Security Deposit and Credits are kept. This allows you to use the same deposit across multiple bookings. <a href='/faq#faq-42'>Learn more</a> in our FAQs.</div>", 'style' => 'position: relative; top: -2px;'}
 					[?]
 			.fr
 				%a.white.size-12{href: "javascript:void(0)", onclick: "showModal('Transaction History', '/wallets/history');pushEvent('Wallet', 'Transaction History Pop Up (Bookings Summary)');"}
@@ -253,7 +268,22 @@
 			.fr.p-10.t-r.p-r20.grey.f-b.size-16
 				₹ #{show_currency wallet.amount.tap{|a| total+=a}}
 			.fc
-
+		- @booking.confirmed_payments.select{|p| p.through=='credits'}.each do |payment|
+			- next if payment.amount.to_i == 0
+			.fl.p-10.p-l20.size-12
+				.text-up
+					Credits Used (#{payment.created_at.strftime('%Y-%m-%d')})
+			.fr.p-10.t-r.p-r20.grey.f-b.size-16
+				\- ₹ #{show_currency payment.amount.tap{|a| total-=a}}
+			.fc
+		- @booking.confirmed_refunds.select{|p| p.through=='credits'}.each do |refund|
+			- next if refund.amount.to_i == 0
+			.fl.p-10.p-l20.size-12
+				.text-up
+					Credits Refunded (#{refund.created_at.strftime('%Y-%m-%d')})
+			.fr.p-10.t-r.p-r20.grey.f-b.size-16
+				₹ #{show_currency refund.amount.tap{|a| total+=a}}
+			.fc
 		.border-t-c
 			.fl.p-t10.p-l20.size-18
 				.text-up

@@ -3,6 +3,8 @@
 	location = @booking.location
 	fare = @booking.get_fare
 	pricing = @booking.pricing
+	deal = @booking.promo.present? && @booking.promo.include?('SQUIRREL') ? 'SQUIRREL' : ''
+	discnt = deal.present? ? fare[:total].to_i*@discount/100 : 0
 	tmp = ''
 	h = (@booking.ends.to_i - @booking.starts.to_i)/3600
 	h += 1 if (@booking.ends.to_i - @booking.starts.to_i) > h*3600
@@ -23,7 +25,8 @@
 		.fl
 			Booking Summary
 		.fr
-			.glyphicon.glyphicon-pencil.pointer.help{onclick: "showSearch();", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Change your booking"}
+			- if deal != 'SQUIRREL'
+				.glyphicon.glyphicon-pencil.pointer.help{onclick: "showSearch();", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Change your booking"}
 		.fc
 	.p-r20.p-l30.size-16.border-b-c
 		.fl.m-l20.colored
@@ -111,6 +114,13 @@
 			%td.p-10.t-r.p-r20.zoom-b.f-b.size-16
 				₹ #{show_currency fare[:total]}
 
+		- if discnt > 0
+			%tr
+				%td.p-10.p-l20.p-b10.text-up.size-12
+					Deal Discount
+				%td.p-10.t-r.p-r20.p-b10.zoom.f-b.size-16
+					\- ₹ #{show_currency discnt}
+
 		%tr
 			%td.p-10.p-l20.p-b10.text-up.size-12
 				Fuel, GPS, Insurance & Taxes
@@ -134,11 +144,11 @@
 					%span.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => @booking.deposit_help}
 						[?]
 
-		%tr.bg-6.white.bg-zoom.ribbon
+		%tr.bg-6.white.bg-zoom
 			%td.p-10.p-l20.text-up.size-16.f-b
 				Payable Amount
 			%td.p-10.t-r.p-r20.size-22.outstandingSide{nowrap: ""}
-				₹ #{show_currency(fare[:total] + pricing.mode::SECURITY)}
+				₹ #{show_currency(fare[:total] + pricing.mode::SECURITY - discnt)}
 
 		%tr
 			%td.p-5.p-l20.p-t10.size-12

@@ -30,7 +30,7 @@ class Location < ActiveRecord::Base
 	end
 	
 	def link(city=nil)
-		return "http://" + HOSTNAME + "/" + CommonHelper.escape(self.city.name.downcase) + "/car-rental-in-" + CommonHelper.escape(self.name.downcase) + "_" + self.encoded_id
+		return "http://" + HOSTNAME + "/" + CommonHelper.escape(self.city.link_name.downcase) + "/car-rental-in-" + CommonHelper.escape(self.name.downcase) + "_" + self.encoded_id
 	end
 	
 	def live

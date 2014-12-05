@@ -186,7 +186,13 @@ class Pricingv4
 		wday = start_date.wday
 		data[:kms] = (kms*h).round
 		year = start_date.year
-		blackout_days = Holiday.list(year)
+		
+		promo_pricing = @booking.city.promo_pricing
+		if promo_pricing
+			blackout_days = []
+		else
+			blackout_days = Holiday.list(year)
+		end
 
 		while hour <= h
 			data[:estimate] += fare

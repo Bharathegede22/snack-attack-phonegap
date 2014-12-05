@@ -1,8 +1,11 @@
 Web::Application.routes.draw do
-	
 	get 'mydeposits' => "wallets#show"
-  get 'bookings'  => "wallets#show"
+  	get 'bookings'  => "wallets#show"
 	get 'device'  => "main#device"
+	get 'deals' => "main#deals_of_the_day"
+	scope "/(:city)", constraints: {city: /bangalore|delhi|pune/} do
+		get 'bookings/do_flash_booking' => 'bookings#do_flash_booking'
+	end
 
 	devise_for :users, 
 		:controllers => {
@@ -67,7 +70,7 @@ Web::Application.routes.draw do
 	resources :users do
 		collection do
 			get 'access'
-			get 'credits'
+			get 'credit_history'
 			get 'forgot'
 			get 'license'
 			get 'license_get_del'
@@ -89,10 +92,10 @@ Web::Application.routes.draw do
 	resources :wallets, :only => [] do
 		collection do
 			get 'history'
-  			get 'show_refund'
-			#post "wallets#topup"
-  			post 'refund'
-  			post 'topup'
+  		get 'show_refund'
+      get 'credit_history'
+  		post 'refund'
+  		post 'topup'
 		end
 	end
 	
@@ -103,6 +106,7 @@ Web::Application.routes.draw do
 				get 'checkoutab'
 				get 'complete'
 				get 'do'
+				# get 'do_flash_booking'
 				get 'docreate'
 				post 'docreate'
 				get 'failed'
@@ -119,10 +123,10 @@ Web::Application.routes.draw do
 	
 	get '/job/:id' => 'main#job'
 	get '/get_locations_map/:id' => 'main#get_locations_map'
- 	get ':action' => 'main', constraints: {action: /about|careers|contact|eligibility|handover|holidays|howitworks|signup|howtozoom|map|member|outstation|reva|privacy|mobile_redirect/}
+ 	get ':action' => 'main', constraints: {action: /about|careers|eligibility|handover|holidays|howitworks|signup|howtozoom|map|member|outstation|reva|privacy|mobile_redirect/}
  	
  	# Redirect
- 	get ':id' => 'main#redirect', constraints: {id: /join|login|mybookings|myaccount|selfdrivecarrental/}
+ 	get ':id' => 'main#redirect', constraints: {id: /contact|join|login|mybookings|myaccount|selfdrivecarrental/}
  	get '/jsi/:key/:id' => 'main#redirect'
  	get ':city/:id' => 'main#redirect', constraints: {city: /Pune|Bangalore/}
  	
@@ -134,6 +138,7 @@ Web::Application.routes.draw do
 		get '/explore' => 'seo#explore'
 		get '/faq'=>'main#faq'
 		get '/fees'=>'main#fees'
+		get '/contact'=>'main#contact'
 		get '/offers' => 'main#offers'
 		get '/nearby' => 'seo#nearby'
 		get '/tariff'=>'main#tariff'

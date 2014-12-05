@@ -17,12 +17,16 @@ class City < ActiveRecord::Base
 		when 'attractions' then "Rent Self Drive Cars In & Around #{self.name}"
 		when 'inside' then "Rent Self Drive Cars, Explore #{self.name}"
 		when 'outside' then "Rent Self Drive Cars, Go Beyond #{self.name}"
-		else "Self Drive Cars In #{self.name}"
+		else "Self-Drive Cars In #{self.name}"
 		end
 	end
 	
+	def inactive?
+		!self.active || self.prelaunch
+	end
+	
 	def link(action=nil)
-		return "http://" + HOSTNAME + "/" + CommonHelper.escape(self.name.downcase) + case action
+		return "http://" + HOSTNAME + "/" + CommonHelper.escape(self.link_name.downcase) + case action
 		when 'attractions' then "/attractions"
 		when 'inside' then "/explore"
 		when 'outside' then "/nearby"
@@ -133,7 +137,7 @@ class City < ActiveRecord::Base
 	def self.getall_hash
 		tmp = {}
 		getall.each do |c|
-			tmp[c.name.downcase] = c
+			tmp[c.link_name.downcase] = c
 		end
 		return tmp
 	end
@@ -188,4 +192,5 @@ end
 #  seo_outside_description :string(255)
 #  seo_outside_keywords    :string(255)
 #  seo_outside_h1          :string(255)
+#  active                  :boolean          default(FALSE)
 #

@@ -1,53 +1,22 @@
 .static
 	%h1
-		Zoomcar's Office
+		Zoomcar's #{@city.name} Office
 	.attraction
 		.right
-			%h2 Address
-			%p
-				117, 2nd Cross, HAL 3rd Stage, Bangalore - 560075
+			- if !@city.address.blank?
+				%h2 Address
+				= @city.address.html_safe
 				%br/
-				Ph: 080-33013371
+			- if !@city.directions.blank?
 				%br/
-			%br/
-			%h2 Directions
-			%p
-				%b 
-					%u If coming from Old Madras Road side:
-				%br/
-				\- Come straight down 80 feet road.
-				%br/
-				\- Pass Columbia Asia Hospital on the left.
-				%br/
-				\- Turn left on New Thippasandra Main Road.
-				%br/
-				\- Take first right on to 1st Cross.
-				%br/
-				\- Take first left onto 2nd Main.
-				%br/
-				\- Take first right onto 2nd Cross.
-				%br/
-				\- Zoomcar's office is immediately on the right side (signboard in front).
-				%br/
-			%p
-				%b
-					%u If coming from Old Airport Road side:
-				%br/
-				\- Come straight up 80 feet road.
-				%br/
-				\- Pass Empire Hotel on the left.
-				%br/
-				\- Take next right onto 4th Main Road.
-				%br/
-				\- Take second left onto 2nd Cross.
-				%br/
-				\- Go to end of block and Zoomcar's office is on the left (signboard in front).
+				%h2 Directions
+				= @city.directions.html_safe
 		.left
 			#Gmap.map
 		.fc
 :javascript
 	function initializeMap() {
-		var myLatlng = new google.maps.LatLng('12.971955851845342', '77.64807955361903');
+		var myLatlng = new google.maps.LatLng("#{@city.lat}", "#{@city.lng}");
 		var mapOptions = {
 			zoom: 13,
 			center: myLatlng,

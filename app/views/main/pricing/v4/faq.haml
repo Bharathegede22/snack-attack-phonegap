@@ -46,11 +46,11 @@
 			.f-b.zoom.size-16.m-b5 #{count+=1}) Do the vehicles have manual or automatic transmission?
 			%p
 				The Figos, Ventos, Scorpios, Ecosport, Honda City, Mahindra XUV W6 have manual transmission. The BMWs, Mercedes and Revas have automatic transmission.
-			.f-b.zoom.size-16.m-b5 #{count+=1}) What is #{CommonHelper::BLACKOUT_TEXT}? Are the prices different during #{CommonHelper::BLACKOUT_TEXT}?
-			%p
-				Hourly rates are different for Mon-Thu, Fri-Sun and #{CommonHelper::BLACKOUT_TEXT}. Please have a look at the dates for #{CommonHelper::BLACKOUT_TEXT} <a>here</a>. The prices are mentioned on the
-				%a{:href => "http://www.zoomcar.com/bangalore/tariff", :target => "_blank"} tariff page.
-
+			- if !@city.promo_pricing
+				.f-b.zoom.size-16.m-b5 #{count+=1}) What is #{CommonHelper::BLACKOUT_TEXT}? Are the prices different during #{CommonHelper::BLACKOUT_TEXT}?
+				%p
+					Hourly rates are different for Mon-Thu, Fri-Sun and #{CommonHelper::BLACKOUT_TEXT}. Please have a look at the dates for #{CommonHelper::BLACKOUT_TEXT} <a>here</a>. The prices are mentioned on the
+					%a{:href => "http://www.zoomcar.com/bangalore/tariff", :target => "_blank"} tariff page.
 		#faqs-2.tab-pane.fade
 			.f-b.zoom.size-16.m-b5 #{count+=1}) How do I become a member?
 			%p
@@ -104,9 +104,9 @@
 				If your reserved vehicle is not where it is supposed to be, notify us immediately by calling #{@city.contact_phone}. Zoomcar and our helpful fleet executives will make sure you get where you need to go! If a near-by Zoomcar vehicle is available, we will transfer your reservation. If not, we will call you a cab and get you a self-drive vehicle as soon as possible so you can quickly be on your way.
 			.f-b.zoom.size-16.m-b5 #{count+=1}) If I bring the car back ahead of my reservation time, do I receive a credit?
 			%p
-				a) Credit worth 50% of billed hourly rate will be given for the remaining hours of your booking.
+				a) Credits worth 50% of billed hourly rate will be given for the remaining hours of your booking.
 				%br/
-				b) Free KMs will be given only for the hours for which you did not get credit.
+				b) Free KMs will be given only for the hours for which you did not get credits.
 
 		#faqs-4.tab-pane.fade
 			.f-b.zoom.size-16.m-b5 #{count+=1}) What modes of payments are accepted?
@@ -121,6 +121,10 @@
 			.f-b.zoom.size-16.m-b5 #{count+=1}) I had problems while the payment was being made after I entered my credit or debit card details. Has my reservation been made?
 			%p
 				No. If your payment does not succeed for whatever reason, Zoomcar's reservation system will not confirm your booking. In order to complete the booking process, payment has to be done upfront.
+			.f-b.zoom.size-16.m-b5 #{count+=1}) What are Zoomcar credits and how do I earn them?
+			%p
+				Zoomcar credits can be used at checkout to pay the booking fee. Your credits are kept in your Zoomcar Wallet. You earn credits when you return a car early, get a friend to join the Zoomcar community, and through promotions we run from time to time. Credits can only be used on the checkout page to pay the booking fee, they cannot be used to pay security deposit, damage charges, extension fees, etc.
+				
 			.f-b.zoom.size-16.m-b5 #{count+=1}) How long does it take to get refunded?
 			%p
 				We process refunds immediately, however it generally takes 4-5 business days for the money to reflect in your account. But depending upon your bank it may take upto 7 business days in very rare case.

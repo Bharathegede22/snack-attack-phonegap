@@ -10,9 +10,6 @@
 			%ul.dropdown-menu.pull-right
 				%li
 					%a{:href => "#{@sslhost}/bookings"} My Bookings
-				- if !false
-					%li
-						%a{:href => "#{@sslhost}/users/credits"} Credits History
 				%li
 					%a{:href => "#{@sslhost}/users/settings"}
 						Account Settings
@@ -22,8 +19,12 @@
 				%li
 					%a{:href => "javascript:void(0)", :onclick => "logOut('#{destroy_user_session_path}');"}
 						Logout
-	%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
-		We're Hiring
+	- if @city.link_name.downcase == 'bangalore' && Time.now > Date.new(2014,11,30).beginning_of_day
+		%a.hiring.fr.ts-3.f-b.pointer{href: "/deals", onclick: "pushEvent('Squirrel', 'Deals Tab - Header', '');"}
+			Deals
+	- else
+		%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
+			We're Hiring
 	.fc
 - else
 	- if current_user && current_user.unsafe_bookings.any?
@@ -44,8 +45,13 @@
 				%li
 					%a{:href => "javascript:void(0)", :onclick => "showModal('Sign In', '/users/forgot');"}
 						Forgot Password
-	%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
-		We're Hiring
+
+	- if @city.link_name.downcase == 'bangalore' && Time.now > Date.new(2014,11,30).beginning_of_day
+		%a.hiring.fr.ts-3.f-b.pointer{href: "/deals", onclick: "pushEvent('Squirrel', 'Deals Tab - Header', '');"}
+			Deals
+	- else
+		%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
+			We're Hiring
 	.fc
 - if user_signed_in? && !session[:social_signup].blank?
 	- if session[:social_signup] == 0

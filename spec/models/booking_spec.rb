@@ -74,7 +74,7 @@ end
 #  corporate_id             :integer
 #  city_id                  :integer
 #  pricing_mode             :string(2)
-#  medium                   :string(12)
+#  medium                   :string(20)
 #  shortened                :boolean          default(FALSE)
 #  total_fare               :integer
 #  deposit_status           :integer          default(0)

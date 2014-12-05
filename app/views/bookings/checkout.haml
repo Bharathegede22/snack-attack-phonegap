@@ -128,30 +128,11 @@
 						#CorporateDiv
 							= render :partial => 'corporate'
 				%table.position-r{width: '100%'}
-					%tr.bg-e
-						%td.p-10.p-l20.size-12
-							.fl.text-up
-								Tariff
-							- if h < 4
-								.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Minimum billing is 4 hours."}
-									[?]
-							.fl.p-l20
-								%a.pointer#applyPromoCode
-									Apply Promo Code
-							.fc
-						%td.p-10.t-r.p-r20.zoom-b.f-b.size-16
-							₹ #{show_currency fare[:total]}
-
-					%tr#promoCode{style: 'display: none'}
-						%td.p-5.p-l20.p-r20.size-12{'colspan' => '2'}
-							= render :partial => "promoab"
-
-					- if user && user.total_credits.to_i > 0
-						%tr
-							%td.p-5.p-l20.p-r20.size-12{'colspan' => '2'}
-								.bg-e.p-10.border-c.solid.r-5
-									= render :partial => "credits"
-
+					.bg-e.p-10.border-c.solid.r-5.available_credits_data
+						- if CommonHelper.offers_credits_live?
+							= render :partial => "promo_credits", :locals => {:fare => fare, :h => h, :user => user}
+						- else
+							= render :partial => "promo"
 					/ %tr
 					/ 	%td.p-5.p-l20.text-up.size-12
 					/ 		Discount
@@ -162,7 +143,7 @@
 						%tr
 							%td.p-10.p-l20.p-b10.text-up.size-12
 								Fuel, GPS, Insurance & Taxes
-							%td.p-10.t-r.p-r20.p-b10.zoom.f-b.size-16
+							%td.p-10.t-r.p-r25.p-b10.zoom.f-b.size-16
 								Free
 
 					/ %tr.bg-e
@@ -185,7 +166,7 @@
 									%a.pop{'href' => '#', 'tabindex' => '0', 'data-toggle' => "popover", 'data-trigger' => 'focus', 'data-placement' => "left", 'data-title' => "Don’t have multiple Security Deposits stuck in refund processes!", 'data-html' => "true", 'data-content' => "<div class='p-l5 m-b5'>• Use the same Deposit across multiple bookings through your Zoomcar Wallet.</div><div class='p-l5 m-b5'>• Refund the amount you want, when you want.</div><div class='p-l5'>• Add money to the Deposit amount in the Wallet if needed.</div><div class='m-t10'>Learn more <a href='/faq#faq-42' target='_blank'>here</a>.</div>"}
 										Can I Use One Security Deposit For Multiple Bookings?
 								.fc
-							%td.p-10.t-r.p-r20.lgrey.f-b.size-16.securityTotal
+							%td.p-10.t-r.p-r25.lgrey.f-b.size-16.securityTotal
 								#Deposit
 									₹ #{show_currency pricing.mode::SECURITY}
 						- unless @wallet_available==0
@@ -210,6 +191,8 @@
 											Pay this now
 										%span.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => @booking.deposit_help}
 											[?]
+									.fl.p-l20
+										#loaderdeposit.wait.bg-w.p-t20.fc
 								.fc
 							%td.p-10.t-r.p-r20.zoom-b.f-b.size-16
 								₹ #{show_currency(@booking.security_amount-@wallet_available)}
@@ -231,8 +214,13 @@
 								else
 									total = fare[:total]
 								end
-							#DepositFinal.DepositFinal
-								₹ #{show_currency(total + @booking.security_amount - @wallet_available)}
+							#DepositFinal
+								₹
+								%span#final_amount_to_pay 
+									#{show_currency(total + @booking.security_amount - @wallet_available)}
+					/ %tr.ribbon-after
+					/ 	%td{colspan: 2}
+					/ 		&nbsp;
 
 					%tr
 						%td.p-5.p-l20.p-t10.size-12
@@ -249,7 +237,7 @@
 								[?]
 							.fc
 						%td.p-5.p-b10.t-r.p-r20.zoom-b.f-b.size-16
-							₹ #{cargroup.excess_kms.to_i} / Km
+							₹ #{pricing.excess_kms.to_i} / Km
 
 					/ %tr.bg-6.white.bg-zoom.ribbon
 					/ 	%td.p-10.p-l30.text-up.size-16.f-b{style: 'width: 250px'}
@@ -267,7 +255,7 @@
 				- if @available == 1 && user && !user.is_blacklisted?
 					.t-c
 						.p-20{style: "width:400px;"}
-							%form{:action => "/#{@city.name.downcase}/bookings/docreate", :id => "CheckoutForm", :method => "post"}
+							%form{:action => "/#{@city.link_name.downcase}/bookings/docreate", :id => "CheckoutForm", :method => "post"}
 								.hide
 									%input{name: "starts", type: "hidden", value: session[:book][:starts]}
 									%input{name: "ends", type: "hidden", value: session[:book][:ends]}
@@ -341,6 +329,7 @@
 	})(document);
 
 	document.getElementById('corpSubmit').style.display = "none";
+	document.getElementById('loaderDeposit').style.display = "none";
 	function checkJquery() {
 		if (window.jQuery) {
 			pushEvent('1-click checkout', 'Checkout Page Load', '');
@@ -365,8 +354,65 @@
 					$(".DepositFinal").html("₹ #{show_currency(total)}");
 				}
 			});
+			
+			if (!($("#credits_block").length)) {
+					$("#applyPromoCode").css("display", "none");
+					$("#promo_without_credits").css("display", "block");
+					$('#applyPromoCode_withoutCredits').click(function(){
+					$('#promoCode').toggle();
+					$('#credits_block').toggle();
+					if ($.trim($(this).text()) === 'Apply Promo Code') {
+				        $(this).text('Hide Promo Code');
+				    } else {
+				        $(this).text('Apply Promo Code');
+				    }
+				});
+			}
+
+			$( document ).on( 'click', '.apply_promocode_btn', function (){
+				$("body").addClass("promoCodeClass");
+				$(".applyCodeText").css("display", "none");
+		
+			});
+			
+			$( document ).on( 'click', '.promoCodeCancelBtn', function (){
+				$("body").removeClass("promoCodeClass");
+				if ($(".creditUseClass").length) {
+				$(".applyCodeText").css("display", "none");
+			} else {
+				$(".applyCodeText").css("display", "block");
+			}
+			});
+
+			$( document ).on( 'click', '.use-credits-submit', function (){
+				$(".wrapper").addClass('creditUseClass');
+				$(".applyCodeText").css("display", "none");
+			
+			});
+
+			$( document ).on( 'click', '.cancelCreditsBtn', function (){
+				$(".wrapper").removeClass("creditUseClass");
+				if ($(".promoCodeClass").length) {
+				$(".applyCodeText").css("display", "none");
+			} else {
+				$(".applyCodeText").css("display", "block");
+			}
+			});
+
 			$('#applyPromoCode').click(function(){
 				$('#promoCode').toggle();
+				$('#credits_block').toggle();
+				if ($.trim($(this).text()) === 'Apply Promo Code or Use Credits') {
+			        $(this).text('Hide Promo Code and Credits Options');
+			    } else {
+			        $(this).text('Apply Promo Code or Use Credits');        
+			    }
+			});
+			$('#proceedToPayment').click(function(){
+				$('#proceedToPayment').hide();
+			});
+			$('#viewTariffDetails').click(function(){
+				$('#proceedToPayment').show();
 			});
 		} else {
 			window.setTimeout(checkJquery, 1000);
@@ -385,7 +431,7 @@
 				dep = 0;
 			}
 			$.ajax({
-				url: "/#{@city.name.downcase}/bookings/seamless_docreate",
+				url: "/#{@city.link_name.downcase}/bookings/seamless_docreate",
 				type: "POST",
 				dataType: "json",
 				data: {
@@ -439,7 +485,7 @@
 					else {
 						// $('#loader').hide();
 						alert('Something went wrong. Please check your Internet connection and try again.');
-						window.location = "/#{@city.name.downcase}";
+						window.location = "/#{@city.link_name.downcase}";
 					}
 				}
 			});
@@ -450,6 +496,9 @@
 		window.location = "/bookings";
 	}
 	function updateDeposit(dep) {
+		$("#make_payment_debit").prop('disabled', true);
+		$("#make_payment_credit").prop('disabled', true);
+		$("#changeDeposit").prop('disabled', true);
 		$.post( "/bookings/seamless_update_payment", { deposit: dep, id: details.order_id }, 
 			function(data, status){
 				if(status=="success"){
@@ -457,8 +506,11 @@
 					if(response.status == "success") {
 						$('#hash').val(response.hash);
 						$('#amount').val(response.amt);
+						$("#changeDeposit").prop('disabled', false);
+						$("#make_payment_debit").prop('disabled', false);
+						$("#make_payment_credit").prop('disabled', false);
 					}
 				}
 			});
 	}
-	checkJquery();	
+	checkJquery();
