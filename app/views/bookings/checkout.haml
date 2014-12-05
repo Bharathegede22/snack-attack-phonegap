@@ -129,10 +129,7 @@
 							= render :partial => 'corporate'
 				%table.position-r{width: '100%'}
 					.bg-e.p-10.border-c.solid.r-5.available_credits_data
-						- if CommonHelper.offers_credits_live?
-							= render :partial => "promo_credits", :locals => {:fare => fare, :h => h, :user => user}
-						- else
-							= render :partial => "promo"
+						= render :partial => "promo_credits", :locals => {:fare => fare, :h => h, :user => user}
 					/ %tr
 					/ 	%td.p-5.p-l20.text-up.size-12
 					/ 		Discount
