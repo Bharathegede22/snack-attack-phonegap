@@ -1,5 +1,6 @@
 :ruby
-	@booking = Booking.last
+	# @booking = Booking.last
+	# @payment = Payment.last
 	if !Rails.env.production?
 		@booking.user_email = PAYU_EMAIL
 		@booking.user_mobile = PAYU_PHONE
@@ -9,16 +10,16 @@
 %form{:action => "#{PAYU_URL}", :id => 'pgForm', :method => "post"}
 	.hidden_field_tag
 		= hidden_field_tag :key, PAYU_KEY
-		= hidden_field_tag :txnid, '', class: 'order_id'
-		= hidden_field_tag :amount, '', class: 'amount'
-		= hidden_field_tag :productinfo, '', class: 'description'
-		= hidden_field_tag :firstname, '', class: 'firstname'
-		= hidden_field_tag :email, '', class: 'customer_email'
-		= hidden_field_tag :phone, '', class: 'customer_phone'
+		= hidden_field_tag :txnid, "#{@payment.encoded_id}", class: 'order_id'
+		= hidden_field_tag :amount, "#{@payment.amount.to_i}", class: 'amount'
+		= hidden_field_tag :productinfo, "#{@booking.cargroup.display_name}", class: 'description'
+		= hidden_field_tag :firstname, "#{@booking.user.name}", class: 'firstname'
+		= hidden_field_tag :email, "#{@booking.user.email}", class: 'customer_email'
+		= hidden_field_tag :phone, "#{@booking.user_mobile}", class: 'customer_phone'
 		= hidden_field_tag :surl, ("http://" + HOSTNAME + "/bookings/pgresponse")
 		= hidden_field_tag :curl, ("http://" + HOSTNAME + "/bookings/pgresponse")
 		= hidden_field_tag :furl, ("http://" + HOSTNAME + "/bookings/pgresponse")
-		= hidden_field_tag :hash, '', class: 'hash'
+		= hidden_field_tag :hash, "#{@hash}", class: 'hash'
 		= hidden_field_tag :api_version , '1'
 		= hidden_field_tag :pg, 'NB', class: 'pgnb'
 		.fl

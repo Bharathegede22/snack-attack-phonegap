@@ -5,7 +5,7 @@
 	end
 %b.size-24 Please wait while we process your request
 %br
-Please dont refresh this page or use back button
+Please do not refresh this page or use back button
 %br/
 %br/
 %img{:src => "http://#{HOSTNAME}/images/loader.gif", :alt => '', :border => '0'}
@@ -17,9 +17,7 @@ Please dont refresh this page or use back button
 
 :javascript
 	function checkJquery() {
-		alert("#{@newflow}");
 		if (window.jQuery) {
-			alert("#{@newflow} with jquery");
 			if ("#{@newflow}" == "true") {
 				$.ajax({
 					url: "/#{@city.link_name}/bookings/createorder",
@@ -33,17 +31,14 @@ Please dont refresh this page or use back button
 						if(response=="success") {
 							var data = JSON.parse(JSON.stringify(data));
 							if(data.status == 'success') {
-								// alert('success!');
-								// window.location = "/#{@city.link_name}/bookings/payment_options";
+								window.location = "/#{@city.link_name}/bookings/payment_options?bid=#{@booking.encoded_id}&pid=#{@payment.encoded_id}";
 							}
 							else {//if(data.status == 'pg error')
-							// alert("fail200\n" + response);
 								window.location = "/bookings/#{@booking.encoded_id}";
 							}
 						}
 					},
 					error: function(data, response) {
-						// alert("fail\n" + response);
 						window.location = "/bookings/#{@booking.encoded_id}";
 					}
 				});

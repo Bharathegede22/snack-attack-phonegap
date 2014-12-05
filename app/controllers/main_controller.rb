@@ -347,8 +347,4 @@ class MainController < ApplicationController
 		render '/main/mobile_redirect', layout: false
 	end
 
-	def new_payment
-		render 'bookings/pg/new_payment', layout: 'plain'
-	end
-
 end

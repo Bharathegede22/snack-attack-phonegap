@@ -198,7 +198,7 @@ class Payment < ActiveRecord::Base
 				payment = Payment.find(id)
 				if payment
 					booking = payment.booking
-					booking.user_email = PAYU_EMAIL if !Rails.env.production?
+					# booking.user_email = PAYU_EMAIL if !Rails.env.production?
 					response = Juspay.check_status(params['order_id'])
 					if response['amount'] == payment.amount.to_i && params['status'].downcase == response['status'].downcase && response['customer_email'] == booking.user.email && response['customer_id'] == booking.user.encoded_id
 						payment.update_status_juspay(response)

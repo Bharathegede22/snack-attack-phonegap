@@ -6,12 +6,12 @@
 				%h4.white.size-15.m-t0.m-b0.p-t15.p-b15.fo-helv 
 					%span.f-n 
 						Amount: 
-					Rs 5000.00
+					Rs #{@payment.amount.to_i}
 			.payment-tranction-id.fr
 				%h4.white.size-15.m-t0.m-b0.p-t15.p-b15.fo-helv
 					%span.f-n 
 						Transaction ID:
-					ljlbwah1c
+					#{@payment.encoded_id}
 		.payment-method-banner.p-15
 			%b.size-13 Choose a payment method
 		.payment-options
@@ -23,3 +23,15 @@
 			.fr
 				%div.f-n.grey.m-t15
 					We do not store your card details.
+
+:javascript
+	function checkJquery() {
+		if (window.jQuery) {
+			$.getScript("https://api.juspay.in/pay.js", function(){
+				//loading Juspay js file
+			});
+		} else {
+			window.setTimeout(checkJquery, 1000);
+		}
+	}
+	checkJquery();

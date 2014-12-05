@@ -69,20 +69,13 @@ class BookingsController < ApplicationController
 	  else
 	  	return
 	  end
-  	if !Rails.env.production?
-			@booking.user_email = PAYU_EMAIL
-			@booking.user_mobile = PAYU_PHONE
-		end
 		# Creating order on juspay
-		data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user_email, customer_mobile: @booking.user_mobile, return_url: "http://#{HOSTNAME}/bookings/pgresponse" }
+		data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user.email, customer_phone: @booking.user_mobile, return_url: "http://#{HOSTNAME}/bookings/pgresponse" }
 		response = Juspay.create_order(data)
 
 		if response['status'].downcase == 'created' || response['status'].downcase == 'new'
 			render :json => {status: 'success'}
-			# hash = PAYU_KEY + "|" + @payment.encoded_id + "|" + @payment.amount.to_i.to_s + "|" + @booking.cargroup.display_name + "|" + @booking.user_name.strip + "|" + @booking.user_email + "|||||||||||" + PAYU_SALT
-			# render :json => {:response => response['status'].downcase, :amt => @payment.amount.to_i, :order_id => @payment.encoded_id, :name => @booking.user_name, :email => @booking.user_email, :phone => @booking.user_mobile, :desc => @booking.cargroup.display_name, :product_id => @booking.cargroup.brand_id, :cust_id => @booking.user.encoded_id, :hash => Digest::SHA512.hexdigest(hash)}
 		elsif response['status'].downcase == 'error'
-			
 			flash[:error] = "Something went wrong. Please try again."
 			render :json => {:response => 'pg error'}
 		end
@@ -432,7 +425,20 @@ class BookingsController < ApplicationController
 	end
 	
 	def payment_options
-		render partial: '/bookings/pg/payment_options', layout: 'plain'
+		bstr, bid = CommonHelper.decode(params[:bid])
+		pstr, pid = CommonHelper.decode(params[:pid])
+		# TODO handle case when booking/payment ID is invalid
+		if bstr == 'booking' && pstr == 'payment'
+			@booking = Booking.find(bid)
+			@payment = Payment.find(pid)
+			if !Rails.env.production?
+				@booking.user_email = PAYU_EMAIL
+				@booking.user_mobile = PAYU_PHONE
+			end
+			hash = PAYU_KEY + "|" + @payment.encoded_id + "|" + @payment.amount.to_i.to_s + "|" + @booking.cargroup.display_name + "|" + @booking.user.name.strip + "|" + @booking.user.email + "|||||||||||" + PAYU_SALT
+			@hash = Digest::SHA512.hexdigest(hash)
+			render '/bookings/pg/new_payment', layout: 'plain'
+		end
 	end
 
 	def payments
