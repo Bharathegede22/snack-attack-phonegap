@@ -9,6 +9,7 @@
  //variables
 /*==============================*/
 $black: #323a45;
+$blue: #00AEEF;
 $white: #fff;
 $green: #6ABD19;
 $grey: #C5C5C5;
@@ -389,4 +390,108 @@ $border-grey3px: 3px #ccc solid;
 }
 .duration-hrs{
 	padding: 13.5px 0;
+}
+/***********************************New-payment-page*******************************/
+.payment-wrapper{
+	width: 713px;
+	margin-left: auto;
+	margin-right: auto;
+}
+.payment-order-summary{
+	background: $green;
+	display: inline-block;
+	width: 100%;
+}
+.payment-method-banner{
+	border: 1px #ccc solid;
+	margin-top: -3px;
+}
+.payment-options {
+	border: 1px #ccc solid;
+	margin-top: -1px;
+}
+.payment-tab{
+	min-height: 367px;
+	background: #F9F9F9;
+}
+
+#payment-partial {
+	background: #F2F2F2;
+}
+#payment-tabs a {
+	font-size: 13px;
+	font-weight: normal;
+	color: #323A45;
+	text-decoration: none;
+	width: 150px;
+	text-align: left;
+	padding: 15px;
+	background: #F2F2F2;
+	border-bottom: 1px solid #D8D8D8;
+	border-right: 1px solid #D8D8D8;
+}
+#payment-tabs a:hover {
+	background: #EAEBEC;
+}
+#payment-tabs a.active {
+	background: #FFF;
+	border-right: none;
+	border-left: 2px #666 solid;
+	font-weight: bold;
+
+}
+#payment-body {
+	background: #FFF;
+	padding: 10px 30px;
+	//width: 340px;
+	margin-left: 2em;
+}
+
+.credit-card-number, .credit-card-name {
+	width: 100%;
+}
+.card-number-bg {
+	background: #FFF url(<%= asset_path 'all-cards.png' %>) no-repeat 98% 50%;
+}
+.credit-card-month { width: 50px; }
+.credit-card-year { width: 70px; }
+
+.credit-card-cvv {
+	width: 50px;
+}
+.amex {
+	background: url(<%= asset_path 'amex.png' %>) no-repeat 98% 50%;
+}
+.dinersclub {
+	background: url(<%= asset_path 'dinersclub.png' %>) no-repeat 98% 50%;
+}
+.maestro {
+	background: url(<%= asset_path 'maestro.png' %>) no-repeat 98% 50%;
+}
+.mastercard {
+	background: url(<%= asset_path 'mastercard.png' %>) no-repeat 98% 50%;
+}
+.visa {
+	background: url(<%= asset_path 'visa.png' %>) no-repeat 98% 50%;
+}
+.generic {
+	background: url(<%= asset_path 'generic.png' %>) no-repeat 98% 50%;
+}
+.credit-card-error {
+	border: 2px solid #dd0000;
+}
+.debit-card-info {
+	background-color:transparent;
+	color:#000000;
+	outline:0;
+}
+.note-msg{
+	margin: 2.5em 0px;
+	p{
+		//font-weight: bold;
+	}
+	span{
+		color: $blue;
+		font-weight: bold;
+	}
 }
