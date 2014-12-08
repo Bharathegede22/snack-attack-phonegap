@@ -339,7 +339,6 @@
 				= form_tag("/bookings/#{@booking.encoded_id}/dodeposit", method: :get) do
 					=hidden_field_tag 'checkoutDeposit', "1"
 					%input#PayNowButton.button.m-auto{style: "width:200px;", type: "submit", value: "Proceed to Payment"}
-					/ , onclick: "showModal('Make Payment', '/bookings/pg/payment_options');", :data => { :checkoutDeposit => "document.getElementById('checkoutDeposit').value;" }}
 		.fc
 
 :javascript

@@ -70,7 +70,7 @@ class BookingsController < ApplicationController
 	  	return
 	  end
 		# Creating order on juspay
-		data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user.email, customer_phone: @booking.user_mobile, return_url: "http://#{HOSTNAME}/bookings/pgresponse" }
+		data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user.email, customer_phone: @booking.user.mobile, return_url: "http://#{HOSTNAME}/bookings/pgresponse" }
 		response = Juspay.create_order(data)
 
 		if response['status'].downcase == 'created' || response['status'].downcase == 'new'
@@ -312,7 +312,9 @@ class BookingsController < ApplicationController
 	end
 	
 	def dodeposit
-		@booking.update_column(:defer_deposit, false) if params[:checkoutDeposit]=="1"
+		defer_deposit = params[:checkoutDeposit] != "1"
+		@booking.update_column(:defer_deposit, defer_deposit)
+		# @booking.update_column(:defer_deposit, false) if params[:checkoutDeposit]=="1"
 		if !@booking.defer_allowed?
 			@booking.add_security_deposit_charge
 			#amount = @booking.user.wallet_available_on_time(@booking.starts - CommonHelper::WALLET_FREEZE_START.hours,@booking) 
@@ -425,6 +427,7 @@ class BookingsController < ApplicationController
 	end
 	
 	def payment_options
+		redirect_to '/' and return if params[:pid].blank? || params[:bid].blank?
 		bstr, bid = CommonHelper.decode(params[:bid])
 		pstr, pid = CommonHelper.decode(params[:pid])
 		# TODO handle case when booking/payment ID is invalid
