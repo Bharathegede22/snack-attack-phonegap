@@ -73,7 +73,7 @@
 											= (@booking.starts - CommonHelper::ALLOTMENT.minutes).strftime("%d %b, %Y %I:%M %p")
 							- else
 								\-
-			- if @booking.status == 5 && !@booking.end_km.nil? && @booking.end_km > 0
+			- if @booking.status == 5 && @booking.end_km.present? && @booking.end_km.to_i > 0
 				%div.travelled-distance
 					%div.dist-icon
 						= image_tag("milestone-icon.png")
