@@ -49,7 +49,7 @@
 			%p.t-c
 				%span{:style => "display:block;margin-top:10px;"}
 					or Go back to
-					%a{:href => "/bookings/failed?id=#{@booking.encoded_id}"}
+					%a{:href => "/bookings/#{@booking.encoded_id}"}
 						www.zoomcar.com                                                                  
 	#payment-2.tab-pane.fade
 		%form{:id => 'dcForm', class: 'juspay-inline-form-debit'}
@@ -92,7 +92,7 @@
 			%p.t-c
 				%span{:style => "display:block;margin-top:10px;"}
 					or Go back to
-					%a{:href => "cancel?mihpayid=4f84ac24317c6cc904a2f79297a3996eff59bdfe30c43ac8bf4a9231f71d66fc&amp;status=cancel"}
+					%a{:href => "/bookings/#{@booking.encoded_id}"}
 						www.zoomcar.com
 	#payment-3.tab-pane.fade
 	/ #payment-4.tab-pane.fade

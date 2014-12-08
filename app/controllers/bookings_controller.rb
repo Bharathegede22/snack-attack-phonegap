@@ -261,7 +261,7 @@ class BookingsController < ApplicationController
 				session[:booking_id] = nil
 		  	redirect_to "/bookings/#{@booking.encoded_id}"
 			elsif @booking.outstanding_with_security > 0
-				redirect_to payment_bookings_path(@city.link_name.downcase)
+				redirect_to payment_bookings_path(@city.link_name.downcase, id: @booking.encoded_id)
 			else
 				u = @booking.user
 				if u.check_license
@@ -326,7 +326,7 @@ class BookingsController < ApplicationController
   
 	def dopayment
 		session[:booking_id] = @booking.encoded_id
-		redirect_to payment_bookings_path(@city.link_name.downcase)
+		redirect_to payment_bookings_path(@city.link_name.downcase, id: @booking.encoded_id)
 	end
 	
 	def failed
@@ -418,7 +418,7 @@ class BookingsController < ApplicationController
 	def payment
 		@payment = @booking.check_payment
 		if @payment
-			@newflow = true ? true : false # abtest
+			@newflow = abtest? ? true : false # abtest
 			render :layout => 'plain'
 		else
 			flash[:notice] = "Booking is already paid for full, no need for a new transaction."
