@@ -360,6 +360,7 @@ class Payment < ActiveRecord::Base
 						b.add_security_deposit_charge
 					end
 					if !b.defer_payment_allowed? && b.wallet_security_payment.nil?
+						b.user.calculate_wallet_total_amount
 						b.update_column(:insufficient_deposit, false)
 						b.make_payment_from_wallet
 					end

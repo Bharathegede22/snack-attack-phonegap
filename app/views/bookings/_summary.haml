@@ -16,9 +16,9 @@
 	- total_charge = 0
 	- @booking.charges.each do |charge|
 		%tr
-			-if !['early_return_charge','early_return_refund'].include? charge.activity
+			-unless charge.early_return?
 				- total_charge += charge.refund==0 ? charge.amount : -charge.amount
-				-if !['security_deposit'].include? charge.activity
+				-unless charge.security?
 					%td
 						= charge.activity.titleize
 					%td.t-r
