@@ -593,7 +593,7 @@ class BookingsController < ApplicationController
 						end
 						flash[:notice] = "Your booking successfully <b>" + @string.downcase.gsub('ing', 'ed') + "</b> by " + tmp.chomp(', ')
 						@booking.update_column(:defer_deposit, false) if !params[:deposit].blank? && params[:deposit].to_i == 1
-						if CommonHelper.offers_credits_live? && @booking.offer_id.present? && @booking.promo.present?
+						if CommonHelper.offers_credits_live?(@booking.created_at) && @booking.offer_id.present? && @booking.promo.present?
 							reschedule_params = update_reschedule_params(params, @booking)
 							response = make_promo_api_call(reschedule_params)
 							promo = response["promo"]
@@ -615,7 +615,7 @@ class BookingsController < ApplicationController
 						flash[:error] = "Sorry, but the car is no longer available"
 					else
 						@confirm = true
-						if CommonHelper.offers_credits_live? && @booking.offer_id.present? && @booking.promo.present?
+						if CommonHelper.offers_credits_live?(@booking.created_at) && @booking.offer_id.present? && @booking.promo.present?
 							reschedule_params = update_reschedule_params(params, @booking)
 							response = make_promo_api_call(reschedule_params)
 							update_sessions(response)
