@@ -149,17 +149,18 @@
 			Fare Breakdown
 		- total_charge = 0
 		- @booking.charges.each do |charge|
-			- total_charge += charge.refund==0 ? charge.amount : -charge.amount
-			-if !['security_deposit','early_return_charge','early_return_refund'].include? charge.activity
-				.fl.p-10.p-l20.size-12
-					.text-up
-						= charge.activity.titleize
-						- if charge.activity== 'booking_fee' && @booking.ends-@booking.starts < 4.hours
-							%span.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Minimum billing is 4 hours."}
-								[?]
-				.fr.p-10.t-r.p-r20.grey.f-b.size-16
-					#{charge.refund==0 ? '' : '-'}₹ #{show_currency charge.amount}
-				.fc
+			- unless charge.early_return?
+				- total_charge += charge.refund==0 ? charge.amount : -charge.amount
+				- unless charge.security?
+					.fl.p-10.p-l20.size-12
+						.text-up
+							= charge.activity.titleize
+							- if charge.activity== 'booking_fee' && @booking.ends-@booking.starts < 4.hours
+								%span.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Minimum billing is 4 hours."}
+									[?]
+					.fr.p-10.t-r.p-r20.grey.f-b.size-16
+						#{charge.refund==0 ? '' : '-'}₹ #{show_currency charge.amount}
+					.fc
 		.fl.p-10.p-l20.size-12
 			.text-up
 				Refundable Deposit
