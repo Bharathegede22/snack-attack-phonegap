@@ -1008,7 +1008,7 @@ class BookingsController < ApplicationController
 	# Author::Aniket
 	# Date:: 22/11/2014
 	def check_booking_obj
-		if session[:book][:id].present?
+		if session[:book].present? && session[:book][:id].present?
 			b = Booking.find_by(id: CommonHelper.decode(session[:book][:id]))
 			if b.starts == Time.zone.parse(session[:book][:starts]) && b.ends == Time.zone.parse(session[:book][:ends]) && b.location_id == session[:book][:loc].to_i && b.cargroup_id == session[:book][:car].to_i
 				# @booking = Booking.new
