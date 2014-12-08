@@ -6,5 +6,7 @@
 	.bs-zoom.r-10{:style => "background:#eeeeee; padding:50px 0; width:600px; margin:auto; line-height:30px;"}
 		- if @newflow
 			= render :partial => '/bookings/pg/create_payment'
+			:javascript
+				pushEvent('1-click checkout-A', 'Redirect Page Load', '');
 		- else
 			= render :partial => '/bookings/pg/payu'

@@ -427,7 +427,6 @@
 
 - if survey
 	:javascript
-		pushEvent('1-click checkout', 'Booking Failed', '');
 		var _kiq = _kiq || [];
 		(function(){
 			setTimeout(function(){
@@ -436,3 +435,7 @@
 			}, 1);
 		})();
 		_kiq.push(['identify', "#{@booking.encoded_id}"]);
+	
+	- if abtest?
+		:javascript
+			_gaq.push(['_trackEvent', "1-click checkout-A", "Booking Failed", ""]);
