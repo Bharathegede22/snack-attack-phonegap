@@ -49,7 +49,7 @@
 
 			.fc
 
-		.border-b-c
+		.border-b-c.position-r
 			.p-t5.p-b5.p-l20.p-r20.size-16
 				.inline-block.colored
 					.m-auto{:class => 'car' + @booking.cargroup_id.to_s}
@@ -73,6 +73,16 @@
 											= (@booking.starts - CommonHelper::ALLOTMENT.minutes).strftime("%d %b, %Y %I:%M %p")
 							- else
 								\-
+			- if @booking.status == 5 && !@booking.end_km.nil? && @booking.end_km > 0
+				%div.travelled-distance
+					%div.dist-icon
+						= image_tag("milestone-icon.png")
+					%div.dist-info
+						%div.info-value
+							#{@booking.end_km} kms
+						%div.info-text
+							Travelled		
+
 
 		.border-b-c
 			.p-t10.p-b10.p-l20.p-r20
