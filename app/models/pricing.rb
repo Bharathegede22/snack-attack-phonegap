@@ -13,14 +13,30 @@ class Pricing < ActiveRecord::Base
 		end
 	end
 	
+	def hourly_normal
+		return self.hourly_fare
+	end
+
 	def daily_discounted
 		if self.daily_discounted_fare.blank?
-			return (self.daily_fare*(100 - self.mode::WEEKDAY_DISCOUNT)/100.0).to_i
+			if ['v1','v2'].include?(self.version)
+				return (self.daily_fare*(100 - self.mode::WEEKDAY_DISCOUNT)/100.0).to_i
+			else
+				return (self.hourly_discounted_fare*24).to_i
+			end
 		else
 			return self.daily_discounted_fare
 		end
 	end
 	
+	def daily_normal
+		if self.daily_fare.blank?
+			return (self.hourly_normal*24).to_i
+		else
+			return self.daily_fare
+		end
+	end
+
 	def mode
 		return "Pricing#{self.version}".constantize
 	end

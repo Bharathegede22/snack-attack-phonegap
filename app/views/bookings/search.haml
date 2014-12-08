@@ -112,7 +112,7 @@
 				map.fitBounds(bounds);
 				google.maps.event.addListenerOnce(map, 'idle', function() {
 					google.maps.event.addListenerOnce(map, 'click', function() {
-						pushEvent('Maps','' , 'Search Page');
+						pushEvent('Maps','First Click', 'Search Page');
 					});
 				});
 			}

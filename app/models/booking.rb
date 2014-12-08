@@ -13,8 +13,9 @@ class Booking < ActiveRecord::Base
 	has_many	:payments, :inverse_of => :booking, dependent: :destroy
 	has_many	:refunds, :inverse_of => :booking, dependent: :destroy
 	has_many	:confirmed_payments, -> { where "status = 1 and through != 'wallet_widget'" }, class_name: "Payment"
+  has_many	:confirmed_credit_payments, -> { where("status = 1 AND through = 'credits'") }, class_name: "Payment"
 	has_many	:confirmed_refunds, -> { where "status = 1 and through != 'wallet_widget'" }, class_name: "Refund"
-	has_many 	:credit, :as => :creditable , dependent: :destroy
+  has_many 	:credits, :as => :creditable, dependent: :destroy
 	has_many	:utilizations, -> {where "minutes > 0"}, dependent: :destroy
     has_many  :activities
 	
@@ -149,13 +150,13 @@ class Booking < ActiveRecord::Base
 			end
 
 			# Creating order on juspay
-			data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user_email, customer_mobile: @booking.user_mobile, return_url: "http://#{HOSTNAME}/bookings/pgresponse" }			
+			data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user.email, customer_mobile: @booking.user.phone, return_url: "http://#{HOSTNAME}/bookings/pgresponse", udf1: "web", udf2: "desktop" }
 			response = Juspay.create_order(data)
 
-			hash = PAYU_KEY + "|" + @payment.encoded_id + "|" + @payment.amount.to_i.to_s + "|" + @booking.cargroup.display_name + "|" + @booking.user_name.strip + "|" + @booking.user_email + "|||||||||||" + PAYU_SALT
+			hash = PAYU_KEY + "|" + @payment.encoded_id + "|" + @payment.amount.to_i.to_s + "|" + @booking.cargroup.display_name + "|" + @booking.user.name.strip + "|" + @booking.user.email + "|||||||||||" + PAYU_SALT
 			
 			if(!response.nil? && response['status'].downcase=='created')
-				json_resp = {:status => 'success', :amt => @payment.amount.to_i, :order_id => @payment.encoded_id, :name => @booking.user_name, :email => @booking.user_email, :phone => @booking.user_mobile, :desc => @booking.cargroup.display_name, :product_id => @booking.cargroup.brand_id, :cust_id => @booking.user.encoded_id, :hash => Digest::SHA512.hexdigest(hash)}
+				json_resp = {:status => 'success', :amt => @payment.amount.to_i, :order_id => @payment.encoded_id, :name => @booking.user.name, :email => @booking.user.email, :phone => @booking.user.phone, :desc => @booking.cargroup.display_name, :product_id => @booking.cargroup.brand_id, :cust_id => @booking.user.encoded_id, :hash => Digest::SHA512.hexdigest(hash)}
 			else
 				json_resp = {:status=>'error'}
 			end
@@ -187,7 +188,7 @@ class Booking < ActiveRecord::Base
   end
 
   def defer_payment_allowed?
-    self.starts > (Time.now + CommonHelper::JIT_DEPOSIT_ALLOW.hours + 30.minutes)
+    (self.starts > (Time.now + CommonHelper::JIT_DEPOSIT_ALLOW.hours + 30.minutes) && !(self.promo.present? && self.promo.include?('SQUIRREL'))) 
   end
 	
 	def deposit_help
@@ -214,7 +215,8 @@ class Booking < ActiveRecord::Base
 			note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs."
 			note += data[:refund].to_s + " - Cancellation Refund.<br/>"
 			self.notes += note
-		end
+    end
+
 		if data[:penalty] > 0
 			data[:penalty] = [self.pricing.mode::CHARGE_CAP, data[:penalty]].min #WEB-181 cap cancellation charge to 2500
 			charge = Charge.where(["booking_id = ? AND activity = 'cancellation_charge'", self.id]).first
@@ -444,6 +446,25 @@ class Booking < ActiveRecord::Base
 		return "Pricing#{self.pricing.version}".constantize.check(self)
 	end
 	
+	def flash_discount(deal)
+		charge = Charge.new(booking_id: self.id, activity: 'deal_discount')
+		charge.refund = 1
+		discount = self.outstanding*deal.discount/100
+		charge.discount = discount
+		charge.amount = discount
+		if charge.save
+			deal.booking_id = self.id
+			deal.logged_at = Time.now
+			deal.save!
+			# deal.update_column(:booking_id, self.id)
+			note = "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs."
+			note += discount.to_s + " - Deal Discount.<br/>"
+			self.notes += note
+			self.save(validate: false)
+		end
+	end
+
+
 	def hold_security?
 		self.hold == true
     end
@@ -666,7 +687,76 @@ class Booking < ActiveRecord::Base
 	
 	def wallet_security_payment
 		payments.where(through: 'wallet', :status=>1).first
+  end
+
+  def credits_used
+    self.confirmed_credit_payments.collect(&:amount).sum.to_i
+  end
+
+  # Returns credit amount applied for booking
+  # Author:: Rohit
+  # Date:: 27/10/2014
+  # 
+  # Expects
+  # * <b>user_credits<b> total user credits
+  #   <b>discount_applied<b> Amount of discount alrearedy applied
+  # 
+  # Returns
+  # :err => 'Insufficient credits, please try again!'
+  #
+  def apply_credits(user_credits, discount_applied=0)
+  	return {:err => 'Insufficient credits, please try again!'} if user_credits.to_i <= 0
+  	fare = self.get_fare
+  	credits_applicable = fare[:total]
+  	credits_applicable -= discount_applied
+  	credits_applicable = user_credits if user_credits.to_i < credits_applicable
+  	{:credits => credits_applicable}
+  end
+
+  # Removes credit from the booking
+  # Author:: Rohit
+  # Date:: 24/11/2014
+  # 
+	def revert_credits
+		credit_payments = self.confirmed_credit_payments
+		revert_amount = credit_payments.collect(&:amount).sum
+		return unles revert_amount > 0 
+		#remove the negative credits created for booking.
+		self.allot_credits(amount: revert_amount, source_name: Credit::SOURCE_NAME_INVERT['Checkout Refresh']) if revert_amount > 0
+		#clear the credits payment created for booking.
+		credit_payments.each do |payment|
+			payment.update_attributes!(amount: 0)
+		end
 	end
+
+	# Removes credit from the booking
+  # Author:: Natasha
+  # Date:: 24/11/2014
+  # 
+	def revert_promo
+		if self.offer_id.present?
+			# Make charge charge inactive
+			Charge.where(:booking_id => self.id, :activity => "discount").update_all(:amount => 0)
+			# if a Promo then -> Remove the associaton with booking
+			self.promo = nil if self.promo.present?
+			self.offer_id = nil if self.offer_id.present?
+			# if a Coupon Code -> revert userd status and disassociate booking
+			CouponCode.where(:booking_id => self.id).update_all(:used => 0, :used_at => nil, :booking_id => nil)
+			self.save
+		end
+	end
+
+  # Allots credit to user
+  # Author:: Rohit
+  # Date:: 3/11/2014 
+  #
+  # Expects
+  # * <b>args[:amount]<b> amount for credits
+  # * <b>args[:source_name]<b> Source name for credits
+  #
+  def allot_credits(args)
+    self.credits.create(user_id: self.user_id, amount: args[:amount].to_i, booking_key: self.confirmation_key, action: true, status: true, source_name: args[:source_name])
+  end
 
 	def sendsms(action, amount,deposit = 0)
 		message =  case action 
@@ -694,8 +784,8 @@ class Booking < ActiveRecord::Base
 			end
 		end
 		message << "#{self.city.contact_phone} : Zoomcar Support." if action != 'cancel'
-		#SmsSender.perform_async(self.user_mobile, message, self.id) if Rails.env.production?
-		SmsTask::message_exotel(self.user_mobile, message, self.id)
+		#SmsSender.perform_async(self.user.phone, message, self.id) if Rails.env.production?
+		SmsTask::message_exotel(self.user.phone, message, self.id)
 	end
 	
 	def set_fare
@@ -833,6 +923,20 @@ class Booking < ActiveRecord::Base
 		return total.to_i
 	end
 	
+	def total_discount
+		total = 0
+		self.charges.each do |c|
+			if c.activity.include?('discount')
+				if c.refund > 0
+					total += c.amount
+				else
+					total -= c.amount
+				end
+			end
+		end
+		return total.to_i
+	end
+
 	def total_payments
 		total = 0
 		self.confirmed_payments.each do |p|

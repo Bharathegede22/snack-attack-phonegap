@@ -1,10 +1,10 @@
-/old checkout page - redirection to PayU for making payment
-/Used for A/B test with checkout.haml
+/	old checkout page - redirection to PayU for making payment
 
 :ruby
 	if !@booking.blank?
 		cargroup = @booking.cargroup
 		location = @booking.location
+		deal = @booking.promo.present? && @booking.promo.include?('SQUIRREL') ? 'SQUIRREL' : ''
 	else
 		cargroup = Cargroup.random(@city)
 		location = Location.random(@city)
@@ -18,6 +18,7 @@
 	end
 	fare = @booking.get_fare
 	pricing = @booking.pricing
+	discnt = deal.present? ? fare[:total].to_i*@discount/100 : 0
 	tmp = ''
 	h = (@booking.ends.to_i - @booking.starts.to_i)/3600
 	h += 1 if (@booking.ends.to_i - @booking.starts.to_i) > h*3600
@@ -52,7 +53,8 @@
 					.fl
 						Booking Summary
 					.fr
-						.glyphicon.glyphicon-pencil.pointer.help{onclick: "showSearch();", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Change your booking"}
+						- if deal != 'SQUIRREL'
+							.glyphicon.glyphicon-pencil.pointer.help{onclick: "showSearch();", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Change your booking"}
 					.fc
 
 				.summary-cell.fl.border-r-c
@@ -128,29 +130,8 @@
 						#CorporateDiv
 							= render :partial => 'corporate'
 				%table.position-r{width: '100%'}
-					%tr.bg-e
-						%td.p-10.p-l20.size-12
-							.fl.text-up
-								Tariff
-							- if h < 4
-								.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Minimum billing is 4 hours."}
-									[?]
-							.fl.p-l20
-								%a.pointer#applyPromoCode
-									Apply Promo Code
-							.fc
-						%td.p-10.t-r.p-r20.zoom-b.f-b.size-16
-							₹ #{show_currency fare[:total]}
-
-					%tr#promoCode{style: 'display: none'}
-						%td.p-5.p-l20.p-r20.size-12{'colspan' => '2'}
-							= render :partial => "promoab"
-
-					- if user && user.total_credits.to_i > 0
-						%tr
-							%td.p-5.p-l20.p-r20.size-12{'colspan' => '2'}
-								.bg-e.p-10.border-c.solid.r-5
-									= render :partial => "credits"
+					.bg-e.p-10.border-c.solid.r-5.available_credits_data
+						= render :partial => "promo_credits", :locals => {:fare => fare, :h => h, :user => user}
 
 					/ %tr
 					/ 	%td.p-5.p-l20.text-up.size-12
@@ -162,7 +143,7 @@
 						%tr
 							%td.p-10.p-l20.p-b10.text-up.size-12
 								Fuel, GPS, Insurance & Taxes
-							%td.p-10.t-r.p-r20.p-b10.zoom.f-b.size-16
+							%td.p-10.t-r.p-r25.p-b10.zoom.f-b.size-16
 								Free
 
 					/ %tr.bg-e
@@ -185,7 +166,7 @@
 									%a.pop{'href' => '#', 'tabindex' => '0', 'data-toggle' => "popover", 'data-trigger' => 'focus', 'data-placement' => "left", 'data-title' => "Don’t have multiple Security Deposits stuck in refund processes!", 'data-html' => "true", 'data-content' => "<div class='p-l5 m-b5'>• Use the same Deposit across multiple bookings through your Zoomcar Wallet.</div><div class='p-l5 m-b5'>• Refund the amount you want, when you want.</div><div class='p-l5'>• Add money to the Deposit amount in the Wallet if needed.</div><div class='m-t10'>Learn more <a href='/faq#faq-42' target='_blank'>here</a>.</div>"}
 										Can I Use One Security Deposit For Multiple Bookings?
 								.fc
-							%td.p-10.t-r.p-r20.lgrey.f-b.size-16.securityTotal
+							%td.p-10.t-r.p-r25.lgrey.f-b.size-16.securityTotal
 								#Deposit
 									₹ #{show_currency pricing.mode::SECURITY}
 						- unless @wallet_available==0
@@ -202,7 +183,7 @@
 								.fl.text-up
 									Deposit Due
 								
-								- if @booking.defer_allowed? && !(@wallet_available>= @booking.security_amount)
+								- if deal != 'SQUIRREL' && @booking.defer_allowed? && !(@wallet_available>= @booking.security_amount)
 									.fl.p-l20
 										%span
 											%input{checked: "checked", id: "changeDeposit", name: "securityDeposit", type: "checkbox", value: "yes"}
@@ -211,7 +192,7 @@
 										%span.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => @booking.deposit_help}
 											[?]
 								.fc
-							%td.p-10.t-r.p-r20.zoom-b.f-b.size-16
+							%td.p-10.t-r.p-r25.zoom-b.f-b.size-16
 								₹ #{show_currency(@booking.security_amount-@wallet_available)}
 
 					- if @booking.defer_allowed?
@@ -224,7 +205,7 @@
 						%td.p-10.p-l20.text-up.size-16.f-b{style: 'width: 250px'}
 							Payable Amount
 
-						%td.p-10.t-r.p-r20.size-22.outstandingSide.position-r{style: 'width: 250px'}
+						%td.p-10.t-r.p-r25.size-22.outstandingSide.position-r{style: 'width: 250px'}
 							:ruby
 								if !session[:credits].blank?
 									total = fare[:total] - session[:credits].to_i
@@ -232,7 +213,12 @@
 									total = fare[:total]
 								end
 							#DepositFinal
-								₹ #{show_currency(total + @booking.security_amount - @wallet_available)}
+								₹
+								%span#final_amount_to_pay 
+									#{show_currency(total + @booking.security_amount - @wallet_available)}
+					/ %tr.ribbon-after
+					/ 	%td{colspan: 2}
+					/ 		&nbsp;
 
 					%tr
 						%td.p-5.p-l20.p-t10.size-12
@@ -240,7 +226,7 @@
 							.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "All Zoomcar reservations comes with free driving kms, which are based on vehicle type and reservation duration."}
 								[?]
 							.fc
-						%td.p-5.t-r.p-r20.p-t10.zoom-b.f-b.size-16
+						%td.p-5.t-r.p-r25.p-t10.zoom-b.f-b.size-16
 							= fare[:kms]
 					%tr
 						%td.p-5.p-b10.p-l20.size-12
@@ -248,20 +234,23 @@
 							.fl.p-l5.help.pointer{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "If you travel more than #{fare[:kms]} Kms during the reservation, then Kms beyond #{fare[:kms]} will be charged at this price. Click here to enter your expected Kms to estimate your final tariff."}
 								[?]
 							.fc
-						%td.p-5.p-b10.t-r.p-r20.zoom-b.f-b.size-16
+						%td.p-5.p-b10.t-r.p-r25.zoom-b.f-b.size-16
 							₹ #{pricing.excess_kms.to_i} / Km
 
 			.t-c
-				.m-auto.p-20{style: "width:400px;"}
+				.m-auto.p-t10.p-b20{style: "width:400px;"}
 					- if @available == 1 && user && !user.is_blacklisted?
-						%form{:action => "/#{@city.name.downcase}/bookings/docreate", :id => "CheckoutForm", :method => "post"}
+						- flash_param = deal == 'SQUIRREL' ? "?deal=" + session[:deal] : ''
+						%form{:action => "/#{@city.link_name.downcase}/bookings/docreate" + flash_param, :id => "CheckoutForm", :method => "post"}
 							.hide
 								%input{name: "starts", type: "hidden", value: session[:book][:starts]}
 								%input{name: "ends", type: "hidden", value: session[:book][:ends]}
 								%input{name: "loc", type: "hidden", value: session[:book][:loc]}
 								%input{name: "car", type: "hidden", value: session[:book][:car]}
 								%input{name: "deposit", type: "hidden", value: 1, id: "checkoutDeposit"}
-							%input.button.m-auto{style: "width:200px;", type: "submit", value: "Checkout"}
+							- if deal == 'SQUIRREL'
+								%h4.size-12.m-b10.l-red.lh-n Once you click checkout, you will get 10 minutes to book the deal !
+							%input.button.m-auto{style: "width:200px;", type: "submit", value: "Checkout", onclick: "squirrelEvent();"}
 					- else
 						.button-dis Checkout
 					#CheckoutWait{style: 'display:none;'}
@@ -305,6 +294,8 @@
 		.fc
 		%br/
 :javascript
+	var flag = true;
+	var details;
 	var _adx = {};
 	_adx.xb  = '35BDU410';
 	_adx.xt  = 'conversion';
@@ -319,8 +310,14 @@
 
 	function checkJquery() {
 		if (window.jQuery) {
+			if('#{deal}' == 'SQUIRREL') {
+				pushEvent('Squirrel', 'Checkout Page Load', '');
+			}
 			$('#changeDeposit').change(function() {
 				var $this = $(this);
+				if(!flag){
+					updateDeposit($this.is(':checked'));
+				}
 				if ($this.is(':checked')) {
 					$('#checkoutDeposit').val("1");
 					$('#DepositMessage').hide();
@@ -330,14 +327,76 @@
 					$('#checkoutDeposit').val("0");
 					$('#DepositMessage').show();
 					$("#Deposit").addClass('t-s');
-					$("#DepositFinal").html("₹ #{show_currency(total)}");
+					$(".DepositFinal").html("₹ #{show_currency(total)}");
 				}
 			});
+			
+			if (!($("#credits_block").length)) {
+					$("#applyPromoCode").css("display", "none");
+					$("#promo_without_credits").css("display", "block");
+					$('#applyPromoCode_withoutCredits').click(function(){
+					$('#promoCode').toggle();
+					$('#credits_block').toggle();
+					if ($.trim($(this).text()) === 'Apply Promo Code') {
+				        $(this).text('Hide Promo Code');
+				    } else {
+				        $(this).text('Apply Promo Code');        
+				    }
+				});
+			}
+
+			$( document ).on( 'click', '.apply_promocode_btn', function (){
+				$("body").addClass("promoCodeClass");
+				$(".applyCodeText").css("display", "none");
+		
+			});
+			
+			$( document ).on( 'click', '.promoCodeCancelBtn', function (){
+				$("body").removeClass("promoCodeClass");
+				if ($(".creditUseClass").length) {
+				$(".applyCodeText").css("display", "none");
+			} else {
+				$(".applyCodeText").css("display", "block");
+			}
+			});
+
+			$( document ).on( 'click', '.use-credits-submit', function (){
+				$(".wrapper").addClass('creditUseClass');
+				$(".applyCodeText").css("display", "none");
+			
+			});
+
+			$( document ).on( 'click', '.cancelCreditsBtn', function (){
+				$(".wrapper").removeClass("creditUseClass");
+				if ($(".promoCodeClass").length) {
+				$(".applyCodeText").css("display", "none");
+			} else {
+				$(".applyCodeText").css("display", "block");
+			}
+			});
+
 			$('#applyPromoCode').click(function(){
 				$('#promoCode').toggle();
+				$('#credits_block').toggle();
+				if ($.trim($(this).text()) === 'Apply Promo Code or Use Credits') {
+			        $(this).text('Hide Promo Code and Credits Options');
+			    } else {
+			        $(this).text('Apply Promo Code or Use Credits');        
+			    }
+			});
+			$('#proceedToPayment').click(function(){
+				$('#proceedToPayment').hide();
+			});
+			$('#viewTariffDetails').click(function(){
+				$('#proceedToPayment').show();
 			});
 		} else {
 			window.setTimeout(checkJquery, 1000);
+		}
+	}
+	function squirrelEvent() {
+		if('#{deal}' == 'SQUIRREL') {
+			pushEvent('Squirrel', 'Checkout', '');
 		}
 	}
 	checkJquery();

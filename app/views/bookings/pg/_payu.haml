@@ -19,8 +19,8 @@ Please dont refresh this page or use back button
 				@payment.encoded_id + "|" + 
 				@payment.amount.to_i.to_s + "|" + 
 				@booking.cargroup.display_name + "|" + 
-				@booking.user_name.strip + "|" + 
-				@booking.user_email + "|||||||||||" + 
+				@booking.user.name.strip + "|" +
+				@booking.user.email + "|||||||||||" +
 				PAYU_SALT
 		%form{:action => "#{PAYU_URL}", :id => 'pgForm', :method => "post"}
 			.hide
@@ -28,9 +28,9 @@ Please dont refresh this page or use back button
 				= text_field_tag :txnid, @payment.encoded_id
 				= text_field_tag :amount, @payment.amount.to_i
 				= text_field_tag :productinfo, @booking.cargroup.display_name
-				= text_field_tag :firstname, @booking.user_name
-				= text_field_tag :email, @booking.user_email
-				= text_field_tag :phone, @booking.user_mobile
+				= text_field_tag :firstname, @booking.user.name
+				= text_field_tag :email, @booking.user.email
+				= text_field_tag :phone, @booking.user.phone
 				= text_field_tag :surl, ("http://" + HOSTNAME + "/bookings/pgresponse")
 				= text_field_tag :curl, ("http://" + HOSTNAME + "/bookings/pgresponse")
 				= text_field_tag :furl, ("http://" + HOSTNAME + "/bookings/pgresponse")

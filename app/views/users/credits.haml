@@ -1,6 +1,6 @@
 - render_flash
 %h4
-	Available Credits: ₹ #{@total_credits}
+	Available Credits: ₹ #{@total_credits.to_i}
 
 
 .panel.panel-default
@@ -15,7 +15,7 @@
 				- @used_credits.each do |credit|
 					%tr
 						%td= credit.created_at.strftime("%d %B %Y")
-						%td= credit.source_name
+						%td= Credit::SOURCE_NAME[credit.source_name]
 						%td= credit.amount
 	%br/
 	.panel-heading
@@ -29,5 +29,5 @@
 				- @earned_credits.each do |credit|
 					%tr
 						%td= credit.created_at.strftime("%d %B %Y")
-						%td= credit.source_name
+						%td= credit.Credit::SOURCE_NAME[credit.source_name]
 						%td= credit.amount
