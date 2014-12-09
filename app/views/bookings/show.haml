@@ -386,29 +386,6 @@
 			$('#applyPromoCode').click(function(){
 				$('#promoCode').toggle();
 			});
-			// $('#PayNowButton').click(function(){
-			// 	$("#PayNowButton").prop("disabled", true);				
-			// 	$.ajax({
-			// 		url: "/bookings/#{@booking.encoded_id}/seamless_dodeposit",
-			// 		type: "POST",
-			// 		dataType: "json",
-			// 		data: $.param({
-			// 			checkoutDeposit: $('#checkoutDeposit').val(), 
-			// 		}), 
-			// 		success: function(data, status){
-			// 			if(status=="success"){
-			// 				var response = JSON.parse(JSON.stringify(data));
-			// 				if(response.status == "success") {
-			// 					var amt = "₹ " + response.amt.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-			// 					showModal('Payable Amount :  ' + amt, '/bookings/seamless_payment_options');
-			// 					$("#DepositFinal").html(amt);
-			// 					setTimeout(function(){ setVal(response); }, 3000);
-			// 					$("#PayNowButton").prop("disabled", false);				
-			// 				}
-			// 			}
-			// 		}
-			// 	});
-			// });
 		} else {
 			window.setTimeout(checkJquery, 1000);
 		}

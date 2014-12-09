@@ -7,6 +7,6 @@
 		- if @newflow
 			= render :partial => '/bookings/pg/create_payment'
 			:javascript
-				pushEvent('1-click checkout-A', 'Redirect Page Load', '');
+				_gaq.push(['_trackEvent', "1-click checkout-A", "Redirect Page Load", ""]);
 		- else
 			= render :partial => '/bookings/pg/payu'
