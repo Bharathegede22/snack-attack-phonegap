@@ -1,103 +1,93 @@
-#payment-tabs.fl
-	%a.block.active#credit{:href => "#payment-1", 'data-toggle' => "tab", :onclick => "pushEvent('1-click checkout', 'Credit Card', '');makeactive('#credit', '#debit', '#netbanking');"}
+#payment-tabs.fl.payment-tab
+	%a.block.active#credit{:href => "#payment-1", 'data-toggle' => "tab", :onclick => "pushEvent('1-click checkout-A', 'Credit Card', '');makeactive('#credit', '#debit', '#netbanking');"}
 		Credit Card
-	%a.block#debit{:href => "#payment-2", 'data-toggle' => "tab", :onclick => "pushEvent('1-click checkout', 'Debit Card', '');makeactive('#debit', '#credit', '#netbanking');"}
+	%a.block#debit{:href => "#payment-2", 'data-toggle' => "tab", :onclick => "pushEvent('1-click checkout-A', 'Debit Card', '');makeactive('#debit', '#credit', '#netbanking');"}
 		Debit Card
-	%a.block#netbanking{:href => "#payment-3", 'data-toggle' => "tab", :onclick => "pushEvent('1-click checkout', 'Netbanking', '');makeactive('#netbanking', '#credit', '#debit');"}
+	%a.block#netbanking{:href => "#payment-3", 'data-toggle' => "tab", :onclick => "pushEvent('1-click checkout-A', 'Netbanking', '');makeactive('#netbanking', '#credit', '#debit');"}
 		Netbanking
 	%a.block.active.hide{}
-
 #payment-body.fl.tab-content
 	#payment-1.tab-pane.fade.in.active
-
 		%form{:id => 'ccForm', class: 'juspay-inline-form-credit'}
 			.hidden_field_tag
 				= hidden_field_tag :ccmerchant_id, "#{JUSPAY_ID}", class: 'merchant_id'
-				= hidden_field_tag :ccorder_id, '', class: 'order_id'
+				= hidden_field_tag :ccorder_id, "#{@payment.encoded_id}", class: 'order_id'
 				= hidden_field_tag :ccard_number, '', class: 'card-number', name: ''
 				= hidden_field_tag :ccgateway_id, 12, class: 'gateway_id', name: 'gateway_id'
+				= hidden_field_tag :redirect, true, class: 'redirect', name: 'redirect'
 			.p-t5.p-b10
-				= label_tag 'ccnum', 'Credit Card Number', class: 'f-n grey'
-				= text_field_tag :ccnum, '', :maxlength => 26, :size =>20, :onblur => 'validateCard(this.value, "#ccnum");', :required => true, :placeholder => '', :class => 'p-5 size-16 credit-card-number', name: '', :onclick => "pushEvent('1-click checkout', 'Credit Card', '');this.onclick=null;"
+				= label_tag 'ccnum', 'Credit Card Number', class: 'f-b grey'
+				= text_field_tag :ccnum, '', :maxlength => 26, :size =>20, :onblur => 'validateCard(this.value, "#ccnum");', :required => true, :placeholder => '', :class => 'p-5 size-16 credit-card-number', name: '', :onclick => "pushEvent('1-click checkout-A', 'Credit Card', '');this.onclick=null;"
 			.p-t5.p-b10
 				.fl
 					%div
-						= label_tag 'ccexpdate', 'Expiry Date', class: 'f-n grey'
+						= label_tag 'ccexpdate', 'Expiry Date', class: 'f-b grey'
 					.credit-card-month.inline-block
 						= text_field_tag :ccexpmon, '', :size => 2, :placeholder => "MM", required: true, :class => 'p-5 size-16 expmon', name: '', :maxlength => 2, :onKeyup => "validateExpiry(this, 'm');autotab(this, '#ccexpyr');"
 					.credit-card-year.inline-block
 						= text_field_tag :ccexpyr, '', :size => 4, :placeholder => "YYYY", required: true, :class => 'p-5 size-16 expyr', name: '', :maxlength => 4, :onKeyup => "validateExpiry(this, 'y');autotab(this, '#ccvv');"
 
-				.fr{:style => "margin-left: 40px"}
+				.fl{:style => "margin-left: 40px"}
 					%div
-						= label_tag 'ccvv', 'CVV', class: 'f-n grey'
+						= label_tag 'ccvv', 'CVV', class: 'f-b grey'
 					= text_field_tag :ccvv, '', :type => 'password', :autocomplete => 'off', :maxlength => 3, :size =>3, :placeholder => '', required: true, :class => 'p-5 size-16 credit-card-cvv', name: '', :onKeyup => "autotab(this, '#ccard_name');"
 					= image_tag 'cvv.png', :id => 'credit-card-cvv-icon'
 				.fc
 			.p-t5.p-b10
-				= label_tag 'ccname', 'Name on Card', class: 'f-n grey'
+				= label_tag 'ccname', 'Name on Card', class: 'f-b grey'
 				= text_field_tag :ccard_name, '', :maxlength => 32, :size =>26, required: true, :placeholder => '', :class => 'p-5 size-16 credit-card-name', :name => ''
 			/ .p-t5.p-b10
-			%input.button.m-auto#make_payment_credit{style: "width:200px;", type: "submit", value: "Pay Now", class: 'make_payment', onclick:"pushEvent('1-click checkout', 'Pay Button', '');"}
+			%input.button.m-auto#make_payment_credit{style: "width:200px;", type: "submit", value: "Pay Now", class: 'make_payment', onclick:"pushEvent('1-click checkout-A', 'Pay Button', 'Credit Card');"}
 			%br/
 			%br/
-			.p-t5.p-b10
-				.fc.inline-block{:style => "margin-left: 0px"}
-					%div
-						= image_tag asset_path('godaddy.gif'), :size => '131x32', :onclick => 'verifyGoDaddySSLSeal();'
-				.fr
-					%div.f-n.grey
-						We do not store your
-						%br/
-						card details.
-
+			%p.t-c
+				%span{:style => "display:block;margin-top:10px;"}
+					or Go back to
+					%a{:href => "/bookings/#{@booking.encoded_id}"}
+						www.zoomcar.com                                                                  
 	#payment-2.tab-pane.fade
 		%form{:id => 'dcForm', class: 'juspay-inline-form-debit'}
 			.hidden_field_tag
 				= hidden_field_tag :dcmerchant_id, "#{JUSPAY_ID}", class: 'merchant_id'
-				= hidden_field_tag :dcorder_id, '', class: 'order_id'
+				= hidden_field_tag :dcorder_id, "#{@payment.encoded_id}", class: 'order_id'
 				= hidden_field_tag :dcard_number, '', class: 'card-number', :name => ''
 				= hidden_field_tag :dcgateway_id, 12, class: 'gateway_id', name: 'gateway_id'
+				= hidden_field_tag :redirect, true, class: 'redirect', name: 'redirect'
 				= hidden_field_tag :dcmon, '12', :name => ''
 				= hidden_field_tag :dcyr, '2049', :name => ''
 				= hidden_field_tag :ddcvv, '111', :name => ''
 			.p-t5.p-b10
-				= label_tag 'dcnum', 'Debit Card Number', class: 'f-n grey'
+				= label_tag 'dcnum', 'Debit Card Number', class: 'f-b grey'
 				= text_field_tag :dcnum, '', :maxlength => 26, :size =>20, :onblur => 'validateCard(this.value, "#dcnum");', required: true, :placeholder => '', :class => 'p-5 size-16 credit-card-number', :name => ''
 			.p-t5.p-b10
 				.fl
 					%div
-						= label_tag 'dcexpdate', 'Expiry Date', class: 'f-n grey'
+						= label_tag 'dcexpdate', 'Expiry Date', class: 'f-b grey'
 					.credit-card-month.inline-block
 						= text_field_tag :dcexpmon, '', :size => 2, :placeholder => "MM", :class => 'p-5 size-16 expmon', name: '', :maxlength => 2, :onKeyup => "validateExpiry(this, 'm');autotab(this, '#dcexpyr');"
 					.credit-card-year.inline-block
 						= text_field_tag :dcexpyr, '', :size => 4, :placeholder => "YYYY", :class => 'p-5 size-16 expyr', name: '', :maxlength => 4, :onKeyup => "validateExpiry(this, 'y');autotab(this, '#dcvv');"
 
-				.fr{:style => "margin-left: 40px"}
+				.fl{:style => "margin-left: 40px"}
 					%div
-						= label_tag 'dcvv', 'CVV', class: 'f-n grey'
+						= label_tag 'dcvv', 'CVV', class: 'f-b grey'
 					= text_field_tag :dcvv, '', :type => 'password', :autocomplete => 'off', :maxlength => 3, :size =>3, :placeholder => '', :class => 'p-5 size-16 credit-card-cvv', :name => '', :onKeyup => "autotab(this, '#dcard_name');"
 					= image_tag 'cvv.png', :id => 'credit-card-cvv-icon'
 				.fc
 			/ .debit-card-info.p-t5.p-b10.f-b
 			/ 	Expiry date and CVV fields should be left blank if not present on your debit card
 			.p-t5.p-b10
-				= label_tag 'dcname', 'Name on Card', class: 'f-n grey'
+				= label_tag 'dcname', 'Name on Card', class: 'f-b grey'
 				= text_field_tag :dcard_name, '', :maxlength => 32, :size =>26, required: true, :placeholder => '', :name => '', :class => 'p-5 size-16 credit-card-name'
 			/ .p-t5.p-b10
-			%input.button.m-auto#make_payment_debit{style: "width:200px;", type: "submit", value: "Pay Now", class: 'make_payment', onclick:"pushEvent('1-click checkout', 'Pay Button', '');"}
+			%input.button.m-auto#make_payment_debit{style: "width:200px;", type: "submit", value: "Pay Now", class: 'make_payment', onclick:"pushEvent('1-click checkout-A', 'Pay Button', 'Debit Card');"}
 			%br/
 			%br/
-			.p-t5.p-b10
-				.fc.inline-block{:style => "margin-left: 0px"}
-					%div
-						= image_tag asset_path('godaddy.gif'), :size => '131x32', :onclick => 'verifyGoDaddySSLSeal();'
-				.fr
-					%div.f-n.grey
-						We do not store your
-						%br/
-						card details.
-
+			%p.t-c
+				%span{:style => "display:block;margin-top:10px;"}
+					or Go back to
+					%a{:href => "/bookings/#{@booking.encoded_id}"}
+						www.zoomcar.com
 	#payment-3.tab-pane.fade
 	/ #payment-4.tab-pane.fade
 	/ 	Iron Price
@@ -108,6 +98,7 @@
 	function checkJquery() {
 		if(window.jQuery) {
 			$('#payment-3').append("#{j render(:partial => 'bookings/pg/payu/netbanking')}");
+			pushEvent('1-click checkout-A', 'Payment Options Page Load', '');
 			$('#ccnum, #dcnum').payment('formatCardNumber');
 			$('#ccnum').bind('focusout', function (event) {
 				var ccno = $('#ccnum').val();
