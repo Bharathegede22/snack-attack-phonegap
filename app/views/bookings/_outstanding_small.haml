@@ -121,7 +121,7 @@
 				}
 - else
 	%h4.zoom No change in booking amount
-- if @booking.promo.present?
+- if CommonHelper.offers_credits_live?(@booking.created_at) && @booking.promo.present?
 	.bg-e.r-5.p-5.size-14.dgrey.border-c.solid
 		%table{width: '100%'}
 			- if session[:promo_valid] == true

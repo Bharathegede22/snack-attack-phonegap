@@ -86,8 +86,9 @@ module CommonHelper
   
 		
   class << self
-  	def offers_credits_live?
-  		return Time.now > Date.parse(Variable.value_for('offers_credits_live_date'))
+  	
+  	def offers_credits_live?(date=Time.now)
+  		return date > Date.parse(Variable.value_for('offers_credits_live_date'))
   	end
 
   	def encode(c,id)
