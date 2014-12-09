@@ -138,7 +138,7 @@
 				.fc
 		.fc
 	- cls = (!@header.blank? && @header == 'search') ? '' : 'hide'
-	- if (search_abtest? && (!@header.blank? && @header != "homepage" && @header != "booking")) || (!search_abtest? && (!@header.blank? && @header == 'search'))
+	- if (search_abtest? && (@header != "homepage" && @header != "booking")) || (!search_abtest? && (!@header.blank? && @header == 'search'))
 		#SH
 			#SearchFormDiv.search-header
 				= render :partial => '/bookings/widget'
