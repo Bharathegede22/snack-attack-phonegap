@@ -1,8 +1,4 @@
 :ruby
-	if !Rails.env.production?
-		@booking.user_email = PAYU_EMAIL
-		@booking.user_mobile = PAYU_PHONE
-	end
 	banks = [['AXIB', 'AXIS Bank'], ['BOIB', 'Bank of India'], ['BOMB', 'Bank of India'], ['CBIB', 'Central Bank Of India'], ['CRPB', 'Corporation Bank'], ['DCBB', 'Development Credit Bank'], ['FEDB', 'Federal Bank'], ['HDFB', 'HDFC Bank'], ['ICIB', 'ICICI Netbanking'], ['IDBB', 'Industrial Development Bank of India'], ['INDB', 'Indian Bank'], ['INIB', 'IndusInd Bank'], ['INOB', 'Indian Overseas Bank'], ['JAKB', 'Jammu and Kashmir Bank'], ['KRKB', 'Karnataka Bank'], ['KRVB', 'Karur Vysya'], ['SBBJB', 'State Bank of Bikaner and Jaipur'], ['SBHB', 'State Bank of Hyderabad'], ['SBIB', 'State Bank of India'], ['SBMB', 'State Bank of Mysore'], ['SBTB', 'State Bank of Travancore'], ['SOIB', 'South Indian Bank'], ['UBIB', 'Union Bank of India'], ['UNIB', 'United Bank Of India'], ['VJYB', 'Vijaya Bank'], ['YESB', 'Yes Bank'], ['CUBB', 'CityUnion'], ['CABB', 'Canara Bank'], ['SBPB', 'State Bank of Patiala'], ['CITNB', 'Citi Bank NetBanking'], ['DSHB', 'Deutsche Bank'], ['162B', 'Kotak Bank']]
 
 %form{:action => "#{PAYU_URL}", :id => 'pgForm', :method => "post"}

@@ -1,9 +1,3 @@
-:ruby
-	if !Rails.env.production?
-		@booking.user_email = PAYU_EMAIL
-		@booking.user_mobile = PAYU_PHONE
-	end
-
 #payment-tabs.fl.payment-tab
 	%a.block.active#credit{:href => "#payment-1", 'data-toggle' => "tab", :onclick => "pushEvent('1-click checkout-A', 'Credit Card', '');makeactive('#credit', '#debit', '#netbanking');"}
 		Credit Card

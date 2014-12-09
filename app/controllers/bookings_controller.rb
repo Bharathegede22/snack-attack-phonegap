@@ -432,10 +432,6 @@ class BookingsController < ApplicationController
 		if bstr == 'booking' && pstr == 'payment'
 			@booking = Booking.find(bid)
 			@payment = Payment.find(pid)
-			if !Rails.env.production?
-				@booking.user_email = PAYU_EMAIL
-				@booking.user_mobile = PAYU_PHONE
-			end
 			hash = PAYU_KEY + "|" + @payment.encoded_id + "|" + @payment.amount.to_i.to_s + "|" + @booking.cargroup.display_name + "|" + @booking.user.name.strip + "|" + @booking.user.email + "|||||||||||" + PAYU_SALT
 			@hash = Digest::SHA512.hexdigest(hash)
 			render '/bookings/pg/new_payment', layout: 'plain'
@@ -699,10 +695,6 @@ class BookingsController < ApplicationController
 			elsif @booking.outstanding > 0
 				@payment = @booking.check_payment
 				if @payment
-					if !Rails.env.production?
-						@booking.user_email = PAYU_EMAIL
-						@booking.user_mobile = PAYU_PHONE
-					end
 					# Creating order on juspay
 					data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user.email, customer_mobile: @booking.user.phone, return_url: "http://#{HOSTNAME}/bookings/pgresponse", udf1: "web", udf2: "desktop" }
 					response = Juspay.create_order(data)
