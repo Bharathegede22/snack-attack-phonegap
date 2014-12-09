@@ -98,36 +98,12 @@
 					location.reload();
 				}
 		- else		
-			/ Please wait while we proceed for payment
-			/ %br/
-			/ %br/
+			Please wait while we proceed for payment
+			%br/
+			%br/
 			:javascript
-				$.getScript("https://api.juspay.in/pay.js", function(){
-					//loading Juspay js file
-				});
-				$.ajax({
-					url: "/bookings/#{@booking.encoded_id}/seamless_dopayment",
-					type: "POST",
-					datatype: "json",
-					success: function(data, response){
-						if(response == 'success'){
-							details = JSON.parse(JSON.stringify(data));
-							amt = "₹ " + details.amt.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-							showModal('Payable Amount :  ' + amt, '/bookings/seamless_payment_options');
-							$("#DepositFinal").html(amt);
-							setTimeout(function(){ setVal(); }, 3000);
-						}
-					}
-				});
-				function setVal() {
-					$('.order_id').val(details.order_id);
-					$('#txnid').val(details.order_id);
-					$('.description').val(details.desc);
-					$('.product_id').val(details.product_id);
-					$('.firstname').val(details.name);
-					$('.customer_email').val(details.email);
-					$('.customer_phone').val(details.phone);
-					$('.amount').val(details.amt);
-					$('.customer_id').val(details.cust_id);
-					$('#hash').val(details.hash);
+				var auto = setTimeout(function(){ submitRedirect(); }, 3000);
+				function submitRedirect() {
+					clearTimeout(auto);
+					window.location = "/bookings/#{@booking.encoded_id}/dopayment";
 				}
