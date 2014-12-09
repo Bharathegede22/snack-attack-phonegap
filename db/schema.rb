@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141120092606) do
+ActiveRecord::Schema.define(version: 20141202125832) do
 
   create_table "accidents", force: true do |t|
     t.boolean  "active",                                                            default: true
@@ -266,6 +266,7 @@ ActiveRecord::Schema.define(version: 20141120092606) do
     t.integer  "avatar_file_size"
     t.datetime "avatar_updated_at"
     t.integer  "view_image"
+  end
 
   add_index "car_images", ["car_imageable_type", "car_imageable_id"], name: "index_car_images_on_car_imageable_type_and_car_imageable_id", using: :btree
 
@@ -441,6 +442,7 @@ ActiveRecord::Schema.define(version: 20141120092606) do
     t.string   "medium",             limit: 20, default: "1"
     t.integer  "car_id",             limit: 2
     t.string   "initial_answer"
+  end
 
   create_table "checklists", force: true do |t|
     t.text     "header"
@@ -478,6 +480,11 @@ ActiveRecord::Schema.define(version: 20141120092606) do
     t.string  "seo_outside_keywords"
     t.string  "seo_outside_h1"
     t.boolean "active",                             default: false
+    t.boolean "promo_pricing",                      default: false
+    t.boolean "prelaunch",                          default: false
+    t.string  "link_name"
+    t.text    "address"
+    t.text    "directions"
   end
 
   create_table "city_offers", force: true do |t|
@@ -513,15 +520,18 @@ ActiveRecord::Schema.define(version: 20141120092606) do
 
   create_table "credits", force: true do |t|
     t.integer  "user_id"
+    t.string   "booking_key"
+    t.text     "promo_code"
+    t.integer  "updated_by"
     t.string   "creditable_type"
     t.integer  "amount"
-    t.boolean  "action"
+    t.boolean  "action",          default: true
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "status",          default: true
     t.string   "note"
     t.integer  "creditable_id"
-    t.string   "source_name"
+    t.integer  "source_name"
   end
 
   create_table "dashboard_devices", force: true do |t|
@@ -532,6 +542,31 @@ ActiveRecord::Schema.define(version: 20141120092606) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "deals", force: true do |t|
+    t.datetime "starts",                                null: false
+    t.datetime "ends",                                  null: false
+    t.datetime "offer_start",                           null: false
+    t.datetime "offer_end",                             null: false
+    t.integer  "cargroup_id", limit: 2,                 null: false
+    t.integer  "car_id",      limit: 2,                 null: false
+    t.integer  "location_id", limit: 2,                 null: false
+    t.integer  "booking_id"
+    t.integer  "discount",                              null: false
+    t.boolean  "sold_out",              default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "logged_at"
+  end
+
+  add_index "deals", ["booking_id"], name: "index_deals_on_booking_id", using: :btree
+  add_index "deals", ["car_id"], name: "index_deals_on_car_id", using: :btree
+  add_index "deals", ["cargroup_id"], name: "index_deals_on_cargroup_id", using: :btree
+  add_index "deals", ["ends"], name: "index_deals_on_ends", using: :btree
+  add_index "deals", ["location_id"], name: "index_deals_on_location_id", using: :btree
+  add_index "deals", ["offer_end"], name: "index_deals_on_offer_end", using: :btree
+  add_index "deals", ["offer_start"], name: "index_deals_on_offer_start", using: :btree
+  add_index "deals", ["starts"], name: "index_deals_on_starts", using: :btree
 
   create_table "debugs", force: true do |t|
     t.integer  "debugable_id"
@@ -677,14 +712,6 @@ ActiveRecord::Schema.define(version: 20141120092606) do
     t.datetime "updated_at"
   end
 
-  create_table "landing_pages", force: true do |t|
-    t.string   "title"
-    t.text     "content"
-    t.boolean  "active",     default: true
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "location_offers", force: true do |t|
     t.integer "location_id"
     t.integer "offer_id"
@@ -806,6 +833,19 @@ ActiveRecord::Schema.define(version: 20141120092606) do
     t.datetime "updated_at"
   end
 
+  create_table "pages", force: true do |t|
+    t.string   "title"
+    t.text     "content"
+    t.boolean  "active",                    default: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "seo_title"
+    t.string   "seo_description"
+    t.string   "seo_keywords"
+    t.string   "seo_h1"
+    t.integer  "city_id",         limit: 2
+  end
+
   create_table "parking_slots", force: true do |t|
     t.integer "location_id"
     t.integer "slots"
@@ -836,11 +876,13 @@ ActiveRecord::Schema.define(version: 20141120092606) do
     t.integer  "location_id",    limit: 2
     t.boolean  "credit",                                           default: false
     t.decimal  "amount",                   precision: 7, scale: 2
+    t.text     "reason"
     t.text     "notes"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.decimal  "remaining_cash",           precision: 7, scale: 2
     t.integer  "fleet_id",       limit: 3
+  end
 
   add_index "petty_cashes", ["location_id"], name: "index_petty_cashes_on_location_id", using: :btree
 
@@ -1080,6 +1122,7 @@ ActiveRecord::Schema.define(version: 20141120092606) do
     t.decimal  "wallet_total_amount",                         precision: 10, scale: 0
     t.integer  "city_id",                         limit: 2
     t.datetime "license_updated_at"
+  end
 
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
   add_index "users", ["email"], name: "index_users_on_email", using: :btree
