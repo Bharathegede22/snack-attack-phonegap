@@ -125,6 +125,21 @@
 						= @booking.promo
 						%br/
 						= offer.summary.html_safe
+		- credits_earned = @booking.credits.where(source_name: Credit::SOURCE_NAME_INVERT['Early Return']).collect(&:amount).sum
+		- if credits_earned > 0
+			.border-b-c
+			.p-t10.p-b10.p-l20.p-r20
+				.text-up.size-11.m-b3
+					Credits
+				.zoom-b.f-b.size-14.earned-credit-statement
+					You earned ₹ #{credits_earned} in credits from this booking
+					#showPage-popover-block
+						%button.btn.creditsDescBtn-showPage.p-0 [?]
+
+			.popover.fade.right.in.booking-showPage-popupBox.m-t15.earn-credit
+				.arrow
+				%h3.popover-title{:style => "display: none;"}
+				.popover-content.size-12 Your credits have been added to your Zoomcar wallet. Use them to pay the fee for your next booking.
 
 	= render :partial => '/bookings/socialshare'
 
@@ -134,17 +149,18 @@
 			Fare Breakdown
 		- total_charge = 0
 		- @booking.charges.each do |charge|
-			- total_charge += charge.refund==0 ? charge.amount : -charge.amount
-			-if !['security_deposit','early_return_charge','early_return_refund'].include? charge.activity
-				.fl.p-10.p-l20.size-12
-					.text-up
-						= charge.activity.titleize
-						- if charge.activity== 'booking_fee' && @booking.ends-@booking.starts < 4.hours
-							%span.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Minimum billing is 4 hours."}
-								[?]
-				.fr.p-10.t-r.p-r20.grey.f-b.size-16
-					#{charge.refund==0 ? '' : '-'}₹ #{show_currency charge.amount}
-				.fc
+			- unless charge.early_return?
+				- total_charge += charge.refund==0 ? charge.amount : -charge.amount
+				- unless charge.security?
+					.fl.p-10.p-l20.size-12
+						.text-up
+							= charge.activity.titleize
+							- if charge.activity== 'booking_fee' && @booking.ends-@booking.starts < 4.hours
+								%span.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Minimum billing is 4 hours."}
+									[?]
+					.fr.p-10.t-r.p-r20.grey.f-b.size-16
+						#{charge.refund==0 ? '' : '-'}₹ #{show_currency charge.amount}
+					.fc
 		.fl.p-10.p-l20.size-12
 			.text-up
 				Refundable Deposit
@@ -199,15 +215,15 @@
 			.fr.p-10.t-r.p-r20.zoom-b.f-b.size-20
 				₹ #{show_currency total_payment}
 			.fc
-	- if @booking.confirmed_refunds.select{|p| p.through.in? ['citruspay', 'juspay', 'payu'] || p.through == 'wallet_refund'}.any?
+	- if @booking.confirmed_refunds.select{|p| p.through.in? ['citruspay', 'juspay', 'payu', 'cheque'] || p.through == 'wallet_refund'}.any?
 		.bg-w.bs-9.m-b20{'style' => 'width: 360px'}
 			.bg-zoomb.white.p-10.f-b.size-18.p-l10.p-r10
 				Refunds Issued
 			- total_refund=0
-			- @booking.confirmed_refunds.select{|p| p.through.in? ['citruspay', 'juspay', 'payu'] || p.through=='wallet_refund'}.each do |refund|
+			- @booking.confirmed_refunds.select{|p| p.through.in? ['citruspay', 'juspay', 'payu', 'cheque'] || p.through=='wallet_refund'}.each do |refund|
 				.fl.p-10.p-l20.size-12
 					.text-up
-						Amount Refunded (#{refund.created_at.strftime('%Y-%m-%d')})
+						#{refund.through == 'cheque' ? "BY CHEQUE" : "Amount Refunded"} (#{refund.created_at.strftime('%Y-%m-%d')})
 				.fr.p-10.t-r.p-r20.grey.f-b.size-16
 					₹ #{show_currency refund.amount.tap{|p| total_refund+=p}}
 				.fc
@@ -225,7 +241,7 @@
 			.fl
 				Zoomcar Wallet
 
-				%span.pointer.pop.size-12.white{'href' => '#', 'data-toggle' => "popover",  'data-placement' => "top", 'data-html' => "true", 'data-content' => "<div class='grey size-12 f-n'>Your Zoomcar Wallet is where your Security Deposit is kept. This allows you to use the same deposit across multiple bookings. <a href='/faq#faq-42'>Learn more</a> in our FAQs.</div>"}
+				%span.pointer.pop.size-12.white{'href' => '#', 'data-toggle' => "popover",  'data-placement' => "top", 'data-html' => "true", 'data-content' => "<div class='grey size-12 f-n'>Your Zoomcar Wallet is where your Security Deposit and Credits are kept. This allows you to use the same deposit across multiple bookings. <a href='/faq#faq-42'>Learn more</a> in our FAQs.</div>", 'style' => 'position: relative; top: -2px;'}
 					[?]
 			.fr
 				%a.white.size-12{href: "javascript:void(0)", onclick: "showModal('Transaction History', '/wallets/history');pushEvent('Wallet', 'Transaction History Pop Up (Bookings Summary)');"}
@@ -253,7 +269,22 @@
 			.fr.p-10.t-r.p-r20.grey.f-b.size-16
 				₹ #{show_currency wallet.amount.tap{|a| total+=a}}
 			.fc
-
+		- @booking.confirmed_payments.select{|p| p.through=='credits'}.each do |payment|
+			- next if payment.amount.to_i == 0
+			.fl.p-10.p-l20.size-12
+				.text-up
+					Credits Used (#{payment.created_at.strftime('%Y-%m-%d')})
+			.fr.p-10.t-r.p-r20.grey.f-b.size-16
+				\- ₹ #{show_currency payment.amount.tap{|a| total-=a}}
+			.fc
+		- @booking.confirmed_refunds.select{|p| p.through=='credits'}.each do |refund|
+			- next if refund.amount.to_i == 0
+			.fl.p-10.p-l20.size-12
+				.text-up
+					Credits Refunded (#{refund.created_at.strftime('%Y-%m-%d')})
+			.fr.p-10.t-r.p-r20.grey.f-b.size-16
+				₹ #{show_currency refund.amount.tap{|a| total+=a}}
+			.fc
 		.border-t-c
 			.fl.p-t10.p-l20.size-18
 				.text-up
@@ -306,11 +337,9 @@
 				₹ #{show_currency payable_amount}
 			-if payable_amount>0
 				.fc
-				/ = form_tag("/bookings/#{@booking.encoded_id}/dodeposit", method: :get) do
-				= form_tag() do
+				= form_tag("/bookings/#{@booking.encoded_id}/dodeposit", method: :get) do
 					=hidden_field_tag 'checkoutDeposit', "1"
-					%input#PayNowButton.button.m-auto{style: "width:200px;", type: "button", value: "Proceed to Payment"}
-					/ , onclick: "showModal('Make Payment', '/bookings/pg/payment_options');", :data => { :checkoutDeposit => "document.getElementById('checkoutDeposit').value;" }}
+					%input#PayNowButton.button.m-auto{style: "width:200px;", type: "submit", value: "Proceed to Payment"}
 		.fc
 
 :javascript
@@ -357,29 +386,6 @@
 			$('#applyPromoCode').click(function(){
 				$('#promoCode').toggle();
 			});
-			$('#PayNowButton').click(function(){
-				$("#PayNowButton").prop("disabled", true);				
-				$.ajax({
-					url: "/bookings/#{@booking.encoded_id}/seamless_dodeposit",
-					type: "POST",
-					dataType: "json",
-					data: $.param({
-						checkoutDeposit: $('#checkoutDeposit').val(), 
-					}), 
-					success: function(data, status){
-						if(status=="success"){
-							var response = JSON.parse(JSON.stringify(data));
-							if(response.status == "success") {
-								var amt = "₹ " + response.amt.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-								showModal('Payable Amount :  ' + amt, '/bookings/seamless_payment_options');
-								$("#DepositFinal").html(amt);
-								setTimeout(function(){ setVal(response); }, 3000);
-								$("#PayNowButton").prop("disabled", false);				
-							}
-						}
-					}
-				});
-			});
 		} else {
 			window.setTimeout(checkJquery, 1000);
 		}
@@ -399,7 +405,6 @@
 
 - if survey
 	:javascript
-		pushEvent('1-click checkout', 'Booking Failed', '');
 		var _kiq = _kiq || [];
 		(function(){
 			setTimeout(function(){
@@ -408,3 +413,7 @@
 			}, 1);
 		})();
 		_kiq.push(['identify', "#{@booking.encoded_id}"]);
+	
+	- if abtest?
+		:javascript
+			_gaq.push(['_trackEvent', "1-click checkout-A", "Booking Failed", ""]);

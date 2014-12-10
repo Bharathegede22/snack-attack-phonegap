@@ -1,6 +1,6 @@
 FactoryGirl.define do 
   factory :credit do
-    source_name "booking"
+    source_name Credit::SOURCE_NAME_INVERT["Booking"]
     action 1
     status 1
     amount 100

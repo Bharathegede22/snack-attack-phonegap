@@ -70,7 +70,7 @@ Web::Application.routes.draw do
 	resources :users do
 		collection do
 			get 'access'
-			get 'credits'
+			get 'credit_history'
 			get 'forgot'
 			get 'license'
 			get 'license_get_del'
@@ -92,10 +92,10 @@ Web::Application.routes.draw do
 	resources :wallets, :only => [] do
 		collection do
 			get 'history'
-  			get 'show_refund'
-			#post "wallets#topup"
-  			post 'refund'
-  			post 'topup'
+  		get 'show_refund'
+      get 'credit_history'
+  		post 'refund'
+  		post 'topup'
 		end
 	end
 	
@@ -105,6 +105,7 @@ Web::Application.routes.draw do
 				get 'checkout'
 				get 'checkoutab'
 				get 'complete'
+				get 'createorder'
 				get 'do'
 				# get 'do_flash_booking'
 				get 'docreate'
@@ -112,6 +113,7 @@ Web::Application.routes.draw do
 				get 'failed'
 				get 'login'
 				get 'payment'
+				get 'payment_options'
 				get 'userdetails'
 				post 'seamless_docreate'
 			end

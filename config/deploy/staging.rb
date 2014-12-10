@@ -11,7 +11,7 @@ set :domain_name, "www.zoomcartest.com"
 default_run_options[:pty] = true
 set :scm, :git
 set :repository, "git@github.com:ZoomCar/web.git"
-set :branch, "master"
+set :branch, "staging"
 set :deploy_via, :remote_cache
 ssh_options[:forward_agent] = true
 

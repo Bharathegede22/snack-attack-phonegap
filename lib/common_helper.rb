@@ -86,6 +86,11 @@ module CommonHelper
   
 		
   class << self
+  	
+  	def offers_credits_live?(date=Time.now)
+  		return date > Date.parse(Variable.value_for('offers_credits_live_date'))
+  	end
+
   	def encode(c,id)
   		if Rails.env == 'production'
 		    temp = case c.downcase

@@ -64,5 +64,7 @@
 			"1"
 		]);
 		_gaq.push(['_trackTrans']);
-		_gaq.push(['_trackEvent', "1-click checkout", "Booking Done", ""]);
 	%script{type: "text/javascript", src: "//www.googleadservices.com/pagead/conversion.js"}
+	- if abtest?
+		:javascript
+			_gaq.push(['_trackEvent', "1-click checkout-A", "Booking Done", ""]);
