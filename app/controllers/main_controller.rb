@@ -346,4 +346,5 @@ class MainController < ApplicationController
 		@header = 'mobile_redirect'
 		render '/main/mobile_redirect', layout: false
 	end
+
 end

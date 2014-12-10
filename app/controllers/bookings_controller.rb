@@ -33,12 +33,7 @@ class BookingsController < ApplicationController
 		check_deal
 		generic_meta
 		@header = 'booking'
-		if abtest?
-			render :checkoutab
-		else
-			# payu checkout page
-			render :checkouta
-		end
+		render :checkouta
 	end
 	
 	def complete
@@ -52,6 +47,32 @@ class BookingsController < ApplicationController
 			session[:corporate_id] = params[:corporate_id] if !params[:corporate_id].blank?
 		end
 		render json: {html: render_to_string('_corporate.haml', layout: false)}
+  end
+
+	# creates order for payment on juspay
+	#
+	# Author:: Aniket
+	# Date:: 05/12/2014
+	#  
+  def createorder
+  	bstr, bid = CommonHelper.decode(params[:booking])
+  	pstr, pid = CommonHelper.decode(params[:payment])
+  	if bstr == 'booking' && pstr == 'payment'
+	  	@booking = Booking.find(bid)
+	  	@payment = Payment.find(pid)
+	  else
+	  	return
+	  end
+		# Creating order on juspay
+		data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user.email, customer_phone: @booking.user.mobile, return_url: "http://#{HOSTNAME}/bookings/pgresponse" }
+		response = Juspay.create_order(data)
+
+		if response['status'].downcase == 'created' || response['status'].downcase == 'new'
+			render :json => {status: 'success'}
+		elsif response['status'].downcase == 'error'
+			flash[:error] = "Something went wrong. Please try again."
+			render :json => {:response => 'pg error'}
+		end
   end
 
   # Applies credits to user booking
@@ -234,7 +255,7 @@ class BookingsController < ApplicationController
 				session[:booking_id] = nil
 		  	redirect_to "/bookings/#{@booking.encoded_id}"
 			elsif @booking.outstanding_with_security > 0
-				redirect_to payment_bookings_path(@city.link_name.downcase)
+				redirect_to payment_bookings_path(@city.link_name.downcase, id: @booking.encoded_id)
 			else
 				u = @booking.user
 				if u.check_license
@@ -285,7 +306,9 @@ class BookingsController < ApplicationController
 	end
 	
 	def dodeposit
-		@booking.update_column(:defer_deposit, false) if params[:checkoutDeposit]=="1"
+		defer_deposit = params[:checkoutDeposit] != "1"
+		@booking.update_column(:defer_deposit, defer_deposit)
+		# @booking.update_column(:defer_deposit, false) if params[:checkoutDeposit]=="1"
 		if !@booking.defer_allowed?
 			@booking.add_security_deposit_charge
 			#amount = @booking.user.wallet_available_on_time(@booking.starts - CommonHelper::WALLET_FREEZE_START.hours,@booking) 
@@ -297,7 +320,7 @@ class BookingsController < ApplicationController
   
 	def dopayment
 		session[:booking_id] = @booking.encoded_id
-		redirect_to payment_bookings_path(@city.link_name.downcase)
+		redirect_to payment_bookings_path(@city.link_name.downcase, id: @booking.encoded_id)
 	end
 	
 	def failed
@@ -389,6 +412,7 @@ class BookingsController < ApplicationController
 	def payment
 		@payment = @booking.check_payment
 		if @payment
+			@newflow = abtest? ? true : false # abtest
 			render :layout => 'plain'
 		else
 			flash[:notice] = "Booking is already paid for full, no need for a new transaction."
@@ -396,6 +420,26 @@ class BookingsController < ApplicationController
     end
 	end
 	
+	# renders payment options UI
+	#
+	# Author:: Aniket
+	# Date:: 05/12/2014
+	#  
+	def payment_options
+		redirect_to '/' and return if params[:pid].blank? || params[:bid].blank?
+		bstr, bid = CommonHelper.decode(params[:bid])
+		pstr, pid = CommonHelper.decode(params[:pid])
+		if bstr == 'booking' && pstr == 'payment'
+			@booking = Booking.find(bid)
+			@payment = Payment.find(pid)
+			hash = PAYU_KEY + "|" + @payment.encoded_id + "|" + @payment.amount.to_i.to_s + "|" + @booking.cargroup.display_name + "|" + @booking.user.name.strip + "|" + @booking.user.email + "|||||||||||" + PAYU_SALT
+			@hash = Digest::SHA512.hexdigest(hash)
+			render '/bookings/pg/new_payment', layout: 'plain'
+		else
+			redirect_to '/' and return
+		end
+	end
+
 	def payments
 		render layout: 'users'
 	end
@@ -651,10 +695,6 @@ class BookingsController < ApplicationController
 			elsif @booking.outstanding > 0
 				@payment = @booking.check_payment
 				if @payment
-					if !Rails.env.production?
-						@booking.user_email = PAYU_EMAIL
-						@booking.user_mobile = PAYU_PHONE
-					end
 					# Creating order on juspay
 					data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user.email, customer_mobile: @booking.user.phone, return_url: "http://#{HOSTNAME}/bookings/pgresponse", udf1: "web", udf2: "desktop" }
 					response = Juspay.create_order(data)
@@ -960,7 +1000,7 @@ class BookingsController < ApplicationController
 	# Author::Aniket
 	# Date:: 22/11/2014
 	def check_booking_obj
-		if session[:book][:id].present?
+		if session[:book].present? && session[:book][:id].present?
 			b = Booking.find_by(id: CommonHelper.decode(session[:book][:id]))
 			if b.starts == Time.zone.parse(session[:book][:starts]) && b.ends == Time.zone.parse(session[:book][:ends]) && b.location_id == session[:book][:loc].to_i && b.cargroup_id == session[:book][:car].to_i
 				# @booking = Booking.new
