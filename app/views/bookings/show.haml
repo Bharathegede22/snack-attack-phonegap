@@ -337,11 +337,9 @@
 				₹ #{show_currency payable_amount}
 			-if payable_amount>0
 				.fc
-				/ = form_tag("/bookings/#{@booking.encoded_id}/dodeposit", method: :get) do
-				= form_tag() do
+				= form_tag("/bookings/#{@booking.encoded_id}/dodeposit", method: :get) do
 					=hidden_field_tag 'checkoutDeposit', "1"
-					%input#PayNowButton.button.m-auto{style: "width:200px;", type: "button", value: "Proceed to Payment"}
-					/ , onclick: "showModal('Make Payment', '/bookings/pg/payment_options');", :data => { :checkoutDeposit => "document.getElementById('checkoutDeposit').value;" }}
+					%input#PayNowButton.button.m-auto{style: "width:200px;", type: "submit", value: "Proceed to Payment"}
 		.fc
 
 :javascript
@@ -388,29 +386,6 @@
 			$('#applyPromoCode').click(function(){
 				$('#promoCode').toggle();
 			});
-			$('#PayNowButton').click(function(){
-				$("#PayNowButton").prop("disabled", true);				
-				$.ajax({
-					url: "/bookings/#{@booking.encoded_id}/seamless_dodeposit",
-					type: "POST",
-					dataType: "json",
-					data: $.param({
-						checkoutDeposit: $('#checkoutDeposit').val(), 
-					}), 
-					success: function(data, status){
-						if(status=="success"){
-							var response = JSON.parse(JSON.stringify(data));
-							if(response.status == "success") {
-								var amt = "₹ " + response.amt.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-								showModal('Payable Amount :  ' + amt, '/bookings/seamless_payment_options');
-								$("#DepositFinal").html(amt);
-								setTimeout(function(){ setVal(response); }, 3000);
-								$("#PayNowButton").prop("disabled", false);				
-							}
-						}
-					}
-				});
-			});
 		} else {
 			window.setTimeout(checkJquery, 1000);
 		}
@@ -430,7 +405,6 @@
 
 - if survey
 	:javascript
-		pushEvent('1-click checkout', 'Booking Failed', '');
 		var _kiq = _kiq || [];
 		(function(){
 			setTimeout(function(){
@@ -439,3 +413,7 @@
 			}, 1);
 		})();
 		_kiq.push(['identify', "#{@booking.encoded_id}"]);
+	
+	- if abtest?
+		:javascript
+			_gaq.push(['_trackEvent', "1-click checkout-A", "Booking Failed", ""]);
