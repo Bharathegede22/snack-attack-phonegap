@@ -72,19 +72,12 @@
 											%td{:colspan => "2",:style => "text-align:left;padding-left:2%;border-top:2px solid white"}
 												%div{:style => "margin-top:2%;margin-bottom:2%;font-size:12px;"}
 													Zoomcar India PVT Limited
-													%p{:style => "margin:0;"} 117, 2nd cross
-													%p{:style => "margin:0;"} HAL, 3rd stage
-													%p{:style => "margin:0;"} Bangalore, Karnataka 560075
+													%p{:style => "margin:0;"}=@city.address.html_safe
 											%td{:style => "text-align:right;padding-right:2%;border-top:2px solid white;color:white"}
 												%div{:style => "margin-top:2%;margin-bottom:2%;color:white;text-decoration:inherit;font-size: 12px;"}
 													for more details call:
 													%p{:style => "color:white;text-decoration:none!important;text-align:right;margin:0;"}
-														- if @city == 1
-															080-33013371
-														- elsif @city == 2
-															022-30038101
-														-else
-															080-33013371										
+														=@city.contact_phone
 				- if !Rails.env.production?
 					%div{style: "text-align:center; color:red; margin:10px; padding:0; font-weight:bold;"}
 						this email is generated on Zoomcar's test server and doesn't have any relevance whatsoever
