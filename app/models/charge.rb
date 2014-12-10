@@ -20,6 +20,22 @@ class Charge < ActiveRecord::Base
 		save!
 	end
 
+	def security?
+		activity == 'security_deposit' && !refund?
+	end
+
+	def security_refund?
+		activity == 'security_deposit_refund' && refund?
+	end
+
+	def refund?
+		refund == 1
+	end
+
+	def early_return?
+		['early_return_charge','early_return_refund'].include? activity
+	end
+
 	protected
 	
 	def after_create_tasks

@@ -69,26 +69,45 @@ class Offer < ActiveRecord::Base
 		return text  unless self.check_output_condition
 		return none
 	end
-	
+
+	def self.update_coupon(coupon_id, booking_id)
+		CouponCode.where(:id => coupon_id).update_all(:used => 1, :used_at => Time.now, :booking_id => booking_id)
+	end
+
 end
 
 # == Schema Information
 #
 # Table name: offers
 #
-#  id                :integer          not null, primary key
-#  heading           :string(255)
-#  description       :text
-#  promo_code        :string(255)
-#  status            :boolean          default(TRUE)
-#  disclaimer        :text
-#  visibility        :integer          default(0)
-#  user_condition    :text
-#  booking_condition :text
-#  output_condition  :text
-#  created_at        :datetime
-#  updated_at        :datetime
-#  summary           :string(255)
-#  instructions      :text
-#  valid_till        :datetime
+#  id                           :integer          not null, primary key
+#  heading                      :string(255)
+#  description                  :text
+#  promo_code                   :string(255)
+#  status                       :boolean          default(TRUE)
+#  disclaimer                   :text
+#  visibility                   :integer          default(0)
+#  user_condition               :text
+#  booking_condition            :text
+#  output_condition             :text
+#  created_at                   :datetime
+#  updated_at                   :datetime
+#  summary                      :string(255)
+#  instructions                 :text
+#  valid_till                   :datetime
+#  discount_type                :string(255)
+#  value                        :integer
+#  creation_starts              :datetime
+#  creation_ends                :datetime
+#  trip_start_date              :datetime
+#  trip_end_date                :datetime
+#  is_mobile_allowed            :boolean          default(FALSE)
+#  is_web_allowed               :boolean          default(FALSE)
+#  min_amount                   :integer
+#  max_amount                   :integer
+#  used_count                   :integer
+#  ref_initial                  :string(255)
+#  ref_immediate                :string(255)
+#  booking_condition_return_nil :boolean          default(TRUE)
+#  weekdays                     :string(255)
 #

@@ -19,8 +19,6 @@ end
 #  priority         :integer
 #  seating          :integer
 #  wait_period      :integer
-#  daily_fare       :integer
-#  hourly_fare      :integer
 #  disclaimer       :string(255)
 #  description      :text
 #  cartype          :integer
@@ -49,13 +47,6 @@ end
 #  smoking          :boolean
 #  pet              :boolean
 #  handicap         :boolean
-#  hourly_km_limit  :integer          default(40)
-#  daily_km_limit   :integer          default(200)
-#  excess_kms       :decimal(5, 2)
-#  weekly_fare      :integer
-#  monthly_fare     :integer
-#  weekly_km_limit  :integer
-#  monthly_km_limit :integer
 #  kmpl             :float
 #  seo_title        :string(255)
 #  seo_description  :string(255)

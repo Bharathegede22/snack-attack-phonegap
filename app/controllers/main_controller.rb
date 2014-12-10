@@ -137,6 +137,23 @@ class MainController < ApplicationController
 		render "main/deals/#{params[:id]}"
 	end
 
+	def deals_of_the_day
+		@meta_title = "Zoomcar Deals Zone"
+		@meta_keywords = "zoomcar deals"
+		@deal = Deal.where("offer_start < ? AND offer_end > ?", Time.now, Time.now)
+		@location = Array.new
+		@cargroup = Array.new
+		@sold_out = Array.new
+		@discount = Array.new
+		@deal.each_with_index do |d, i|
+			@location[i] = Location.where(id: d.location_id).first
+			@cargroup[i] = Cargroup.where(id: d.cargroup_id).first
+			@sold_out[i] = d.booking_id.present? || d.sold_out
+			@discount[i] = d.discount
+		end
+		render "main/deals/offers"
+	end
+
 	def device
 		render json: {html: ''}
 	end
@@ -153,7 +170,7 @@ class MainController < ApplicationController
 		@meta_title = "Zoomcar Frequently Asked Questions (FAQs) | Zoomcar"
 		@meta_description = "Read answers about Zoomcar to the most frequently asked questions on our FAQ page"
 		@meta_keywords = "zoomcar faqs"
-		@canonical = "http://#{HOSTNAME}/#{@city.name.downcase}/faq"
+		@canonical = "http://#{HOSTNAME}/#{@city.link_name.downcase}/faq"
 		@header = 'help'
 		render "/main/pricing/#{@city.pricing_mode}/faq"
 	end
@@ -162,7 +179,7 @@ class MainController < ApplicationController
 		@meta_title = "Zoomcar Fees Policy | Zoomcar"
 		@meta_description = "Read Zoomcar fees policy for any returning vehicle late, returning vehicle to wrong location, traffic and parking violations, key not returned at end of reservation, accident & Zoomcar rule violations" 
     @meta_keywords = "zoomcar fees policy"
-		@canonical = "http://#{HOSTNAME}/#{@city.name.downcase}/fees"
+		@canonical = "http://#{HOSTNAME}/#{@city.link_name.downcase}/fees"
 		@header = 'policy'
 		render "/main/pricing/#{@city.pricing_mode}/policy"
 	end
@@ -185,14 +202,14 @@ class MainController < ApplicationController
 		@meta_title = "List of Holidays | Zoomcar"
 		@meta_description = "Zoom off on Holidays "
 		@meta_keywords = "zoomcar holidays"
-		@canonical = "http://#{HOSTNAME}/#{@city.name.downcase}/holidays"
+		@canonical = "http://#{HOSTNAME}/#{@city.link_name.downcase}/holidays"
 	end
 
 	def homepage
 		@meta_title = "Self Drive Cars Rental In #{@city.name} | Join Online, Book A Car & Drive | Zoomcar"
 		@meta_description = "Book a self-driven car online. Self driving car rental made easy like never before, simply join us for renting a car by the hour or day. Includes fuel, insurance & taxes"
 		@meta_keywords = "zoomcar, self drive car, self drive car rental, renting a car, self drive cars"
-		@canonical = "http://#{HOSTNAME}/#{@city.name.downcase}"
+		@canonical = "http://#{HOSTNAME}/#{@city.link_name.downcase}"
 		@header = 'homepage'
 		@noindex = true
 		#expires_in 1.months, :public => true, 'max-stale' => 0 #if Rails.env == 'production'
@@ -229,6 +246,7 @@ class MainController < ApplicationController
 			@header = 'homepage'
 			@canonical = @city.link
 		else
+			redirect_to @city.link and return if !session[:city].blank?
 			@city = City.lookup('bangalore') if !@city.active
 			@meta_title = City.meta_title
 			@meta_description = City.meta_description
@@ -271,7 +289,7 @@ class MainController < ApplicationController
 		@meta_title = "Zoom for Less in #{@city.name} | #{HOSTNAME}"
 		@meta_description = "Offers running in #{@city.name} on Zoomcar"
 		@meta_keywords = "zoomcar offers"
-		@canonical = "http://#{HOSTNAME}/#{@city.name.downcase}/offers"
+		@canonical = "http://#{HOSTNAME}/#{@city.link_name.downcase}/offers"
 		@header = 'offers'
 	end
 
@@ -307,7 +325,7 @@ class MainController < ApplicationController
 		@meta_title = "Zoomcar Safety | Zoomcar"
 		@meta_description = "Zoomcar guidelines for a safe zooming experience"
 		@meta_keywords = "zoomcar, zoom, safety"
-		@canonical = "http://#{HOSTNAME}/#{@city.name.downcase}/safety"
+		@canonical = "http://#{HOSTNAME}/#{@city.link_name.downcase}/safety"
 		@header = 'help'
 	end
 
@@ -315,7 +333,7 @@ class MainController < ApplicationController
 		@meta_title = "Zoomcar Rental Tariffs In #{@city.name} | Zoomcar"
 		@meta_description = "Zoomcar offers the simplest, easiest car-rental tariff in #{@city.name}. Find out what all is included"
 		@meta_keywords = "zoomcar hire tariffs"
-		@canonical = "http://#{HOSTNAME}/#{@city.name}/tariff"
+		@canonical = "http://#{HOSTNAME}/#{@city.link_name}/tariff"
 		@header = 'tariff'
 		render "/main/pricing/#{@city.pricing_mode}/tariff"
 	end
@@ -328,4 +346,5 @@ class MainController < ApplicationController
 		@header = 'mobile_redirect'
 		render '/main/mobile_redirect', layout: false
 	end
+
 end

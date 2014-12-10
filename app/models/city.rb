@@ -26,7 +26,7 @@ class City < ActiveRecord::Base
 	end
 	
 	def link(action=nil)
-		return "http://" + HOSTNAME + "/" + CommonHelper.escape(self.name.downcase) + case action
+		return "http://" + HOSTNAME + "/" + CommonHelper.escape(self.link_name.downcase) + case action
 		when 'attractions' then "/attractions"
 		when 'inside' then "/explore"
 		when 'outside' then "/nearby"
@@ -137,7 +137,7 @@ class City < ActiveRecord::Base
 	def self.getall_hash
 		tmp = {}
 		getall.each do |c|
-			tmp[c.name.downcase] = c
+			tmp[c.link_name.downcase] = c
 		end
 		return tmp
 	end

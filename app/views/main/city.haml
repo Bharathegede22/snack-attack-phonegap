@@ -32,9 +32,9 @@
 			%h2 Where in #{@city.name}
 			#Gmap.map{style: 'height: 600px;'}
 			%br/
-			= link_to "Explore " + @city.name, "/#{CommonHelper.escape(@city.name.downcase)}/explore"
+			= link_to "Explore " + @city.name, "/#{CommonHelper.escape(@city.link_name.downcase)}/explore"
 			%br/
-			= link_to "Beyond " + @city.name, "/#{CommonHelper.escape(@city.name.downcase)}/nearby"
+			= link_to "Beyond " + @city.name, "/#{CommonHelper.escape(@city.link_name.downcase)}/nearby"
 		.fc
 = javascript_tag do
 	:plain
