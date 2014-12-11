@@ -144,10 +144,6 @@ class Booking < ActiveRecord::Base
 		@booking = b
 		@payment = @booking.check_payment
 		if @payment
-			if !Rails.env.production?
-				@booking.user_email = PAYU_EMAIL
-				@booking.user_mobile = PAYU_PHONE
-			end
 
 			# Creating order on juspay
 			data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user.email, customer_mobile: @booking.user.phone, return_url: "http://#{HOSTNAME}/bookings/pgresponse", udf1: "web", udf2: "desktop" }

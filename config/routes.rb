@@ -105,6 +105,7 @@ Web::Application.routes.draw do
 				get 'checkout'
 				get 'checkoutab'
 				get 'complete'
+				get 'createorder'
 				get 'do'
 				# get 'do_flash_booking'
 				get 'docreate'
@@ -112,6 +113,7 @@ Web::Application.routes.draw do
 				get 'failed'
 				get 'login'
 				get 'payment'
+				get 'payment_options'
 				get 'userdetails'
 				post 'seamless_docreate'
 			end
