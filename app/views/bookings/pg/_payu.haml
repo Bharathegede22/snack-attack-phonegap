@@ -28,7 +28,7 @@ Please dont refresh this page or use back button
 				= text_field_tag :txnid, @payment.encoded_id
 				= text_field_tag :amount, @payment.amount.to_i
 				= text_field_tag :productinfo, @booking.cargroup.display_name
-				= text_field_tag :firstname, @booking.user.name
+				= text_field_tag :firstname, @booking.user.name.strip
 				= text_field_tag :email, @booking.user.email
 				= text_field_tag :phone, @booking.user.phone
 				= text_field_tag :surl, ("http://" + HOSTNAME + "/bookings/pgresponse")
