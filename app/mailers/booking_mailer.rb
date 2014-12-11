@@ -1,6 +1,6 @@
 class BookingMailer < ActionMailer::Base
   
-  layout 'email'
+  layout 'email', except: [:welcome, :welcome2]
   
   default from: "Zoomcar <help@zoomcar.com>"
   
@@ -42,7 +42,15 @@ class BookingMailer < ActionMailer::Base
 
 	def welcome(user)
 		@user = user
-		mail(to: @user.email, subject: "Welcome To Zoomcar")
+		mail(to: @user.email, subject: "Welcome To Zoomcar") do |format|
+			format.html {render layout: false}			
+		end
 	end
-	
+
+	def welcome2(user)
+		@user = user
+		mail(to: @user.email, subject: "Welcome To Zoomcar") do |format|
+			format.html {render layout: false}			
+		end
+	end
 end
