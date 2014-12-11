@@ -35,7 +35,7 @@
 						.error
 							= errortxt(current_user.errors[:name].uniq.join(', '))
 				.row.form-group
-					%label.col-sm-2.control-label Date of Birth *
+					%label.col-sm-2.control-label Date of Birth
 					.col-sm-10
 						- if current_user.dob.blank?
 							= f.text_field :dob, :class => 'form-control dob', placeholder: "dd/mm/yyyy (min #{CommonHelper::MIN_AGE} years)"
