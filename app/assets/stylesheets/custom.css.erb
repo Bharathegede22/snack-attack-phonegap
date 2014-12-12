@@ -100,22 +100,22 @@ a {
 	width:310px;
 }
 .navbar .unlimited {
-	margin-top: 2px;
+	margin-right:205px;
 	float: right;
-	width: 300px;
+	width: 349px;
 	cursor: pointer;
-	margin-right: 35px;
+	margin-top:-19px;
 }
 .navbar .unlimited a:hover {
 	text-decoration: none;
 }
 .navbar .unlimited .info-text {
 	font-weight: bold;
-	border-bottom: 3px solid #8ECF4F;
+	border-bottom: 3px solid red;
 	padding-right: 10px;
 	font-family: 'Droid Sans', 'Arial', sans-serif;
 	color: #404141;
-	font-size: 11px;
+	font-size: 12px;
 }
 .navbar .unlimited .info-img img{
 	margin-top: -2px;
@@ -1110,7 +1110,8 @@ a {
 }
 
 .content .car1, .content .car2, .content .car3, .content .car4, .content .car5, 
-	.content .car6, .content .car7, .content .car8, .content .car9, .content .car10, .content .car11, .content .car12, .content .car13, .content .car14, .content .car15 {
+	.content .car6, .content .car7, .content .car8, .content .car9, .content .car10, 
+	.content .car11, .content .car12, .content .car13, .content .car14, .content .car15 {
 	background:url(<%= asset_path 'cars/strip.jpg' %>) no-repeat;
 	width:100px;
 	height:80px;
@@ -1164,8 +1165,21 @@ a {
 	background-position:-1100px 0px;
 }
 
+.content .car13 {
+	background-position:-1200px 0px;
+}
+
+.content .car14 {
+	background-position:-1300px 0px;
+}
+
+.content .car15 {
+	background-position:-1400px 0px;
+}
+
 .small-car1, .small-car2, .small-car3, .small-car4, .small-car5, 
-	.small-car6, .small-car7, .small-car8, .small-car9, .small-car10, .small-car11, .small-car12 {
+	.small-car6, .small-car7, .small-car8, .small-car9, .small-car10, 
+	.small-car11, .small-car12, .small-car13, .small-car14, .small-car15 {
 	background:url(<%= asset_path 'cars/small-strip.jpg' %>) no-repeat;
 	width:70px;
 	height:56px;
@@ -1219,6 +1233,18 @@ a {
 	background-position:-770px 0px;
 }
 
+.small-car13 {
+	background-position:-840px 0px;
+}
+
+.small-car14 {
+	background-position:-910px 0px;
+}
+
+.small-car15 {
+	background-position:-980px 0px;
+}
+
 .colored .small-car1 {
 	background-position:0px -56px;
 }
@@ -1267,6 +1293,18 @@ a {
 	background-position:-770px -56px;
 }
 
+.colored .small-car13 {
+	background-position:-840px -56px;
+}
+
+.colored .small-car14 {
+	background-position:-910px -56px;
+}
+
+.colored .small-car15 {
+	background-position:-980px -56px;
+}
+
 .search-item:hover .car1, .colored .car1 {
 	background-position:0px -80px;
 }
@@ -1313,6 +1351,18 @@ a {
 
 .search-item:hover .car12, .colored .car12 {
 	background-position:-1100px -80px;
+}
+
+.search-item:hover .car13, .colored .car13 {
+	background-position:-1200px -80px;
+}
+
+.search-item:hover .car14, .colored .car14 {
+	background-position:-1300px -80px;
+}
+
+.search-item:hover .car15, .colored .car15 {
+	background-position:-1400px -80px;
 }
 
 .search-item .details {
@@ -2478,7 +2528,6 @@ a {
     height: 200px;
     margin-left: 15px;
     border: 5px dotted #D1D1D1;
-    margin-top: 10px;
     margin-right: 31px;
     float: left;
     overflow: hidden;
@@ -2498,7 +2547,6 @@ button.delete {
     width: 25px;
     font-size: 14px;
     line-height: 18px;
-    margin-top: 10px;
     background: red;
     border: 1px solid red;
     color: #fff;
@@ -2589,19 +2637,14 @@ button.delete {
     width: 150px;
     height: 200px; 
     border: 1px solid #ccc;
-    margin-top: 10px;
-
 }
 
 #pre_uploaded_img_parent img{
     float: left;
     width: 150px;
      height: 200px; 
-    /* margin-right: 30px; */
     border: 1px solid #ccc;
     margin-left: 0;
-    margin-top: 10px;
-
 }
 
 .ajax-file-upload-green {
@@ -2634,12 +2677,15 @@ button.delete {
 }
 
 
-
-.pre_uploaded-img-wrapper:hover .block-2 {
+.hover-delete {
+	width: 100%;
+	height: 100%;
+}
+.pre_uploaded-img-wrapper .hover-delete:hover .block-2 {
     display: block;
 }
 
-.uploaded-img-wrapper:hover .block-2 {
+.uploaded-img-wrapper .hover-delete:hover .block-2 {
     display: block;
 }
 
@@ -2650,12 +2696,12 @@ button.delete {
 .popover_overlay { 
      position : absolute;
      left: 15px;
-     top: 10px;
+     top: 0px;
      width: 150px;
      height: 200px;
      right:0;
      z-index: 999;
-     background:rgba(0,0,0,0.9);
+     background:rgba(0,0,0,0.5);
      text-align: center;
      margin-left: -15px;
  }
@@ -2745,11 +2791,11 @@ button.delete {
 }
 
 .uploaded-img-wrapper, .pre_uploaded-img-wrapper {
-    width: 170px;
+    width: 150px;
     height: 200px;
     float: left;
     margin-left: 10px;
-    margin-right: 10px;
+    margin-right: 30px;
 }
 
 .android-dl-page, .iphone-dl-page {
@@ -3285,4 +3331,39 @@ button.delete {
 /*-----Outstation Page------*/
 .no-border-top {
 	border-top: 0;
-};
+}
+/*-------------Booking--------------*/
+.travelled-distance {
+	width: 50%;
+	display: inline-block;
+	vertical-align: top;
+	margin-top: 26px;
+	text-align: right;
+	padding-right: 12px;
+	position: absolute;
+	top: 0;
+	right: 0;
+	font-family: Arial, Helvetica, sans-serif;
+}
+.travelled-distance .dist-icon {
+	display: inline-block;
+	width: 44px;
+}
+.travelled-distance .dist-icon img {
+	width: 100%;
+}
+.travelled-distance .dist-info {
+	display: inline-block;
+	text-align: left;
+	vertical-align: bottom;
+	margin-bottom: 2px;
+	margin-left: -6px;
+}
+.travelled-distance .info-value {
+	font-size: 15px;
+	font-weight: bold;
+}
+.travelled-distance .info-text {
+	text-transform: uppercase;
+	font-size: 11px;
+}
