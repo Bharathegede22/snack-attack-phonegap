@@ -151,7 +151,7 @@ class Payment < ActiveRecord::Base
 					hash += PAYU_SALT + "|" + 
 						params['status'] + "|||||||||||" + 
 						booking.user.email + "|" +
-						booking.user.name + "|" +
+						booking.user.name.strip + "|" +
 						params['productinfo'] + "|" + 
 						params['amount'] + "|" + 
 						payment.encoded_id.downcase + "|" + 
