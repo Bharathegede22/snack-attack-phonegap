@@ -18,7 +18,7 @@ module BookingsHelper
         results[car["id"].to_s] = car["locations_availibility"]
       end
       [results,cars]
-    rescue Exception => ex      
+    rescue Exception => ex
       Rails.logger.info "JsonParsingError: Error parsing response from search results from api===== #{ex.message}--- BookingsHelper"
       flash[:error] = "Sorry, our system is busy right now. Please try after some time."
       [nil,nil]
