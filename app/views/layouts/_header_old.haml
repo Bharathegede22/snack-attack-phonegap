@@ -128,13 +128,13 @@
 							%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
 								We're Hiring
 						.fc
-				- if @city.id === 2
-					.unlimited{:style => "margin-right:220px;margin-top:-20px;"}
-						%a{href: "/#{@city.link_name.downcase}/offers"}
-							%span.info-text
-								Unlimited kms free! #wherewillyougo
-							%span.info-img
-								= image_tag("ecosport-car.png")
+				//- if @city.id === 2
+				.unlimited
+					%a{href: "/blog/zoomcar%EF%BB%BF-is-legally-operating-in-bangalore-not-a-taxi-aggregator-or-provider/", :target => "blank"}
+						%span.info-text
+							Zoomcar is neither a taxi provider nor banned!
+						%span.info-img
+							= image_tag("ecosport-car.png")
 				.fc
 		.fc
 	- cls = (!@header.blank? && @header == 'search') ? '' : 'hide'
