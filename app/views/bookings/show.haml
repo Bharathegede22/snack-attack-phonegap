@@ -79,7 +79,7 @@
 						= image_tag("milestone-icon.png")
 					%div.dist-info
 						%div.info-value
-							#{@booking.end_km} kms
+							#{@booking.end_km.to_i - @booking.start_km.to_i} kms
 						%div.info-text
 							Travelled		
 
