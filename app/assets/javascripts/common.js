@@ -65,6 +65,10 @@ function applyPromoCode(frm,url,divId) {
 	response = null;
 	$(document).ready(function(){
 		var promo = jQuery.trim($("#DetailsName").val());
+		var starts = jQuery.trim($("#DetailsStarts").val());
+		var ends = jQuery.trim($("#DetailsEnds").val());
+		var loc = jQuery.trim($("#DetailsLocation").val());
+		var car = jQuery.trim($("#DetailsCargroup").val());
 		var clear = jQuery.trim($("#clearPromo").val());
 
 		var credits_old = $("#creditsUsed").text();
@@ -81,6 +85,10 @@ function applyPromoCode(frm,url,divId) {
 		    type:"POST", 
 		    url: "/bookings/promo",
 		    data: {promo: promo,
+		    			starts: starts,
+		    			ends: ends,
+		    			loc: loc,
+		    			car: car,
 		    			clear: clear},
 				dataType: "json"
 		  })
