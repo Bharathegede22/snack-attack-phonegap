@@ -943,6 +943,7 @@ class BookingsController < ApplicationController
 	end
 
 	def check_search
+		copy_params
 		if !session[:book].blank? && !session[:book][:starts].blank? && !session[:book][:ends].blank? && !session[:book][:car].blank? && !session[:book][:loc].blank?
 			@booking = Booking.new
 			@booking.starts = Time.zone.parse(session[:book][:starts])
