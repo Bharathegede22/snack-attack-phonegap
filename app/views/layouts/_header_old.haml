@@ -19,7 +19,7 @@
 						.fc
 				.links
 					%ul.nav.navbar-nav.fr
-						- if !search_abtest? and ((@header.blank? || @header != 'homepage') && @city.active)
+						- if !search_abtest? && ((@header.blank? || @header != 'homepage') && @city.active)
 							- cls = (!@header.blank? && (@header == 'search' || @header == 'booking')) ? 'active' : ''
 							%li
 								%a{class: cls, href: "javascript:void(0)", onclick: "showSearch();"} Book Cars
