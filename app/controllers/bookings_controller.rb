@@ -64,7 +64,7 @@ class BookingsController < ApplicationController
 	  	return
 	  end
 		# Creating order on juspay
-		data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user.email, customer_phone: @booking.user.mobile, return_url: "http://#{HOSTNAME}/bookings/pgresponse" }
+		data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user.email, customer_phone: @booking.user.phone, return_url: "http://#{HOSTNAME}/bookings/pgresponse" }
 		response = Juspay.create_order(data)
 
 		if response['status'].downcase == 'created' || response['status'].downcase == 'new'
