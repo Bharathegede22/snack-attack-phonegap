@@ -19,7 +19,7 @@
 						.fc
 				.links
 					%ul.nav.navbar-nav.fr
-						- if (@header.blank? || @header != 'homepage') && @city.active
+						- if !search_abtest? and ((@header.blank? || @header != 'homepage') && @city.active)
 							- cls = (!@header.blank? && (@header == 'search' || @header == 'booking')) ? 'active' : ''
 							%li
 								%a{class: cls, href: "javascript:void(0)", onclick: "showSearch();"} Book Cars
@@ -31,7 +31,7 @@
 									%b.caret
 								%ul.dropdown-menu
 									%li
-										%a{href: "/#{@city.name.downcase}/tariff"}
+										%a{href: "/#{@city.link_name.downcase}/tariff"}
 											Tariffs Details
 									%li
 										%a{href: "javascript:void(0)", onclick: "showModal('Tariff Calculator', '/calculator/tariff');"}
@@ -49,17 +49,19 @@
 									%a{href: "/howitworks"}
 										How Zoomcar Works
 								%li
-									%a{href: "/#{@city.name.downcase}/safety"}
+									%a{href: "/#{@city.link_name.downcase}/safety"}
 										Zoom in Safety
 								%li
 									%a{href: "/outstation"}
 										Going Outstation?
 								- if @city.active
-									%li
-										%a{href: "/reva"}
-											Zoomcar's Electric!
+									- car = Cargroup.find(5)
+									- if !car.blank? && !car.active_pricing(@city.id).blank?
+										%li
+											%a{href: "/reva"}
+												Zoomcar's Electric!
 								%li
-									%a{href: "/#{@city.name.downcase}/faq"}
+									%a{href: "/#{@city.link_name.downcase}/faq"}
 										FAQs
 								%li
 									%a{href: "/handover"}
@@ -71,7 +73,7 @@
 								%b.caret
 							%ul.dropdown-menu
 								%li
-									%a{href: "/#{@city.name.downcase}/fees"}
+									%a{href: "/#{@city.link_name.downcase}/fees"}
 										Fee Policy
 								%li
 									%a{href: "/eligibility"}
@@ -85,7 +87,7 @@
 						- if @city.active
 							%li
 								- cls = (!@header.blank? && @header == 'offers') ? 'active' : ''
-								%a{class: cls, href: "/#{@city.name.downcase}/offers"} Offers
+								%a{class: cls, href: "/#{@city.link_name.downcase}/offers"} Offers
 					.fc
 				.support
 					= @city.contact_phone
@@ -94,12 +96,12 @@
 				.city-tabs.fl
 					:ruby
 						url = request.fullpath
-						url = "/#{@city.name.downcase}" if true # !url.include?(@city.name.downcase)
+						url = "/#{@city.link_name.downcase}" if true # !url.include?(@city.link_name.downcase)
 					- City.active.each do |city|
 						:ruby
 							cls = ''
 							cls = 'active' if @city.id == city.id
-						= link_to city.name, "/#{city.name.downcase}", class: cls
+						= link_to city.name, "/#{city.link_name.downcase}", class: cls
 					.fc
 				.info
 					#UserBar
@@ -118,20 +120,25 @@
 									%li
 										%a{href: "javascript:void(0)", onclick: "showModal('Sign In', '/users/forgot');"}
 											Forgot Password
-						%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
-							We're Hiring
+											
+						- if @city.link_name.downcase == 'bangalore' && Time.now > Date.new(2014,11,30).beginning_of_day
+							%a.hiring.fr.ts-3.f-b.pointer{href: "/deals", onclick: "pushEvent('Squirrel', 'Deals Tab - Header', '');"}
+								Deals
+						- else
+							%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
+								We're Hiring
 						.fc
-				- if @city.id === 2
-					.unlimited
-						%a{href: "/#{@city.name.downcase}/offers"}
-							%span.info-text
-								Unlimited kms free! #wherewillyougo
-							%span.info-img
-								= image_tag("ecosport-car.png")
+				//- if @city.id === 2
+				.unlimited
+					%a{href: "http://zoomcar.com/blog/zoomcar%EF%BB%BF-is-legally-operating-in-bangalore-not-a-taxi-aggregator-or-provider/", :target => "blank", :style => "text-decoration:none"}
+						%span.info-text
+							Zoomcar is neither a taxi provider nor banned!
+						%span.info-img
+							= image_tag("ecosport-car.png")
 				.fc
 		.fc
 	- cls = (!@header.blank? && @header == 'search') ? '' : 'hide'
-	- if !@header.blank? && @header == 'search'
+	- if (search_abtest? && (@header != "homepage" && @header != "booking")) || (!search_abtest? && (!@header.blank? && @header == 'search'))
 		#SH
 			#SearchFormDiv.search-header
 				= render :partial => '/bookings/widget'

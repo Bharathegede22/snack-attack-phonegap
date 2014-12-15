@@ -337,11 +337,45 @@ class User < ActiveRecord::Base
 	end 
 
 	def send_welcome_mail
-		if rand(100) < 80 #&& self.name_was.nil? && self.name_changed?
+		abtest=rand(100)
+		if (1..35).include? abtest# && self.name_was.nil? && self.name_changed?
 			BookingMailer.welcome(self).deliver
-			Email.create(user_id: self.id, activity: 'welcome_mail') 
+			Email.create(user_id: self.id, activity: 'welcome_mail1')
+		elsif (35..70).include? abtest
+			BookingMailer.welcome2(self).deliver
+			Email.create(user_id: self.id, activity: 'welcome_mail2')
 		end
 	end
+
+	def generate_authentication_token
+    if !auth_token_expired? && authentication_token.present?
+      self.authentication_token
+    else
+      token = ""
+      loop do
+        token = Devise.friendly_token
+        unless User.where(authentication_token: token).first
+          break token
+        end
+      end
+      self.authentication_token = token
+      self.authentication_token_valid_till = Time.zone.now + 90.days
+      self.save
+      token
+    end
+  end 
+
+  def auth_token_expired?
+    if authentication_token.present? && authentication_token_valid_till.present?
+      if Time.zone.parse(authentication_token_valid_till) >= Time.zone.now
+        false
+      else
+        true
+      end
+    else
+      true
+    end 
+  end
 	
 	private :before_create_tasks, :before_validation_tasks, :valid_otp_length?
 end

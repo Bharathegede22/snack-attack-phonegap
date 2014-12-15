@@ -1,0 +1,70 @@
+:ruby
+	b = Booking.new
+	b.starts = starts
+	b.ends = ends
+	b.location_id = location.id
+	b.cargroup_id = cargroup.id
+	b.city_id = location.city_id
+	b.valid?
+	fare = b.get_fare
+	disc = fare[:total] - fare[:total]*discount/100
+.col-md-6.pull-left
+	- if sold_out
+		.sold-out-tag
+	.each-car-offer.r-3
+		.col-md-4.border-r-c.p-b3
+			= image_tag("cars/#{cargroup.id}small.jpg", :alt => "")
+			.fl.p-t5.p-b10
+				.size-20.f-b.zoom-b.t-c
+					= cargroup.shortname
+				.size-14.m-t8.lgrey.t-c
+					= cargroup.seating.to_s + " Seater"
+					%form{:action => "/#{@city.link_name.downcase}/bookings/do_flash_booking", :id => "CheckoutForm"}
+						.hide
+							%input{name: "deal", type: "hidden", value: "#{deal}"}
+						.m-t10.btn-book.m-b3
+							%input{type: "submit", value: "Book Now", :class => [("button-dis" if sold_out), ("button" unless sold_out)], :disabled => sold_out, :onclick => "pushEvent('Squirrel', 'Book Now', '');"}
+		.col-md-8.border-b-c.p-0
+			.col-md-4
+				.text-up.size-12.p-b2.p-t5.t-c.light-grey
+					Pickup Time
+			.col-md-4.border-l-c
+				.text-up.size-12.p-b2.p-t5.t-c.light-grey
+					Dropoff Time
+			.col-md-4.border-l-c
+				.text-up.size-12.p-b2.p-t11.p-b11.t-c.light-grey
+					Duration
+		.col-md-8.border-b-c.p-0
+			.col-md-4.p-l0.p-r0
+				.text-up.size-12.p-b10.p-t10.t-c
+					.fo-helv.f-b
+						= starts.strftime("%d %b, %Y")
+						%br 
+							= starts.strftime('%I:%M %P')
+			.col-md-4.border-l-c.p-l0.p-r0
+				.text-up.size-12.p-b10.p-t10.t-c
+					.fo-helv.f-b
+						= ends.strftime("%d %b, %Y")
+						%br 
+							= ends.strftime('%I:%M %P')
+			.col-md-4.border-l-c.p-l0.p-r0
+				.text-up.size-18.p-b10.p-t10.t-c.duration-hrs
+					.fo-helv.f-b
+						= ((ends - starts)/1.hour).round 
+						Hrs
+		.col-md-8.border-b-c.p-0.p-l35.location_icon
+			.size-13.p-b5.p-t5.light-grey
+				%span.text-up
+					Pickup location
+				.zoom-b.f-b.size-12.m-t5
+					= location.name
+					%br/
+					%a.size-11.help.pointer{:href => "javascript:showMap(#{location.lat}, #{location.lng}, '#{location.name}');"}
+						(view map)
+		.col-md-8.p-0
+			.col-md-5.p-r0.p-l0
+				%h4.t-c.size-16.m-t15.strike-text Rs. #{fare[:total]}
+			.col-md-7.p-r0.p-l0
+				%h4.t-c.fo-helv.f-b.size-20.m-t15.red 
+					Rs. #{disc}
+					%span.size-16.red (#{discount}% off)

@@ -11,10 +11,17 @@ class ApplicationController < ActionController::Base
   before_filter :authenticate_staging
   force_ssl if: :check_ssl?
 
+
   # => Checks if A/B test cookies are set and renders the checkout page accordingly
   def abtest?
-    cookies[:abtesth].present?
+    cookies[:abtestj].present?
   end
+  helper_method :abtest?
+
+  def search_abtest?
+    cookies[:abtesti].present?
+  end
+  helper_method :search_abtest?
 
   def check_city
     # Checking explicit city in the url
@@ -154,6 +161,8 @@ class ApplicationController < ActionController::Base
     #  city = 'mumbai'
     if lat >= 18.18 && lat <= 18.88 && lon >= 73.52 && lon <= 74.22
       city = 'pune'
+    elsif lat >= 28.32 && lat <= 29.02 && lon >= 76.87 && lon <= 77.57
+      city = 'delhi'
     else
       city = 'bangalore'
     end
@@ -164,6 +173,25 @@ class ApplicationController < ActionController::Base
     session[:city] = city.downcase
     cookies[:city] = {:value => city.downcase, :expires => 10.years.from_now, :domain => "." + HOSTNAME.split(':').first.gsub("www.", '')}
     @city = City.lookup_all(city.downcase)
+  end
+
+  def error_with_message(message="", http_status_code = 400)
+    message = "Woah, we punctured a tire! ZoomCar encountered an error." if message.blank?
+    if http_status_code  == 401 && Rails.env.production?
+      response.headers["WWW-Authenticate"] = "Basic realm = 'fake'"
+      http_status_code = 400
+    end
+    render inline: "json.errorCode \"#{message}\"; json.error \"#{t(message)}\"; json.status '0'", :status => http_status_code,  type: :jbuilder
+    return
+  end
+
+  def authenticate_user_from_token!
+    Rails.logger.debug(current_user.inspect)
+    if current_user && !current_user.auth_token_expired?
+      # sign_in current_user, store:false
+    else
+      error_with_message(:tokenNotFound, 401)
+    end
   end
   
 end

@@ -1,8 +1,23 @@
 .static
 	%h1.zoom #{@city.name} Offers
+	- if @city.link_name == 'bangalore'
+		.offers-banner
+		.checknow-button.fr
+			%a{href: "/deals", onclick: "pushEvent('Squirrel', 'Deals Tab - Header', '');"} Check now!
 	- offers = @city.active_offers
-	- if offers.blank?
+	- if offers.blank? && @city.link_name != "bangalore"
 		Sorry, no offers are available right now.
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+		%br/
+	- elsif offers.blank? && @city.link_name == "bangalore"
 		%br/
 		%br/
 		%br/

@@ -143,7 +143,6 @@ class Payment < ActiveRecord::Base
 				payment = Payment.find(id)
 				if payment
 					booking = payment.booking
-					booking.user_email = PAYU_EMAIL if !Rails.env.production?
 					if params['additionalCharges'].present?
 						hash = params['additionalCharges'] + "|"
 					else
@@ -151,15 +150,15 @@ class Payment < ActiveRecord::Base
 					end
 					hash += PAYU_SALT + "|" + 
 						params['status'] + "|||||||||||" + 
-						booking.user_email + "|" + 
-						booking.user_name + "|" + 
+						booking.user.email + "|" +
+						booking.user.name.strip + "|" +
 						params['productinfo'] + "|" + 
 						params['amount'] + "|" + 
 						payment.encoded_id.downcase + "|" + 
 						PAYU_KEY
 					if params['amount'].to_i == payment.amount.to_i && 
-						params['firstname'] == booking.user_name.strip && 
-						params['email'] == booking.user_email && 
+						params['firstname'] == booking.user.name.strip &&
+						params['email'] == booking.user.email &&
 						Digest::SHA512.hexdigest(hash) == params['hash']
 						payment.status = case params['status'].downcase
 						when 'success' then 1
@@ -198,9 +197,8 @@ class Payment < ActiveRecord::Base
 				payment = Payment.find(id)
 				if payment
 					booking = payment.booking
-					booking.user_email = PAYU_EMAIL if !Rails.env.production?
 					response = Juspay.check_status(params['order_id'])
-					if response['amount'] == payment.amount.to_i && params['status'].downcase == response['status'].downcase && response['customer_email'] == booking.user_email && response['customer_id'] == booking.user.encoded_id
+					if response['amount'] == payment.amount.to_i && params['status'].downcase == response['status'].downcase && response['customer_email'] == booking.user.email && response['customer_id'] == booking.user.encoded_id
 						payment.update_status_juspay(response)
 						return payment
 					end
@@ -228,10 +226,6 @@ class Payment < ActiveRecord::Base
 		payment = Payment.find(id)
 		booking = Booking.find(payment.booking_id)
 		pricing = booking.pricing
-		if !Rails.env.production?
-			booking.user_email = PAYU_EMAIL
-			booking.user_mobile = PAYU_PHONE
-		end
 		if dep == 'true'
 			payment.amount += pricing.mode::SECURITY
       booking.update_column(:defer_deposit, false)
@@ -244,7 +238,7 @@ class Payment < ActiveRecord::Base
 		response = Juspay.update_order(data)
 		if(response['status'].downcase == 'new')
 			payment.update_attribute(:amount, payment.amount)
-			hash = PAYU_KEY + "|" + payment.encoded_id + "|" + payment.amount.to_i.to_s + "|" + booking.cargroup.display_name + "|" + booking.user_name.strip + "|" + booking.user_email + "|||||||||||" + PAYU_SALT
+			hash = PAYU_KEY + "|" + payment.encoded_id + "|" + payment.amount.to_i.to_s + "|" + booking.cargroup.display_name + "|" + booking.user.name.strip + "|" + booking.user.email + "|||||||||||" + PAYU_SALT
 			json_resp = {:status=> 'success', :msg => "updated amount", :amt => payment.amount.to_i, :hash => Digest::SHA512.hexdigest(hash)}
 		else
 			json_resp = {:status=> 'error', :msg => "Juspay error", :amt => payment.amount.to_i}
@@ -295,7 +289,27 @@ class Payment < ActiveRecord::Base
 				if b.status == 0
 					b.carry = true if (self.amount > b.outstanding)
 					if !b.car_id.blank?
-						b.status = 1
+						if b.promo.present? && b.promo.include?('SQUIRREL')
+							# booking is deal booking
+							str, id = CommonHelper.decode(b.promo[8, b.promo.length])
+							if str == 'deal'
+								deal = Deal.find_by(id: id)
+								if !deal.sold_out
+									b.status = 1
+									deal.sold_out = true
+									deal.booking_id = b.id
+									deal.save!
+								else
+									# deal double booking
+									b.status = 6
+									# b.auto_cancel = true
+									# b.valid?
+									# b.do_cancellation
+								end
+							end
+						else
+							b.status = 1
+						end
 					elsif b.manage_inventory == 1
 						b.status = 1
 					else
@@ -303,7 +317,7 @@ class Payment < ActiveRecord::Base
 						b.status = 6
 					end
 					#BookingMailer.payment(b.id).deliver
-					#SmsSender.perform_async(b.user_mobile, "Zoomcar booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoomcar Support.", b.id)
+					#SmsSender.perform_async(b.user.phone, "Zoomcar booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoomcar Support.", b.id)
 					if !b.location.kle_enabled.nil?
 						if (b.created_at < b.location.kle_enabled && b.starts >= b.location.kle_enabled) && (b.starts.to_i - b.created_at.to_i) < 86400 && b.kle_enabled
 							####SEND EMAIL#####
@@ -320,7 +334,7 @@ class Payment < ActiveRecord::Base
 							Email.create(activity: 'Userprepardness_confirm',booking_id: b.id,user_id: b.user_id)
 						end
 					end
-					SmsTask::message_exotel(b.user_mobile, "Zoomcar booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoomcar Support.", b.id)
+					SmsTask::message_exotel(b.user.phone, "Zoomcar booking (#{b.confirmation_key}) is confirmed. #{b.cargroup.display_name} from #{b.starts.strftime('%I:%M %p, %d %b')} till #{b.ends.strftime('%I:%M %p, %d %b')} at #{b.location.shortname}. #{b.city.contact_phone} : Zoomcar Support.", b.id)
 				end
 				b.deposit_status = 2 if b.deposit_status == 1
 				b.notes += "<b>" + Time.now.strftime("%d/%m/%y %I:%M %p") + " : </b> Rs." + self.amount.to_s + " - Payment Received through <u>" + self.through_text + "</u>.<br/>"
@@ -340,6 +354,7 @@ class Payment < ActiveRecord::Base
 						b.add_security_deposit_charge
 					end
 					if !b.defer_payment_allowed? && b.wallet_security_payment.nil?
+						b.user.calculate_wallet_total_amount
 						b.update_column(:insufficient_deposit, false)
 						b.make_payment_from_wallet
 					end
@@ -383,6 +398,8 @@ end
 #  refunded_amount              :integer          default(0)
 #  deposit_available_for_refund :integer          default(0)
 #  deposit_paid                 :integer          default(0)
+#  rrn                          :string(255)
+#  auth_id                      :string(255)
 #
 # Indexes
 #
