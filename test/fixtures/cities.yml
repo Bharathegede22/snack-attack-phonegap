@@ -35,4 +35,9 @@ two: {}
 #  seo_outside_keywords    :string(255)
 #  seo_outside_h1          :string(255)
 #  active                  :boolean          default(FALSE)
+#  promo_pricing           :boolean          default(FALSE)
+#  prelaunch               :boolean          default(FALSE)
+#  link_name               :string(255)
+#  address                 :text
+#  directions              :text
 #

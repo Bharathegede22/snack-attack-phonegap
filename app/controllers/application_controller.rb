@@ -18,6 +18,11 @@ class ApplicationController < ActionController::Base
   end
   helper_method :abtest?
 
+  def search_abtest?
+    cookies[:abtesti].present?
+  end
+  helper_method :search_abtest?
+
   def check_city
     # Checking explicit city in the url
     city_prompt = false
