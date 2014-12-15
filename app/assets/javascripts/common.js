@@ -67,8 +67,8 @@ function applyPromoCode(frm,url,divId) {
 		var promo = jQuery.trim($("#DetailsName").val());
 		var starts = jQuery.trim($("#DetailsStarts").val());
 		var ends = jQuery.trim($("#DetailsEnds").val());
-		var location_id = jQuery.trim($("#DetailsLocation").val());
-		var cargroup_id = jQuery.trim($("#DetailsCargroup").val());
+		var loc = jQuery.trim($("#DetailsLocation").val());
+		var car = jQuery.trim($("#DetailsCargroup").val());
 		var clear = jQuery.trim($("#clearPromo").val());
 
 		var credits_old = $("#creditsUsed").text();
@@ -87,8 +87,8 @@ function applyPromoCode(frm,url,divId) {
 		    data: {promo: promo,
 		    			starts: starts,
 		    			ends: ends,
-		    			location_id: location_id,
-		    			cargroup_id: cargroup_id,
+		    			loc: loc,
+		    			car: car,
 		    			clear: clear},
 				dataType: "json"
 		  })

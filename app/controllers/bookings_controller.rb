@@ -943,22 +943,13 @@ class BookingsController < ApplicationController
 	end
 
 	def check_search
+		copy_params
 		if !session[:book].blank? && !session[:book][:starts].blank? && !session[:book][:ends].blank? && !session[:book][:car].blank? && !session[:book][:loc].blank?
 			@booking = Booking.new
 			@booking.starts = Time.zone.parse(session[:book][:starts])
 			@booking.ends = Time.zone.parse(session[:book][:ends])
 			@booking.location_id = session[:book][:loc]
 			@booking.cargroup_id = session[:book][:car]
-			city = @booking.location.city
-			@booking.city_id = city.id
-			@booking.valid?
-			redirect_to request.fullpath.gsub(@city.link_name.downcase, city.link_name.downcase) and return if city.id != @city.id
-		elsif params[:starts].present? && params[:ends].present? && params[:location_id].present? && params[:cargroup_id].present?
-			@booking = Booking.new
-			@booking.starts = params[:starts] if params[:starts].present?
-			@booking.ends = params[:ends] if params[:ends].present?
-			@booking.location_id = params[:location_id] if params[:location_id].present?
-			@booking.cargroup_id = params[:cargroup_id] if params[:cargroup_id].present?
 			city = @booking.location.city
 			@booking.city_id = city.id
 			@booking.valid?
