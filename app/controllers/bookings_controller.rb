@@ -953,6 +953,16 @@ class BookingsController < ApplicationController
 			@booking.city_id = city.id
 			@booking.valid?
 			redirect_to request.fullpath.gsub(@city.link_name.downcase, city.link_name.downcase) and return if city.id != @city.id
+		elsif params[:starts].present? && params[:ends].present? && params[:location_id].present? && params[:cargroup_id].present?
+			@booking = Booking.new
+			@booking.starts = params[:starts] if params[:starts].present?
+			@booking.ends = params[:ends] if params[:ends].present?
+			@booking.location_id = params[:location_id] if params[:location_id].present?
+			@booking.cargroup_id = params[:cargroup_id] if params[:cargroup_id].present?
+			city = @booking.location.city
+			@booking.city_id = city.id
+			@booking.valid?
+			redirect_to request.fullpath.gsub(@city.link_name.downcase, city.link_name.downcase) and return if city.id != @city.id
 		end
 	end
 	
