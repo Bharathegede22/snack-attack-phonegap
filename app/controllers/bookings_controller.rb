@@ -64,7 +64,7 @@ class BookingsController < ApplicationController
 	  	return
 	  end
 		# Creating order on juspay
-		data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user.email, customer_phone: @booking.user.mobile, return_url: "http://#{HOSTNAME}/bookings/pgresponse" }
+		data = { amount: @payment.amount.to_i, order_id: @payment.encoded_id, customer_id: @booking.user.encoded_id, customer_email: @booking.user.email, customer_phone: @booking.user.phone, return_url: "http://#{HOSTNAME}/bookings/pgresponse" }
 		response = Juspay.create_order(data)
 
 		if response['status'].downcase == 'created' || response['status'].downcase == 'new'
@@ -412,7 +412,6 @@ class BookingsController < ApplicationController
 	def payment
 		@payment = @booking.check_payment
 		if @payment
-			@newflow = abtest? ? true : false # abtest
 			render :layout => 'plain'
 		else
 			flash[:notice] = "Booking is already paid for full, no need for a new transaction."
@@ -943,6 +942,7 @@ class BookingsController < ApplicationController
 	end
 
 	def check_search
+		copy_params
 		if !session[:book].blank? && !session[:book][:starts].blank? && !session[:book][:ends].blank? && !session[:book][:car].blank? && !session[:book][:loc].blank?
 			@booking = Booking.new
 			@booking.starts = Time.zone.parse(session[:book][:starts])

@@ -79,7 +79,7 @@
 						= image_tag("milestone-icon.png")
 					%div.dist-info
 						%div.info-value
-							#{@booking.end_km} kms
+							#{@booking.end_km.to_i - @booking.start_km.to_i} kms
 						%div.info-text
 							Travelled		
 
@@ -424,6 +424,5 @@
 		})();
 		_kiq.push(['identify', "#{@booking.encoded_id}"]);
 	
-	- if abtest?
-		:javascript
-			_gaq.push(['_trackEvent', "1-click checkout-A", "Booking Failed", ""]);
+	:javascript
+		_gaq.push(['_trackEvent', "1-click checkout-A", "Booking Failed", ""]);
