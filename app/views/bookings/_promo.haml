@@ -7,6 +7,14 @@
 				.row
 					.col-md-7.text-right.promocode-input
 						%input#DetailsName.validate-presence.form-control{:placeholder => "Enter Promo Code" ,name: 'promo', type: "text", value: @promo}
+						- if @booking.starts.present?
+							%input#DetailsStarts{:type => 'hidden', :name => 'starts', :value => @booking.starts}
+						- if @booking.ends.present?
+							%input#DetailsEnds{:type => 'hidden', :name => 'ends', :value => @booking.ends}
+						- if @booking.location_id.present?
+							%input#DetailsLocation{:type => 'hidden', :name => 'location_id', :value => @booking.location_id}
+						- if @booking.cargroup_id.present?
+							%input#DetailsCargroup{:type => 'hidden', :name => 'cargroup_id', :value => @booking.cargroup_id}
 					.col-md-3.text-left.promo-submit
 						#PromoSubmit_promo
 							%button.btn.btn-default.apply_promocode_btn#use_tariff{type:"submit"} Apply
@@ -21,6 +29,14 @@
 				.fr
 					%form{:id => "PromoForm", :onsubmit => "return applyPromoCode(this,'/bookings/promo?clear=1','PromoCreditsDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 						%input#clearPromo.form-control{name: 'clear', type: "hidden", value: "1" }
+						- if @booking.starts.present?
+							%input#DetailsStarts{:type => 'hidden', :name => 'starts', :value => @booking.starts}
+						- if @booking.ends.present?
+							%input#DetailsEnds{:type => 'hidden', :name => 'ends', :value => @booking.ends}
+						- if @booking.location_id.present?
+							%input#DetailsLocation{:type => 'hidden', :name => 'location_id', :value => @booking.location_id}
+						- if @booking.cargroup_id.present?
+							%input#DetailsCargroup{:type => 'hidden', :name => 'cargroup_id', :value => @booking.cargroup_id}
 						#PromoSubmit.m-r_15
 							%button.btn.btn-default.btn-xs.promoCodeCancelBtn{type:"submit"}
 								%span.glyphicon.glyphicon-remove.creditRemovespan
