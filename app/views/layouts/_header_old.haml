@@ -138,10 +138,14 @@
 				.fc
 		.fc
 	- cls = (!@header.blank? && @header == 'search') ? '' : 'hide'
-	- if (search_abtest? && (@header != "homepage" && @header != "booking")) || (!search_abtest? && (!@header.blank? && @header == 'search'))
+	- if (search_abtest? && (@header != "homepage" && @header != "booking"))
 		#SH
 			#SearchFormDiv.search-header
 				= render :partial => '/bookings/widget'
+	- elsif (!search_abtest? && (!@header.blank? && @header == 'search'))
+		#SH
+			#SearchFormDiv.search-header.no-cookie
+				= render :partial => '/bookings/widget'			
 	- else
 		#SH{:style => 'display:none;'}
 			#SearchFormDiv.search-header.no-cookie
