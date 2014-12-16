@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   has_many :bookings
   has_many :credits
   has_many :wallets
+  has_many :referrals, :foreign_key => :referral_user_id
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable 
   devise :database_authenticatable, :registerable, 
@@ -53,6 +54,17 @@ class User < ActiveRecord::Base
 
   def fleet?
 		return self.role >= 5
+	end
+
+	def referral_code
+		return self.ref_code if self.ref_code.present?
+		self.generate_referral_code
+		self.ref_code
+	end
+
+	def generate_referral_code
+		self.ref_code = Digest::SHA1.hexdigest(self.email)[8..16].upcase
+		self.save!
 	end
 	
 	def get_bookings(action, page=0)

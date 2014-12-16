@@ -134,6 +134,12 @@ class ApplicationController < ActionController::Base
   def authenticate_staging
     redirect_to '/users/access' and return if Rails.env == 'staging' && (current_user.blank? || (!current_user.blank? && current_user.role < 1))
   end
+
+  def validate_and_apply_referral(user)
+    referral = UserUpdates.new(user, cookies)
+    referral.apply_referral_code
+    referral.clear_referral_cookie(cookies)
+  end
   
   private
   

@@ -8,6 +8,8 @@ class Credit < ActiveRecord::Base
 	default_scope where("(status = 1)")
 	SOURCE_NAME = {1 => "Booking", 2 => "Early Return", 3 => "Call center", 4 => "Refund more than cash paid", 5 => "Promo Code", 6 => "Sign up", 7 => "Referral", 8 => "Checkout Refresh", 9 => "Others"}
 	SOURCE_NAME_INVERT = SOURCE_NAME.invert
+	REFERRAL_CREDIT = 500
+
 	def self.use_credits(booking, amount)
 		payment = Payment.new
 		payment.booking_id = booking.id
