@@ -30,6 +30,7 @@ end
 #  sold_out    :boolean          default(FALSE)
 #  created_at  :datetime
 #  updated_at  :datetime
+#  logged_at   :datetime
 #
 # Indexes
 #

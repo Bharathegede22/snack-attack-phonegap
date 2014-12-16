@@ -28,6 +28,11 @@ class Credit < ActiveRecord::Base
 		credit.save!
   end
 
+  def history_description
+  	return "Booking Fee" if !self.action && self.booking_key.present?
+  	self.action ? "Credits Added" : "Credits Correction"
+  end
+
 	protected
 
 	def after_create_tasks
@@ -42,13 +47,16 @@ end
 #
 #  id              :integer          not null, primary key
 #  user_id         :integer
+#  booking_key     :string(255)
+#  promo_code      :text
+#  updated_by      :integer
 #  creditable_type :string(255)
 #  amount          :integer
-#  action          :boolean
+#  action          :boolean          default(TRUE)
 #  created_at      :datetime
 #  updated_at      :datetime
 #  status          :boolean          default(TRUE)
 #  note            :string(255)
 #  creditable_id   :integer
-#  source_name     :string(255)
+#  source_name     :integer
 #
