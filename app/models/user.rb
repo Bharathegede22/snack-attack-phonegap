@@ -187,6 +187,7 @@ class User < ActiveRecord::Base
 			  user.save!
 			end
 		end
+		user.generate_authentication_token if user.present?
 		return [is_new, user]
 	end
 	

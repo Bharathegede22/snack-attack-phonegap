@@ -424,6 +424,5 @@
 		})();
 		_kiq.push(['identify', "#{@booking.encoded_id}"]);
 	
-	- if abtest?
-		:javascript
-			_gaq.push(['_trackEvent', "1-click checkout-A", "Booking Failed", ""]);
+	:javascript
+		_gaq.push(['_trackEvent', "1-click checkout-A", "Booking Failed", ""]);
