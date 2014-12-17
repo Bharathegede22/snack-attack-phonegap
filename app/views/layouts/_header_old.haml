@@ -1,7 +1,7 @@
 = render :partial => '/layouts/tag_manager' if Rails.env.production?
 #DocTop
 = render :partial => '/main/mobile_redirect' if !@device.blank?
-- if !@header.blank? && @header == 'search'
+- if (!search_abtest? && !@header.blank? && @header == 'search') || (search_abtest? && @header != "homepage" && @header != "booking")
 	#NavBuffer.nav-buffer-big
 - else
 	#NavBuffer.nav-buffer
