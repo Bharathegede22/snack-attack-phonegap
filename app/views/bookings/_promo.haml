@@ -1,41 +1,106 @@
-#PromoDiv
-	- @offer ||= Offer.get(session[:promo_code],@city) if !session[:promo_code].blank?
-	- if @offer && !@offer[:error].blank?
-		.alert.alert-danger
-			= @offer[:error].html_safe
-	- if session[:promo_code].blank?
-		.p-b5
-			%b Promo Code (Optional)
-		%form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
-			.row
-				.col-md-7
-					%input#DetailsName.validate-presence.form-control{name: 'promo', type: "text", value: @promo}
-				.col-md-5
-					#PromoSubmit
-						%button.btn.btn-default{type:"submit"} Apply Promo Code
-		#PromoWait{style: "display:none;"}
-			.wait
-		#DetailsNameError.error
-	- else
-		.p-b5
-			.fl
-				%b Promo Code (Optional)
-			.fr
-				%form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
-					#PromoSubmit
-						%button.btn.btn-default.btn-xs{type:"submit"}
-							%span.glyphicon.glyphicon-remove
+- if CommonHelper.offers_credits_live?
+	.p-l17.height34
+		- if flash[:error].present?
+			- render_flash
+		- elsif session[:promo_code].blank? && session[:promo_message].blank?
+			%form.promocode-form{:id => "PromoForm", :onsubmit => "return applyPromoCode(this,'/bookings/promo','PromoCreditsDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+				.row
+					.col-md-7.text-right.promocode-input
+						%input#DetailsName.validate-presence.form-control{:placeholder => "Enter Promo Code" ,name: 'promo', type: "text", value: @promo}
+						- if @booking.starts.present?
+							%input#DetailsStarts{:type => 'hidden', :name => 'starts', :value => @booking.starts}
+						- if @booking.ends.present?
+							%input#DetailsEnds{:type => 'hidden', :name => 'ends', :value => @booking.ends}
+						- if @booking.location_id.present?
+							%input#DetailsLocation{:type => 'hidden', :name => 'location_id', :value => @booking.location_id}
+						- if @booking.cargroup_id.present?
+							%input#DetailsCargroup{:type => 'hidden', :name => 'cargroup_id', :value => @booking.cargroup_id}
+					.col-md-3.text-left.promo-submit
+						#PromoSubmit_promo
+							%button.btn.btn-default.apply_promocode_btn#use_tariff{type:"submit"} Apply
+
 					#PromoWait{style: "display:none;"}
 						.wait
-			.fc
-		.p-b5
-			Promo code 
-			%b #{session[:promo_code]}
-			has been applied.
-		- if @offer && @offer[:offer]
+					#DetailsNameError.error
+		- elsif session[:promo_message].present?
+			.p-b5
+				.fl
+					%b.size-12 PROMO CODE
+				.fr
+					%form{:id => "PromoForm", :onsubmit => "return applyPromoCode(this,'/bookings/promo?clear=1','PromoCreditsDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+						%input#clearPromo.form-control{name: 'clear', type: "hidden", value: "1" }
+						- if @booking.starts.present?
+							%input#DetailsStarts{:type => 'hidden', :name => 'starts', :value => @booking.starts}
+						- if @booking.ends.present?
+							%input#DetailsEnds{:type => 'hidden', :name => 'ends', :value => @booking.ends}
+						- if @booking.location_id.present?
+							%input#DetailsLocation{:type => 'hidden', :name => 'location_id', :value => @booking.location_id}
+						- if @booking.cargroup_id.present?
+							%input#DetailsCargroup{:type => 'hidden', :name => 'cargroup_id', :value => @booking.cargroup_id}
+						#PromoSubmit.m-r_15
+							%button.btn.btn-default.btn-xs.promoCodeCancelBtn{type:"submit"}
+								%span.glyphicon.glyphicon-remove.creditRemovespan
+						#PromoWait{style: "display:none;"}
+							.wait
+				.fc
 			.p-b5.size-12
-				= @offer[:offer].summary.html_safe
-		.p-b5.size-12
-			%i Discount will be manually evaluated and refunded back to your card.
-		.promoCode_condition_block_whenApplied
-			%i.promoCode_condition Promo Codes are not applicable during #{CommonHelper::BLACKOUT_TEXT}.
+				%i #{session[:promo_message]}
+		- else			
+			.fc
+			.col-md-12.promoCode-desc-block.clearfix.rmpad
+				.col-md-4.text-right.clearfix.rmpad{:style=>"text-align:left;text-transform: uppercase;"}
+					%b #{session[:promo_code]}
+				.col-md-8.text-right.clearfix.rmpad
+					%b.promo_amount - ₹
+					%b.promo_amount#promoAmount.size-16 #{session[:promo_discount]}
+				.col-md-1.btn-promocode_cancel
+					%form#PromoForm{:action => "javascript:void(0)", "data-ajax" => "false", :onsubmit => "return applyPromoCode(this,'/bookings/promo?clear=1','PromoDiv');"}
+						%input#clearPromo.form-control{name: 'clear', type: "hidden", value: "1" }
+						#PromoSubmit
+							%button.btn.btn-default.btn-xs.promoCodeCancelBtn{:type => "submit"}
+								%span.glyphicon.glyphicon-remove.promoRemovespan
+						#PromoWait{:style => "display: none;"}
+							.wait
+- else
+	#PromoDiv.p-5
+		- @offer ||= Offer.get(session[:promo_code],@city) if !session[:promo_code].blank?
+		- if @offer && !@offer[:error].blank?
+			.alert.alert-danger
+				= @offer[:error].html_safe
+		- if session[:promo_code].blank?
+			.p-b5
+				%b Promo Code (Optional)
+			%form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+				.row
+					.col-md-7
+						%input#DetailsName.validate-presence.form-control{name: 'promo', type: "text", value: @promo}
+					.col-md-5
+						#PromoSubmit
+							%button.btn.btn-default{type:"submit"} Apply Promo Code
+			#PromoWait{style: "display:none;"}
+				.wait
+			#DetailsNameError.error
+		- else
+			.p-b5
+				.fl
+					%b Promo Code (Optional)
+				.fr
+					%form{:id => "PromoForm", :onsubmit => "return SubmitForm(this,'/bookings/promo?clear=1','PromoDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+						#PromoSubmit
+							%button.btn.btn-default.btn-xs{type:"submit"}
+								%span.glyphicon.glyphicon-remove
+						#PromoWait{style: "display:none;"}
+							.wait
+				.fc
+			.p-b5
+				Promo code 
+				%b #{session[:promo_code]}
+				has been applied.
+			- if @offer && @offer[:offer]
+				.p-b5.size-12
+					= @offer[:offer].summary.html_safe
+			.p-b5.size-12
+				%i Discount will be manually evaluated and refunded back to your card.
+			- if !@city.promo_pricing
+				.promoCode_condition_block_whenApplied
+					%i.promoCode_condition Promo Codes are not applicable during #{CommonHelper::BLACKOUT_TEXT}.

@@ -17,7 +17,7 @@ gem "rfc822"
 gem "paperclip"
 gem 'rack-cache'
 gem 'lacquer'
-gem 'dalli'
+gem 'dalli', '2.6.4'
 gem 'sidekiq'
 gem 'sinatra', '>= 1.3.0', :require => nil
 gem 'fql'
@@ -28,7 +28,7 @@ gem 'sprockets-image_compressor'
 gem 'paper_trail', '~> 3.0.1'
 gem 'geoip'
 gem "browser"
-gem 'whenever', :require => false
+gem 'whenever'
 
 group :development do
 	gem 'capistrano'

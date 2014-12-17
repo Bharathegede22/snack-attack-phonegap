@@ -22,6 +22,10 @@
 		Use the below button if you are not redirected within 10 seconds
 		.p-t10
 			%a.btn.btn-default{href: url} Proceed to Zoomcar
+
+	:javascript
+		_gaq.push(['_trackEvent', "1-click checkout-A", "Booking Done", ""]);
+			
 	:javascript
 		window.onload = function() {
 			var auto = setTimeout(function(){ submitform(); }, 1000);

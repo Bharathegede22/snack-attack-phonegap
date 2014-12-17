@@ -6,7 +6,8 @@ class Credit < ActiveRecord::Base
 	after_create :after_create_tasks
 	
 	default_scope where("(status = 1)")
-
+	SOURCE_NAME = {1 => "Booking", 2 => "Early Return", 3 => "Call center", 4 => "Refund more than cash paid", 5 => "Promo Code", 6 => "Sign up", 7 => "Referral", 8 => "Checkout Refresh", 9 => "Others"}
+	SOURCE_NAME_INVERT = SOURCE_NAME.invert
 	def self.use_credits(booking, amount)
 		payment = Payment.new
 		payment.booking_id = booking.id
@@ -17,17 +18,18 @@ class Credit < ActiveRecord::Base
 
 		credit = Credit.new
 		credit.user_id = booking.user_id
+    credit.booking_key = booking.confirmation_key.upcase
 		credit.creditable_type = 'Booking'
 		credit.amount = amount
 		credit.action = false
-		credit.source_name = 'booking'
+		credit.source_name = Credit::SOURCE_NAME_INVERT["Booking"]
 		credit.status = 1
 		credit.creditable_id = booking.id
 		credit.save!
-	end
-	
+  end
+
 	protected
-	
+
 	def after_create_tasks
 		user.update_credits
 	end
@@ -40,13 +42,16 @@ end
 #
 #  id              :integer          not null, primary key
 #  user_id         :integer
+#  booking_key     :string(255)
+#  promo_code      :text
+#  updated_by      :integer
 #  creditable_type :string(255)
 #  amount          :integer
-#  action          :boolean
+#  action          :boolean          default(TRUE)
 #  created_at      :datetime
 #  updated_at      :datetime
 #  status          :boolean          default(TRUE)
 #  note            :string(255)
 #  creditable_id   :integer
-#  source_name     :string(255)
+#  source_name     :integer
 #

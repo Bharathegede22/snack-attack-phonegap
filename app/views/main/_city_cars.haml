@@ -16,9 +16,9 @@
 					%th Daily
 					%th Weekly
 				%tr
-					%td ₹ #{show_currency(pricing.hourly_fare)}
-					%td ₹ #{show_currency(pricing.daily_fare)}
-					%td ₹ #{show_currency(pricing.weekly_fare)}
+					%td ₹ #{show_currency(pricing.hourly_discounted)}
+					%td ₹ #{show_currency(pricing.daily_discounted)}
+					%td #{show_currency(pricing.weekly_percentage_discount)} % Discount
 			%b Available At
 			%br/
 			- locs.uniq.each do |l|

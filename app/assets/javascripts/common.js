@@ -25,25 +25,113 @@ function autoResize(id,count) {
 	$("#IframeBox").fadeIn();
 }
 
-function applyPromoCode() {
+function formCredits(frm,url,divId) {
 	response = null;
 	$(document).ready(function(){
-		var code = jQuery.trim($("#promo_code_text").val());
-		
-		if (code != "") {
+		var apply_credits = jQuery.trim($("#applyCredits").val());
+		var remove_credits = jQuery.trim($("#removeCredits").val());
+
+		var credits_old = $("#creditsUsed").text();
+		var promo_old = $("#promoAmount").text();
+		credits_old = getValue(credits_old);
+		promo_old = getValue(promo_old);
+		$('.cancelCreditsBtn:submit').click(function(){
+			$('.cancelCreditsBtn:submit').attr("disabled", true);	
+		});
+		$('#use_credit:submit').click(function(){
+			$('#use_credit:submit').attr("disabled", true);	
+		});
 		  $.ajax({
 		    type:"POST", 
 		    url: "/bookings/promo",
-		    data: {promo_code:code},
+		    data: {apply_credits: apply_credits,
+		    			remove_credits: remove_credits},
 				dataType: "json"
 		  })
 		  .done(function(json){
-		    $("#promo").empty().append(json.html);
+		    $("#PromoDiv").empty().append(json.promo);
+		    $("#CreditDiv").empty().append(json.credit);
+
+		    var credits_new = $("#creditsUsed").text();
+		    var promo_new = $("#promoAmount").text();
+		    credits_new = getValue(credits_new);
+				promo_new = getValue(promo_new);
+				updateCheckoutAmount(credits_new, credits_old, promo_new, promo_old);
 		  })
-		} else {
-			window.alert("Please input a promo code");
-		}
 	});
+}
+
+function applyPromoCode(frm,url,divId) {
+	response = null;
+	$(document).ready(function(){
+		var promo = jQuery.trim($("#DetailsName").val());
+		var starts = jQuery.trim($("#DetailsStarts").val());
+		var ends = jQuery.trim($("#DetailsEnds").val());
+		var loc = jQuery.trim($("#DetailsLocation").val());
+		var car = jQuery.trim($("#DetailsCargroup").val());
+		var clear = jQuery.trim($("#clearPromo").val());
+
+		var credits_old = $("#creditsUsed").text();
+		var promo_old = $("#promoAmount").text();
+		credits_old = getValue(credits_old);
+		promo_old = getValue(promo_old);
+		$('.promoCodeCancelBtn:submit').click(function(){
+			$('.promoCodeCancelBtn:submit').attr("disabled", true);	
+		});
+		$('.use_tariff:submit').click(function(){
+			$('.use_tariff:submit').attr("disabled", true);	
+		});
+		  $.ajax({
+		    type:"POST", 
+		    url: "/bookings/promo",
+		    data: {promo: promo,
+		    			starts: starts,
+		    			ends: ends,
+		    			loc: loc,
+		    			car: car,
+		    			clear: clear},
+				dataType: "json"
+		  })
+		  .done(function(json){
+		    $("#PromoDiv").empty().append(json.promo);
+		    $("#CreditDiv").empty().append(json.credit);
+
+		    var credits_new = $("#creditsUsed").text();
+		    var promo_new = $("#promoAmount").text();
+		    credits_new = getValue(credits_new);
+				promo_new = getValue(promo_new);
+				updateCheckoutAmount(credits_new, credits_old, promo_new, promo_old);
+		  })
+	});
+}
+
+function getValue(rawValue){
+		if (rawValue == ""){
+			return 0;
+		}
+		else{
+			return parseInt(rawValue);
+		}
+}
+
+function commaSeparateNumber(val){
+    while (/(\d+)(\d{3})/.test(val.toString())){
+      val = val.toString().replace(/(\d+)(\d{3})/, '$1'+','+'$2');
+    }
+    return val;
+}
+
+function updateCheckoutAmount(credits_new, credits_old, promo_new, promo_old){
+	var total_amount_raw = $("#final_amount_to_pay").html();
+	var total_amount = parseInt(total_amount_raw.replace(/[, ]+/g, "").trim());
+	
+	if (credits_new != credits_old){
+		total_amount = total_amount - (credits_new - credits_old);
+	}
+	if (promo_new != promo_old){
+		 total_amount = total_amount - (promo_new - promo_old);
+	}
+	document.getElementById("final_amount_to_pay").innerHTML = commaSeparateNumber(total_amount);
 }
 
 function bindCountry() {
@@ -103,9 +191,9 @@ function checkJail() {
 function checkout(data) {
 	$("#CheckoutWait").show();
 	if(typeof(data) === 'undefined'){
-		window.location = "/#{@city.name.downcase}/bookings/docreate";	
+		window.location = "/#{@city.link_name.downcase}/bookings/docreate";	
 	} else {
-		window.location = '/#{@city.name.downcase}/bookings/docreate?starts=' + data.starts + '&ends=' + data.ends + '&loc=' + data.loc + '&car=' + data.car;
+		window.location = '/#{@city.link_name.downcase}/bookings/docreate?starts=' + data.starts + '&ends=' + data.ends + '&loc=' + data.loc + '&car=' + data.car;
 	}
 }
 
@@ -136,7 +224,7 @@ function doBooking(carId, locId) {
 }
 
 function doBookingNotify(carId, locId) {
-	window.location = "/#{@city.name.downcase}/bookings/do?car=" + carId + "&loc=" + locId + "&notify=true";
+	window.location = "/#{@city.link_name.downcase}/bookings/do?car=" + carId + "&loc=" + locId + "&notify=true";
 }
 
 function getCookie(cname) {
@@ -834,3 +922,28 @@ function verifyGoDaddySSLSeal()
 // 	.blur(function(){
 // 	$('#credit-card-cvv-icon').fadeOut();
 // });
+$('[data-toggle="popover"]').popover();
+
+$('body').on('click', function (e) {
+    $('[data-toggle="popover"]').each(function () {
+        //the 'is' for buttons that trigger popups
+        //the 'has' for icons within a button that triggers a popup
+        if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+            $(this).popover('hide');
+        }
+    });
+});
+
+$(".credits-popover").hover(function(){
+	$(".walletPage-popupBox").css("display", "block");
+},
+	function(){
+		$(".walletPage-popupBox").css("display", "none");
+});
+
+$(".creditsDescBtn-showPage").hover(function(){
+	$(".booking-showPage-popupBox").css("display", "block");
+},
+	function(){
+		$(".booking-showPage-popupBox").css("display", "none");
+});

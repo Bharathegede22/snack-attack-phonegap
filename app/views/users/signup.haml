@@ -122,8 +122,7 @@
 				- if City.find(current_user.city_id).active
 					%b Thanks for providing your details.
 				- else
-					%b Thank you! We will let you know when we reach beautiful Delhi. Your discount code will be in that email.
-			An email has been sent on 
+					%b  Thank you! A welcome email is on its way. When we reach beautiful Delhi we will send an email letting you know, and your discount code will be in that email.
 			%b #{current_user.email},
 			please follow instructions as mentioned in the email to activate your account.
 
@@ -142,5 +141,5 @@
 					var auto = setTimeout(function(){ submitRedirect(); }, 1000);
 					function submitRedirect() {
 						clearTimeout(auto);
-						window.location = "/#{@city.name.downcase}/bookings/do";
+						window.location = "/#{@city.link_name.downcase}/bookings/do";
 					}

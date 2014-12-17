@@ -76,13 +76,17 @@
 				s.parentNode.insertBefore(x, s);
 			})(document);
 			function initializeMap() {
-				var myLatlng = new google.maps.LatLng(#{@city.lat}, #{@city.lng});
 				var mapOptions = {
-					zoom: 10,
-					center: myLatlng,
-					mapTypeId: google.maps.MapTypeId.ROADMAP
+					mapTypeId: google.maps.MapTypeId.ROADMAP,
+					streetViewControl: false,
+					zoomControlOptions: {
+						style: google.maps.ZoomControlStyle.LARGE,
+						position: google.maps.ControlPosition.TOP_RIGHT
+					},
+					styles: [{"featureType":"all","stylers":[{"saturation":-100},{"gamma":0.9}]}]
 				}
 				var map = new google.maps.Map(document.getElementById("Gmap"), mapOptions);
+				bounds = new google.maps.LatLngBounds ();
 		- Location.live(@city).each do |l|
 			- if !l.lat.blank? && !l.lng.blank?
 				:plain
@@ -91,6 +95,7 @@
 						maxWidth: 300
 					});
 					var myLatlng#{l.id} = new google.maps.LatLng(#{l.lat}, #{l.lng});
+					bounds.extend (myLatlng#{l.id});
 					var marker#{l.id} = new google.maps.Marker({
 						position: myLatlng#{l.id},
 						map: map,
@@ -103,9 +108,11 @@
 						pushEvent('Locations Selected', '#{l.shortname}', 'Search Page Map');
 					});
 		:plain
+				google.maps.event.trigger(map, 'resize');
+				map.fitBounds(bounds);
 				google.maps.event.addListenerOnce(map, 'idle', function() {
 					google.maps.event.addListenerOnce(map, 'click', function() {
-						pushEvent('Maps','' , 'Search Page');
+						pushEvent('Maps','First Click', 'Search Page');
 					});
 				});
 			}

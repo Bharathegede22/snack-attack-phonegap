@@ -1,88 +1,59 @@
 .footer
 	.footer-text
-		.partition
-			%h3 How It Works?
-			.p-t5
-				%a{:href => "/howitworks"} How Zoomcar Works
-			.p-t5
-				%a{:href => "/#{@city.name.downcase}/safety"} Zoom in Safety
-			.p-t5
-				%a{:href => "/outstation"} Going Outstation?
-			.p-t5
-				%a{:href => "/reva"} Zoomcar's Electric!
-			.p-t5
-				%a{:href => "/#{@city.name.downcase}/faq"} FAQs
-			.p-t5
-				%a{:href => @city.link('attractions')} Locations and Cars
-		.partition
-			%h3 Policies
-			.p-t5
-				%a{:href => "/#{@city.name.downcase}/fees"} Fees
-			.p-t5
-				%a{:href => "/eligibility"} Eligibility
-			.p-t5
-				%a{:href => "/member"} Membership Agreement
-			.p-t5
-				%a{:href => "/privacy"} Privacy Policy
-		.partition
-			%h3 About Us
-			.p-t5
-				%a{:href => "/about"} Zoomcar Team
-			.p-t5
-				%a{:href => "/careers"} Careers @ Zoomcar
-			.p-t5
-				%a{:href => "http://www.zoomcar.com/blog/", :target => "_blank"} Zoomcar Blog
-		.partition
-			%h3 Let's keep in touch
-			.p-t5.lgrey.lh-18
-				- if @city.name.downcase == 'pune'
-					106, Suratwala Mark Plazzo,
+		- if !@city.inactive?
+			.partition
+				%h3 How It Works?
+				.p-t5
+					%a{:href => "/howitworks"} How Zoomcar Works
+				.p-t5
+					%a{:href => "/#{@city.link_name.downcase}/safety"} Zoom in Safety
+				.p-t5
+					%a{:href => "/outstation"} Going Outstation?
+				.p-t5
+					%a{:href => "/reva"} Zoomcar's Electric!
+				.p-t5
+					%a{:href => "/#{@city.link_name.downcase}/faq"} FAQs
+				.p-t5
+					%a{:href => @city.link('attractions')} Locations and Cars
+			.partition
+				%h3 Policies
+				.p-t5
+					%a{:href => "/#{@city.link_name.downcase}/fees"} Fees
+				.p-t5
+					%a{:href => "/eligibility"} Eligibility
+				.p-t5
+					%a{:href => "/member"} Membership Agreement
+				.p-t5
+					%a{:href => "/privacy"} Privacy Policy
+			.partition
+				%h3 About Us
+				.p-t5
+					%a{:href => "/about"} Zoomcar Team
+				.p-t5
+					%a{:href => "/careers"} Careers @ Zoomcar
+				.p-t5
+					%a{:href => "http://www.zoomcar.com/blog/", :target => "_blank"} Zoomcar Blog
+			.partition.t-r
+				%h3 Let's keep in touch
+				.p-t5.lgrey.lh-18
+					= @city.address.html_safe
+					Phone: #{@city.contact_phone}
 					%br/
-					Opp. Fortune Inn Hotel,
+					Email: 
+					%a{:href => "mailto:#{@city.contact_phone}"} #{@city.contact_email}
 					%br/
-					Hinjewadi, Pune - 411057
-				- else
-					117, 2nd Cross,
-					%br/
-					HAL 3rd Stage,
-					%br/
-					Bangalore - 560075
-				%br/
-				Phone: #{@city.contact_phone}
-				%br/
-				Email: 
-				%a{:href => "mailto:#{@city.contact_phone}"} #{@city.contact_email}
-				%br/
-				%a.link{:href => "/contact", :rel => "nofollow", :target => "_blank", :title => "Directions to Zoomcar's Office!"} Get Directions
-			.social.fl
-				%a.link{:href => "https://www.facebook.com/zoomcar.in?ref=hl", :rel => "nofollow", :target => "_blank", :title => "Connect with us on Facebook!"}
-				%a.link{:href => "https://plus.google.com/u/0/105997905931151680973/posts", :rel => "nofollow", :target => "_blank", :title => "We're on Google+ too!"}
-				%a.link{:href => "https://twitter.com/ZoomCarIndia", :rel => "nofollow", :target => "_blank", :title => "Follow us on Twitter!"}
-				%a.link{:href => "http://www.zoomcar.com/blog/", :rel => "nofollow", :target => "_blank", :title => "Catch up with us on our Blog!"}
+					%a.link{:href => "#{@city.link_name.downcase}/contact", :rel => "nofollow", :target => "_blank", :title => "Directions to Zoomcar's Office!"} Our #{@city.name} Office
+				.social.fl
+					%a.link{:href => "https://www.facebook.com/zoomcar.in?ref=hl", :rel => "nofollow", :target => "_blank", :title => "Connect with us on Facebook!"}
+					%a.link{:href => "https://plus.google.com/u/0/105997905931151680973/posts", :rel => "nofollow", :target => "_blank", :title => "We're on Google+ too!"}
+					%a.link{:href => "https://twitter.com/ZoomCarIndia", :rel => "nofollow", :target => "_blank", :title => "Follow us on Twitter!"}
+					%a.link{:href => "http://www.zoomcar.com/blog/", :rel => "nofollow", :target => "_blank", :title => "Catch up with us on our Blog!"}
+				.fc
 			.fc
-		.fc
-
 		.m-t10.lgrey.t-c
 			&copy; Copyright #{Time.now.year} Zoomcar India Private Ltd. All rights reserved.
 		%br/
-
-	:javascript
-		adroll_adv_id = "MAUPRE3VENEQ5LSSZFYO5Q";
-		adroll_pix_id = "Z4HCBGGE4NAGJBEHWRJCDS";
-		(function () {
-			var oldonload = window.onload;
-			window.onload = function(){
-			__adroll_loaded=true;
-			var scr = document.createElement("script");
-			var host = (("https:" == document.location.protocol) ? "https://s.adroll.com" : "http://a.adroll.com");
-			scr.setAttribute('async', 'true');
-			scr.type = "text/javascript";
-			scr.src = host + "/j/roundtrip.js";
-			((document.getElementsByTagName('head') || [null])[0] ||
-			document.getElementsByTagName('script')[0].parentNode).appendChild(scr);
-			if(oldonload){oldonload()}};
-		}());
-</script>
+= render :partial => '/layouts/adroll'
 = render :partial => '/layouts/olark'
 //= render :partial => '/layouts/resume_widget'
 = render :partial => '/layouts/modal'
