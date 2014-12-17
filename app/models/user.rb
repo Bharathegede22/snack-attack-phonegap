@@ -30,6 +30,7 @@ class User < ActiveRecord::Base
   
   after_create :send_welcome_mail
   before_create :before_create_tasks
+  after_save :after_save_tasks
 	before_validation :before_validation_tasks
 	
 	def admin?
@@ -391,6 +392,14 @@ class User < ActiveRecord::Base
   end
 	
 	private :before_create_tasks, :before_validation_tasks, :valid_otp_length?
+
+	def after_save_tasks
+		license_update_events
+	end
+
+	def license_update_events
+		Referral.validate_reference(self.email, {:field => :phone, :value => self.phone}) if self.phone_changed?
+	end
 end
 
 # == Schema Information
