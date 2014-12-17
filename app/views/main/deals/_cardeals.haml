@@ -12,7 +12,7 @@
 	- if sold_out
 		.sold-out-tag
 	.each-car-offer.r-3
-		.col-md-4.border-r-c.p-b3
+		.col-md-4.border-r-c.car-booking-block
 			= image_tag("cars/#{cargroup.id}small.jpg", :alt => "")
 			.fl.p-t5.p-b10
 				.size-20.f-b.zoom-b.t-c
@@ -22,7 +22,7 @@
 					%form{:action => "/#{@city.link_name.downcase}/bookings/do_flash_booking", :id => "CheckoutForm"}
 						.hide
 							%input{name: "deal", type: "hidden", value: "#{deal}"}
-						.m-t10.btn-book.m-b3
+						.m-t20.btn-book.m-b3
 							%input{type: "submit", value: "Book Now", :class => [("button-dis" if sold_out), ("button" unless sold_out)], :disabled => sold_out, :onclick => "pushEvent('Squirrel', 'Book Now', '');"}
 		.col-md-8.border-b-c.p-0
 			.col-md-4

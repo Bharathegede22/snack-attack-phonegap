@@ -17,7 +17,7 @@ gem "rfc822"
 gem "paperclip"
 gem 'rack-cache'
 gem 'lacquer'
-gem 'dalli'
+gem 'dalli', '2.6.4'
 gem 'sidekiq'
 gem 'sinatra', '>= 1.3.0', :require => nil
 gem 'fql'
