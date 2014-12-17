@@ -48,17 +48,24 @@
 			.row
 				.col-md-4
 					.p-5
-						%b Pickup Time
+						%b Schedule Pickup Time
 				.col-md-8
 					.p-5
 						= @booking.starts.strftime("%d %b, %Y %I:%M %p")
 			.row
 				.col-md-4
 					.p-5
-						%b Dropoff Time
+						%b Schedule Dropoff Time
 				.col-md-8
 					.p-5
 						= @booking.ends.strftime("%d %b, %Y %I:%M %p")
+			.row
+				.col-md-4
+					.p-5
+						%b Dropoff Time
+				.col-md-8
+					.p-5
+						= @booking.returned_at.strftime("%d %b, %Y %I:%M %p")
 		.col-md-6
 			= render :partial => '/bookings/summary', :locals => {:payments => false}
 	.m-20.t-c
