@@ -135,10 +135,15 @@ class ApplicationController < ActionController::Base
     redirect_to '/users/access' and return if Rails.env == 'staging' && (current_user.blank? || (!current_user.blank? && current_user.role < 1))
   end
 
+  # Validates and Applies referral codes :: then allots credits to the signed up user
+  # Author:: Rohit
+  #
   def validate_and_apply_referral(user)
-    referral = UserUpdates.new(user, cookies)
-    referral.apply_referral_code
-    referral.clear_referral_cookie(cookies)
+    return if user.nil?
+    args = { platform: "web", auth_token: user.authentication_token, ref_code: {:source => 'facebook', :ref_code => "81EE443D9" }} #JSON.parse(cookies[:ref_code])
+    url = "#{ADMIN_HOSTNAME}/mobile/v3/users/apply_referral"
+    ApiModule.admin_api_post_call(url, args)
+    cookies.delete(:ref_code, domain: ".#{HOSTNAME.gsub('www.','')}")
   end
   
   private
