@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
 
   # => Checks if A/B test cookies are set and renders the checkout page accordingly
   def search_abtest?
-    cookies[:abtesti].present?
+    cookies[:abtestk].present?
   end
   helper_method :search_abtest?
 
