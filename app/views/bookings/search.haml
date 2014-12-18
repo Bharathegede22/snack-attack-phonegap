@@ -4,7 +4,11 @@
 		.wrapper
 			.main-content.search-page
 				:ruby
-					cargroups = Cargroup.list_by_availability(@city,@order)
+					if search_revamp_abtest?
+					  cargroups = Cargroup.list_by_availability(@city,@order)
+					else
+					  cargroups = Cargroup.list(@city)
+					end
 					if !@booking.cargroup_id.blank?
 						tmp = []
 						cargroups.each do |c|
