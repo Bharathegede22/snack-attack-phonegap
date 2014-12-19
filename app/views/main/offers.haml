@@ -1,11 +1,12 @@
 .static
 	%h1.zoom #{@city.name} Offers
-	- if @city.link_name == 'bangalore'
+	- deals_count = Deal.where('offer_start < ? and offer_end > ? and location_id IN (?)',Time.now,Time.now,@city.locations.map(&:id)).count
+	- if deals_count > 0
 		.offers-banner
 		.checknow-button.fr
 			%a{href: "/deals", onclick: "pushEvent('Squirrel', 'Deals Tab - Header', '');"} Check now!
 	- offers = @city.active_offers
-	- if offers.blank? && @city.link_name != "bangalore"
+	- if offers.blank? && deals_count <= 0
 		Sorry, no offers are available right now.
 		%br/
 		%br/
@@ -17,7 +18,7 @@
 		%br/
 		%br/
 		%br/
-	- elsif offers.blank? && @city.link_name == "bangalore"
+	- elsif offers.blank? && deals_count > 0
 		%br/
 		%br/
 		%br/
