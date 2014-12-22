@@ -1,7 +1,36 @@
-.fuckups
-	.fucktargs
-		- if current_user
-			%a{href: "#{referral_url('facebook')}"}
-				Facebook
-			%a{href: "#{referral_url('twitter')}"}
-				Twitter
+.referral
+	.wrapper
+		.referral-info.bg-zoomb.white.p-20.p-l35.p-r35
+			%div.t-c
+				Invite and Earn!
+			%div.row
+				%div.col-md-4.size-14
+					You get Rs.500 worth credits for each referal who ride with us!
+				%div.col-md-4
+				%div.col-md-4.size-14
+					You get Rs.500 worth credits for each referal who ride with us!
+			%div.t-c
+				Don't have any yet? Start earning here!
+		.referral-inner.p-30
+			.referral-creds.bg-zoom.m-t10.r-5.white
+				Referal bonus earned Rs.500. Refer now to start earning your free trip!  
+			.row.m-0.m-t10.m-b10
+				.col-md-5.referral-email.p-0.solid 
+					%div.referral-title.bg-zoomb.white.p-5
+						Refer friends in Benguluru
+					%div.p-l35
+						%div
+							%label To
+							%input{:type =>"email"}
+						%div
+							%label Message
+							%textarea
+						%div
+							%input{:type => "submit"}
+				.col-md-2
+					&nbsp;
+				.col-md-5.referral-link.p-0.solid 
+					%div.referral-title.bg-zoomb.white.p-5
+						Copy + Paste your personal link into your blog, email or IM
+					%div
+						%input{:type =>"url"}
