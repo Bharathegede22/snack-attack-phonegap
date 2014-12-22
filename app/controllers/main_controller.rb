@@ -353,7 +353,6 @@ class MainController < ApplicationController
 	# Date:: 11/12/2014
 	#
 	def set_referral_cookie
-
 		if current_user.blank? && params[:ref].present? && params[:ref].include?('REFCODE') && params[:ref_code].present?
 			cookies[:ref_code] = {:value => JSON.generate(:ref_code => params[:ref_code], :source => params[:refsource]), :expires => 1.day.from_now, :domain => ".#{HOSTNAME.gsub('www.','')}"}
 		end
