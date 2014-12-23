@@ -947,3 +947,19 @@ $(".creditsDescBtn-showPage").hover(function(){
 	function(){
 		$(".booking-showPage-popupBox").css("display", "none");
 });
+
+$(document).ready(function(){
+	$("#ReferForm #submit-refer").click(function(e){
+		e.preventDefault();
+		console.log($("#r-email").val());
+		$.ajax({
+			type: "POST",
+			url: $("#ReferForm").attr('action'),
+			data: {email:$("#r-email").val() , message:$("#r-message").val()},
+			success:function(result){
+				alert(result);
+			}
+		});
+	});
+});
+
