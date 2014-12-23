@@ -165,7 +165,7 @@ class UsersController < ApplicationController
 	end
 
 	def referrals
-
+		render :layout => 'application'
 	end
 	
 	private
