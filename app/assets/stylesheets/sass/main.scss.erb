@@ -276,8 +276,15 @@ $border-grey3px: 3px #ccc solid;
 	}
 }
 .deals-bg{
-	background:$green url(<%= asset_path 'deal-bg.jpg' %>);
-	height: 278px;
+	/*----- this style if for christmas banner remove after it finish ------*/
+	background:#82cfd2 url(<%= asset_path 'deal-bg-christmas.jpg' %>);
+	background-repeat-x: no-repeat;
+	background-position: center;
+	background-position-y: 0;
+	height: 230px;
+	/*----- this style if for christmas banner Ends------*/
+	//background:$green url(<%= asset_path 'deal-bg.jpg' %>);
+	//height: 278px;
 	background-repeat-y: no-repeat;
 	position: absolute;
 	width: 100%;
@@ -289,13 +296,18 @@ $border-grey3px: 3px #ccc solid;
 	width: 100%;
 }
 .deals-banner-text{
-
+	color: $black;
 }
 .deals-banner-text-horizontal{
 
 }
 .deals-banner-img{
-	background: url(<%= asset_path 'deals-cars.png' %>) 10px 6px no-repeat;
+	/*----- this style if for christmas banner remove after it finish ------*/
+	background: url(<%= asset_path 'santa.png' %>) 10px 6px no-repeat;
+	position: relative;
+	top: 40px;
+	/*----- this style if for christmas banner remove after it finish ------*/
+	//background: url(<%= asset_path 'deals-cars.png' %>) 10px 6px no-repeat;
 	width: 244px;
 	height: 136px;
 }
@@ -360,6 +372,8 @@ $border-grey3px: 3px #ccc solid;
 	height: 130px;
 	width: 139px;
 	margin-top: 10px;
+	/*---- for christmas offer---*/
+	background-position-x: -14em;
 }
 .timer-icon{
 	background: url(<%= asset_path 'timer-icon.png' %>) 6px 6px no-repeat;
@@ -397,7 +411,8 @@ $border-grey3px: 3px #ccc solid;
 	padding: 13.5px 0;
 }
 .offers-banner{
-	background: url(<%= asset_path 'offers-bnnr.jpg' %>) 6px 6px no-repeat;
+	//background: url(<%= asset_path 'offers-bnnr.jpg' %>) 6px 6px no-repeat;
+	background: #82cfd2 url(<%= asset_path 'offers-bnnr-christmas.jpg' %>) 6px 6px no-repeat;
 	height: 127px;
 }
 .checknow-button{
@@ -406,8 +421,11 @@ $border-grey3px: 3px #ccc solid;
 	border-radius: 4px;
 	padding: 3px 15px;
 	position: relative;
-	right: 6em;
-	top: -2.2em;
+	//right: 6em;
+	//top: -2.2em;
+	top: -3.2em;
+	right: 5.5em;
+
 	a{
 		color: $white;
 	}
@@ -506,16 +524,6 @@ $border-grey3px: 3px #ccc solid;
 	color:#000000;
 	outline:0;
 }
-// .note-msg{
-// 	margin: 1em 0px 2.5em;
-// 	p{
-// 		color: #888;
-// 	}
-// 	span{
-// 		color: $blue;
-// 		font-weight: bold;
-// 	}
-// }
 .make_payment{
 	margin-left: 11.5em;
 	width: 120px !important;
