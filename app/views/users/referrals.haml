@@ -1,36 +1,53 @@
 .referral
 	.wrapper
 		.referral-info.bg-zoomb.white.p-20.p-l35.p-r35
-			%div.t-c
+			%div.t-c.size-20
 				Invite and Earn!
-			%div.row
+			%div.row.m-30
 				%div.col-md-4.size-14
 					You get Rs.500 worth credits for each referal who ride with us!
 				%div.col-md-4
 				%div.col-md-4.size-14
 					You get Rs.500 worth credits for each referal who ride with us!
-			%div.t-c
+			%div.t-c.size-14
 				Don't have any yet? Start earning here!
-		.referral-inner.p-30
-			.referral-creds.bg-zoom.m-t10.r-5.white
-				Referal bonus earned Rs.500. Refer now to start earning your free trip!  
+		.referral-inner.p-t8.p-b60.p-l30.p-r30
+			.referral-creds.bg-zoom.m-t10.r-5.white.size-18
+				Referal bonus earned Rs.500. Refer now to start earning your free trip! 
 			.row.m-0.m-t10.m-b10
-				.col-md-5.referral-email.p-0.solid 
-					%div.referral-title.bg-zoomb.white.p-5
-						Refer friends in Benguluru
-					%div.p-l35
-						%div
-							%label To
-							%input{:type =>"email"}
-						%div
-							%label Message
-							%textarea
-						%div
-							%input{:type => "submit"}
-				.col-md-2
-					&nbsp;
-				.col-md-5.referral-link.p-0.solid 
-					%div.referral-title.bg-zoomb.white.p-5
-						Copy + Paste your personal link into your blog, email or IM
-					%div
-						%input{:type =>"url"}
+				.col-md-5.referral-email.p-0.solid.border-grey.r-3
+					%form{:action => "/users/refer_user", :id => "ReferForm", :method => "post"} 
+						%div.referral-title.bg-zoomb.white.p-8.r-3.size-13
+							Refer friends in Benguluru
+						%div.t-r.m-20
+							%div.m-b20.size-14
+								%label To:
+								%input.r-3{:type =>"email"}
+							%div.m-b20.size-14
+								%label Message:
+								%textarea.r-3
+							%div.t-l
+								%input.size-14.r-3{:type => "submit"}
+				.col-md-2.divider-height.position-r 
+					%div.top-line.border-l-c.position-a
+					%div.or-circle.position-a.r-20.bg-zoomb
+						%span.white OR
+					%div.bottom-line.border-l-c.position-a
+				.col-md-5.referral-link.p-0
+					%div.solid.border-grey.r-3 
+						%div.referral-title.bg-zoomb.white.p-8.r-3.size-13
+							Copy + Paste your personal link into your blog, email or IM
+						%div.m-20
+							%input{:type =>"url"}
+					%div.divider-width.position-r.m-t20.m-b20
+						%div.left-line.border-t-c.position-a
+						%div.or-circle.position-a.r-20.bg-zoomb
+							%span.white OR
+						%div.right-line.border-t-c.position-a
+					%div.size-14.t-c
+						Connect and share
+					%hr.border-grey
+					%div.social-icons
+			%hr.border-grey.m-r90.m-l90
+			.term-condition.size-14.m-l90
+				Terms and Conditions: 
