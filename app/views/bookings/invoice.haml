@@ -66,6 +66,13 @@
 				.col-md-8
 					.p-5
 						= @booking.returned_at.strftime("%d %b, %Y %I:%M %p")
+			.row
+				.col-md-4
+					.p-5
+						%b Kms Travelled
+				.col-md-8
+					.p-5
+						= @booking.end_km.to_i - @booking.start_km.to_i kms
 		.col-md-6
 			= render :partial => '/bookings/summary', :locals => {:payments => false}
 	.m-20.t-c
