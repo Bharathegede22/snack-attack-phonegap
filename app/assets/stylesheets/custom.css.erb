@@ -81,13 +81,15 @@ a {
 	float:left;
 }
 .santa-cap {
-	background:url(<%= asset_path 'santa-cap.png' %>) no-repeat;
-	width: 100%;
+	background-image:url(<%= asset_path 'santa-cap.png' %>);
+	background-repeat: no-repeat;
+	width: 40px;
 	position: absolute;
-	height: 100px;
-	background-position: 0px -1px;
-	background-size: 2%;
-	left: 229px;
+	height: 40px;
+	background-position: 7px -1px;
+	background-size: 30px;
+	left: 50%;
+	margin-left: -500px;
 }
 
 .navbar .nav-box {
