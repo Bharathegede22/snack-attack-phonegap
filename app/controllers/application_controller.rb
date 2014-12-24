@@ -139,8 +139,10 @@ class ApplicationController < ActionController::Base
   # Author:: Rohit
   #
   def validate_and_apply_referral(user)
-    return if user.nil?
-    args = { platform: "web", auth_token: user.authentication_token, ref_code: {:source => 'facebook', :ref_code => "81EE443D9" }} #JSON.parse(cookies[:ref_code])
+    return if user.nil? || cookies[:ref_code].nil?
+    ref_code = JSON.parse(cookies[:ref_code]) rescue nil
+    return if ref_code.nil?
+    args = { platform: "web", auth_token: user.authentication_token, ref_code: ref_code} #JSON.parse(cookies[:ref_code])
     url = "#{ADMIN_HOSTNAME}/mobile/v3/users/apply_referral"
     ApiModule.admin_api_post_call(url, args)
     cookies.delete(:ref_code, domain: ".#{HOSTNAME.gsub('www.','')}")

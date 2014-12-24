@@ -398,7 +398,7 @@ class User < ActiveRecord::Base
 	end
 
 	def license_update_events
-		Referral.validate_reference(self.email, {:field => :phone, :value => self.phone}) if self.phone_changed?
+		Referral.validate_reference(self.email,self.id, {:field => :phone, :value => self.phone}) if self.phone_changed?
 	end
 end
 

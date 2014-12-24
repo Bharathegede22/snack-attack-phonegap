@@ -167,6 +167,11 @@ class UsersController < ApplicationController
 	def referrals
 		render :layout => 'application'
 	end
+
+	def refer_user
+		# make api call for the same
+		render json: {html: ''}
+	end
 	
 	private
 	
