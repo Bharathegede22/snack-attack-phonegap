@@ -86,6 +86,18 @@ class Cargroup < ActiveRecord::Base
 			")
   	end
   end
+
+  def self.list_by_availability(city,order)
+    #Rails.cache.fetch("cargroup-list-#{city.id}") do
+    Cargroup.find_by_sql("SELECT cg.* FROM cargroups cg
+				INNER JOIN cars c ON c.cargroup_id = cg.id
+				INNER JOIN locations l ON l.id = c.location_id
+				WHERE cg.status > 0 AND c.status > 0 AND l.status > 0 AND l.city_id = #{city.id}
+				GROUP BY cg.id
+				ORDER BY FIELD(cg.id,#{order.join(',')})
+			")
+    #end
+  end
 	
 	def self.live(city)
 		Cargroup.find_by_sql("SELECT cg.*, l.name AS l_name, l.id AS l_id, COUNT(DISTINCT c.id) AS total FROM cargroups cg 
