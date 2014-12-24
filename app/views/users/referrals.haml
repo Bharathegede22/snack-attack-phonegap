@@ -23,10 +23,10 @@
 						%div.referral-title.bg-zoomb.white.p-8.r-3.size-13
 							Invite friends through email
 						%div.t-r.m-20
-							%div.m-b20.size-14
+							%div.m-b15.size-14
 								%label To:
 								%input.r-3{:type =>"email", :name =>"email", :id => "r-email"}
-							%div.m-b20.size-14
+							%div.m-b10.size-14
 								%label Message:
 								%textarea.r-3{:name =>"message", :id => "r-message"}
 									= "message comes here"
@@ -48,16 +48,12 @@
 						%div.or-circle.position-a.r-20.bg-zoomb
 							%span.white OR
 						%div.right-line.border-t-c.position-a
-					%div.size-14.t-c
+					%div.size-14.t-c.m-t10
 						Share via:
-					%div
-						.fl.m-5
-							.fb-share-button{"data-href" => referral_url('fb'), "data-layout"=>"link"}
-						.fl.m-5
-							%a.twitter-share-button{"data-count" => "none", "data-lang" => "en", "data-related" => "anywhereTheJavascriptAPI", "data-url" => referral_url('twitter'), "data-via" => "zoom", :href => "https://twitter.com/share"} Tweet
-						.fl.m-5
-							.g-plus{"data-action" => "share", "data-annotation" =>"none", "data-href" => referral_url('others')}
-						.fc
+					%div.t-c.m-t20
+						%a.social-icons.fb{"data-href" => referral_url('fb'), "data-layout"=>"link"}
+						%a.social-icons.twt{"data-count" => "none", "data-lang" => "en", "data-related" => "anywhereTheJavascriptAPI", "data-url" => referral_url('twitter'), "data-via" => "zoom", :href => "https://twitter.com/share"}
+						%a.social-icons.gplus{"data-action" => "share", "data-annotation" =>"none", "data-href" => referral_url('others')}
 			%hr.border-grey.m-r90.m-l90
 			.term-condition.size-14.m-l90
 				Terms and Conditions: 
