@@ -284,7 +284,7 @@ class Payment < ActiveRecord::Base
 		if self.status_changed? && self.status == 1 
 			b = self.booking
 			b.valid?
-			if b && b.outstanding <= 0
+			if b && b.outstanding_without_deposit<= 0
 				old_status = b.status
 				if b.status == 0
 					b.carry = true if (self.amount > b.outstanding)

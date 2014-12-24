@@ -3,22 +3,26 @@
 	- render_flash
 	.deals-banner
 		.deals-stamp-icon.pull-left
-		.deals-banner-text.fo-helv.f-b.size-54.white.p-t40.fl.m-l20
-			EXCITING DEALS 
-		.deals-banner-text-horizontal.fo-helv.size-20.white.f-b.fl.p-t48.m-l10
-			EVERY
+		.deals-banner-text.fo-helv.f-b.size-38.t-c.black.p-t20.fl.m-l50
+			CHRISTMAS & NEW YEAR
 			%br
-			DAY
+			%div.size-54 DEALS EVERYDAY
+		/	EXCITING DEALS 
+		/.deals-banner-text-horizontal.fo-helv.size-20.white.f-b.fl.p-t48.m-l10
+		/	EVERY
+		/	%br
+		/	DAY
 		.deals-banner-img.fr
 	.offer_main_container
 		.panel.panel-default.offers-panel
 			.panel-heading.offers-heading
-				.timer-icon.pull-right
+				/.timer-icon.pull-right
 				.col-md-5.p-l45.col-md-offset-4
 					%h4.timer-width
 						%span.white
-							Next Deal Starts in
-						%span.pull-right#clock.countdown-time
+							Limited Deals, Hurry Up!
+							/Next Deal Starts in
+						/%span.pull-right#clock.countdown-time
 			.panel-body.offer-panel-body
 				.col-md-12.inline-block
 					- @deal.each_with_index do |d, i|

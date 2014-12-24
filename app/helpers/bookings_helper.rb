@@ -17,8 +17,9 @@ module BookingsHelper
       cars.each do |car|
         results[car["id"].to_s] = car["locations_availibility"]
       end
-      [results,cars]
-    rescue Exception => ex
+      order_by = results.keys
+      [results,cars,order_by]
+    rescue Exception => ex      
       Rails.logger.info "JsonParsingError: Error parsing response from search results from api===== #{ex.message}--- BookingsHelper"
       flash[:error] = "Sorry, our system is busy right now. Please try after some time."
       [nil,nil]
@@ -58,12 +59,12 @@ module BookingsHelper
       params[:location_id] = @booking.location_id if params[:location_id].blank? && @booking.location_id.present?
       params[:cargroup_id] = @booking.cargroup_id if params[:cargroup_id].blank? && @booking.cargroup_id.present?
     else
-      params[:starts] = Time.zone.parse(session[:book][:starts]) if params[:starts].blank? && !session[:book].blank? && !session[:book][:starts].blank? 
+      params[:starts] = Time.zone.parse(session[:book][:starts]) if params[:starts].blank? && !session[:book].blank? && !session[:book][:starts].blank?
       params[:ends] = Time.zone.parse(session[:book][:ends]) if params[:ends].blank? && !session[:book].blank? && !session[:book][:ends].blank?
-      params[:location_id] = session[:book][:loc] if params[:location_id].blank? && !session[:book].blank? && !session[:book][:loc].blank?     
+      params[:location_id] = session[:book][:loc] if params[:location_id].blank? && !session[:book].blank? && !session[:book][:loc].blank?
       params[:cargroup_id] = session[:book][:car] if params[:cargroup_id].blank? && !session[:book].blank? && !session[:book][:car].blank?
     end
-    
+
     params[:ref_initial] = session[:ref_initial] if !session[:ref_initial].blank?
     params[:ref_immediate] = session[:ref_immediate] if !session[:ref_immediate].blank?
 

@@ -9,8 +9,10 @@
 					%a{:href => "/#{@city.link_name.downcase}/safety"} Zoom in Safety
 				.p-t5
 					%a{:href => "/outstation"} Going Outstation?
-				.p-t5
-					%a{:href => "/reva"} Zoomcar's Electric!
+				- car = Cargroup.find(5)
+				- if !car.blank? && !car.active_pricing(@city.id).blank?
+					.p-t5
+						%a{:href => "/reva"} Zoomcar's Electric!
 				.p-t5
 					%a{:href => "/#{@city.link_name.downcase}/faq"} FAQs
 				.p-t5
