@@ -140,7 +140,7 @@ class MainController < ApplicationController
 	def deals_of_the_day
 		@meta_title = "Zoomcar Deals Zone"
 		@meta_keywords = "zoomcar deals"
-		@deal = Deal.where("offer_start < ? AND offer_end > ?", Time.now, Time.now)
+		@deal = Deal.where("offer_start < ? AND offer_end > ? AND car_id in (?)", Time.now, Time.now, @city.all_cars)
 		@location = Array.new
 		@cargroup = Array.new
 		@sold_out = Array.new
