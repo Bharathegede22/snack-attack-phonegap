@@ -25,4 +25,4 @@
 				%td.text-center.bg-w.p-t10.p-b10.border-b-e.bold{:class => (credit.action ? "green" : "red")}
 					= (credit.action ? "+ " : "- ") + credit.amount.to_s
 				%td.text-center.bg-w.p-t10.p-b10.border-b-e
-					= credit.action ? "Credits Added" : "Booking Fee"
+					= credit.history_description
