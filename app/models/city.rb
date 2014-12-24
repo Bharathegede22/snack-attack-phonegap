@@ -12,6 +12,12 @@ class City < ActiveRecord::Base
 		end
 	end
 	
+	def all_cars
+		Rails.cache.fetch("city-cars-#{self.id}-#{Date.today.yday}") do
+			Car.where('location_id in (?)', locations.pluck(:id)).pluck :id
+		end 
+	end
+
 	def h1(action=nil)
 		return case action
 		when 'attractions' then "Rent Self Drive Cars In & Around #{self.name}"

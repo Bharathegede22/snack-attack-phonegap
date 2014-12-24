@@ -107,14 +107,14 @@
 		.border-b-c
 			.p-t10.p-b10.p-l20.p-r20
 				.text-up.size-11.m-b3
-					Pickup Time
+					Scheduled Pickup Time
 				.zoom-b.f-b.size-14
 					= @booking.starts.strftime("%d %b, %Y %I:%M %p")
 
 		.border-b-c
 			.p-t10.p-b10.p-l20.p-r20
 				.text-up.size-11.m-b3
-					Dropoff Time
+					Scheduled Dropoff Time
 				.zoom-b.f-b.size-14
 					= @booking.ends.strftime("%d %b, %Y %I:%M %p")
 
@@ -122,7 +122,7 @@
 			.border-b-c
 				.p-t10.p-b10.p-l20.p-r20
 					.text-up.size-11.m-b3
-						Return Time
+						Dropoff Time
 					.zoom-b.f-b.size-14
 						= @booking.returned_at.strftime("%d %b, %Y %I:%M %p")
 
