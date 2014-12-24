@@ -87,6 +87,7 @@ Web::Application.routes.draw do
 			post 'license_get_del'
 			post 'signup'
 			post 'update'
+			post 'refer_user'
 		end
 	end
 
