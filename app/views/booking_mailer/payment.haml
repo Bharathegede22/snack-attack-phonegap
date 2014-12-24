@@ -150,12 +150,10 @@ Please review the details of your reservation:
 		%b
 			Rs #{cargroup.active_pricing(city).excess_kms}/Km**.
 		%br/
-		%i
-			** - Free kms limit and excess km charge may change and will be governed by the zoom policies at the time of vehicle dropoff. See our 
-			%a{href: 'http://#{HOSTNAME}/tariff'} tariff
-			and
-			%a{href: 'http://#{HOSTNAME}/fees'} fee policy
-			for more.
+	%p{style: "margin:5px 0 0 0; padding:0;"}
+		\- In case of late return: standard hourly charges will be applicable along with an 
+		%b additional Rs. 300 per hour of delay. 
+		You will still receive 10 free kms for each hour charged.
 	- if !@booking.kle_enabled
 		%p{style: "margin:5px 0 0 0; padding:0;"}
 			\- Please remember to carry your valid credit / debit card for paying any fee at the time you return the vehicle.

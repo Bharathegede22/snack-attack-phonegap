@@ -100,9 +100,9 @@ a {
 	width:310px;
 }
 .navbar .unlimited {
-	margin-right:205px;
+	margin-right:200px;
 	float: right;
-	width: 349px;
+	width: 354px;
 	cursor: pointer;
 	margin-top:-19px;
 }
@@ -562,8 +562,13 @@ a {
 }
 
 .search-header {
-	background:#ffffff;
+	background:url(<%= asset_path 'bg-line.png' %>);
 	padding:5px 0 5px 0;
+	border-top: 1px solid #DADADA;
+}
+.no-cookie {
+	background: #fff;
+	border-top: none;
 }
 
 .search-header .item {

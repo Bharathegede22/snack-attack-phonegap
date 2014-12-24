@@ -412,7 +412,6 @@ class BookingsController < ApplicationController
 	def payment
 		@payment = @booking.check_payment
 		if @payment
-			@newflow = abtest? ? true : false # abtest
 			render :layout => 'plain'
 		else
 			flash[:notice] = "Booking is already paid for full, no need for a new transaction."
@@ -943,6 +942,7 @@ class BookingsController < ApplicationController
 	end
 
 	def check_search
+		copy_params
 		if !session[:book].blank? && !session[:book][:starts].blank? && !session[:book][:ends].blank? && !session[:book][:car].blank? && !session[:book][:loc].blank?
 			@booking = Booking.new
 			@booking.starts = Time.zone.parse(session[:book][:starts])
