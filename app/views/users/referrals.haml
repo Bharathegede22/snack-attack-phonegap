@@ -3,14 +3,24 @@
 		.referral-info.bg-zoomb.white.p-20.p-l35.p-r35
 			%div.t-c.size-20
 				Invite and Earn!
-			%div.row.m-30
-				%div.col-md-4.size-14
-					You get ₹500 worth credits for each referal who ride with us!
-				%div.col-md-4.referral-img
-				%div.col-md-4.size-14
-					You get ₹500 worth credits for each referal who ride with us!
-			%div.t-c.size-14
-				Don't have any yet? Start earning here!
+			%div.wrp-refer
+				%div.row.m-30.m-t10
+					%div.col-md-7
+						%div.row
+							%div.col-md-2.referral-img.love
+							%div.col-md-1.referral-img.rt-arrow
+							%div.col-md-2.referral-img.invite
+							%div.col-md-1.referral-img.rt-arrow
+							%div.col-md-2.referral-img.earn
+							%div.col-md-4.referral-img
+
+					%div.col-md-5.size-14
+						%div
+							%span
+							You get ₹500 worth credits for each referal who ride with us!
+						%div
+							%span.green-arrow
+							You get ₹500 worth credits for each referal who ride with us!
 		.referral-inner.p-t8.p-b60.p-l30.p-r30
 			.referral-creds.solid.border-grey.m-t10.r-5.size-18
 				- if referral_credits_earned?
