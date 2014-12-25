@@ -5,26 +5,21 @@
 				Invite and Earn!
 			%div.wrp-refer
 				%div.row.m-30.m-t10
-					%div.col-md-7
+					%div.col-md-7.m-t10
+						%div.referral-img
+					%div.col-md-5.size-14.p-0.refer-text
+						%div.row.m-b25
+							%div.col-md-2.social-icons.green-arrow
+							%div.col-md-10
+								You earn ₹500 in credits for each referral that rides with us!
 						%div.row
-							%div.col-md-2.referral-img.love
-							%div.col-md-1.referral-img.rt-arrow
-							%div.col-md-2.referral-img.invite
-							%div.col-md-1.referral-img.rt-arrow
-							%div.col-md-2.referral-img.earn
-							%div.col-md-4.referral-img
-
-					%div.col-md-5.size-14
-						%div
-							%span
-							You get ₹500 worth credits for each referal who ride with us!
-						%div
-							%span.green-arrow
-							You get ₹500 worth credits for each referal who ride with us!
+							%div.col-md-2.social-icons.green-arrow
+							%div.col-md-10
+								Your friend earns ₹500 in credits too when he signs up.
 		.referral-inner.p-t8.p-b60.p-l30.p-r30
 			.referral-creds.solid.border-grey.m-t10.r-5.size-18
 				- if referral_credits_earned?
-					Referal bonus earned 
+					Referral credits earned 
 					%span.zoom ₹500.
 				Refer now to start earning your free trip! 
 			.row.m-0.m-t10.m-b10
@@ -50,7 +45,7 @@
 				.col-md-5.referral-link.p-0
 					%div.solid.border-grey.r-3 
 						%div.referral-title.bg-zoomb.white.p-8.r-3.size-13
-							Ctrl C + V this unique link into your blog, email or IM
+							Copy + Paste this unique link into your blog, email or IM
 						%div.m-20
 							%input{:type =>"url", :value => referral_url('email')}
 					%div.divider-width.position-r.m-t20.m-b20
