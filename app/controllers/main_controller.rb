@@ -140,7 +140,7 @@ class MainController < ApplicationController
 	def deals_of_the_day
 		@meta_title = "Zoomcar Deals Zone"
 		@meta_keywords = "zoomcar deals"
-		@deal = Deal.where("offer_start < ? AND offer_end > ?", Time.now, Time.now)
+		@deal = Deal.where("offer_start < ? AND offer_end > ? AND car_id in (?)", Time.now, Time.now, @city.all_cars)
 		@location = Array.new
 		@cargroup = Array.new
 		@sold_out = Array.new
@@ -247,7 +247,7 @@ class MainController < ApplicationController
 			@canonical = @city.link
 		else
 			redirect_to @city.link and return if !session[:city].blank?
-			@city = City.lookup('bangalore') if !@city.active
+      @city = City.lookup_all('bangalore') if @city.blank? || !@city.active
 			@meta_title = City.meta_title
 			@meta_description = City.meta_description
 			@meta_keywords = City.meta_keywords
