@@ -203,6 +203,7 @@ class BookingsController < ApplicationController
 		# Corporate Booking
 		if !session[:corporate_id].blank? && current_user.support?
 			@booking.corporate_id = session[:corporate_id]
+			@booking.actual_cargroup = @booking.cargroup
 			if @booking.manage_inventory == 1
 				@booking.status = 1
 			else
@@ -655,6 +656,7 @@ class BookingsController < ApplicationController
 		# Corporate Booking
 		if !session[:corporate_id].blank? && current_user.support?
 			@booking.corporate_id = session[:corporate_id]
+			@booking.actual_cargroup = @booking.cargroup
 			if @booking.manage_inventory == 1
 				@booking.status = 1
 			else
@@ -798,10 +800,11 @@ class BookingsController < ApplicationController
 		                                                              ends: session[:search][:ends],
 		                                                              city: @city.link_name,
 		                                                              location_id: @booking.location_id,
-		                                                              platform: "web"
+		                                                              platform: "web",
+                                                                  new_ui: search_revamp_abtest? ? "Yes" : "No"
 		                                                            }
 		        Rails.logger.info "API call over: ======== "
-		      	@inventory,@cars = get_inventory_from_json search_results_from_admin
+		      	@inventory,@cars,@order = get_inventory_from_json search_results_from_admin
 		      	@header = 'search'
 		  end
     end
