@@ -6,8 +6,10 @@ class Location < ActiveRecord::Base
 	belongs_to :zone
 	
 	has_many :images, :as => :imageable, dependent: :destroy
-	
-	def address_html
+  acts_as_mappable
+
+
+  def address_html
 		text = ""
 		text << self.name
 		return text.html_safe
@@ -15,7 +17,11 @@ class Location < ActiveRecord::Base
 	
 	def encoded_id
 		CommonHelper.encode('location', self.id)
-	end
+  end
+
+  def self.closest_city(lat,lng)
+    Location.all.closest(:origin => [lat,lng])[0]
+  end
 	
 	def h1(city=nil)
 		if(self.seo_h1.present?)

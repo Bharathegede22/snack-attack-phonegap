@@ -37,7 +37,7 @@ class ApplicationController < ActionController::Base
 	    	city_prompt = true
 	      ip = request.headers["X-Real-IP"] if request.headers["X-Real-IP"] && !request.headers["X-Real-IP"].empty?
 	      city = get_city_from_ip(ip) if ip
-        city = 'bangalore' if city.blank?
+        #city = 'bangalore' if city.blank?
 	    end
     end
     if city_prompt
@@ -138,7 +138,10 @@ class ApplicationController < ActionController::Base
   end
   
   def get_city(lat,lon)
-	  #if lat >= 22.8333 && lat <= 23.2333 && lon >= 72.4167 && lon <= 72.8167 
+    city_id = closest_city(lat,lon).city_id
+    city = City.find(city_id).name
+    return city
+	  #if lat >= 22.8333 && lat <= 23.2333 && lon >= 72.4167 && lon <= 72.8167
     #  city = 'ahmedabad'
     #elsif lat >= 30.38 && lat <= 31.08 && lon >= 76.46 && lon <= 77.14
     #  city = 'chandigarh'
@@ -154,6 +157,7 @@ class ApplicationController < ActionController::Base
     #  city = 'kolkata'
     #elsif lat >= 18.63 && lat <= 19.33 && lon >= 72.48 && lon <= 73.18
     #  city = 'mumbai'
+=begin
     if lat >= 18.18 && lat <= 18.88 && lon >= 73.52 && lon <= 74.22
       city = 'pune'
     elsif lat >= 28.32 && lat <= 29.02 && lon >= 76.87 && lon <= 77.57
@@ -162,6 +166,7 @@ class ApplicationController < ActionController::Base
       city = 'bangalore'
     end
     return city
+=end
   end
 	
 	def set_cookies_ref(city)

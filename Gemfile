@@ -27,6 +27,7 @@ gem "rest_client"
 gem 'sprockets-image_compressor'
 gem 'paper_trail', '~> 3.0.1'
 gem 'geoip'
+gem 'geokit-rails'
 gem "browser"
 gem 'whenever'
 
@@ -54,7 +55,7 @@ group :doc do
 end
 
 group :development, :test do
-	gem 'debugger'
+	#gem 'debugger'
   gem "rspec"
   gem 'rspec-rails'
   gem 'rb-readline'
