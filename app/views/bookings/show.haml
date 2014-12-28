@@ -151,7 +151,15 @@
 				%h3.popover-title{:style => "display: none;"}
 				.popover-content.size-12 Your credits have been added to your Zoomcar wallet. Use them to pay the fee for your next booking.
 
-	= render :partial => '/bookings/socialshare'
+	// = render :partial => '/bookings/socialshare'
+	%div.bs-9.m-t20
+		%div.bg-zoomb.white.p-8.size-18
+			Refer a friend 
+			%span.size-12.position-r.help.pointer{'data-placement' => "right", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "You will earn ₹500 in credits for each friend that signs up through the link below and rides with Zoomcar. Your friend gets ₹500 in credits too. We want to spread the joy of Zoomcar!", :style => "top:-2px;"}
+				[?]
+		%div#unique-link.p-20
+			%div.size-12.m-b10 Share this unique link with friends, earn credits!
+			%input{:type =>"url", :value => referral_url('email'), :class => "size-12"}
 
 .fr
 	.bg-w.bs-9.m-b20{'style' => 'width: 360px'}
