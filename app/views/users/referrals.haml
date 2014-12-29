@@ -3,19 +3,24 @@
 		.referral-info.bg-zoomb.white.p-20.p-l35.p-r35
 			%div.t-c.size-20
 				Invite and Earn!
-			%div.row.m-30
-				%div.col-md-4.size-14
-					You get ₹500 worth credits for each referal who ride with us!
-				%div.col-md-4.referral-img
-				%div.col-md-4.size-14
-					You get ₹500 worth credits for each referal who ride with us!
-			%div.t-c.size-14
-				Don't have any yet? Start earning here!
+			%div.wrp-refer
+				%div.row.m-30.m-t10
+					%div.col-md-7.m-t10
+						%div.referral-img
+					%div.col-md-5.size-14.p-0.refer-text
+						%div.row.m-b25
+							%div.col-md-2.social-icons.green-arrow
+							%div.col-md-10
+								You earn ₹500 in credits for each referral that rides with us!
+						%div.row
+							%div.col-md-2.social-icons.green-arrow
+							%div.col-md-10
+								Your friend earns ₹500 in credits too when he signs up.
 		.referral-inner.p-t8.p-b60.p-l30.p-r30
-			.referral-creds.solid.border-grey.m-t10.r-5.size-18
-				- if referral_credits_earned?
-					Referal bonus earned 
-					%span.zoom ₹500.
+			.referral-creds.m-t10.r-5.size-18
+				// - if referral_credits_earned?
+				Referral credits earned: 
+				%span.zoom ₹500.
 				Refer now to start earning your free trip! 
 			.row.m-0.m-t10.m-b10
 				.col-md-5.referral-email.p-0.solid.border-grey.r-3
@@ -23,15 +28,15 @@
 						%div.referral-title.bg-zoomb.white.p-8.r-3.size-13
 							Invite friends through email
 						%div.t-r.m-20
-							%div.m-b20.size-14
+							%div.m-b15.size-14
 								%label To:
 								%input.r-3{:type =>"email", :name =>"email", :id => "r-email"}
-							%div.m-b20.size-14
+							%div.m-b10.size-14
 								%label Message:
 								%textarea.r-3{:name =>"message", :id => "r-message"}
 									= "message comes here"
 							%div.t-l
-								%input.size-14.r-3{:type => "submit", :id => "submit-refer"}
+								%input.size-14.r-3{:type => "submit", :id => "submit-refer", :value => "Send"}
 				.col-md-2.divider-height.position-r 
 					%div.top-line.border-l-c.position-a
 					%div.or-circle.position-a.r-20.bg-zoomb
@@ -40,7 +45,7 @@
 				.col-md-5.referral-link.p-0
 					%div.solid.border-grey.r-3 
 						%div.referral-title.bg-zoomb.white.p-8.r-3.size-13
-							Ctrl C + V this unique link into your blog, email or IM
+							Copy + Paste this unique link into your blog, email or IM
 						%div.m-20
 							%input{:type =>"url", :value => referral_url('email')}
 					%div.divider-width.position-r.m-t20.m-b20
@@ -48,22 +53,18 @@
 						%div.or-circle.position-a.r-20.bg-zoomb
 							%span.white OR
 						%div.right-line.border-t-c.position-a
-					%div.size-14.t-c
+					%div.size-14.t-c.m-t10
 						Share via:
-					%div
-						.fl.m-5
-							.fb-share-button{"data-href" => referral_url('fb'), "data-layout"=>"link"}
-						.fl.m-5
-							%a.twitter-share-button{"data-count" => "none", "data-lang" => "en", "data-related" => "anywhereTheJavascriptAPI", "data-url" => referral_url('twitter'), "data-via" => "zoom", :href => "https://twitter.com/share"} Tweet
-						.fl.m-5
-							.g-plus{"data-action" => "share", "data-annotation" =>"none", "data-href" => referral_url('others')}
-						.fc
+					%div.t-c.m-t20
+						%a.social-icons.fb{"data-href" => referral_url('fb'), "data-layout"=>"link"}
+						%a.social-icons.twt{"data-count" => "none", "data-lang" => "en", "data-related" => "anywhereTheJavascriptAPI", "data-url" => referral_url('twitter'), "data-via" => "zoom", :href => "https://twitter.com/share"}
+						%a.social-icons.gplus{"data-action" => "share", "data-annotation" =>"none", "data-href" => referral_url('others')}
 			%hr.border-grey.m-r90.m-l90
 			.term-condition.size-14.m-l90
 				Terms and Conditions: 
 				%ol.m-t15.m-l65.size-14
-					%li You will receive referral credits only when your friend complete their 1st booking
-					%li One user can earn up to only ₹10,000 in credits from referrals
+					%li You will receive referral credits once your friend completes his 1st booking.
+					%li One user can earn up to only ₹10,000 in credits from referrals.
 
 :javascript
 	function checkJquery() {
