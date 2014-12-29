@@ -143,7 +143,7 @@ class ApplicationController < ActionController::Base
   end
   
   def get_city(lat,lon)
-    city_id = closest_city(lat,lon).city_id
+    city_id = Location.closest_city(lat,lon).city_id
     city = City.find(city_id).name
     return city
 	  #if lat >= 22.8333 && lat <= 23.2333 && lon >= 72.4167 && lon <= 72.8167

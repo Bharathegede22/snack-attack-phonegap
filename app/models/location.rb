@@ -1,5 +1,5 @@
 class Location < ActiveRecord::Base
-	
+
 	belongs_to :city
 	belongs_to :hub, class_name: "Location"
 	belongs_to :user
