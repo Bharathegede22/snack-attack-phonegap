@@ -203,6 +203,7 @@ class BookingsController < ApplicationController
 		# Corporate Booking
 		if !session[:corporate_id].blank? && current_user.support?
 			@booking.corporate_id = session[:corporate_id]
+			@booking.actual_cargroup = @booking.cargroup
 			if @booking.manage_inventory == 1
 				@booking.status = 1
 			else
@@ -655,6 +656,7 @@ class BookingsController < ApplicationController
 		# Corporate Booking
 		if !session[:corporate_id].blank? && current_user.support?
 			@booking.corporate_id = session[:corporate_id]
+			@booking.actual_cargroup = @booking.cargroup
 			if @booking.manage_inventory == 1
 				@booking.status = 1
 			else
