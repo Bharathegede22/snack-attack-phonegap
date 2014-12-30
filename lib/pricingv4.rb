@@ -207,7 +207,8 @@ class Pricingv4
 			end
 			if year != start_date.advance(hours: hour).year
 				year = start_date.advance(hours: hour).year
-				blackout_days = Holiday.list(year)
+				#blackout_days = Holiday.list(year)
+				blackout_days = promo_pricing ? [] : Holiday.list(year)
 			end
 			wday = start_date.advance(hours: hour).wday
 			hour += 1
