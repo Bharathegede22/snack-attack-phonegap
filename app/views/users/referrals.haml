@@ -22,10 +22,10 @@
 								in credits too when he signs up.
 		.referral-inner.p-t8.p-b60.p-l30.p-r30
 			.referral-creds.m-t10.r-5.size-18
-				// - if referral_credits_earned?
 				Referral credits earned: 
-				%span.zoom ₹500.
-				Refer now to start earning your free trip! 
+				%span.zoom ₹#{referral_credits_earned}.
+				- if referral_credits_earned == 0
+					Refer now to start earning your free trip! 
 			.row.m-0.m-t10.m-b10
 				.col-md-5.referral-email.p-0.solid.border-grey.r-3
 					%form{:action => "refer_user", :id => "ReferForm", :method => "post"} 
@@ -38,7 +38,7 @@
 							%div.m-b10.size-14
 								%label Message:
 								%textarea.r-3{:name =>"message", :id => "r-message"}
-									= "message comes here"
+									= referral_message.html_safe
 							%div.t-l
 								%input.size-14.r-3{:type => "submit", :id => "submit-refer", :value => "Send"}
 				.col-md-2.divider-height.position-r 

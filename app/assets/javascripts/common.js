@@ -957,7 +957,7 @@ $(document).ready(function(){
 			url: $("#ReferForm").attr('action'),
 			data: {email:$("#r-email").val() , message:$("#r-message").val()},
 			success:function(result){
-				alert(result);
+
 			}
 		});
 	});

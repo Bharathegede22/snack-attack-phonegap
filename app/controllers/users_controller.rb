@@ -169,8 +169,10 @@ class UsersController < ApplicationController
 	end
 
 	def refer_user
-		# make api call for the same
-		render json: {html: ''}
+		args = { platform: "web", auth_token: current_user.authentication_token, :referral_email => params[:email], :message => params[:message] } #JSON.parse(cookies[:ref_code])
+    url = "#{ADMIN_HOSTNAME}/mobile/v3/users/invite_user"
+    response = ApiModule.admin_api_post_call(url, args)
+		render json: {response: 'Your invitation has been sent. Thank you for sharing the love!', err: nil}
 	end
 	
 	private
