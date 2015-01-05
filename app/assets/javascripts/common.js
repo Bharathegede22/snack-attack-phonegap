@@ -947,19 +947,37 @@ $(".creditsDescBtn-showPage").hover(function(){
 	function(){
 		$(".booking-showPage-popupBox").css("display", "none");
 });
-
+/*-------Referral Page------------*/
 $(document).ready(function(){
+	function clearEmailSent() {
+		$('#ReferForm, #r-email').popover('destroy');
+	}	
 	$("#ReferForm #submit-refer").click(function(e){
+		var el = $("#ReferForm");
 		e.preventDefault();
-		console.log($("#r-email").val());
-		$.ajax({
-			type: "POST",
-			url: $("#ReferForm").attr('action'),
-			data: {email:$("#r-email").val() , message:$("#r-message").val()},
-			success:function(result){
-
-			}
-		});
+		if($('#r-email').val() != '') {
+			console.log($("#r-email").val());
+			$.ajax({
+				type: "POST",
+				url: $("#ReferForm").attr('action'),
+				data: {email:$("#r-email").val() , message:$("#r-message").val()},
+				success:function(result){
+					el.popover({
+						title: 'Email sent',
+						content: result.response
+					}).popover("show");
+					window.setTimeout(clearEmailSent, 3000);
+					window.setTimeout(function(){location.reload()},3000)
+				}
+			});
+		}
+		else {
+			$("#r-email").popover({
+				content: "Please enter an email address"
+				
+			}).popover("show");
+			window.setTimeout(clearEmailSent, 3000);
+		}
 	});
 });
 
