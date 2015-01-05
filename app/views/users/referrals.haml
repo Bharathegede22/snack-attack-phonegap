@@ -36,9 +36,9 @@
 								%label To:
 								%input.r-3{:type =>"email", :name =>"email", :id => "r-email"}
 							%div.m-b10.size-14
-								%label Message:
-								%textarea.r-3{:name =>"message", :id => "r-message"}
-									= referral_message.html_safe
+								/ %label Message:
+								/ %textarea.r-3{:name =>"message", :id => "r-message"}
+								/ 	= referral_message.html_safe
 							%div.t-l
 								%input.size-14.r-3{:type => "submit", :id => "submit-refer", :value => "Send"}
 				.col-md-2.divider-height.position-r 
@@ -60,8 +60,8 @@
 					%div.size-14.t-c.m-t10
 						Share via:
 					%div.t-c.m-t20
-						%a.social-icons.fb{:href => "https://www.facebook.com/sharer/sharer.php?app_id=196733960374479&sdk=joey&u=http%3A%2F%2Flocal.dev%2Fusers%2Freferral_url%28%27fb%27%29&display=popup&ref=plugin", :target => "blank"} 
-						%a.social-icons.twt{ :href => "https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Flocal.dev%2Fusers%2Freferrals&related=anywhereTheJavascriptAPI&tw_p=tweetbutton&url=http%3A%2F%2Flocal.dev%2Fsignup%2F%3Fref%3DREFCODE%26ref_code%3DMzk3NjU%3D%26refsource%3Dtwitter&via=zoom"}
+						%a.social-icons.fb.fb-share-button{"data-href" => referral_url('fb'), "data-layout" => 'icon'} 
+						%a.social-icons.twt.twitter-share-button{"data-count" => "none", "data-lang" => "en", "data-related" => "anywhereTheJavascriptAPI", "data-url" => "http://www.zoomcar.com?ref=share-twitter", "data-via" => "zoom", :href => "https://twitter.com/share"}
 						%a.social-icons.gplus{"data-action" => "share", "data-annotation" =>"none", "data-href" => referral_url('others')}
 			%hr.border-grey.m-r90.m-l90
 			.term-condition.size-14.m-l90

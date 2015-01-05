@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 	
-	before_filter :authenticate_user!, :only => [:license,:license_get_del, :social, :settings, :update, :credits]
+	before_filter :authenticate_user!, :only => [:license,:license_get_del, :social, :settings, :update, :credits, :referrals]
 	skip_before_filter :authenticate_staging
 	
 	def access
@@ -169,7 +169,7 @@ class UsersController < ApplicationController
 	end
 
 	def refer_user
-		args = { platform: "web", auth_token: current_user.authentication_token, :referral_email => params[:email], :message => params[:message] } #JSON.parse(cookies[:ref_code])
+		args = { platform: "web", auth_token: current_user.authentication_token, :referral_email => params[:email]}
     url = "#{ADMIN_HOSTNAME}/mobile/v3/users/invite_user"
     response = ApiModule.admin_api_post_call(url, args)
 		render json: {response: 'Your invitation has been sent. Thank you for sharing the love!', err: nil}
