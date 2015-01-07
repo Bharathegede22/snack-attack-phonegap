@@ -146,7 +146,7 @@ module BookingsHelper
       c.amount = offer_discount
       c.refund = 0
     end
-    c.save!
+    c.save! if c.activity.present?
   end
 
   def credits_hash
