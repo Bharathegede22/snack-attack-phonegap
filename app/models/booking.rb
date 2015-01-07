@@ -41,7 +41,6 @@ class Booking < ActiveRecord::Base
 	after_save :after_save_tasks
 	before_create :before_create_tasks
 	before_save :before_save_tasks
-	before_save         :manage_inventory_cargroup
 	before_validation :before_validation_tasks
 	
 	# Return a scope for all interval overlapping the given interval, including the given interval itself
