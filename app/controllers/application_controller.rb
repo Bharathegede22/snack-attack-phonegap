@@ -42,14 +42,16 @@ class ApplicationController < ActionController::Base
 	    	city_prompt = true
 	      ip = request.headers["X-Real-IP"] if request.headers["X-Real-IP"] && !request.headers["X-Real-IP"].empty?
 	      city = get_city_from_ip(ip) if ip
-        #city = 'bangalore' if city.blank?
+        Rails.logger.info("city from ip=> #{city}")
+        city = 'bangalore' if city.blank?
 	    end
     end
     if city_prompt
     	@city = City.lookup_all(city.downcase)
     else
     	set_cookies_ref(city)
-		end
+    end
+    Rails.logger.info("city => #{city}")
   end
 
   def check_invite
@@ -139,6 +141,7 @@ class ApplicationController < ActionController::Base
   
   def get_city_from_ip(ip)
     geo = GeoIP.new(::Rails.root + "GeoLiteCity.dat").city(ip)
+    Rails.logger.info("geo.latitude=#{geo.latitude}, geo.longitude=#{geo.longitude}")
     return get_city(geo.latitude, geo.longitude) if geo && geo.country_name == 'India'
   end
   
