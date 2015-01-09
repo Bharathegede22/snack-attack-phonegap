@@ -1,5 +1,6 @@
 require "browser"
 class ApplicationController < ActionController::Base
+  include ApplicationHelper
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   
@@ -138,11 +139,18 @@ class ApplicationController < ActionController::Base
   end
   
   private
-  
+
   def get_city_from_ip(ip)
-    geo = GeoIP.new(::Rails.root + "GeoLiteCity.dat").city(ip)
-    Rails.logger.info("geo.latitude=#{geo.latitude}, geo.longitude=#{geo.longitude}")
-    return get_city(geo.latitude, geo.longitude) if geo && geo.country_name == 'India'
+    search_results_from_admin = mindtree_api_call(ip)
+    if !search_results_from_admin.nil?
+      json_result = JSON.parse(search_results_from_admin)
+      lat = json_result["location"]["latitude"]
+      long = json_result["location"]["longitude"]
+      Rails.logger.info("geo.latitude=#{lat}, geo.longitude=#{long}")
+      return get_city(lat, long)
+    else
+      return "bangalore"
+    end
   end
   
   def get_city(lat,lon)

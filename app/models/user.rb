@@ -106,7 +106,7 @@ class User < ActiveRecord::Base
     @profile || @signup
   end
   
-	def self.find_for_oauth(auth, signed_in=nil, ref_initial=nil, ref_immediate=nil)
+	def self.find_for_oauth(auth, signed_in=nil, ref_initial=nil, ref_immediate=nil, city)
   	is_new = 0
   	case auth.provider
   	when 'facebook'
@@ -145,7 +145,10 @@ class User < ActiveRecord::Base
   					user.gender = 1
   				end
         end
-        user.city = @city.id if !@city.nil?
+        user.city_id = city.id if !city.nil?
+        Rails.logger.info "user.city = #{user.city}"
+        Rails.logger.info "="*200
+        Rails.logger.info city.id
         user.password = Devise.friendly_token.first(12) if user.encrypted_password.blank?
  				if !user.phone.blank?
 	 				user.phone = user.phone.to_i.to_s
@@ -185,7 +188,7 @@ class User < ActiveRecord::Base
 						user.gender = 1
 					end
         end
-        user.city = @city.id if !@city.nil?
+        user.city_id = city.id if city.nil?
         user.save!
 			end
 		end

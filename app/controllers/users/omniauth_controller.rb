@@ -18,7 +18,7 @@ class Users::OmniauthController < Devise::OmniauthCallbacksController
   private
   
   def manage
-  	session[:social_signup], user = User.find_for_oauth(request.env["omniauth.auth"], current_user, session[:ref_initial], session[:ref_immediate])
+  	session[:social_signup], user = User.find_for_oauth(request.env["omniauth.auth"], current_user, session[:ref_initial], session[:ref_immediate],@city)
   	if user
 			sign_in('user', user)
 			if session[:book].blank?
