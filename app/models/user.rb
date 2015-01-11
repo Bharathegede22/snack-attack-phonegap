@@ -146,9 +146,6 @@ class User < ActiveRecord::Base
   				end
         end
         user.city_id = city.id if !city.nil?
-        Rails.logger.info "user.city = #{user.city}"
-        Rails.logger.info "="*200
-        Rails.logger.info city.id
         user.password = Devise.friendly_token.first(12) if user.encrypted_password.blank?
  				if !user.phone.blank?
 	 				user.phone = user.phone.to_i.to_s
