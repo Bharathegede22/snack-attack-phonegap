@@ -43,7 +43,6 @@ class ApplicationController < ActionController::Base
 	    	city_prompt = true
 	      ip = request.headers["X-Real-IP"] if request.headers["X-Real-IP"] && !request.headers["X-Real-IP"].empty?
 	      city = get_city_from_ip(ip) if ip
-        Rails.logger.info("city from ip=> #{city}")
         city = 'bangalore' if city.blank?
 	    end
     end
@@ -52,7 +51,6 @@ class ApplicationController < ActionController::Base
     else
     	set_cookies_ref(city)
     end
-    Rails.logger.info("city => #{city}")
   end
 
   def check_invite
@@ -146,7 +144,6 @@ class ApplicationController < ActionController::Base
       json_result = JSON.parse(search_results_from_admin)
       lat = json_result["location"]["latitude"]
       long = json_result["location"]["longitude"]
-      Rails.logger.info("geo.latitude=#{lat}, geo.longitude=#{long}")
       return get_city(lat, long)
     else
       return "bangalore"

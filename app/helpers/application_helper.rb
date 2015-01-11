@@ -53,10 +53,10 @@ module ApplicationHelper
 
   def mindtree_api_call ip
     begin
-      resource = RestClient::Resource.new('https://geoip.maxmind.com/geoip/v2.1/city/115.118.59.13sd9', {:user => '96903', :password => 'Hor8dpCQb7WT',:ssl_version => 'TLSv1'})
+      resource = RestClient::Resource.new("https://geoip.maxmind.com/geoip/v2.1/city/#{ip}", {:user => MINDTREE_USERNAME, :password => MINDTREE_PASSWORD,:ssl_version => 'TLSv1'})
       resource.get
     rescue Exception => e
-      Rails.logger.info "RestClient GET call failed\n #{e.message}"
+      Rails.logger.info "MINDTREE GET call failed\n #{e.message}"
       flash[:error] = "Sorry, our system is busy right now. Please try after some time."
       return
     end
