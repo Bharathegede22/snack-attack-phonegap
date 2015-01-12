@@ -32,7 +32,14 @@ Web::Application.configure do
   # This option may cause significant delays in view rendering with a large
   # number of complex assets.
   config.assets.debug = false
-  config.action_controller.asset_host = "//#{HOSTNAME}"
   config.cache_store = :dalli_store, {:namespace => MEMCACHED_KEY}
+
+  config.action_controller.asset_host = Proc.new { |source|
+    if source.starts_with?('/system')
+      "//uploads.zoomcar.com"
+    else
+      "//" + HOSTNAME
+    end
+  }
 
 end
