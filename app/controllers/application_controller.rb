@@ -143,7 +143,7 @@ class ApplicationController < ActionController::Base
     ref_code = JSON.parse(cookies[:ref_code]) rescue nil
     return if ref_code.nil?
     args = { platform: "web", auth_token: user.authentication_token, ref_code: ref_code} #JSON.parse(cookies[:ref_code])
-    url = "#{ADMIN_HOSTNAME}/mobile/v3/users/apply_referral"
+    url = "#{ADMIN_HOSTNAME}mobile/v3/users/apply_referral"
     ApiModule.admin_api_post_call(url, args)
     cookies.delete(:ref_code, domain: ".#{HOSTNAME.gsub('www.','')}")
   end
