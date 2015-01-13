@@ -460,13 +460,11 @@ class Booking < ActiveRecord::Base
 			self.save(validate: false)
 		end
 	end
-
-
+	
 	def hold_security?
 		self.hold == true
-    end
+  end
 
-	
 	def link
 		return "http://" + HOSTNAME + "/bookings/" + self.encoded_id
 	end
@@ -491,26 +489,26 @@ class Booking < ActiveRecord::Base
 			if !self.starts_last.blank? && (self.starts != self.starts_last || self.ends != self.ends_last)
 				if self.starts > self.ends_last + cargroup.wait_period.minutes || self.ends < self.starts_last - cargroup.wait_period.minutes
 					# Non Overlapping Reschedule
-					check = Inventory.check(self.city_id, self.actual_cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
+					check = Inventory.check(self.city_id, cargroup.id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
 				elsif (self.starts != self.starts_last || self.ends != self.ends_last)
 					# Overlapping Reschedule
 					if self.starts < self.starts_last
-						check = Inventory.check(self.city_id, self.actual_cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
+						check = Inventory.check(self.city_id, cargroup.id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
 					end
 					if self.ends > self.ends_last && check == 1
-						check = Inventory.check(self.city_id, self.actual_cargroup_id, self.location_id, self.ends_last, (self.ends + cargroup.wait_period.minutes))
+						check = Inventory.check(self.city_id, cargroup.id, self.location_id, self.ends_last, (self.ends + cargroup.wait_period.minutes))
 					end
 				end
 				if check == 1
-					Inventory.release(self.actual_cargroup_id, self.location_id, self.starts_last, self.ends_last)
-					Inventory.block(self.actual_cargroup_id, self.location_id, self.starts, self.ends)
+					Inventory.release(self.cargroup.id, self.location_id, self.starts_last, self.ends_last)
+					Inventory.block(self.cargroup.id, self.location_id, self.starts, self.ends)
 				end
 			else
 				if self.status < 9
-					check = Inventory.check(self.city_id, self.actual_cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
-					Inventory.block(self.actual_cargroup_id, self.location_id, self.starts, self.ends) if check == 1
+					check = Inventory.check(self.city_id, cargroup.id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
+					Inventory.block(cargroup.id, self.location_id, self.starts, self.ends) if check == 1
 				else
-					Inventory.release(self.actual_cargroup_id, self.location_id, self.starts, self.ends)
+					Inventory.release(cargroup.id, self.location_id, self.starts, self.ends)
 				end
 			end
 			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
@@ -522,8 +520,8 @@ class Booking < ActiveRecord::Base
 
 	def kle_enabled
 		if !self.location.kle_enabled.nil?
-			#return (self.starts >= self.location.kle_enabled && Cargroup.find(self.actual_cargroup_id).kle)
-			return (self.starts >= self.location.kle_enabled && Cargroup.find(self.cargroup_id).kle)
+			return (self.starts >= self.location.kle_enabled && Cargroup.find(self.actual_cargroup_id).kle)
+			#return (self.starts >= self.location.kle_enabled && Cargroup.find(self.cargroup_id).kle)
 		else
 			false
 		end
@@ -1010,7 +1008,7 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def manage_inventory_cargroup
-		if actual_cargroup_id_changed? && [1,6,7].include?(status) && car_id==nil
+		if self.actual_cargroup_id_changed? && [1,6,7].include?(status) && car_id==nil
 			Inventory.release(self.actual_cargroup_id_was, self.location_id, self.starts, self.ends)
 			Inventory.block(self.actual_cargroup_id, self.location_id, self.starts, self.ends)
 		end
