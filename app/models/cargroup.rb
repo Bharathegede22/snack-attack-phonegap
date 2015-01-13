@@ -1,5 +1,7 @@
 class Cargroup < ActiveRecord::Base
 	
+	has_one :image, :as => :imageable
+	has_one :picture, :as => :pictureable
 	has_many :bookings
 	
 	def active_pricing(city)
