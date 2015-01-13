@@ -60,19 +60,24 @@ class Car < ActiveRecord::Base
 			end
 			Inventory.connection.clear_query_cache
 			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
-			carmovements.uniq.each do |ar|
-				starts_tmp = ar[1]
-				ends_tmp = ar[2]
-				ar[0].each do |cm|
-					if check == 1
-						start_time = (cm.starts > starts_tmp) ? cm.starts : starts_tmp
-						end_time = (cm.ends < ends_tmp) ? cm.ends : ends_tmp
-						tmp = Inventory.check(city, self.cargroup_id, cm.location_id, start_time, end_time)
-						check = 0 if tmp == 0
+			begin
+				carmovements.uniq.each do |ar|
+					starts_tmp = ar[1]
+					ends_tmp = ar[2]
+					ar[0].each do |cm|
+						if check == 1
+							start_time = (cm.starts > starts_tmp) ? cm.starts : starts_tmp
+							end_time = (cm.ends < ends_tmp) ? cm.ends : ends_tmp
+							tmp = Inventory.check(city, self.cargroup_id, cm.location_id, start_time, end_time)
+							check = 0 if tmp == 0
+						end
 					end
 				end
+				ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+			rescue Exception => e
+				ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+				raise e
 			end
-			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
 		end
 		return check
 	end
@@ -151,42 +156,47 @@ class Car < ActiveRecord::Base
 			end
 		end
 		
-		Inventory.connection.clear_query_cache
-		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
+		begin
+		  Inventory.connection.clear_query_cache
+			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
 		# Check Inventory
-		if block
-			carmovements.uniq.each do |ar|
-				starts_tmp = ar[1]
-				ends_tmp = ar[2]
-				ar[0].each do |cm|
-					if check == 1
+			if block
+				carmovements.uniq.each do |ar|
+					starts_tmp = ar[1]
+					ends_tmp = ar[2]
+					ar[0].each do |cm|
+						if check == 1
+							start_time = (cm.starts > starts_tmp) ? cm.starts : starts_tmp
+							end_time = (cm.ends < ends_tmp) ? cm.ends : ends_tmp
+							tmp = Inventory.check(1, self.cargroup_id, cm.location_id, start_time, end_time)
+							check = 0 if tmp == 0
+						end
+					end
+				end
+			end
+				
+			if check == 1
+				carmovements_m.uniq.each do |ar|
+					starts_tmp = ar[1]
+					ends_tmp = ar[2]
+					ar[0].each do |cm|
 						start_time = (cm.starts > starts_tmp) ? cm.starts : starts_tmp
 						end_time = (cm.ends < ends_tmp) ? cm.ends : ends_tmp
-						tmp = Inventory.check(1, self.cargroup_id, cm.location_id, start_time, end_time)
-						check = 0 if tmp == 0
+						if block
+							# Block
+							Inventory.block(self.cargroup_id, cm.location_id, start_time, end_time)
+						else	
+							# Release Inventory
+							Inventory.release(self.cargroup_id, cm.location_id, start_time, end_time)
+						end
 					end
 				end
 			end
+			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+		rescue Exception => e
+			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+			raise e
 		end
-			
-		if check == 1
-			carmovements_m.uniq.each do |ar|
-				starts_tmp = ar[1]
-				ends_tmp = ar[2]
-				ar[0].each do |cm|
-					start_time = (cm.starts > starts_tmp) ? cm.starts : starts_tmp
-					end_time = (cm.ends < ends_tmp) ? cm.ends : ends_tmp
-					if block
-						# Block
-						Inventory.block(self.cargroup_id, cm.location_id, start_time, end_time)
-					else	
-						# Release Inventory
-						Inventory.release(self.cargroup_id, cm.location_id, start_time, end_time)
-					end
-				end
-			end
-		end
-		ActiveRecord::Base.connection.execute("UNLOCK TABLES")
 		return check
 	end
 	
