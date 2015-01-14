@@ -14,13 +14,21 @@ class SeoController < ApplicationController
 		when 'attraction' then Attraction.find(id)
 		when 'cargroup' then Cargroup.find(id)
 		when 'location' then Location.find(id)
+		when 'page' then Page.find(id)
 		else nil
 		end
-		@meta_title = @object.meta_title(@city)
-		@meta_description = @object.meta_description(@city)
-		@meta_keywords = @object.meta_keywords(@city)
-		@canonical = @object.link(@city)
-		render "/seo/" + str
+		render_404 and return if @object.nil?
+		if str == 'page'
+			link = @object.link
+      head :moved_permanently, :location => link and return if request.url.split('?').first != link
+			render text: @object.content.html_safe, layout: false and return
+		else
+			@meta_title = @object.meta_title(@city)
+			@meta_description = @object.meta_description(@city)
+			@meta_keywords = @object.meta_keywords(@city)
+			@canonical = @object.link(@city)
+			render "/seo/" + str
+		end
 	end
 	
 	def nearby
