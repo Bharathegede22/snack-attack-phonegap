@@ -81,24 +81,29 @@ class Booking < ActiveRecord::Base
 		if self.car_id.blank?
 			cargroup = self.cargroup
 			Inventory.connection.clear_query_cache
-			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
-			if self.starts != self.starts_last || self.ends != self.ends_last
-				if self.starts > self.ends_last + cargroup.wait_period.minutes || self.ends < self.starts_last - cargroup.wait_period.minutes
-					# Non Overlapping Reschedule
-					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
+			begin
+				ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
+				if self.starts != self.starts_last || self.ends != self.ends_last
+					if self.starts > self.ends_last + cargroup.wait_period.minutes || self.ends < self.starts_last - cargroup.wait_period.minutes
+						# Non Overlapping Reschedule
+						check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
+					else
+						# Overlapping Reschedule
+						if self.starts < self.starts_last
+							check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
+						end
+						if check == 1 && self.ends > self.ends_last
+							check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, self.ends_last, (self.ends + cargroup.wait_period.minutes))
+						end
+					end
 				else
-					# Overlapping Reschedule
-					if self.starts < self.starts_last
-						check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
-					end
-					if check == 1 && self.ends > self.ends_last
-						check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, self.ends_last, (self.ends + cargroup.wait_period.minutes))
-					end
+					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
 				end
-			else
-				check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
+				ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+			rescue Exception => e
+				ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+				raise e
 			end
-			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
 		else
 			check = self.car.check_inventory(self.city_id, self.starts_last, self.ends_last, self.starts, self.ends)
 		end
@@ -486,32 +491,37 @@ class Booking < ActiveRecord::Base
 		if self.car_id.blank?
 			Inventory.connection.clear_query_cache
 			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
-			if !self.starts_last.blank? && (self.starts != self.starts_last || self.ends != self.ends_last)
-				if self.starts > self.ends_last + cargroup.wait_period.minutes || self.ends < self.starts_last - cargroup.wait_period.minutes
-					# Non Overlapping Reschedule
-					check = Inventory.check(self.city_id, cargroup.id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
-				elsif (self.starts != self.starts_last || self.ends != self.ends_last)
-					# Overlapping Reschedule
-					if self.starts < self.starts_last
-						check = Inventory.check(self.city_id, cargroup.id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
+			begin
+				if !self.starts_last.blank? && (self.starts != self.starts_last || self.ends != self.ends_last)
+					if self.starts > self.ends_last + cargroup.wait_period.minutes || self.ends < self.starts_last - cargroup.wait_period.minutes
+						# Non Overlapping Reschedule
+						check = Inventory.check(self.city_id, cargroup.id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
+					elsif (self.starts != self.starts_last || self.ends != self.ends_last)
+						# Overlapping Reschedule
+						if self.starts < self.starts_last
+							check = Inventory.check(self.city_id, cargroup.id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
+						end
+						if self.ends > self.ends_last && check == 1
+							check = Inventory.check(self.city_id, cargroup.id, self.location_id, self.ends_last, (self.ends + cargroup.wait_period.minutes))
+						end
 					end
-					if self.ends > self.ends_last && check == 1
-						check = Inventory.check(self.city_id, cargroup.id, self.location_id, self.ends_last, (self.ends + cargroup.wait_period.minutes))
+					if check == 1
+						Inventory.release(self.cargroup.id, self.location_id, self.starts_last, self.ends_last)
+						Inventory.block(self.cargroup.id, self.location_id, self.starts, self.ends)
 					end
-				end
-				if check == 1
-					Inventory.release(self.cargroup.id, self.location_id, self.starts_last, self.ends_last)
-					Inventory.block(self.cargroup.id, self.location_id, self.starts, self.ends)
-				end
-			else
-				if self.status < 9
-					check = Inventory.check(self.city_id, cargroup.id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
-					Inventory.block(cargroup.id, self.location_id, self.starts, self.ends) if check == 1
 				else
-					Inventory.release(cargroup.id, self.location_id, self.starts, self.ends)
+					if self.status < 9
+						check = Inventory.check(self.city_id, cargroup.id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
+						Inventory.block(cargroup.id, self.location_id, self.starts, self.ends) if check == 1
+					else
+						Inventory.release(cargroup.id, self.location_id, self.starts, self.ends)
+					end
 				end
+				ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+			rescue Exception => e
+				ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+				raise e
 			end
-			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
 		else
 			check = self.car.manage_inventory(self.starts_last, self.ends_last, self.starts, self.ends, (self.status < 9))
 		end
