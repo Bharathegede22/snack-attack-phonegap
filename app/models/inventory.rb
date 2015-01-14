@@ -41,27 +41,43 @@ class Inventory < ActiveRecord::Base
 	end
 	
 	def self.do_block(city, cargroup, location, starts, ends, change_max=false)
-		Inventory.connection.clear_query_cache
-		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
-		tmp = check(city, cargroup, location, starts, ends)
-		block(cargroup, location, starts, ends, change_max) if tmp == 1
-		ActiveRecord::Base.connection.execute("UNLOCK TABLES")
-		return tmp
+		begin
+			Inventory.connection.clear_query_cache
+			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
+			tmp = check(city, cargroup, location, starts, ends)
+			block(cargroup, location, starts, ends, change_max) if tmp == 1
+			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+			return tmp
+		rescue Exception => e
+			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+			raise e
+		end
 	end
 	
 	def self.do_check(city, cargroup, location, starts, ends)
-		Inventory.connection.clear_query_cache
-		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE, cargroups READ")
-		tmp = check(city, cargroup, location, starts, ends)
-		ActiveRecord::Base.connection.execute("UNLOCK TABLES")
-		return tmp
+		begin
+			Inventory.connection.clear_query_cache
+			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE, cargroups READ")
+			tmp = check(city, cargroup, location, starts, ends)
+			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+			return tmp
+		rescue Exception => e
+			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+			raise e
+		end
 	end
 	
 	def self.do_release(cargroup, location, starts, ends, change_max=false)
-		Inventory.connection.clear_query_cache
-		ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
-		release(cargroup, location, starts, ends, change_max)
-		ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+		begin
+			Inventory.connection.clear_query_cache
+			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
+			release(cargroup, location, starts, ends, change_max)
+			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+		rescue Exception => e
+			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+			raise e
+		end
+		
 	end
 	
 	def self.get(city, cargroup, location, starts, ends, page)
@@ -85,14 +101,19 @@ class Inventory < ActiveRecord::Base
 		end
 		starts = Time.today if starts < Time.today
 		if ends > Time.today || ends <= Time.today + CommonHelper::BOOKING_WINDOW.days
-			Inventory.connection.clear_query_cache
-			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
-			temp = Inventory.find_by_sql("SELECT slot, total FROM inventories 
-				WHERE cargroup_id = #{cargroup} AND location_id = #{location} AND 
-				slot >= '#{starts.to_s(:db)}' AND 
-				slot < '#{ends.to_s(:db)}' 
-				ORDER BY slot ASC")
-			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+			begin
+				Inventory.connection.clear_query_cache
+			  ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
+				temp = Inventory.find_by_sql("SELECT slot, total FROM inventories 
+					WHERE cargroup_id = #{cargroup} AND location_id = #{location} AND 
+					slot >= '#{starts.to_s(:db)}' AND 
+					slot < '#{ends.to_s(:db)}' 
+					ORDER BY slot ASC")
+				ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+			rescue Exception => e
+				ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+				raise e
+			end
 		else
 			temp = []
 		end
@@ -137,19 +158,23 @@ class Inventory < ActiveRecord::Base
 			end_date = ends
 			end_date += 330.minutes
 			end_date += c.wait_period.minutes
-			
-			Inventory.connection.clear_query_cache
-			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
-			Inventory.find_by_sql("SELECT slot, total, location_id FROM inventories 
-				WHERE cargroup_id = #{c.id} AND 
-				location_id IN (#{locs.collect {|l| l.id}.join(',')}) AND 
-				slot >= '#{start_date.to_s(:db)}' AND 
-				slot < '#{(end_date).to_s(:db)}' AND 
-				total < 1 
-				GROUP BY location_id").each do |i|
-				tmp[i.location_id.to_s] = 0
+			begin
+				Inventory.connection.clear_query_cache
+				ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
+				Inventory.find_by_sql("SELECT slot, total, location_id FROM inventories 
+					WHERE cargroup_id = #{c.id} AND 
+					location_id IN (#{locs.collect {|l| l.id}.join(',')}) AND 
+					slot >= '#{start_date.to_s(:db)}' AND 
+					slot < '#{(end_date).to_s(:db)}' AND 
+					total < 1 
+					GROUP BY location_id").each do |i|
+					tmp[i.location_id.to_s] = 0
+				end
+				ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+			rescue Exception => e
+				ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+				raise e
 			end
-			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
 			check[c.id.to_s] = tmp
 		end
 		Inventory.connection.execute("UNLOCK TABLES")
