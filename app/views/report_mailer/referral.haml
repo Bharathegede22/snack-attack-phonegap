@@ -51,7 +51,7 @@
                                             %td{:height => "10", :width => "100%"}
                                           %tr
                                             %td{:style => "font-family:Helvetica,arial,sans-serif;font-size:13px;color:#333333;text-align:left;line-height:18px"}
-                                              Your friend -----<full name of user who sent invite>---- wants to share the joy, adventure, and independence of self-drive car rental with you!
+                                              Your friend #{@current_user.name} wants to share the joy, adventure, and independence of self-drive car rental with you!
                                           %tr
                                             %td{:height => "10", :width => "100%"}
                                           %tr
@@ -61,9 +61,9 @@
                                             %td{:height => "10", :width => "100%"}
                                           %tr
                                             %td{:style => "font-family:Helvetica,arial,sans-serif;font-size:13px;color:#333333;text-align:left;line-height:18px"}
-                                              Click on 
-                                              %a{:href => "#", :target => "_blank"} ------ this link<hyperlinked referral text “this link”; Rohit will provide this link>-----
-                                              and sign up to earn ₹500 in credits, it takes only 10 seconds. You can use them towards your first ride. Your friend too gets ₹500 in credits when you complete your first ride, we believe in spreading the love. So go ahead and book your first adventure!
+                                              Click on
+                                              %a{:href => "http://#{HOSTNAME}/signup/?ref=#{Referral::REFCODE}&ref_code=#{@current_user.referral_code}&refsource=email", :target => "blank"} this link
+                                              and sign up to earn ₹#{Credit::REFERRAL_CREDIT} in credits, it takes only 10 seconds. You can use them towards your first ride. Your friend too gets ₹#{Credit::REFERRAL_CREDIT} in credits when you complete your first ride—we believe in spreading the love. So go ahead and book your first adventure!
                                           %tr
                                             %td{:height => "10", :width => "100%"}
                                           %tr

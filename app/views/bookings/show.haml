@@ -159,7 +159,7 @@
 				[?]
 		%div#unique-link.p-20
 			%div.size-12.m-b10 Share this unique link with friends, earn credits!
-			%input{:type =>"url", :value => referral_url('email'), :class => "size-12"}
+			%input{:type =>"url", :value => referral_url('email'), :class => "size-12", :onClick => "this.select();"}
 
 .fr
 	.bg-w.bs-9.m-b20{'style' => 'width: 360px'}

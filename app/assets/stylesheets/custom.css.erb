@@ -3393,6 +3393,9 @@ button.delete {
 	color: #727272;
 	text-align: center;
 }
+.referral .email-block {
+	margin: 20px;
+}
 .referral input[type="email"],
 .referral textarea{
 	width: 250px;
@@ -3415,7 +3418,7 @@ button.delete {
 	height: 30px;
 }
 .referral input[type="submit"] {
-	margin-left: 82px;
+	margin-left: 84px;
 	background-color: #6ABD19;
 	border: 1px solid #6ABD19;
 	padding: 5px 24px;
@@ -3472,15 +3475,25 @@ button.delete {
 	left: 45%;
 	top: 15%;
 }
-.referral .social-icons {
+.referral .arrow-img {
 	background:url(<%= asset_path 'referral-social-icons.png' %>) no-repeat;
 	height: 40px;
 	width: 40px;
 	display: inline-block;
 	margin: 0 auto;
 	background-size: 170px;
+	vertical-align: top;
 }
-.referral .fb {
+.referral .social-icons {
+	/*background:url(<%= asset_path 'referral-social-icons.png' %>) no-repeat;*/
+	height: 21px;
+	width: 65px;
+	display: inline-block;
+	margin: 0 auto;
+	/*background-size: 170px;*/
+	vertical-align: top;
+}
+/*.referral .fb {
 	background-position: -7px -34px;
 }
 .referral .twt {
@@ -3488,7 +3501,7 @@ button.delete {
 }
 .referral .gplus {
 	background-position: -119px -35px;
-}
+}*/
 .referral .referral-img {
 	background:url(<%= asset_path 'referal-page.png' %>) no-repeat;
 	height: 85px;
@@ -3499,6 +3512,9 @@ button.delete {
 }
 .refer-text {
 	padding-right: 10%;
+}
+.referral .email-modal button {
+	border: none
 }
 /*--------show.haml---------*/
 #unique-link input {
