@@ -962,22 +962,22 @@ $(document).ready(function(){
 				url: $("#ReferForm").attr('action'),
 				data: {email:$("#r-email").val()},
 				success:function(result){
-					
-					if(result.err == 'null' || result.response != 'null') {
+					if(result.err == false) {
 						el.popover({
 							// title: 'Email sent',
 							content: result.response
 						}).popover("show");
 						window.setTimeout(clearEmailSent, 5000);
-						// window.setTimeout(function(){location.reload()},5000)
+						window.setTimeout(function(){location.reload()},5000)
 					}
-					else if (result.err != 'null'){
+					else{
 						console.log("hello");
 						$("#r-email").popover({
-							content: result.err
+							content: result.response
 						}).popover("show");
-						// window.setTimeout(clearEmailSent, 5000);
+						window.setTimeout(clearEmailSent, 5000);
 					}
+					console.log("below");
 				}
 			});
 		}
