@@ -962,21 +962,28 @@ $(document).ready(function(){
 				url: $("#ReferForm").attr('action'),
 				data: {email:$("#r-email").val() , message:$("#r-message").val()},
 				success:function(result){
-					el.popover({
-						title: 'Email sent',
-						content: result.response
-					}).popover("show");
-					window.setTimeout(clearEmailSent, 3000);
-					window.setTimeout(function(){location.reload()},3000)
+					if(result.err == 'null'){
+						$("#r-email").popover({
+							content: "Please enter email address"
+						}).popover("show");
+						window.setTimeout(clearEmailSent, 5000);
+					}
+					else{
+						el.popover({
+							// title: 'Email sent',
+							content: result.response
+						}).popover("show");
+						window.setTimeout(clearEmailSent, 5000);
+						window.setTimeout(function(){location.reload()},5000)
+					}
 				}
 			});
 		}
 		else {
 			$("#r-email").popover({
-				content: "Please enter an email address"
-				
+				content: "Please enter email address"
 			}).popover("show");
-			window.setTimeout(clearEmailSent, 3000);
+			window.setTimeout(clearEmailSent, 5000);
 		}
 	});
 });
