@@ -960,21 +960,23 @@ $(document).ready(function(){
 			$.ajax({
 				type: "POST",
 				url: $("#ReferForm").attr('action'),
-				data: {email:$("#r-email").val() , message:$("#r-message").val()},
+				data: {email:$("#r-email").val()},
 				success:function(result){
-					if(result.err == 'null'){
-						$("#r-email").popover({
-							content: "Please enter email address"
-						}).popover("show");
-						window.setTimeout(clearEmailSent, 5000);
-					}
-					else{
+					
+					if(result.err == 'null' || result.response != 'null') {
 						el.popover({
 							// title: 'Email sent',
 							content: result.response
 						}).popover("show");
 						window.setTimeout(clearEmailSent, 5000);
-						window.setTimeout(function(){location.reload()},5000)
+						// window.setTimeout(function(){location.reload()},5000)
+					}
+					else if (result.err != 'null'){
+						console.log("hello");
+						$("#r-email").popover({
+							content: result.err
+						}).popover("show");
+						// window.setTimeout(clearEmailSent, 5000);
 					}
 				}
 			});
