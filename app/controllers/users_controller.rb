@@ -185,7 +185,7 @@ class UsersController < ApplicationController
 		args = { platform: "web", auth_token: current_user.authentication_token, :referral_email => params[:email]}
     url = "#{ADMIN_HOSTNAME}mobile/v3/users/invite_user"
     response = ApiModule.admin_api_post_call(url, args)
-		render json: (response["response"] rescue { err: 'Sorry!! But something went wrong'})
+		render json: (response["response"] rescue { err: true, :response => 'Sorry!! But something went wrong'})
 	end
 	
 	private
