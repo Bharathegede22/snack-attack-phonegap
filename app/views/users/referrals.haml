@@ -20,7 +20,7 @@
 								Your friend earns 
 								%span.zoom ₹#{Credit::REFERRAL_CREDIT} 
 								in credits too when he signs up.
-		.referral-inner.p-t8.p-b60.p-l30.p-r30
+		.referral-inner.p-t8.p-b60.p-l50.p-r50
 			.referral-creds.m-t10.r-5.size-18
 				Referral credits earned: 
 				%span.zoom ₹#{referral_credits_earned}.
@@ -81,7 +81,7 @@
 			.modal-header
 				%button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
 					%span{"aria-hidden" => "true"} &times;
-			.modal-body
+			.modal-body.p-b30
 				= render :partial => "referral_email_preview"
 :javascript
 	function checkJquery() {

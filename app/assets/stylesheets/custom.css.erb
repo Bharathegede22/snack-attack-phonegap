@@ -3396,6 +3396,9 @@ button.delete {
 .referral .email-block {
 	margin: 20px;
 }
+.referral-email {
+	width: 45% !important;
+}
 .referral input[type="email"],
 .referral textarea{
 	width: 250px;
@@ -3406,6 +3409,7 @@ button.delete {
 }
 .referral textarea{
 	padding: 5px 10px;
+	resize: none;
 }
 .referral input[type="url"] {
 	width: 100%;
@@ -3418,7 +3422,7 @@ button.delete {
 	height: 30px;
 }
 .referral input[type="submit"] {
-	margin-left: 84px;
+	margin-left: 95px;
 	background-color: #6ABD19;
 	border: 1px solid #6ABD19;
 	padding: 5px 24px;
@@ -3433,7 +3437,7 @@ button.delete {
 .referral .top-line,
 .referral .bottom-line{
 	height: 85px;
-	left: 78px;
+	left: 45px;
 }
 .referral .top-line{
 	top: 25px;
@@ -3442,7 +3446,7 @@ button.delete {
 	top: 175px;
 }
 .referral .or-circle {
-	left: 40%;
+	left: 30%;
 	top: 42%;
 /*	background-color: #000000;
 	border-radius: 20px;*/
@@ -3456,6 +3460,7 @@ button.delete {
 }
 .referral .divider-height {
 	height: 290px;
+	width: 10% !important;
 }
 .referral .divider-width {
 	height: 50px;
@@ -3476,12 +3481,12 @@ button.delete {
 	top: 15%;
 }
 .referral .arrow-img {
-	background:url(<%= asset_path 'referral-social-icons.png' %>) no-repeat;
+	background:url(<%= asset_path 'green-tick.png' %>) no-repeat;
 	height: 40px;
 	width: 40px;
 	display: inline-block;
 	margin: 0 auto;
-	background-size: 170px;
+	background-position: 19px 4px;
 	vertical-align: top;
 }
 .referral .social-icons {
@@ -3513,11 +3518,20 @@ button.delete {
 .refer-text {
 	padding-right: 10%;
 }
+#preview-email .modal-header {
+	background-color: #EEE;
+	height: 46px;
+}
 .referral .email-modal button {
 	border: none
+}
+.referral-link {
+	width: 45% !important;
 }
 /*--------show.haml---------*/
 #unique-link input {
 	width: 100%;
 	padding: 5px;
+	font-style: italic;
+	color: #727272;
 }
