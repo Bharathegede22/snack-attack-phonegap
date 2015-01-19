@@ -506,8 +506,8 @@ class Booking < ActiveRecord::Base
 						end
 					end
 					if check == 1
-						Inventory.release(self.cargroup.id, self.location_id, self.starts_last, self.ends_last)
-						Inventory.block(self.cargroup.id, self.location_id, self.starts, self.ends)
+						Inventory.release(cargroup.id, self.location_id, self.starts_last, self.ends_last)
+						Inventory.block(cargroup.id, self.location_id, self.starts, self.ends)
 					end
 				else
 					if self.status < 9
