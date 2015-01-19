@@ -54,8 +54,25 @@
 					= image_tag("features/7.png", :alt => "Any duration")
 					.m-t10.feature
 						Go Anywhere. Our Cars Have All-India Permits
-
 	%br/
+	%br/
+	%br/
+
+	
+	- if user_signed_in?
+	- else
+		%div{:style => 'width: 550px; margin: 0 auto;'}
+			#signup-call.fl
+				Ready to make your first booking?
+			%a#signup-hiw.fl{href: "javascript:void(0)", onclick: "showModal('Sign Up', '/users/signup');"}
+				Sign Up
+			.fc
+
+	.t-c.size-14.f-i.m-t10
+		Still have questions or curious to find out more? Check out our 
+		= succeed "." do
+			%a.f-b{:href => '/faq'} FAQs
+
 	%br/
 	%br/
 	%br/
@@ -121,20 +138,4 @@
 
 	%br/
 	%br/
-	%br/
-	%br/
-	
-	- if user_signed_in?
-	- else
-		%div{:style => 'width: 550px; margin: 0 auto;'}
-			#signup-call.fl
-				Ready to make your first booking?
-			%a#signup-hiw.fl{href: "javascript:void(0)", onclick: "showModal('Sign Up', '/users/signup');"}
-				Sign Up
-			.fc
-
-	.t-c.size-14.f-i.m-t10
-		Still have questions or curious to find out more? Check out our 
-		= succeed "." do
-			%a.f-b{:href => '/faq'} FAQs
 
