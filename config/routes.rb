@@ -81,11 +81,13 @@ Web::Application.routes.draw do
 			get 'signup'
 			get 'status'
 			get 'status_old'
+			get 'referrals'
 
 			post 'license'
 			post 'license_get_del'
 			post 'signup'
 			post 'update'
+			post 'refer_user'
 		end
 	end
 

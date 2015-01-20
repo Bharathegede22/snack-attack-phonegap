@@ -1,7 +1,7 @@
 class ReportMailer < ActionMailer::Base
   
   default from: "Zoomcar <noreply@zoomcar.com>"
-  
+
   def exotel(error, phone, booking)
   	@error = error
   	@phone = phone
@@ -14,5 +14,5 @@ class ReportMailer < ActionMailer::Base
   	@booking = @review.booking
   	mail to: "feedback@zoomcar.com", subject: "User Feedback"
   end
-  
+
 end
