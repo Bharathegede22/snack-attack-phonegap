@@ -118,13 +118,11 @@
 					})();
 			- session[:signup] = 1
 		- else
-			.alert.alert-success
+			%div
 				- if City.find(current_user.city_id).active
-					%b Thanks for providing your details.
+					%b Thank you for signing up.
 				- else
 					%b  Thank you! A welcome email is on its way. When we reach beautiful Delhi we will send an email letting you know, and your discount code will be in that email.
-			%b #{current_user.email},
-			please follow instructions as mentioned in the email to activate your account.
 
 			:javascript
 				pushEvent('Sign Up', 'Successful Sign-up', 'Home Page (My Account)');
