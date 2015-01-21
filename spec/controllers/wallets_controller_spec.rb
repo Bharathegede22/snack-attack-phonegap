@@ -1,17 +1,18 @@
 require 'spec_helper'
 
 describe WalletsController do
-
-  describe "GET 'topup'" do
-    it "returns http success" do
-      get 'topup'
-      response.should be_success
-    end
-  end
+  login_user
+  # NO Such Action
+  # describe "GET 'topup'" do
+  #   it "returns http success" do
+  #     get 'topup'
+  #     response.should be_success
+  #   end
+  # end
 
   describe "GET 'refund'" do
     it "returns http success" do
-      get 'refund'
+      get 'refund', amount: 100
       response.should be_success
     end
   end
