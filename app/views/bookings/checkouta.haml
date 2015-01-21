@@ -239,7 +239,7 @@
 
 			.t-c
 				.m-auto.p-t10.p-b20{style: "width:400px;"}
-					- if @available == 1 && user && !user.is_blacklisted?
+					- if @available == 1 && user && !user.is_blacklisted? && !user.is_underage?
 						- flash_param = deal == 'SQUIRREL' ? "?deal=" + session[:deal] : ''
 						%form{:action => "/#{@city.link_name.downcase}/bookings/docreate" + flash_param, :id => "CheckoutForm", :method => "post"}
 							.hide
