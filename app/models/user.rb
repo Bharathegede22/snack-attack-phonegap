@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   has_many :bookings
   has_many :credits
   has_many :wallets
+  has_many :referrals, :foreign_key => :referral_user_id
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable 
   devise :database_authenticatable, :registerable, 
@@ -29,6 +30,7 @@ class User < ActiveRecord::Base
   
   after_create :send_welcome_mail
   before_create :before_create_tasks
+  after_save :after_save_tasks
 	before_validation :before_validation_tasks
 	
 	def admin?
@@ -53,6 +55,17 @@ class User < ActiveRecord::Base
 
   def fleet?
 		return self.role >= 5
+	end
+
+	def referral_code
+		return self.ref_code if self.ref_code.present?
+		self.generate_referral_code
+		self.ref_code
+	end
+
+	def generate_referral_code
+		self.ref_code = Base64.urlsafe_encode64(self.id.to_s)
+		self.save!
 	end
 	
 	def get_bookings(action, page=0)
@@ -379,6 +392,14 @@ class User < ActiveRecord::Base
   end
 	
 	private :before_create_tasks, :before_validation_tasks, :valid_otp_length?
+
+	def after_save_tasks
+		license_update_events
+	end
+
+	def license_update_events
+		Referral.validate_reference(self.email,self.id, {:field => :phone, :value => self.phone}) if self.phone_changed?
+	end
 end
 
 # == Schema Information

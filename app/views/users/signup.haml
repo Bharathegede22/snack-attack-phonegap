@@ -120,7 +120,7 @@
 		- else
 			%div
 				- if City.find(current_user.city_id).active
-					%b Thank you for signing up.
+					%b Thank you for signing up. #{signup_credits_earned? ? "You have earned ₹500 in credits! They are in your Zoomcar Wallet." : ""}
 				- else
 					%b  Thank you! A welcome email is on its way. When we reach beautiful Delhi we will send an email letting you know, and your discount code will be in that email.
 

@@ -947,3 +947,43 @@ $(".creditsDescBtn-showPage").hover(function(){
 	function(){
 		$(".booking-showPage-popupBox").css("display", "none");
 });
+/*-------Referral Page------------*/
+$(document).ready(function(){
+	function clearEmailSent() {
+		$('#ReferForm, #r-email').popover('destroy');
+	}	
+	$("#ReferForm #submit-refer").click(function(e){
+		var el = $("#ReferForm");
+		e.preventDefault();
+		if($('#r-email').val() != '') {
+			$.ajax({
+				type: "POST",
+				url: $("#ReferForm").attr('action'),
+				data: {email:$("#r-email").val()},
+				success:function(result){
+					if(result.err == false) {
+						el.popover({
+							// title: 'Email sent',
+							content: result.response
+						}).popover("show");
+						window.setTimeout(clearEmailSent, 7000);
+						window.setTimeout(function(){location.reload()},7000)
+					}
+					else{
+						$("#r-email").popover({
+							content: result.response
+						}).popover("show");
+						window.setTimeout(clearEmailSent, 7000);
+					}
+				}
+			});
+		}
+		else {
+			$("#r-email").popover({
+				content: "Please enter email address"
+			}).popover("show");
+			window.setTimeout(clearEmailSent, 5000);
+		}
+	});
+});
+
