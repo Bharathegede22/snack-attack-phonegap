@@ -956,7 +956,6 @@ $(document).ready(function(){
 		var el = $("#ReferForm");
 		e.preventDefault();
 		if($('#r-email').val() != '') {
-			console.log($("#r-email").val());
 			$.ajax({
 				type: "POST",
 				url: $("#ReferForm").attr('action'),
@@ -971,13 +970,11 @@ $(document).ready(function(){
 						window.setTimeout(function(){location.reload()},7000)
 					}
 					else{
-						console.log("hello");
 						$("#r-email").popover({
 							content: result.response
 						}).popover("show");
 						window.setTimeout(clearEmailSent, 7000);
 					}
-					console.log("below");
 				}
 			});
 		}
