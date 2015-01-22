@@ -8,15 +8,15 @@ describe Inventory do
  	context 'association' do
  		[:city, :cargroup, :location].each do |attr|
     		it { should belong_to attr }
-  		end
   	end
+  end
 
-  	context 'validations' do
-      [:cargroup_id, :city_id, :location_id, :total, :slot].each do |att|
-      	it { should validate_presence_of att}
-      end
+  context 'validations' do
+    [:cargroup_id, :city_id, :location_id, :total, :slot].each do |att|
+    	it { should validate_presence_of att}
+    end
 
-      it { should validate_uniqueness_of(:cargroup_id).scoped_to([:location_id, :slot]) }
+    it { should validate_uniqueness_of(:cargroup_id).scoped_to([:location_id, :slot]) }
 	end
 
   it "should decrease inventory on block_plain" do
