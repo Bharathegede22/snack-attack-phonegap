@@ -9,8 +9,6 @@ GOOGLE_ID = configurations['google_id']
 GOOGLE_SECRET = configurations['google_secret']
 GOOGLE_MAP_KEY = "#{configurations['google_map_api_key']}"
 
-MINDTREE_USERNAME = configurations['mindtree_username']
-MINDTREE_PASSWORD = configurations['mindtree_password']
 
 PAYU_EMAIL = configurations['payu_email']
 PAYU_PHONE = configurations['payu_phone']
