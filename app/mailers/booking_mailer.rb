@@ -48,7 +48,7 @@ class BookingMailer < ActionMailer::Base
 
 	def welcome(user)
 		@user = user
-		@city = !@user.city_id.nil? ? City.find(@user.city_id) : City.find(1)
+		@city = !@user.city_id.nil? ? City.find(@user.city_id) : City.first
 		mail(to: @user.email, subject: "Welcome To Zoomcar") do |format|
 			format.html {render layout: false}			
 		end
@@ -56,7 +56,7 @@ class BookingMailer < ActionMailer::Base
 
 	def welcome2(user)
 		@user = user
-		@city = !@user.city_id.nil? ? City.find(@user.city_id) : City.find(1)
+		@city = !@user.city_id.nil? ? City.find(@user.city_id) : City.first
 		mail(to: @user.email, subject: "Welcome To Zoomcar") do |format|
 			format.html {render layout: false}			
 		end

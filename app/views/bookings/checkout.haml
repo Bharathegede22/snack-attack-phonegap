@@ -249,7 +249,7 @@
 			/ %br/
 			/ %br/
 			.payment-options.m-auto
-				- if @available == 1 && user && !user.is_blacklisted?
+				- if @available == 1 && user && !user.is_blacklisted? && !user.is_underage?
 					.t-c
 						.p-20{style: "width:400px;"}
 							%form{:action => "/#{@city.link_name.downcase}/bookings/docreate", :id => "CheckoutForm", :method => "post"}

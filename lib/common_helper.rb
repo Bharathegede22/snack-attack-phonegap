@@ -42,7 +42,6 @@ module CommonHelper
 	WALLET_FREEZE_END   = 6
 	
 	BLACKLISTED_STATUS  = 1
-	BOOKING_WINDOW      = 60
   
 	ENCODING_ARRAY = ["7", "c", "i", "j", "o", "k", "z", "l", "q", "r", "m", "8", "h", "u", "g", "w", "3", "1", "y", "p", "5", "s", "0", "d", "a", "e", "v", "t", "2", "4", "f", "b", "x", "6", "n", "9"]
   
@@ -95,15 +94,16 @@ module CommonHelper
   		if Rails.env == 'production'
 		    temp = case c.downcase
 		    when 'attraction' then 10000000
-		    when 'job' then 20000000
-		    #when 'payment' then 30000000
+        when 'job' then 20000000
+        when 'debug' then 30000000
 		    when 'cargroup' then 40000000
 		    when 'location' then 50000000
+		    when 'page' then 70000000
 		    when 'deal' then 80000000
 		    when 'booking' then 10000000000000
 		    when 'payment' then 20000000000000
 		    when 'user' then 30000000000000
-		    else 0
+        else 0
 		    end
 		  else
 		  	temp = case c.downcase
@@ -113,9 +113,10 @@ module CommonHelper
 		    when 'cargroup' then 40000000
 		    when 'location' then 50000000
 		    when 'user' then 60000000
-		    when 'deal' then 80000000
-		    when 'booking' then 10000000000000
-		    #when 'payment' then 20000000000000
+        when 'page' then 70000000
+        when 'deal' then 80000000
+        when 'debug' then 90000000
+        when 'booking' then 10000000000000
 		    else 0
 		    end
 		  end
@@ -147,20 +148,22 @@ module CommonHelper
 		    pos = pos + 1
 		  end
 		  if Rails.env == 'production'
-		  	return ['user',id-30000000000000] if id > 30000000000000
+        return ['user',id-30000000000000] if id > 30000000000000
 				return ['payment',id-20000000000000] if id > 20000000000000
 				return ['booking',id-10000000000000] if id > 10000000000000
 				return ['deal',id-80000000] if id > 80000000
+				return ['page',id-70000000] if id > 70000000
 				return ['location',id-50000000] if id > 50000000
 				return ['cargroup',id-40000000] if id > 40000000
-				#return ['payment',id-30000000] if id > 30000000
+        return ['debug',id-30000000] if id > 30000000
 				return ['job',id-20000000] if id > 20000000
 		    return ['attraction',id-10000000] if id > 10000000      
 		    return ['',nil]
 		  else
-		  	#return ['payment',id-20000000000000] if id > 20000000000000
 				return ['booking',id-10000000000000] if id > 10000000000000
-				return ['deal',id-80000000] if id > 80000000
+        return ['debug',id-90000000] if id > 90000000
+        return ['deal',id-80000000] if id > 80000000
+		  	return ['page',id-70000000] if id > 70000000
 		  	return ['user',id-60000000] if id > 60000000
 				return ['location',id-50000000] if id > 50000000
 				return ['cargroup',id-40000000] if id > 40000000

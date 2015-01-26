@@ -49,7 +49,8 @@ namespace :generic do
   task :configs, :roles => [:app] do
     run "ln -s #{shared_path}/configurations.yml #{release_path}/config/configurations.yml"
     run "ln -s #{shared_path}/database.yml #{release_path}/config/database.yml"
-    run "ln -s #{shared_path}/database.yml #{release_path}/config/varnishd.yml"
+    run "ln -s #{shared_path}/varnishd.yml #{release_path}/config/varnishd.yml"
+    run "ln -s #{shared_path}/newrelic.yml #{release_path}/config/newrelic.yml"
     run "ln -s #{shared_path}/GeoLiteCity.dat #{release_path}/GeoLiteCity.dat"
     run "rm #{release_path}/public/robots.txt"
     run "ln -s #{shared_path}/robots.txt #{release_path}/public/robots.txt"

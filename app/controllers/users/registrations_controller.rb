@@ -12,6 +12,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
       end
 			if resource.save
 				resource.generate_authentication_token
+				validate_and_apply_referral(resource)
 			  yield resource if block_given?
 			  if resource.active_for_authentication?
 			    #set_flash_message :notice, :signed_up if is_flashing_format?
@@ -42,6 +43,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 			build_resource(sign_up_params)
 			if resource.save
 				resource.generate_authentication_token
+				validate_and_apply_referral(resource)
 			  yield resource if block_given?
 			  if resource.active_for_authentication?
 			    set_flash_message :notice, :signed_up if is_flashing_format?

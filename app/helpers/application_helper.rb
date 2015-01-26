@@ -49,7 +49,12 @@ module ApplicationHelper
  	
  	def show_currency(text)
  		number_with_delimiter(text.to_i, locale: 'en-IN')
+ 	end
+
+  def referral_url(source)
+    "http://#{HOSTNAME}/signup/?ref=#{Referral::REFCODE}&ref_code=#{current_user.referral_code}&refsource=#{source}"
   end
+  
 
   def mindtree_api_call ip
     begin

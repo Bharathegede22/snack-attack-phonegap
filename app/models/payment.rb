@@ -104,7 +104,7 @@ class Payment < ActiveRecord::Base
 	end
 	
 	def self.check_status
-		Payment.find(:all, :conditions => ["status != 1 AND created_at >= ? AND created_at < ?", Time.now - 1.hours, Time.now - 15.minutes]).each do |p|
+    Payment.unscoped.find(:all, :conditions => ["through IN ('juspay', 'payu') AND (status is NULL or status != 1) AND created_at >= ? AND created_at < ?", Time.now - 2.hours, Time.now - 15.minutes]).each do |p|
 			resp = Juspay.check_status(p.encoded_id)
 			if resp && resp['status_id'].to_i < 40
 				str,id = CommonHelper.decode(resp['order_id'].downcase)

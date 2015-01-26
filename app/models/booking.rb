@@ -81,24 +81,29 @@ class Booking < ActiveRecord::Base
 		if self.car_id.blank?
 			cargroup = self.cargroup
 			Inventory.connection.clear_query_cache
-			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
-			if self.starts != self.starts_last || self.ends != self.ends_last
-				if self.starts > self.ends_last + cargroup.wait_period.minutes || self.ends < self.starts_last - cargroup.wait_period.minutes
-					# Non Overlapping Reschedule
-					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
+			begin
+				ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
+				if self.starts != self.starts_last || self.ends != self.ends_last
+					if self.starts > self.ends_last + cargroup.wait_period.minutes || self.ends < self.starts_last - cargroup.wait_period.minutes
+						# Non Overlapping Reschedule
+						check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
+					else
+						# Overlapping Reschedule
+						if self.starts < self.starts_last
+							check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
+						end
+						if check == 1 && self.ends > self.ends_last
+							check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, self.ends_last, (self.ends + cargroup.wait_period.minutes))
+						end
+					end
 				else
-					# Overlapping Reschedule
-					if self.starts < self.starts_last
-						check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
-					end
-					if check == 1 && self.ends > self.ends_last
-						check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, self.ends_last, (self.ends + cargroup.wait_period.minutes))
-					end
+					check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
 				end
-			else
-				check = Inventory.check(self.city_id, self.cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
+				ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+			rescue Exception => e
+				ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+				raise e
 			end
-			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
 		else
 			check = self.car.check_inventory(self.city_id, self.starts_last, self.ends_last, self.starts, self.ends)
 		end
@@ -276,8 +281,8 @@ class Booking < ActiveRecord::Base
 		# 	make_payment_from_wallet(refunds.where(through: 'wallet').first.amount)
 		end
 		self.save(validate: false)
-		BookingMailer.cancel(self.id,total.to_i.abs,deposit.to_i.abs).deliver
-		sendsms('cancel', total.to_i.abs,deposit.to_i.abs) if Rails.env.production?
+		# BookingMailer.cancel(self.id,total.to_i.abs,deposit.to_i.abs).deliver
+		# sendsms('cancel', total.to_i.abs,deposit.to_i.abs) if Rails.env.production?
 		return data
 	end
 	
@@ -460,13 +465,11 @@ class Booking < ActiveRecord::Base
 			self.save(validate: false)
 		end
 	end
-
-
+	
 	def hold_security?
 		self.hold == true
-    end
+  end
 
-	
 	def link
 		return "http://" + HOSTNAME + "/bookings/" + self.encoded_id
 	end
@@ -488,32 +491,37 @@ class Booking < ActiveRecord::Base
 		if self.car_id.blank?
 			Inventory.connection.clear_query_cache
 			ActiveRecord::Base.connection.execute("LOCK TABLES inventories WRITE")
-			if !self.starts_last.blank? && (self.starts != self.starts_last || self.ends != self.ends_last)
-				if self.starts > self.ends_last + cargroup.wait_period.minutes || self.ends < self.starts_last - cargroup.wait_period.minutes
-					# Non Overlapping Reschedule
-					check = Inventory.check(self.city_id, self.actual_cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
-				elsif (self.starts != self.starts_last || self.ends != self.ends_last)
-					# Overlapping Reschedule
-					if self.starts < self.starts_last
-						check = Inventory.check(self.city_id, self.actual_cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
+			begin
+				if !self.starts_last.blank? && (self.starts != self.starts_last || self.ends != self.ends_last)
+					if self.starts > self.ends_last + cargroup.wait_period.minutes || self.ends < self.starts_last - cargroup.wait_period.minutes
+						# Non Overlapping Reschedule
+						check = Inventory.check(self.city_id, cargroup.id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
+					elsif (self.starts != self.starts_last || self.ends != self.ends_last)
+						# Overlapping Reschedule
+						if self.starts < self.starts_last
+							check = Inventory.check(self.city_id, cargroup.id, self.location_id, (self.starts - cargroup.wait_period.minutes), self.starts_last)
+						end
+						if self.ends > self.ends_last && check == 1
+							check = Inventory.check(self.city_id, cargroup.id, self.location_id, self.ends_last, (self.ends + cargroup.wait_period.minutes))
+						end
 					end
-					if self.ends > self.ends_last && check == 1
-						check = Inventory.check(self.city_id, self.actual_cargroup_id, self.location_id, self.ends_last, (self.ends + cargroup.wait_period.minutes))
+					if check == 1
+						Inventory.release(cargroup.id, self.location_id, self.starts_last, self.ends_last)
+						Inventory.block(cargroup.id, self.location_id, self.starts, self.ends)
 					end
-				end
-				if check == 1
-					Inventory.release(self.actual_cargroup_id, self.location_id, self.starts_last, self.ends_last)
-					Inventory.block(self.actual_cargroup_id, self.location_id, self.starts, self.ends)
-				end
-			else
-				if self.status < 9
-					check = Inventory.check(self.city_id, self.actual_cargroup_id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
-					Inventory.block(self.actual_cargroup_id, self.location_id, self.starts, self.ends) if check == 1
 				else
-					Inventory.release(self.actual_cargroup_id, self.location_id, self.starts, self.ends)
+					if self.status < 9
+						check = Inventory.check(self.city_id, cargroup.id, self.location_id, (self.starts - cargroup.wait_period.minutes), (self.ends + cargroup.wait_period.minutes))
+						Inventory.block(cargroup.id, self.location_id, self.starts, self.ends) if check == 1
+					else
+						Inventory.release(cargroup.id, self.location_id, self.starts, self.ends)
+					end
 				end
+				ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+			rescue Exception => e
+				ActiveRecord::Base.connection.execute("UNLOCK TABLES")
+				raise e
 			end
-			ActiveRecord::Base.connection.execute("UNLOCK TABLES")
 		else
 			check = self.car.manage_inventory(self.starts_last, self.ends_last, self.starts, self.ends, (self.status < 9))
 		end
@@ -522,8 +530,8 @@ class Booking < ActiveRecord::Base
 
 	def kle_enabled
 		if !self.location.kle_enabled.nil?
-			#return (self.starts >= self.location.kle_enabled && Cargroup.find(self.actual_cargroup_id).kle)
-			return (self.starts >= self.location.kle_enabled && Cargroup.find(self.cargroup_id).kle)
+			return (self.starts >= self.location.kle_enabled && Cargroup.find(self.actual_cargroup_id).kle)
+			#return (self.starts >= self.location.kle_enabled && Cargroup.find(self.cargroup_id).kle)
 		else
 			false
 		end
@@ -998,6 +1006,9 @@ class Booking < ActiveRecord::Base
 			self.total = self.revenue
 			self.balance = self.outstanding
 		end
+		if self.release_payment_changed? && self.release_payment == true
+			self.release_payment_updated_at = Time.now
+		end
 	end
 
 	def before_validation_tasks
@@ -1010,7 +1021,7 @@ class Booking < ActiveRecord::Base
 	end
 	
 	def manage_inventory_cargroup
-		if actual_cargroup_id_changed? && [1,6,7].include?(status) && car_id==nil
+		if self.actual_cargroup_id_changed? && [1,6,7].include?(status) && car_id==nil
 			Inventory.release(self.actual_cargroup_id_was, self.location_id, self.starts, self.ends)
 			Inventory.block(self.actual_cargroup_id, self.location_id, self.starts, self.ends)
 		end
@@ -1021,95 +1032,96 @@ end
 #
 # Table name: bookings
 #
-#  id                       :integer          not null, primary key
-#  car_id                   :integer
-#  location_id              :integer
-#  user_id                  :integer
-#  booked_by                :integer
-#  cancelled_by             :integer
-#  comment                  :string(255)
-#  days                     :integer
-#  hours                    :integer
-#  estimate                 :decimal(8, 2)
-#  discount                 :decimal(8, 2)
-#  total                    :decimal(8, 2)
-#  starts                   :datetime
-#  ends                     :datetime
-#  cancelled_at             :datetime
-#  returned_at              :datetime
-#  ip                       :string(255)
-#  status                   :integer          default(0)
-#  jsi                      :string(10)
-#  user_name                :string(255)
-#  user_email               :string(255)
-#  user_mobile              :string(255)
-#  created_at               :datetime
-#  updated_at               :datetime
-#  start_km                 :string(10)
-#  end_km                   :string(10)
-#  normal_days              :integer          default(0)
-#  normal_hours             :integer          default(0)
-#  discounted_days          :integer          default(0)
-#  discounted_hours         :integer          default(0)
-#  actual_starts            :datetime
-#  actual_ends              :datetime
-#  last_starts              :datetime
-#  last_ends                :datetime
-#  early                    :boolean          default(FALSE)
-#  late                     :boolean          default(FALSE)
-#  extended                 :boolean          default(FALSE)
-#  rescheduled              :boolean          default(FALSE)
-#  fuel_starts              :integer
-#  fuel_ends                :integer
-#  daily_fare               :integer
-#  hourly_fare              :integer
-#  hourly_km_limit          :integer
-#  daily_km_limit           :integer
-#  excess_kms               :integer          default(0)
-#  notes                    :text
-#  cargroup_id              :integer
-#  fleet_id_start           :integer
-#  fleet_id_end             :integer
-#  individual_start         :integer
-#  individual_end           :integer
-#  transport                :integer
-#  unblocks                 :datetime
-#  outstation               :boolean          default(FALSE)
-#  checkout                 :datetime
-#  confirmation_key         :string(20)
-#  balance                  :integer
-#  ref_initial              :string(255)
-#  ref_immediate            :string(255)
-#  promo                    :string(255)
-#  credit_status            :integer          default(0)
-#  offer_id                 :integer
-#  pricing_id               :integer
-#  corporate_id             :integer
-#  city_id                  :integer
-#  pricing_mode             :string(2)
-#  medium                   :string(20)
-#  shortened                :boolean          default(FALSE)
-#  total_fare               :integer
-#  deposit_status           :integer          default(0)
-#  carry                    :boolean          default(FALSE)
-#  hold                     :boolean          default(FALSE)
-#  release_payment          :boolean          default(FALSE)
-#  settled                  :boolean          default(FALSE)
-#  actual_cargroup_id       :integer
-#  actual_cargroup_id_count :integer          default(0)
-#  car_id_count             :integer          default(0)
-#  cargroup_id_count        :integer          default(0)
-#  ends_count               :integer          default(0)
-#  end_km_count             :integer          default(0)
-#  location_id_count        :integer          default(0)
-#  returned_at_count        :integer          default(0)
-#  starts_count             :integer          default(0)
-#  start_km_count           :integer          default(0)
-#  defer_deposit            :boolean
-#  insufficient_deposit     :boolean          default(FALSE)
-#  fleet_checklist_by       :integer
-#  start_checklist_by       :integer
-#  end_checklist_by         :integer
+#  id                         :integer          not null, primary key
+#  car_id                     :integer
+#  location_id                :integer
+#  user_id                    :integer
+#  booked_by                  :integer
+#  cancelled_by               :integer
+#  comment                    :string(255)
+#  days                       :integer
+#  hours                      :integer
+#  estimate                   :decimal(8, 2)
+#  discount                   :decimal(8, 2)
+#  total                      :decimal(8, 2)
+#  starts                     :datetime
+#  ends                       :datetime
+#  cancelled_at               :datetime
+#  returned_at                :datetime
+#  ip                         :string(255)
+#  status                     :integer          default(0)
+#  jsi                        :string(10)
+#  user_name                  :string(255)
+#  user_email                 :string(255)
+#  user_mobile                :string(255)
+#  created_at                 :datetime
+#  updated_at                 :datetime
+#  start_km                   :string(10)
+#  end_km                     :string(10)
+#  normal_days                :integer          default(0)
+#  normal_hours               :integer          default(0)
+#  discounted_days            :integer          default(0)
+#  discounted_hours           :integer          default(0)
+#  actual_starts              :datetime
+#  actual_ends                :datetime
+#  last_starts                :datetime
+#  last_ends                  :datetime
+#  early                      :boolean          default(FALSE)
+#  late                       :boolean          default(FALSE)
+#  extended                   :boolean          default(FALSE)
+#  rescheduled                :boolean          default(FALSE)
+#  fuel_starts                :integer
+#  fuel_ends                  :integer
+#  daily_fare                 :integer
+#  hourly_fare                :integer
+#  hourly_km_limit            :integer
+#  daily_km_limit             :integer
+#  excess_kms                 :integer          default(0)
+#  notes                      :text
+#  cargroup_id                :integer
+#  fleet_id_start             :integer
+#  fleet_id_end               :integer
+#  individual_start           :integer
+#  individual_end             :integer
+#  transport                  :integer
+#  unblocks                   :datetime
+#  outstation                 :boolean          default(FALSE)
+#  checkout                   :datetime
+#  confirmation_key           :string(20)
+#  balance                    :integer
+#  ref_initial                :string(255)
+#  ref_immediate              :string(255)
+#  promo                      :string(255)
+#  credit_status              :integer          default(0)
+#  offer_id                   :integer
+#  pricing_id                 :integer
+#  corporate_id               :integer
+#  city_id                    :integer
+#  pricing_mode               :string(2)
+#  medium                     :string(20)
+#  shortened                  :boolean          default(FALSE)
+#  total_fare                 :integer
+#  deposit_status             :integer          default(0)
+#  carry                      :boolean          default(FALSE)
+#  hold                       :boolean          default(FALSE)
+#  release_payment            :boolean          default(FALSE)
+#  settled                    :boolean          default(FALSE)
+#  actual_cargroup_id         :integer
+#  actual_cargroup_id_count   :integer          default(0)
+#  car_id_count               :integer          default(0)
+#  cargroup_id_count          :integer          default(0)
+#  ends_count                 :integer          default(0)
+#  end_km_count               :integer          default(0)
+#  location_id_count          :integer          default(0)
+#  returned_at_count          :integer          default(0)
+#  starts_count               :integer          default(0)
+#  start_km_count             :integer          default(0)
+#  defer_deposit              :boolean
+#  insufficient_deposit       :boolean          default(FALSE)
+#  fleet_checklist_by         :integer
+#  start_checklist_by         :integer
+#  end_checklist_by           :integer
+#  release_payment_updated_at :datetime
 #
 # Indexes
 #

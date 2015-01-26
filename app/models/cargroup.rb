@@ -1,5 +1,7 @@
 class Cargroup < ActiveRecord::Base
 	
+	has_one :image, :as => :imageable
+	has_one :picture, :as => :pictureable
 	has_many :bookings
 	
 	def active_pricing(city)
@@ -128,6 +130,7 @@ end
 #  name             :string(255)
 #  display_name     :string(255)
 #  status           :boolean          default(FALSE)
+#  ended            :boolean          default(FALSE)
 #  priority         :integer
 #  seating          :integer
 #  wait_period      :integer

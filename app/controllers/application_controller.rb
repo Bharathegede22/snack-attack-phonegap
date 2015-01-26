@@ -135,21 +135,27 @@ class ApplicationController < ActionController::Base
   def authenticate_staging
     redirect_to '/users/access' and return if Rails.env == 'staging' && (current_user.blank? || (!current_user.blank? && current_user.role < 1))
   end
+
+  # Validates and Applies referral codes :: then allots credits to the signed up user
+  # Author:: Rohit
+  #
+  def validate_and_apply_referral(user)
+    return if user.nil? || cookies[:ref_code].nil?
+    ref_code = JSON.parse(cookies[:ref_code]) rescue nil
+    return if ref_code.nil?
+    args = { platform: "web", auth_token: user.authentication_token, ref_code: ref_code} #JSON.parse(cookies[:ref_code])
+    url = "#{ADMIN_HOSTNAME}/mobile/v3/users/apply_referral"
+    ApiModule.admin_api_post_call(url, args)
+    cookies.delete(:ref_code, domain: ".#{HOSTNAME.gsub('www.','')}")
+  end
   
   private
 
   def get_city_from_ip(ip)
-    search_results_from_admin = mindtree_api_call(ip)
-    if !search_results_from_admin.nil?
-      json_result = JSON.parse(search_results_from_admin)
-      lat = json_result["location"]["latitude"]
-      long = json_result["location"]["longitude"]
-      return get_city(lat, long)
-    else
-      return "bangalore"
-    end
+    geo = GeoIP.new(::Rails.root + "GeoLiteCity.dat").city(ip)
+    return get_city(geo.latitude, geo.longitude) if geo && geo.country_name == 'India'
   end
-  
+
   def get_city(lat,lon)
     city_id = Location.closest_city(lat,lon).city_id
     city = City.find(city_id).name

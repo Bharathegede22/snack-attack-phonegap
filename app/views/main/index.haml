@@ -32,12 +32,12 @@
 							- pricing = cargroup.active_pricing(@city.id)
 							:ruby
 								if cargroup == @cargroup.first
-									style = "background:url(#{asset_path 'cars/' + cargroup.id.to_s + '.jpg'}) no-repeat center top;"
+									style = "background:url(#{asset_url(cargroup.image.avatar.url(:profile))}) no-repeat center top;"
 									databg = ''
 									cls = 'active'
 								else
 									style = ""
-									databg = asset_path 'cars/' + cargroup.id.to_s + '.jpg'
+									databg = asset_url(cargroup.image.avatar.url(:profile))
 									cls = ''
 								end
 							.item{:class => cls}
