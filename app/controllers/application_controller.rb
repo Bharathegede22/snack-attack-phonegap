@@ -11,18 +11,6 @@ class ApplicationController < ActionController::Base
   before_filter :authenticate_staging
   force_ssl if: :check_ssl?
 
-
-  # => Checks if A/B test cookies are set and renders the checkout page accordingly
-  def search_abtest?
-    cookies[:abtestk].present?
-  end
-  helper_method :search_abtest?
-
-  def search_revamp_abtest?
-    cookies[:abtestl].present?
-  end
-  helper_method :search_revamp_abtest?
-
   def check_city
     # Checking explicit city in the url
     city_prompt = false
