@@ -32,6 +32,11 @@
 					end
 				- cargroups.each do |c|
 					= render :partial => 'search_item', :locals => {inventory: @inventory[c.id.to_s], car: c, org_locs: locs, location: @booking.location_id}
+				.other-results.m-b10
+					%hr.fl.border-g.border-w2
+					%span.txt1 Sorry, there are no cars available
+					%hr.fr.border-g.border-w2
+					%span.txt2 that matches your search criteria. The one below come closest.
 			#Sidebar.sidebar
 				.mapwrap
 					#Gmap.map

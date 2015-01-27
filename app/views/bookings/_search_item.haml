@@ -38,31 +38,53 @@
 - if !locs.blank?
 	.search-item
 		.default
-			.p-10
+			.p-10.p-t15
 				.img
 					%div{:class => 'car' + car.id.to_s}
-				.details
-					.name
+					.name.t-c
 						= car.display_name
 					.cap
 						= car.seating
 						Seater
+				.details
+					/ .name
+					/ 	= car.display_name
+					/ .cap
+					/ 	= car.seating
+					/ 	Seater
+					%span.size-12.clock-icon.position-r.help.pointer{'data-placement' => "left", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "This booking's pickup time is earlier.", :style => "top:-2px;"}
+					.time-slot
+						.pick-up.wrap-slot
+							.pick-time
+								10:00 AM
+							.pick-date
+								24 Dec
+						.time-diff.wrap-slot
+							.img-arrw
+							.time-span
+								14 days, 12 hrs, 30 mins
+						.drop-off.wrap-slot.t-r
+							.drop-time
+								10:30 PM
+							.drop-date
+								27 Dec
 					.fc
 					.disclaimer
 						- if !car.disclaimer.blank?
 							= car.disclaimer.html_safe
 					.avail
-						- if locs[0][1] == 1
-							.yes{id: 'Avail' + car.id.to_s}
-								Available
-						- else
-							.no{id: 'Avail' + car.id.to_s}
-								Not Available
-						.at
-							at
+						/ - if locs[0][1] == 1
+						/ 	.yes{id: 'Avail' + car.id.to_s}
+						/ 		Available
+						/ - else
+						/ 	.no{id: 'Avail' + car.id.to_s}
+						/ 		Not Available
+						/ .at
+						/ 	at
+						%span.size-12.loc-icon.position-r.help.pointer{'data-placement' => "left", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "This car starts from a different location", :style => "top:-2px;"}
 						.loc
 							.btn-group
-								%button.btn.btn-default{type: "button", id: 'LocName' + car.id.to_s}
+								%button.btn.btn-default.loc-name{type: "button", id: 'LocName' + car.id.to_s}
 									= locs[0][0].shortname
 								%button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", type: "button"}
 									%span.caret
