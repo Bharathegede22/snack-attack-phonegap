@@ -31,7 +31,13 @@
 						%label.col-sm-4.control-label City *
 						.col-sm-6
 							- if !current_user.city_id.blank?
-								%input#DetailsCity.validate-presence.form-control.city{name: 'user[city_id]', type: "text", value: current_user.city_id}
+								%select{name: 'user[city_id]'}
+									%option#DetailsCity.validate-presence.form-control.city{type: "text", value: "1", selected: current_user.city_id == 1}
+										Bangalore
+									%option#DetailsCity.validate-presence.form-control.city{type: "text", value: "2", selected: current_user.city_id == 2}
+										Pune
+									%option#DetailsCity.validate-presence.form-control.city{type: "text", value: "3", selected: current_user.city_id == 3}
+										Delhi
 							- else
 								%input#DetailsDob.validate-presence.form-control.dob{name: 'user[dob]', type: "text", value: current_user.dob.strftime('%d/%m/%Y'), placeholder: "dd/mm/yyyy (min #{CommonHelper::MIN_AGE} years)"}
 							#DetailsDobError.error
