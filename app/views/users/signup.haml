@@ -31,7 +31,7 @@
 						%label.col-sm-4.control-label City *
 						.col-sm-6
 							- if !current_user.city_id.blank?
-								%select{name: 'user[city_id]'}
+								%select.selectpicker.select-city{name: 'user[city_id]'}
 									%option#DetailsCity.validate-presence.form-control.city{type: "text", value: "1", selected: current_user.city_id == 1}
 										Bangalore
 									%option#DetailsCity.validate-presence.form-control.city{type: "text", value: "2", selected: current_user.city_id == 2}
@@ -156,3 +156,9 @@
 						clearTimeout(auto);
 						window.location = "/#{@city.link_name.downcase}/bookings/do";
 					}
+:javascript
+function checkJquery() {
+	$('.selectpicker').selectpicker();
+}
+checkJquery();
+					
