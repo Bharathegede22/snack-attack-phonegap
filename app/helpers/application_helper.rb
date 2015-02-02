@@ -2,7 +2,7 @@ module ApplicationHelper
 
   def admin_api_get_call url,params
     begin
-      resource = RestClient::Resource.new(url,:timeout => 5, :open_timeout => 5)
+      resource = RestClient::Resource.new(url,:timeout => 30, :open_timeout => 5)
       resource.get params: params  
     rescue Exception => e
       Rails.logger.info "RestClient GET call failed\n #{e.message}"

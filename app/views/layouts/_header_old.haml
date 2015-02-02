@@ -1,7 +1,7 @@
 = render :partial => '/layouts/tag_manager' if Rails.env.production?
 #DocTop
 = render :partial => '/main/mobile_redirect' if !@device.blank?
-- if (!search_abtest? && !@header.blank? && @header == 'search') || (search_abtest? && @header != "homepage" && @header != "booking")
+- if (@header != "homepage" && @header != "booking")
 	#NavBuffer.nav-buffer-big
 - else
 	#NavBuffer.nav-buffer
@@ -19,10 +19,6 @@
 						.fc
 				.links
 					%ul.nav.navbar-nav.fr
-						- if !search_abtest? && ((@header.blank? || @header != 'homepage') && @city.active)
-							- cls = (!@header.blank? && (@header == 'search' || @header == 'booking')) ? 'active' : ''
-							%li
-								%a{class: cls, href: "javascript:void(0)", onclick: "showSearch();"} Book Cars
 						- if !@city.prelaunch
 							%li.dropdown
 								- cls = (!@header.blank? && @header == 'tariff') ? 'dropdown-toggle active' : 'dropdown-toggle'
@@ -138,14 +134,10 @@
 				.fc
 		.fc
 	- cls = (!@header.blank? && @header == 'search') ? '' : 'hide'
-	- if (search_abtest? && (@header != "homepage" && @header != "booking"))
+	- if (@header != "homepage" && @header != "booking")
 		#SH
 			#SearchFormDiv.search-header
 				= render :partial => '/bookings/widget'
-	- elsif (!search_abtest? && (!@header.blank? && @header == 'search'))
-		#SH
-			#SearchFormDiv.search-header.no-cookie
-				= render :partial => '/bookings/widget'			
 	- else
 		#SH{:style => 'display:none;'}
 			#SearchFormDiv.search-header.no-cookie
