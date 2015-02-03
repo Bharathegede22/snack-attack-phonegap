@@ -186,6 +186,7 @@ end
 #  pricing_mode            :string(2)
 #  contact_phone           :string(15)
 #  contact_email           :string(50)
+#  refund_contact_email    :string(50)
 #  seo_title               :string(255)
 #  seo_description         :string(255)
 #  seo_keywords            :string(255)
@@ -204,4 +205,5 @@ end
 #  link_name               :string(255)
 #  address                 :text
 #  directions              :text
+#  vat                     :string(255)
 #
