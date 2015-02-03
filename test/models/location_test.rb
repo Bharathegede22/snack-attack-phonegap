@@ -21,6 +21,8 @@ end
 #  mobile          :string(15)
 #  email           :string(100)
 #  status          :integer          default(1)
+#  inventory_done  :boolean          default(FALSE)
+#  ended           :boolean          default(FALSE)
 #  disclaimer      :string(255)
 #  block_time      :integer
 #  zone_id         :integer
