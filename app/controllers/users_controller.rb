@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 	
-	before_filter :authenticate_user!, :only => [:license,:license_get_del, :social, :settings, :update, :credits, :referrals]
+	before_filter :authenticate_user!, :only => [:license,:license_get_del, :social, :settings, :update, :credits, :referrals,:credit_history]
 	skip_before_filter :authenticate_staging
 	
 	def access
