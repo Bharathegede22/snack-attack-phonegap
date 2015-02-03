@@ -6,7 +6,7 @@ class Referral < ActiveRecord::Base
 	VALID = {alreay_used_email: 0, existing_license: 1, valid: 2, existing_phone: 3}
 	REFCODE = 'REFCODE'.freeze
 
-	def self.validate_reference(user, user_id, field)
+	def self.validate_reference(user, field)
 		return {:err => 'params missing'} if field[:field].blank?
 		referral = Referral.where(referral_email: user.email, signup_flag: 1).first
 		if referral
