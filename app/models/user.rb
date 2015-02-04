@@ -119,7 +119,7 @@ class User < ActiveRecord::Base
     @profile || @signup
   end
   
-	def self.find_for_oauth(auth, signed_in=nil, ref_initial=nil, ref_immediate=nil)
+	def self.find_for_oauth(auth,city, signed_in=nil, ref_initial=nil, ref_immediate=nil)
   	is_new = 0
   	case auth.provider
   	when 'facebook'
@@ -148,7 +148,7 @@ class User < ActiveRecord::Base
 					user.state = auth.extra.raw_info.location.state if user.state.blank?
 					if user.country.blank? && Country.find_country_by_name(auth.extra.raw_info.location.country)
 						user.country = Country.find_country_by_name(auth.extra.raw_info.location.country).alpha2
-					end
+          end
 				end
  				user.dob = Date.parse(fql['birthday_date']) if user.dob.blank? && !fql['birthday_date'].blank?
   			if !fql['sex'].blank?
@@ -157,8 +157,9 @@ class User < ActiveRecord::Base
   				else
   					user.gender = 1
   				end
-  			end
- 				user.password = Devise.friendly_token.first(12) if user.encrypted_password.blank?
+        end
+        user.city_id = city.id if !city.nil?
+        user.password = Devise.friendly_token.first(12) if user.encrypted_password.blank?
  				if !user.phone.blank?
 	 				user.phone = user.phone.to_i.to_s
 	 				user.phone = nil if user.phone.length != 10
@@ -196,8 +197,9 @@ class User < ActiveRecord::Base
 					else
 						user.gender = 1
 					end
-		    end
-			  user.save!
+        end
+        user.city_id = city.id if city.nil?
+        user.save!
 			end
 		end
 		user.generate_authentication_token if user.present?
@@ -461,6 +463,7 @@ end
 #  wallet_total_amount             :integer
 #  city_id                         :integer
 #  license_updated_at              :datetime
+#  card_saved                      :boolean          default(FALSE)
 #
 # Indexes
 #

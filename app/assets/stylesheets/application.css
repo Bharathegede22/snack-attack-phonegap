@@ -12,6 +12,7 @@
  *= require bootstrap-theme
  *= require bootstrap-datetimepicker
  *= require bootstrap-custom
+ *= require bootstrap-select
  *= require common
  *= require custom
  *= require header-new
