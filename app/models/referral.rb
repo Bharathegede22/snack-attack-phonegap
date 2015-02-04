@@ -3,12 +3,12 @@ class Referral < ActiveRecord::Base
 
 	REFERABLE_TYPE = {signup: 1}
 	SOURCE = {"email" => 1, "fb" => 2, "twitter" => 3, "others" => 4}
-	VALID = {alreay_used_email: 0, existing_license: 1, valid: 2}
+	VALID = {alreay_used_email: 0, existing_license: 1, valid: 2, existing_phone: 3}
 	REFCODE = 'REFCODE'.freeze
 
-	def self.validate_reference(user_email, user_id, field)
+	def self.validate_reference(user, field)
 		return {:err => 'params missing'} if field[:field].blank?
-		referral = Referral.where(referral_email: user_email, signup_flag: 1).first
+		referral = Referral.where(referral_email: user.email, signup_flag: 1).first
 		if referral
 			# Validate if its a new user from unique license number
 			users_with_same_license = User.where(field[:field] => field[:value])
@@ -16,7 +16,9 @@ class Referral < ActiveRecord::Base
 				valid = VALID[:existing_license]
 			else
 				valid = VALID[:valid]
-			  Credit.create(user_id: user_id, amount: Credit::REFERRAL_CREDIT, action: true, status: true, source_name: Credit::SOURCE_NAME_INVERT["Sign up"])
+				unless user.sign_up_credits_earned?
+			  	Credit.create(user_id: user.id, amount: Credit::REFERRAL_CREDIT, action: true, status: true, source_name: Credit::SOURCE_NAME_INVERT["Sign up"])
+			  end
 			end
 			referral.update_attributes(valid_referral: valid)
 		end

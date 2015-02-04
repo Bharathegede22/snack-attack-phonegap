@@ -132,20 +132,22 @@ module BookingsHelper
   def create_reschedule_offer_charge(booking_id, promo, offer_discount)
     c = Charge.new
     c.booking_id = booking_id
-    if promo["valid"] == true
-      if promo["discount"] < offer_discount
+    if promo.present?
+      if promo["valid"] == true
+        if promo["discount"] < offer_discount
+          c.activity = "discount_refund"
+          c.amount = offer_discount - promo["discount"]
+          c.refund = 0
+        elsif promo["discount"] > offer_discount
+          c.activity = "discount"
+          c.amount = promo["discount"] - offer_discount
+          c.refund = 2
+        end
+      else
         c.activity = "discount_refund"
-        c.amount = offer_discount - promo["discount"]
+        c.amount = offer_discount
         c.refund = 0
-      elsif promo["discount"] > offer_discount
-        c.activity = "discount"
-        c.amount = promo["discount"] - offer_discount
-        c.refund = 2
       end
-    else
-      c.activity = "discount_refund"
-      c.amount = offer_discount
-      c.refund = 0
     end
     c.save! if c.activity.present?
   end
