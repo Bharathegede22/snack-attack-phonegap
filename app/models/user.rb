@@ -119,7 +119,7 @@ class User < ActiveRecord::Base
     @profile || @signup
   end
   
-	def self.find_for_oauth(auth, signed_in=nil, ref_initial=nil, ref_immediate=nil, city)
+	def self.find_for_oauth(auth,city, signed_in=nil, ref_initial=nil, ref_immediate=nil)
   	is_new = 0
   	case auth.provider
   	when 'facebook'
