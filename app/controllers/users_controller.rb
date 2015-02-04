@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 	
-	before_filter :authenticate_user!, :only => [:license,:license_get_del, :social, :settings, :update, :credits, :referrals]
+	before_filter :authenticate_user!, :only => [:license,:license_get_del, :social, :settings, :update, :credits, :referrals,:credit_history]
 	skip_before_filter :authenticate_staging
 	
 	def access
@@ -120,8 +120,13 @@ class UsersController < ApplicationController
 			current_user.country = user.country
 			current_user.pincode = user.pincode
 			current_user.state = user.state
+      #if current_user.city_id.blank?
+      # current_user.city_id = @city.id
+      #else
+      # current_user.city = user.city
+      #end
 			current_user.city = user.city
-      current_user.city_id = @city.id if current_user.city_id.blank?
+      current_user.city_id = user.city_id
 			current_user.signup = true
 			if current_user.save
 				flash[:notice] = 'Details saved, please carry on!' if session[:book].blank?
@@ -182,7 +187,7 @@ class UsersController < ApplicationController
   #  * <b>params[:referral_email]</b> comma separated email addresses to send referral emails
   #
 	def refer_user
-		args = { platform: "web", auth_token: current_user.authentication_token, :referral_email => params[:email]}
+		args = { platform: "web", auth_token: current_user.authentication_token, :referral_email => params[:email], :source => 'email'}
     url = "#{ADMIN_HOSTNAME}/mobile/v3/users/invite_user"
     response = ApiModule.admin_api_post_call(url, args)
 		render json: (response["response"] rescue { err: true, :response => 'Sorry!! But something went wrong'})
@@ -195,7 +200,7 @@ class UsersController < ApplicationController
 	end
 	
   def signup_params
-    params.require(:user).permit(:name, :phone, :dob, :gender, :country, :pincode, :state, :city, :license)
+    params.require(:user).permit(:name, :phone, :dob, :gender, :country, :pincode, :state, :city, :license, :city_id)
   end
 
 end

@@ -14,6 +14,7 @@ end
 #  name             :string(255)
 #  display_name     :string(255)
 #  status           :boolean          default(FALSE)
+#  ended            :boolean          default(FALSE)
 #  priority         :integer
 #  seating          :integer
 #  wait_period      :integer

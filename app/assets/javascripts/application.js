@@ -14,6 +14,7 @@
 //= require jquery/jquery.payment
 //= require bootstrap
 //= require bootstrap-datetimepicker
+//= require bootstrap-select
 //= require common
 //= require jquery/jquery.uploadfile.min
 //= require jquery/jquery.countdown.min.js
