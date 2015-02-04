@@ -390,6 +390,10 @@ class User < ActiveRecord::Base
       true
     end 
   end
+
+  def sign_up_credits_earned?
+		credits.where(:source_name => Credit::SOURCE_NAME_INVERT["Sign up"]).count > 0
+	end
 	
 	private :before_create_tasks, :before_validation_tasks, :valid_otp_length?
 
@@ -398,7 +402,7 @@ class User < ActiveRecord::Base
 	end
 
 	def license_update_events
-		Referral.validate_reference(self.email,self.id, {:field => :phone, :value => self.phone}) if self.phone_changed?
+		Referral.validate_reference(self, {:field => :phone, :value => self.phone}) if self.phone_changed?
 	end
 end
 
