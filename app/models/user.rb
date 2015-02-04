@@ -198,7 +198,7 @@ class User < ActiveRecord::Base
 						user.gender = 1
 					end
         end
-        user.city_id = city.id if city.nil?
+        user.city_id = city.id if !city.nil?
         user.save!
 			end
 		end
