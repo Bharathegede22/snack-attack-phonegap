@@ -3539,7 +3539,8 @@ button.delete {
 	color: #727272;
 }
 /*---------------Sign Up----------*/
-#SignupDiv .bootstrap-select .btn-default{
+#SignupDiv .bootstrap-select .btn-default,
+#DetailsDiv .bootstrap-select .btn-default{
 	/*background: url(<%= asset_path 'dropdown-arrow.png' %>) no-repeat;
 	background: url(<%= asset_path 'dropdown-arrow.png' %>) no-repeat;
 	background-position: 97%;
@@ -3561,20 +3562,22 @@ button.delete {
 	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 	-webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
 	transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-}
-#SignupDiv .bootstrap-select .btn-default {
 	background-color: #fff;
 	color: #555555!important;
 	font-weight: normal;
 }
 #SignupDiv .btn-default:hover, 
-#SignupDiv .btn-notify {
+#SignupDiv .btn-notify,
+#DetailsDiv .btn-default:hover, 
+#DetailsDiv .btn-notify {
 	text-shadow: none;
 }
-#SignupDiv .bootstrap-select:not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+#SignupDiv .bootstrap-select:not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn),
+#DetailsDiv .bootstrap-select:not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
 	width: 255px;
 }
-#SignupDiv .dropdown-menu {
+#SignupDiv .dropdown-menu,
+#DetailsDiv .dropdown-menu {
 	padding: 0!important;
 	border-radius: 4px!important;
 	background-clip: inherit!important;
@@ -3582,11 +3585,13 @@ button.delete {
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
 }
-#SignupDiv .dropdown-menu > li > a {
+#SignupDiv .dropdown-menu > li > a,
+#DetailsDiv .dropdown-menu > li > a {
 	padding: 7px 13px;
 	color: #555555;
 }
-#SignupDiv li a.form-control{
+#SignupDiv li a.form-control,
+#DetailsDiv li a.form-control{
 	border-radius: 0;
 	-webkit-box-shadow: none;
 	box-shadow: none;
