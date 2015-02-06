@@ -103,7 +103,7 @@ module BookingsHelper
 
   def update_reschedule_params(params, booking)
     params[:promo] = booking.promo
-    params[:id] = booking.id
+    params[:booking_id] = booking.confirmation_key
     params[:city_id] = @city.id
     params[:auth_token] = @current_user.authentication_token
     params[:starts] = Time.zone.parse(params[:starts]) if params[:starts].present?
