@@ -54,4 +54,6 @@ module ApplicationHelper
   def referral_url(source)
     "http://#{HOSTNAME}/signup/?ref=#{Referral::REFCODE}&ref_code=#{current_user.referral_code}&refsource=#{source}"
   end
+  
+
 end

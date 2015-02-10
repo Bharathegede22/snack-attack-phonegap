@@ -1,5 +1,6 @@
 require "browser"
 class ApplicationController < ActionController::Base
+  include ApplicationHelper
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   
@@ -37,7 +38,7 @@ class ApplicationController < ActionController::Base
     	@city = City.lookup_all(city.downcase)
     else
     	set_cookies_ref(city)
-		end
+    end
   end
 
   def check_invite
@@ -137,14 +138,17 @@ class ApplicationController < ActionController::Base
   end
   
   private
-  
+
   def get_city_from_ip(ip)
     geo = GeoIP.new(::Rails.root + "GeoLiteCity.dat").city(ip)
     return get_city(geo.latitude, geo.longitude) if geo && geo.country_name == 'India'
   end
-  
+
   def get_city(lat,lon)
-	  #if lat >= 22.8333 && lat <= 23.2333 && lon >= 72.4167 && lon <= 72.8167 
+    city_id = Location.closest_city(lat,lon).city_id
+    city = City.find(city_id).link_name
+    return city
+	  #if lat >= 22.8333 && lat <= 23.2333 && lon >= 72.4167 && lon <= 72.8167
     #  city = 'ahmedabad'
     #elsif lat >= 30.38 && lat <= 31.08 && lon >= 76.46 && lon <= 77.14
     #  city = 'chandigarh'
@@ -160,6 +164,7 @@ class ApplicationController < ActionController::Base
     #  city = 'kolkata'
     #elsif lat >= 18.63 && lat <= 19.33 && lon >= 72.48 && lon <= 73.18
     #  city = 'mumbai'
+=begin
     if lat >= 18.18 && lat <= 18.88 && lon >= 73.52 && lon <= 74.22
       city = 'pune'
     elsif lat >= 28.32 && lat <= 29.02 && lon >= 76.87 && lon <= 77.57
@@ -168,6 +173,7 @@ class ApplicationController < ActionController::Base
       city = 'bangalore'
     end
     return city
+=end
   end
 	
 	def set_cookies_ref(city)

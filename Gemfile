@@ -27,6 +27,7 @@ gem "rest_client"
 gem 'sprockets-image_compressor'
 gem 'paper_trail', '~> 3.0.1'
 gem 'geoip'
+gem 'geokit-rails'
 gem "browser"
 gem 'whenever'
 

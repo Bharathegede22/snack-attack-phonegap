@@ -119,7 +119,7 @@ class User < ActiveRecord::Base
     @profile || @signup
   end
   
-	def self.find_for_oauth(auth, signed_in=nil, ref_initial=nil, ref_immediate=nil)
+	def self.find_for_oauth(auth,city, signed_in=nil, ref_initial=nil, ref_immediate=nil)
   	is_new = 0
   	case auth.provider
   	when 'facebook'
@@ -148,7 +148,7 @@ class User < ActiveRecord::Base
 					user.state = auth.extra.raw_info.location.state if user.state.blank?
 					if user.country.blank? && Country.find_country_by_name(auth.extra.raw_info.location.country)
 						user.country = Country.find_country_by_name(auth.extra.raw_info.location.country).alpha2
-					end
+          end
 				end
  				user.dob = Date.parse(fql['birthday_date']) if user.dob.blank? && !fql['birthday_date'].blank?
   			if !fql['sex'].blank?
@@ -157,8 +157,9 @@ class User < ActiveRecord::Base
   				else
   					user.gender = 1
   				end
-  			end
- 				user.password = Devise.friendly_token.first(12) if user.encrypted_password.blank?
+        end
+        user.city_id = city.id if !city.nil?
+        user.password = Devise.friendly_token.first(12) if user.encrypted_password.blank?
  				if !user.phone.blank?
 	 				user.phone = user.phone.to_i.to_s
 	 				user.phone = nil if user.phone.length != 10
@@ -196,8 +197,9 @@ class User < ActiveRecord::Base
 					else
 						user.gender = 1
 					end
-		    end
-			  user.save!
+        end
+        user.city_id = city.id if !city.nil?
+        user.save!
 			end
 		end
 		user.generate_authentication_token if user.present?
@@ -352,12 +354,9 @@ class User < ActiveRecord::Base
 
 	def send_welcome_mail
 		abtest=rand(100)
-		if (1..35).include? abtest# && self.name_was.nil? && self.name_changed?
-			BookingMailer.welcome(self).deliver
-			Email.create(user_id: self.id, activity: 'welcome_mail1')
-		elsif (35..70).include? abtest
+		if (1..80).include? abtest
 			BookingMailer.welcome2(self).deliver
-			Email.create(user_id: self.id, activity: 'welcome_mail2')
+			Email.create(user_id: self.id, activity: 'welcome_mail3')
 		end
 	end
 
@@ -390,6 +389,10 @@ class User < ActiveRecord::Base
       true
     end 
   end
+
+  def sign_up_credits_earned?
+		credits.where(:source_name => Credit::SOURCE_NAME_INVERT["Sign up"]).count > 0
+	end
 	
 	private :before_create_tasks, :before_validation_tasks, :valid_otp_length?
 
@@ -398,7 +401,7 @@ class User < ActiveRecord::Base
 	end
 
 	def license_update_events
-		Referral.validate_reference(self.email,self.id, {:field => :phone, :value => self.phone}) if self.phone_changed?
+		Referral.validate_reference(self, {:field => :phone, :value => self.phone}) if self.phone_changed?
 	end
 end
 
@@ -457,6 +460,7 @@ end
 #  wallet_total_amount             :integer
 #  city_id                         :integer
 #  license_updated_at              :datetime
+#  card_saved                      :boolean          default(FALSE)
 #
 # Indexes
 #

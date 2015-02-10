@@ -57,7 +57,7 @@ class BookingMailer < ActionMailer::Base
 	def welcome2(user)
 		@user = user
 		@city = !@user.city_id.nil? ? City.find(@user.city_id) : City.first
-		mail(to: @user.email, subject: "Welcome To Zoomcar") do |format|
+		mail(to: @user.email, subject: "So #wherewillyougo with a Zoomcar?") do |format|
 			format.html {render layout: false}			
 		end
 	end
