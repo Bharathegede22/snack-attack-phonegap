@@ -32,6 +32,7 @@ class Payment < ActiveRecord::Base
 				when 'success' then 1
 				when 'failure' then 2
 				when 'pending' then 3
+				else 3
 				end
 				if self.status != sta
 					self.status = sta
@@ -164,6 +165,7 @@ class Payment < ActiveRecord::Base
 						when 'success' then 1
 						when 'failure' then 2
 						when 'pending' then 3
+						else 3
 						end
 						if !params['mode'].blank?
 							payment.mode = case params['mode'].downcase
@@ -214,6 +216,7 @@ class Payment < ActiveRecord::Base
 		when 1 then 'Success'
 		when 2 then 'Failed'
 		when 3 then 'Pending'
+		else 3
 		end
 	end
 	
@@ -254,6 +257,7 @@ class Payment < ActiveRecord::Base
 			when 'juspay_declined' then 2
 			when 'pending_vbv' then 3
 			when 'started' then 3
+			else 3
 			end
 			self.through = 'juspay'
 			self.key = params['order_id'] if !params['order_id'].blank?
