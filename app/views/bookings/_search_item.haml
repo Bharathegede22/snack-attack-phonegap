@@ -39,7 +39,7 @@
 	.search-item
 		.default
 			.p-10
-				%img.car-img{:src => "/assets/cars/1small.jpg"}
+				%img.car-img{:src => @car_images[car.id.to_s]}
 					/ %div{:class => 'car' + car.id.to_s}
 				.details
 					.name

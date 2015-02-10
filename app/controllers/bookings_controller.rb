@@ -804,7 +804,7 @@ class BookingsController < ApplicationController
                                                                   new_ui: "Yes"
 		                                                            }
 		        Rails.logger.info "API call over: ======== "
-		      	@inventory,@cars,@order = get_inventory_from_json search_results_from_admin
+		      	@inventory,@cars,@order,@car_images = get_inventory_from_json search_results_from_admin
 		      	@header = 'search'
 		  end
     end
