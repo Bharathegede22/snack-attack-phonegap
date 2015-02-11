@@ -14,15 +14,17 @@ module BookingsHelper
       json_result = JSON.parse(json_data)
       cars = json_result["cars"]
       results = Hash.new
+      car_images = {}
       cars.each do |car|
         results[car["id"].to_s] = car["locations_availibility"]
+        car_images[car["id"].to_s] = car["small_image_url"]
       end
       order_by = results.keys
-      [results,cars,order_by]
+      [results,cars,order_by,car_images]
     rescue Exception => ex      
       Rails.logger.info "JsonParsingError: Error parsing response from search results from api===== #{ex.message}--- BookingsHelper"
       flash[:error] = "Sorry, our system is busy right now. Please try after some time."
-      [nil,nil]
+      [nil,nil,nil,nil]
     end
   end
 
