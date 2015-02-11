@@ -42,6 +42,9 @@ Please review the details of your reservation:
 				- if !location.disclaimer.blank?
 					%p{style: 'color:red; margin:0; padding:0;'}
 						= location.disclaimer.html_safe
+				- if !@booking.kle_enabled && !location.mobile.blank?
+					For any assistance, please call our fleet at 		
+					%b #{location.mobile}
 					%br/
 		%tr
 			%td{valign: 'top'} Reservation Begins: 
