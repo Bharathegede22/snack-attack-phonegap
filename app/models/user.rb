@@ -198,7 +198,7 @@ class User < ActiveRecord::Base
 						user.gender = 1
 					end
         end
-        user.city_id = city.id if city.nil?
+        user.city_id = city.id if !city.nil?
         user.save!
 			end
 		end
@@ -354,12 +354,9 @@ class User < ActiveRecord::Base
 
 	def send_welcome_mail
 		abtest=rand(100)
-		if (1..35).include? abtest# && self.name_was.nil? && self.name_changed?
-			BookingMailer.welcome(self).deliver
-			Email.create(user_id: self.id, activity: 'welcome_mail1')
-		elsif (35..70).include? abtest
+		if (1..80).include? abtest
 			BookingMailer.welcome2(self).deliver
-			Email.create(user_id: self.id, activity: 'welcome_mail2')
+			Email.create(user_id: self.id, activity: 'welcome_mail3')
 		end
 	end
 
