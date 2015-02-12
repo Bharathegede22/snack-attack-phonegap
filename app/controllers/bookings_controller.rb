@@ -259,12 +259,6 @@ class BookingsController < ApplicationController
 				redirect_to payment_bookings_path(@city.link_name.downcase, id: @booking.encoded_id)
 			else
 				u = @booking.user
-				# make a zero payment if no payment entry is created.
-				if not @booking.any_payments?
-					@booking.create_dummy_payment
-					@booking.reload
-				end
-
 				if u.check_license
 			  	flash[:notice] = "Thanks for the payment. Please continue."
 			  	redirect_to "/bookings/#{@booking.encoded_id}"
@@ -421,6 +415,11 @@ class BookingsController < ApplicationController
 		if @payment
 			render :layout => 'plain'
 		else
+			# make a zero payment if no payment entry is created.
+			if not @booking.any_payments?
+				@booking.create_dummy_payment
+				@booking.reload
+			end
 			flash[:notice] = "Booking is already paid for full, no need for a new transaction."
       redirect_to "/bookings/" + @booking.encoded_id and return
     end
