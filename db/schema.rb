@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150114051938) do
+ActiveRecord::Schema.define(version: 20150210093736) do
 
   create_table "accidents", force: true do |t|
     t.boolean  "active",                                                            default: true
@@ -218,6 +218,7 @@ ActiveRecord::Schema.define(version: 20150114051938) do
     t.integer  "start_checklist_by"
     t.integer  "end_checklist_by"
     t.datetime "release_payment_updated_at"
+    t.decimal  "recorded_distance",                     precision: 10, scale: 2
   end
 
   add_index "bookings", ["car_id"], name: "index_bookings_on_car_id", using: :btree
@@ -484,6 +485,8 @@ ActiveRecord::Schema.define(version: 20150114051938) do
     t.string   "medium",             limit: 20, default: "1"
     t.integer  "car_id",             limit: 2
     t.string   "initial_answer"
+    t.datetime "question_open_time"
+    t.datetime "answer_time"
   end
 
   add_index "checklist_answers", ["checklist_id"], name: "index_checklist_answers_on_checklist_id", using: :btree
@@ -867,6 +870,17 @@ ActiveRecord::Schema.define(version: 20150114051938) do
     t.string  "name"
   end
 
+  create_table "notification_sents", force: true do |t|
+    t.integer  "notificable_id"
+    t.string   "notificable_type"
+    t.string   "body"
+    t.datetime "sent_at"
+    t.integer  "no_of_times",      default: 1
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "type"
+  end
+
   create_table "notifieds", force: true do |t|
     t.integer  "push_notification_id"
     t.integer  "device_id"
@@ -1032,6 +1046,20 @@ ActiveRecord::Schema.define(version: 20150114051938) do
     t.datetime "updated_at"
   end
 
+  create_table "referrals", force: true do |t|
+    t.integer  "referral_user_id"
+    t.string   "referral_email",   limit: 63
+    t.string   "source",           limit: 31
+    t.integer  "valid_referral",   limit: 2
+    t.boolean  "signup_flag"
+    t.integer  "first_booking_id"
+    t.integer  "referable_type",   limit: 2
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "referrals", ["referral_user_id", "referral_email"], name: "index_referrals_on_referral_user_id_and_referral_email", unique: true, using: :btree
+
   create_table "refunds", force: true do |t|
     t.integer  "booking_id"
     t.integer  "status",     limit: 1,                          default: 0
@@ -1156,6 +1184,17 @@ ActiveRecord::Schema.define(version: 20150114051938) do
 
   add_index "templates", ["title"], name: "index_templates_on_title", using: :btree
 
+  create_table "test_inventories", force: true do |t|
+    t.integer  "cargroup_id", limit: 2
+    t.integer  "location_id", limit: 2
+    t.integer  "city_id",     limit: 2
+    t.integer  "total",       limit: 1, default: 0
+    t.datetime "slot"
+    t.integer  "max",         limit: 1, default: 0
+  end
+
+  add_index "templates", ["title"], name: "index_templates_on_title", using: :btree
+
   create_table "triplogs", force: true do |t|
     t.integer  "booking_id"
     t.integer  "attraction_id"
@@ -1177,6 +1216,7 @@ ActiveRecord::Schema.define(version: 20150114051938) do
     t.integer  "role",                            limit: 1,                            default: 0
     t.boolean  "mobile",                                                               default: false
     t.string   "email",                                                                                null: false
+    t.string   "ref_code"
     t.string   "encrypted_password",                                                   default: "",    null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
@@ -1233,12 +1273,12 @@ ActiveRecord::Schema.define(version: 20150114051938) do
     t.integer "car_id",              limit: 2
     t.integer "cargroup_id",         limit: 2
     t.integer "location_id",         limit: 2
-    t.integer "minutes",             limit: 2,                         default: 0
-    t.integer "billed_minutes",      limit: 2,                         default: 0
-    t.integer "billed_minutes_last", limit: 2,                         default: 0
+    t.integer "minutes",             limit: 2, default: 0
+    t.integer "billed_minutes",      limit: 2, default: 0
+    t.integer "billed_minutes_last", limit: 2, default: 0
     t.integer "wday",                limit: 1
-    t.decimal "revenue",                       precision: 7, scale: 2, default: 0.0
-    t.decimal "revenue_last",                  precision: 7, scale: 2, default: 0.0
+    t.integer "revenue"
+    t.integer "revenue_last"
     t.date    "day"
     t.float   "fuel_margin"
   end
