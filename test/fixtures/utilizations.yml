@@ -23,8 +23,8 @@ two: {}
 #  billed_minutes      :integer          default(0)
 #  billed_minutes_last :integer          default(0)
 #  wday                :integer
-#  revenue             :decimal(7, 2)    default(0.0)
-#  revenue_last        :decimal(7, 2)    default(0.0)
+#  revenue             :integer
+#  revenue_last        :integer
 #  day                 :date
 #  fuel_margin         :float
 #
