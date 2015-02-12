@@ -30,7 +30,8 @@
 		.fc
 	.p-r20.p-l30.size-16.border-b-c
 		.fl.m-l20.colored
-			.m-auto{:class => 'car' + @booking.cargroup_id.to_s}
+			%img.m-auto{:src => "/assets/cars/1small.jpg",:class => 'car' + @booking.cargroup_id.to_s}
+			/ .m-auto{:class => 'car' + @booking.cargroup_id.to_s}
 		.fl.p-t15.p-l15
 			.size-20.f-b.zoom-b
 				= cargroup.display_name

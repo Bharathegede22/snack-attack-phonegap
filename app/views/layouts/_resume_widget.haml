@@ -31,8 +31,9 @@
 
 				.p-l5
 					.inline-block.colored
-						.m-auto{:class => 'small-car' + session[:book][:car]}
-					.inline-block.p-l5.t-l.position-r{'style' => 'top: -10px'}
+						%img.m-auto{:src => "/assets/cars/1small.jpg",:class => 'car' + @booking.cargroup_id.to_s}
+						/ .m-auto{:class => 'car' + @booking.cargroup_id.to_s}
+					.inline-block.p-l5.t-l.position-r{style: "vertical-align: middle;"}
 						.f-b.zoom-b
 							#{Cargroup.where(id: session[:book][:car].to_i).last.shortname}
 						.size-11.grey
