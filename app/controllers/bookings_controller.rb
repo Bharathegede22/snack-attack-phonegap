@@ -259,6 +259,12 @@ class BookingsController < ApplicationController
 				redirect_to payment_bookings_path(@city.link_name.downcase, id: @booking.encoded_id)
 			else
 				u = @booking.user
+				# make a zero payment if no payment entry is created.
+				if not @booking.any_payments?
+					@booking.create_dummy_payment
+					@booking.reload
+				end
+
 				if u.check_license
 			  	flash[:notice] = "Thanks for the payment. Please continue."
 			  	redirect_to "/bookings/#{@booking.encoded_id}"
