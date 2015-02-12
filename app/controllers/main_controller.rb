@@ -1,5 +1,5 @@
 class MainController < ApplicationController
-	
+	before_filter :set_referral_cookie, :only => [:signup]
 	def about
 		@meta_title = "About Zoomcar Team | Online Self Drive Car In #{@city.name}"
 		@meta_description = "Read about Zoomcar's self drive car team. Highly qualified professionals with knowledge and experience in self driven car rental services"
@@ -345,6 +345,17 @@ class MainController < ApplicationController
 		@canonical = "http://#{HOSTNAME}/mobile_redirect"
 		@header = 'mobile_redirect'
 		render '/main/mobile_redirect', layout: false
+	end
+
+	private
+
+	# Author:: Rohit
+	# Date:: 11/12/2014
+	#
+	def set_referral_cookie
+		if current_user.blank? && params[:ref].present? && params[:ref].include?('REFCODE') && params[:ref_code].present?
+			cookies[:ref_code] = {:value => JSON.generate(:ref_code => params[:ref_code], :source => params[:refsource]), :expires => 1.day.from_now, :domain => "." + HOSTNAME.split(':').first.gsub("www.", '')}
+		end
 	end
 
 end

@@ -2,7 +2,7 @@ module ApplicationHelper
 
   def admin_api_get_call url,params
     begin
-      resource = RestClient::Resource.new(url,:timeout => 5, :open_timeout => 5)
+      resource = RestClient::Resource.new(url,:timeout => 30, :open_timeout => 5)
       resource.get params: params  
     rescue Exception => e
       Rails.logger.info "RestClient GET call failed\n #{e.message}"
@@ -50,4 +50,10 @@ module ApplicationHelper
  	def show_currency(text)
  		number_with_delimiter(text.to_i, locale: 'en-IN')
  	end
+
+  def referral_url(source)
+    "http://#{HOSTNAME}/signup/?ref=#{Referral::REFCODE}&ref_code=#{current_user.referral_code}&refsource=#{source}"
+  end
+  
+
 end

@@ -1,0 +1,95 @@
+.referral
+	.wrapper
+		.referral-info.bg-zoomb.white.p-20.p-l35.p-r35
+			%div.t-c.size-20
+				Invite and Earn!
+			%div.wrp-refer
+				%div.row.m-30.m-t10
+					%div.col-md-7.m-t10
+						%div.referral-img
+					%div.col-md-5.size-14.p-0.refer-text
+						%div.row.m-b25
+							%div.col-md-2.arrow-img.green-arrow
+							%div.col-md-10
+								You earn 
+								%span.zoom ₹#{Credit::REFERRAL_CREDIT} 
+								in credits for each referral that rides with us!
+						%div.row
+							%div.col-md-2.arrow-img.green-arrow
+							%div.col-md-10
+								Your friend earns 
+								%span.zoom ₹#{Credit::REFERRAL_CREDIT} 
+								in credits too when he signs up.
+		.referral-inner.p-t8.p-b60.p-l50.p-r50
+			.referral-creds.m-t10.r-5.size-18
+				Referral credits earned: 
+				%span.zoom ₹#{referral_credits_earned}.
+				- if referral_credits_earned == 0
+					Refer now to start earning your free trip! 
+			.row.m-0.m-t10.m-b10
+				.col-md-5.referral-email.p-0.solid.border-grey.r-3
+					%form{:action => "refer_user", :id => "ReferForm", :method => "post"} 
+						%div.referral-title.bg-zoomb.white.p-8.r-3.size-13
+							Invite friends through email
+						%div.t-r.email-block
+							%div.m-b15.size-14
+								%label To:
+								%textarea.r-3{:name => "email", :id => "r-email"}
+							%div.m-b10.size-14
+								/ %label Message:
+								/ %textarea.r-3{:name =>"message", :id => "r-message"}
+								/ 	= referral_message.html_safe
+							%div.t-l.m-b20
+								%input.size-14.r-3{:type => "submit", :id => "submit-refer", :value => "Send"}
+							%div.t-r.email-modal
+								%button.f-i.size-12.m-r40.t-u.bg-w{"data-target" => "#preview-email", "data-toggle" => "modal", :type => "button"}
+									View the email your friends will receive.
+				.col-md-2.divider-height.position-r 
+					%div.top-line.border-l-c.position-a
+					%div.or-circle.position-a.r-20.bg-zoomb
+						%span.white OR
+					%div.bottom-line.border-l-c.position-a
+				.col-md-5.referral-link.p-0
+					%div.solid.border-grey.r-3 
+						%div.referral-title.bg-zoomb.white.p-8.r-3.size-13
+							Copy + Paste this unique link into your blog, email or IM
+						%div.m-20
+							%input{:type =>"url", :value => referral_url('email'), :onClick => "this.select();"}
+					%div.divider-width.position-r.m-t20.m-b20
+						%div.left-line.border-t-c.position-a
+						%div.or-circle.position-a.r-20.bg-zoomb
+							%span.white OR
+						%div.right-line.border-t-c.position-a
+					%div.size-14.t-c.m-t10
+						Share via:
+					%div.t-c.m-t20
+						%div.social-icons
+							%a.fb-share-button{"data-href" => referral_url('fb'), "data-layout" => 'button'} 
+						%div.social-icons
+							%a.twitter-share-button{"data-count" => "none", "data-lang" => "en", "data-related" => "anywhereTheJavascriptAPI", "data-url" => referral_url('twitter'), "data-via" => "zoom", :href => "https://twitter.com/share"}
+						%div.social-icons
+							%a.g-plus{"data-action" => "share", "data-annotation" =>"none", "data-href" => referral_url('others')}
+			%hr.border-grey.m-r90.m-l90
+			.term-condition.size-14.m-l90
+				Terms and Conditions: 
+				%ol.m-t15.m-l65.size-14
+					%li You will receive referral credits once your friend completes his 1st booking.
+					%li One user can earn up to only ₹10,000 in credits from referrals.
+					%li Zoomcar will check your friend’s Driver License to verify that they are in fact a new user. If they are not a new user, we will retract the credits they earned at signup.
+#preview-email.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "myModalLabel", :role => "dialog", :tabindex => "-1"}
+	.modal-dialog
+		.modal-content
+			.modal-header
+				%button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+					%span{"aria-hidden" => "true"} &times;
+			.modal-body.p-b30
+				= render :partial => "referral_email_preview"
+:javascript
+	function checkJquery() {
+		if (window.jQuery) {
+			socialPlugins();
+		} else {
+			window.setTimeout(checkJquery, 1000);
+		}
+	}
+	checkJquery();

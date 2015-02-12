@@ -32,6 +32,7 @@ class Payment < ActiveRecord::Base
 				when 'success' then 1
 				when 'failure' then 2
 				when 'pending' then 3
+				else 3
 				end
 				if self.status != sta
 					self.status = sta
@@ -104,7 +105,7 @@ class Payment < ActiveRecord::Base
 	end
 	
 	def self.check_status
-		Payment.find(:all, :conditions => ["status != 1 AND created_at >= ? AND created_at < ?", Time.now - 1.hours, Time.now - 15.minutes]).each do |p|
+    Payment.unscoped.find(:all, :conditions => ["through IN ('juspay', 'payu') AND (status is NULL or status != 1) AND created_at >= ? AND created_at < ?", Time.now - 2.hours, Time.now - 15.minutes]).each do |p|
 			resp = Juspay.check_status(p.encoded_id)
 			if resp && resp['status_id'].to_i < 40
 				str,id = CommonHelper.decode(resp['order_id'].downcase)
@@ -164,6 +165,7 @@ class Payment < ActiveRecord::Base
 						when 'success' then 1
 						when 'failure' then 2
 						when 'pending' then 3
+						else 3
 						end
 						if !params['mode'].blank?
 							payment.mode = case params['mode'].downcase
@@ -214,6 +216,7 @@ class Payment < ActiveRecord::Base
 		when 1 then 'Success'
 		when 2 then 'Failed'
 		when 3 then 'Pending'
+		else 3
 		end
 	end
 	
@@ -254,6 +257,7 @@ class Payment < ActiveRecord::Base
 			when 'juspay_declined' then 2
 			when 'pending_vbv' then 3
 			when 'started' then 3
+			else 3
 			end
 			self.through = 'juspay'
 			self.key = params['order_id'] if !params['order_id'].blank?

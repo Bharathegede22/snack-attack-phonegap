@@ -3,6 +3,9 @@ class Inventory < ActiveRecord::Base
 	belongs_to :cargroup
 	belongs_to :city
 	belongs_to :location
+
+	validates :cargroup_id, :city_id, :location_id, :total, :slot, presence: true
+	validates :cargroup_id, uniqueness: {scope: [:location_id, :slot]}
 	
 	def self.block(cargroup, location, starts, ends, change_max=false)
 		return if starts.to_i > ends.to_i

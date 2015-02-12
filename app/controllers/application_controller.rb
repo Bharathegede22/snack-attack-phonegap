@@ -1,5 +1,6 @@
 require "browser"
 class ApplicationController < ActionController::Base
+  include ApplicationHelper
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   
@@ -10,18 +11,6 @@ class ApplicationController < ActionController::Base
   before_filter :check_ref
   before_filter :authenticate_staging
   force_ssl if: :check_ssl?
-
-
-  # => Checks if A/B test cookies are set and renders the checkout page accordingly
-  def search_abtest?
-    cookies[:abtestk].present?
-  end
-  helper_method :search_abtest?
-
-  def search_revamp_abtest?
-    cookies[:abtestl].present?
-  end
-  helper_method :search_revamp_abtest?
 
   def check_city
     # Checking explicit city in the url
@@ -49,7 +38,7 @@ class ApplicationController < ActionController::Base
     	@city = City.lookup_all(city.downcase)
     else
     	set_cookies_ref(city)
-		end
+    end
   end
 
   def check_invite
@@ -134,16 +123,32 @@ class ApplicationController < ActionController::Base
   def authenticate_staging
     redirect_to '/users/access' and return if Rails.env == 'staging' && (current_user.blank? || (!current_user.blank? && current_user.role < 1))
   end
+
+  # Validates and Applies referral codes :: then allots credits to the signed up user
+  # Author:: Rohit
+  #
+  def validate_and_apply_referral(user)
+    return if user.nil? || cookies[:ref_code].nil?
+    ref_code = JSON.parse(cookies[:ref_code]) rescue nil
+    return if ref_code.nil?
+    args = { platform: "web", auth_token: user.authentication_token, ref_code: ref_code} #JSON.parse(cookies[:ref_code])
+    url = "#{ADMIN_HOSTNAME}/mobile/v3/users/apply_referral"
+    ApiModule.admin_api_post_call(url, args)
+    cookies.delete(:ref_code, domain: ".#{HOSTNAME.gsub('www.','')}")
+  end
   
   private
-  
+
   def get_city_from_ip(ip)
     geo = GeoIP.new(::Rails.root + "GeoLiteCity.dat").city(ip)
     return get_city(geo.latitude, geo.longitude) if geo && geo.country_name == 'India'
   end
-  
+
   def get_city(lat,lon)
-	  #if lat >= 22.8333 && lat <= 23.2333 && lon >= 72.4167 && lon <= 72.8167 
+    city_id = Location.closest_city(lat,lon).city_id
+    city = City.find(city_id).link_name
+    return city
+	  #if lat >= 22.8333 && lat <= 23.2333 && lon >= 72.4167 && lon <= 72.8167
     #  city = 'ahmedabad'
     #elsif lat >= 30.38 && lat <= 31.08 && lon >= 76.46 && lon <= 77.14
     #  city = 'chandigarh'
@@ -159,6 +164,7 @@ class ApplicationController < ActionController::Base
     #  city = 'kolkata'
     #elsif lat >= 18.63 && lat <= 19.33 && lon >= 72.48 && lon <= 73.18
     #  city = 'mumbai'
+=begin
     if lat >= 18.18 && lat <= 18.88 && lon >= 73.52 && lon <= 74.22
       city = 'pune'
     elsif lat >= 28.32 && lat <= 29.02 && lon >= 76.87 && lon <= 77.57
@@ -167,6 +173,7 @@ class ApplicationController < ActionController::Base
       city = 'bangalore'
     end
     return city
+=end
   end
 	
 	def set_cookies_ref(city)

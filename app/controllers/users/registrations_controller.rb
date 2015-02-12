@@ -5,9 +5,14 @@ class Users::RegistrationsController < Devise::RegistrationsController
 			build_resource(sign_up_params)
 			resource.ref_initial = session[:ref_initial]
 			resource.ref_immediate = session[:ref_immediate]
-			resource.city_id = params[:user][:city_id].to_i if !params[:user][:city_id].blank?
+      if !params[:user][:city_id].blank?
+			  resource.city_id = params[:user][:city_id].to_i
+      else
+        resource.city_id = @city.id if !@city.nil?
+      end
 			if resource.save
 				resource.generate_authentication_token
+				validate_and_apply_referral(resource)
 			  yield resource if block_given?
 			  if resource.active_for_authentication?
 			    #set_flash_message :notice, :signed_up if is_flashing_format?
@@ -38,6 +43,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 			build_resource(sign_up_params)
 			if resource.save
 				resource.generate_authentication_token
+				validate_and_apply_referral(resource)
 			  yield resource if block_given?
 			  if resource.active_for_authentication?
 			    set_flash_message :notice, :signed_up if is_flashing_format?

@@ -125,6 +125,9 @@ ActiveRecord::Schema.define(version: 20150210093736) do
 
   add_index "bankcodes", ["issuerCode"], name: "index_bankcodes_on_issuerCode", using: :btree
 
+# Could not dump table "blocks" because of following StandardError
+#   Unknown type 'polygon' for column 'ip_poly'
+
   create_table "bookings", force: true do |t|
     t.integer  "car_id",                     limit: 2
     t.integer  "location_id",                limit: 2
@@ -134,15 +137,15 @@ ActiveRecord::Schema.define(version: 20150210093736) do
     t.string   "comment"
     t.integer  "days",                       limit: 1
     t.integer  "hours"
-    t.decimal  "estimate",                              precision: 8,  scale: 2
-    t.decimal  "discount",                              precision: 8,  scale: 2
-    t.decimal  "total",                                 precision: 8,  scale: 2
+    t.decimal  "estimate",                              precision: 8, scale: 2
+    t.decimal  "discount",                              precision: 8, scale: 2
+    t.decimal  "total",                                 precision: 8, scale: 2
     t.datetime "starts"
     t.datetime "ends"
     t.datetime "cancelled_at"
     t.datetime "returned_at"
     t.string   "ip"
-    t.integer  "status",                     limit: 1,                           default: 0
+    t.integer  "status",                     limit: 1,                          default: 0
     t.string   "jsi",                        limit: 10
     t.string   "user_name"
     t.string   "user_email"
@@ -151,25 +154,25 @@ ActiveRecord::Schema.define(version: 20150210093736) do
     t.datetime "updated_at"
     t.string   "start_km",                   limit: 10
     t.string   "end_km",                     limit: 10
-    t.integer  "normal_days",                limit: 1,                           default: 0
-    t.integer  "normal_hours",                                                   default: 0
-    t.integer  "discounted_days",            limit: 1,                           default: 0
-    t.integer  "discounted_hours",                                               default: 0
+    t.integer  "normal_days",                limit: 1,                          default: 0
+    t.integer  "normal_hours",                                                  default: 0
+    t.integer  "discounted_days",            limit: 1,                          default: 0
+    t.integer  "discounted_hours",                                              default: 0
     t.datetime "actual_starts"
     t.datetime "actual_ends"
     t.datetime "last_starts"
     t.datetime "last_ends"
-    t.boolean  "early",                                                          default: false
-    t.boolean  "late",                                                           default: false
-    t.boolean  "extended",                                                       default: false
-    t.boolean  "rescheduled",                                                    default: false
+    t.boolean  "early",                                                         default: false
+    t.boolean  "late",                                                          default: false
+    t.boolean  "extended",                                                      default: false
+    t.boolean  "rescheduled",                                                   default: false
     t.integer  "fuel_starts",                limit: 1
     t.integer  "fuel_ends",                  limit: 1
     t.integer  "daily_fare",                 limit: 2
     t.integer  "hourly_fare",                limit: 2
     t.integer  "hourly_km_limit",            limit: 2
     t.integer  "daily_km_limit",             limit: 2
-    t.integer  "excess_kms",                 limit: 2,                           default: 0
+    t.integer  "excess_kms",                 limit: 2,                          default: 0
     t.text     "notes"
     t.integer  "cargroup_id",                limit: 2
     t.integer  "fleet_id_start",             limit: 3
@@ -178,39 +181,39 @@ ActiveRecord::Schema.define(version: 20150210093736) do
     t.integer  "individual_end",             limit: 1
     t.integer  "transport",                  limit: 1
     t.datetime "unblocks"
-    t.boolean  "outstation",                                                     default: false
+    t.boolean  "outstation",                                                    default: false
     t.datetime "checkout"
     t.string   "confirmation_key",           limit: 20
     t.integer  "balance"
     t.string   "ref_initial"
     t.string   "ref_immediate"
     t.string   "promo"
-    t.integer  "credit_status",                                                  default: 0
+    t.integer  "credit_status",                                                 default: 0
     t.integer  "offer_id"
     t.integer  "pricing_id"
     t.integer  "corporate_id"
     t.integer  "city_id",                    limit: 2
     t.string   "pricing_mode",               limit: 2
     t.string   "medium",                     limit: 20
-    t.boolean  "shortened",                                                      default: false
+    t.boolean  "shortened",                                                     default: false
     t.integer  "total_fare"
-    t.integer  "deposit_status",             limit: 1,                           default: 0
-    t.boolean  "carry",                                                          default: false
-    t.boolean  "hold",                                                           default: false
-    t.boolean  "release_payment",                                                default: false
-    t.boolean  "settled",                                                        default: false
+    t.integer  "deposit_status",             limit: 1,                          default: 0
+    t.boolean  "carry",                                                         default: false
+    t.boolean  "hold",                                                          default: false
+    t.boolean  "release_payment",                                               default: false
+    t.boolean  "settled",                                                       default: false
     t.integer  "actual_cargroup_id",         limit: 2
-    t.integer  "actual_cargroup_id_count",   limit: 1,                           default: 0
-    t.integer  "car_id_count",               limit: 1,                           default: 0
-    t.integer  "cargroup_id_count",          limit: 1,                           default: 0
-    t.integer  "ends_count",                 limit: 1,                           default: 0
-    t.integer  "end_km_count",               limit: 1,                           default: 0
-    t.integer  "location_id_count",          limit: 1,                           default: 0
-    t.integer  "returned_at_count",          limit: 1,                           default: 0
-    t.integer  "starts_count",               limit: 1,                           default: 0
-    t.integer  "start_km_count",             limit: 1,                           default: 0
+    t.integer  "actual_cargroup_id_count",   limit: 1,                          default: 0
+    t.integer  "car_id_count",               limit: 1,                          default: 0
+    t.integer  "cargroup_id_count",          limit: 1,                          default: 0
+    t.integer  "ends_count",                 limit: 1,                          default: 0
+    t.integer  "end_km_count",               limit: 1,                          default: 0
+    t.integer  "location_id_count",          limit: 1,                          default: 0
+    t.integer  "returned_at_count",          limit: 1,                          default: 0
+    t.integer  "starts_count",               limit: 1,                          default: 0
+    t.integer  "start_km_count",             limit: 1,                          default: 0
     t.boolean  "defer_deposit"
-    t.boolean  "insufficient_deposit",                                           default: false
+    t.boolean  "insufficient_deposit",                                          default: false
     t.integer  "fleet_checklist_by"
     t.integer  "start_checklist_by"
     t.integer  "end_checklist_by"
@@ -284,6 +287,13 @@ ActiveRecord::Schema.define(version: 20150210093736) do
   end
 
   add_index "car_images", ["car_imageable_type", "car_imageable_id"], name: "index_car_images_on_car_imageable_type_and_car_imageable_id", using: :btree
+
+  create_table "car_rankings", force: true do |t|
+    t.integer  "cargroup_id"
+    t.float    "deviation"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "carblocks", force: true do |t|
     t.integer  "car_id",         limit: 2
@@ -766,6 +776,33 @@ ActiveRecord::Schema.define(version: 20150210093736) do
     t.datetime "updated_at"
   end
 
+  create_table "loc_car_rankings", force: true do |t|
+    t.integer  "cargroup_id"
+    t.integer  "location_id"
+    t.integer  "city_id"
+    t.float    "deviation"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "loc_car_rankings_1", force: true do |t|
+    t.integer  "cargroup_id"
+    t.integer  "location_id"
+    t.integer  "city_id"
+    t.float    "deviation"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "location_distances", force: true do |t|
+    t.integer  "city_id"
+    t.string   "loc_a"
+    t.string   "loc_b"
+    t.float    "distance"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "location_offers", force: true do |t|
     t.integer "location_id"
     t.integer "offer_id"
@@ -1156,8 +1193,7 @@ ActiveRecord::Schema.define(version: 20150210093736) do
     t.integer  "max",         limit: 1, default: 0
   end
 
-  add_index "test_inventories", ["cargroup_id", "location_id", "slot"], name: "index_inventories_on_cargroup_id_and_location_id_and_slot", unique: true, using: :btree
-  add_index "test_inventories", ["total"], name: "index_inventories_on_total", using: :btree
+  add_index "templates", ["title"], name: "index_templates_on_title", using: :btree
 
   create_table "triplogs", force: true do |t|
     t.integer  "booking_id"

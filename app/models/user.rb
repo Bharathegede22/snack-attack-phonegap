@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   has_many :bookings
   has_many :credits
   has_many :wallets
+  has_many :referrals, :foreign_key => :referral_user_id
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable 
   devise :database_authenticatable, :registerable, 
@@ -29,6 +30,7 @@ class User < ActiveRecord::Base
   
   after_create :send_welcome_mail
   before_create :before_create_tasks
+  after_save :after_save_tasks
 	before_validation :before_validation_tasks
 	
 	def admin?
@@ -53,6 +55,21 @@ class User < ActiveRecord::Base
 
   def fleet?
 		return self.role >= 5
+	end
+
+	def referral_code
+		return self.ref_code if self.ref_code.present?
+		self.generate_referral_code
+		self.ref_code
+	end
+
+	def generate_referral_code
+		ref_code = Base64.urlsafe_encode64(self.id.to_s)
+		self.ref_code = ref_code.gsub(/[^0-9A-Za-z]/, '')
+		while User.where(:ref_code => self.ref_code).count > 0
+			self.ref_code += rand(1..30).to_s
+		end
+		self.save(:validate => false)
 	end
 	
 	def get_bookings(action, page=0)
@@ -106,7 +123,7 @@ class User < ActiveRecord::Base
     @profile || @signup
   end
   
-	def self.find_for_oauth(auth, signed_in=nil, ref_initial=nil, ref_immediate=nil)
+	def self.find_for_oauth(auth,city, signed_in=nil, ref_initial=nil, ref_immediate=nil)
   	is_new = 0
   	case auth.provider
   	when 'facebook'
@@ -135,7 +152,7 @@ class User < ActiveRecord::Base
 					user.state = auth.extra.raw_info.location.state if user.state.blank?
 					if user.country.blank? && Country.find_country_by_name(auth.extra.raw_info.location.country)
 						user.country = Country.find_country_by_name(auth.extra.raw_info.location.country).alpha2
-					end
+          end
 				end
  				user.dob = Date.parse(fql['birthday_date']) if user.dob.blank? && !fql['birthday_date'].blank?
   			if !fql['sex'].blank?
@@ -144,8 +161,9 @@ class User < ActiveRecord::Base
   				else
   					user.gender = 1
   				end
-  			end
- 				user.password = Devise.friendly_token.first(12) if user.encrypted_password.blank?
+        end
+        user.city_id = city.id if !city.nil?
+        user.password = Devise.friendly_token.first(12) if user.encrypted_password.blank?
  				if !user.phone.blank?
 	 				user.phone = user.phone.to_i.to_s
 	 				user.phone = nil if user.phone.length != 10
@@ -183,8 +201,9 @@ class User < ActiveRecord::Base
 					else
 						user.gender = 1
 					end
-		    end
-			  user.save!
+        end
+        user.city_id = city.id if !city.nil?
+        user.save!
 			end
 		end
 		user.generate_authentication_token if user.present?
@@ -339,12 +358,9 @@ class User < ActiveRecord::Base
 
 	def send_welcome_mail
 		abtest=rand(100)
-		if (1..35).include? abtest# && self.name_was.nil? && self.name_changed?
-			BookingMailer.welcome(self).deliver
-			Email.create(user_id: self.id, activity: 'welcome_mail1')
-		elsif (35..70).include? abtest
+		if (1..80).include? abtest
 			BookingMailer.welcome2(self).deliver
-			Email.create(user_id: self.id, activity: 'welcome_mail2')
+			Email.create(user_id: self.id, activity: 'welcome_mail3')
 		end
 	end
 
@@ -377,8 +393,20 @@ class User < ActiveRecord::Base
       true
     end 
   end
+
+  def sign_up_credits_earned?
+		credits.where(:source_name => Credit::SOURCE_NAME_INVERT["Sign up"]).count > 0
+	end
 	
 	private :before_create_tasks, :before_validation_tasks, :valid_otp_length?
+
+	def after_save_tasks
+		license_update_events
+	end
+
+	def license_update_events
+		Referral.validate_reference(self, {:field => :phone, :value => self.phone}) if self.phone_changed?
+	end
 end
 
 # == Schema Information

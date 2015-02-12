@@ -18,9 +18,11 @@ class Users::OmniauthController < Devise::OmniauthCallbacksController
   private
   
   def manage
-  	session[:social_signup], user = User.find_for_oauth(request.env["omniauth.auth"], current_user, session[:ref_initial], session[:ref_immediate])
+  	session[:social_signup], user = User.find_for_oauth(request.env["omniauth.auth"],@city, current_user, session[:ref_initial], session[:ref_immediate])
   	if user
 			sign_in('user', user)
+			# Call referral related code once new user signs in.
+			validate_and_apply_referral(user) if session[:social_signup]
 			if session[:book].blank?
 		 		redirect_to "/" and return
 		 	else
