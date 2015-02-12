@@ -34,6 +34,7 @@ end
 #  role                            :integer          default(0)
 #  mobile                          :boolean          default(FALSE)
 #  email                           :string(255)      not null
+#  ref_code                        :string(255)
 #  encrypted_password              :string(255)      default(""), not null
 #  reset_password_token            :string(255)
 #  reset_password_sent_at          :datetime
@@ -75,6 +76,7 @@ end
 #  wallet_total_amount             :integer
 #  city_id                         :integer
 #  license_updated_at              :datetime
+#  card_saved                      :boolean          default(FALSE)
 #
 # Indexes
 #

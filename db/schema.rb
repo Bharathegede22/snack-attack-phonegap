@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141202125832) do
+ActiveRecord::Schema.define(version: 20150210093736) do
 
   create_table "accidents", force: true do |t|
     t.boolean  "active",                                                            default: true
@@ -126,94 +126,96 @@ ActiveRecord::Schema.define(version: 20141202125832) do
   add_index "bankcodes", ["issuerCode"], name: "index_bankcodes_on_issuerCode", using: :btree
 
   create_table "bookings", force: true do |t|
-    t.integer  "car_id",                   limit: 2
-    t.integer  "location_id",              limit: 2
+    t.integer  "car_id",                     limit: 2
+    t.integer  "location_id",                limit: 2
     t.integer  "user_id"
     t.integer  "booked_by"
     t.integer  "cancelled_by"
     t.string   "comment"
-    t.integer  "days",                     limit: 1
+    t.integer  "days",                       limit: 1
     t.integer  "hours"
-    t.decimal  "estimate",                            precision: 8, scale: 2
-    t.decimal  "discount",                            precision: 8, scale: 2
-    t.decimal  "total",                               precision: 8, scale: 2
+    t.decimal  "estimate",                              precision: 8,  scale: 2
+    t.decimal  "discount",                              precision: 8,  scale: 2
+    t.decimal  "total",                                 precision: 8,  scale: 2
     t.datetime "starts"
     t.datetime "ends"
     t.datetime "cancelled_at"
     t.datetime "returned_at"
     t.string   "ip"
-    t.integer  "status",                   limit: 1,                          default: 0
-    t.string   "jsi",                      limit: 10
+    t.integer  "status",                     limit: 1,                           default: 0
+    t.string   "jsi",                        limit: 10
     t.string   "user_name"
     t.string   "user_email"
     t.string   "user_mobile"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "start_km",                 limit: 10
-    t.string   "end_km",                   limit: 10
-    t.integer  "normal_days",              limit: 1,                          default: 0
-    t.integer  "normal_hours",                                                default: 0
-    t.integer  "discounted_days",          limit: 1,                          default: 0
-    t.integer  "discounted_hours",                                            default: 0
+    t.string   "start_km",                   limit: 10
+    t.string   "end_km",                     limit: 10
+    t.integer  "normal_days",                limit: 1,                           default: 0
+    t.integer  "normal_hours",                                                   default: 0
+    t.integer  "discounted_days",            limit: 1,                           default: 0
+    t.integer  "discounted_hours",                                               default: 0
     t.datetime "actual_starts"
     t.datetime "actual_ends"
     t.datetime "last_starts"
     t.datetime "last_ends"
-    t.boolean  "early",                                                       default: false
-    t.boolean  "late",                                                        default: false
-    t.boolean  "extended",                                                    default: false
-    t.boolean  "rescheduled",                                                 default: false
-    t.integer  "fuel_starts",              limit: 1
-    t.integer  "fuel_ends",                limit: 1
-    t.integer  "daily_fare",               limit: 2
-    t.integer  "hourly_fare",              limit: 2
-    t.integer  "hourly_km_limit",          limit: 2
-    t.integer  "daily_km_limit",           limit: 2
-    t.integer  "excess_kms",               limit: 2,                          default: 0
+    t.boolean  "early",                                                          default: false
+    t.boolean  "late",                                                           default: false
+    t.boolean  "extended",                                                       default: false
+    t.boolean  "rescheduled",                                                    default: false
+    t.integer  "fuel_starts",                limit: 1
+    t.integer  "fuel_ends",                  limit: 1
+    t.integer  "daily_fare",                 limit: 2
+    t.integer  "hourly_fare",                limit: 2
+    t.integer  "hourly_km_limit",            limit: 2
+    t.integer  "daily_km_limit",             limit: 2
+    t.integer  "excess_kms",                 limit: 2,                           default: 0
     t.text     "notes"
-    t.integer  "cargroup_id",              limit: 2
-    t.integer  "fleet_id_start",           limit: 3
-    t.integer  "fleet_id_end",             limit: 3
-    t.integer  "individual_start",         limit: 1
-    t.integer  "individual_end",           limit: 1
-    t.integer  "transport",                limit: 1
+    t.integer  "cargroup_id",                limit: 2
+    t.integer  "fleet_id_start",             limit: 3
+    t.integer  "fleet_id_end",               limit: 3
+    t.integer  "individual_start",           limit: 1
+    t.integer  "individual_end",             limit: 1
+    t.integer  "transport",                  limit: 1
     t.datetime "unblocks"
-    t.boolean  "outstation",                                                  default: false
+    t.boolean  "outstation",                                                     default: false
     t.datetime "checkout"
-    t.string   "confirmation_key",         limit: 20
+    t.string   "confirmation_key",           limit: 20
     t.integer  "balance"
     t.string   "ref_initial"
     t.string   "ref_immediate"
     t.string   "promo"
-    t.integer  "credit_status",                                               default: 0
+    t.integer  "credit_status",                                                  default: 0
     t.integer  "offer_id"
     t.integer  "pricing_id"
     t.integer  "corporate_id"
-    t.integer  "city_id",                  limit: 2
-    t.string   "pricing_mode",             limit: 2
-    t.string   "medium",                   limit: 20
-    t.boolean  "shortened",                                                   default: false
+    t.integer  "city_id",                    limit: 2
+    t.string   "pricing_mode",               limit: 2
+    t.string   "medium",                     limit: 20
+    t.boolean  "shortened",                                                      default: false
     t.integer  "total_fare"
-    t.integer  "deposit_status",           limit: 1,                          default: 0
-    t.boolean  "carry",                                                       default: false
-    t.boolean  "hold",                                                        default: false
-    t.boolean  "release_payment",                                             default: false
-    t.boolean  "settled",                                                     default: false
-    t.integer  "actual_cargroup_id",       limit: 2
-    t.integer  "actual_cargroup_id_count", limit: 1,                          default: 0
-    t.integer  "car_id_count",             limit: 1,                          default: 0
-    t.integer  "cargroup_id_count",        limit: 1,                          default: 0
-    t.integer  "ends_count",               limit: 1,                          default: 0
-    t.integer  "end_km_count",             limit: 1,                          default: 0
-    t.integer  "location_id_count",        limit: 1,                          default: 0
-    t.integer  "returned_at_count",        limit: 1,                          default: 0
-    t.integer  "starts_count",             limit: 1,                          default: 0
-    t.integer  "start_km_count",           limit: 1,                          default: 0
+    t.integer  "deposit_status",             limit: 1,                           default: 0
+    t.boolean  "carry",                                                          default: false
+    t.boolean  "hold",                                                           default: false
+    t.boolean  "release_payment",                                                default: false
+    t.boolean  "settled",                                                        default: false
+    t.integer  "actual_cargroup_id",         limit: 2
+    t.integer  "actual_cargroup_id_count",   limit: 1,                           default: 0
+    t.integer  "car_id_count",               limit: 1,                           default: 0
+    t.integer  "cargroup_id_count",          limit: 1,                           default: 0
+    t.integer  "ends_count",                 limit: 1,                           default: 0
+    t.integer  "end_km_count",               limit: 1,                           default: 0
+    t.integer  "location_id_count",          limit: 1,                           default: 0
+    t.integer  "returned_at_count",          limit: 1,                           default: 0
+    t.integer  "starts_count",               limit: 1,                           default: 0
+    t.integer  "start_km_count",             limit: 1,                           default: 0
     t.boolean  "defer_deposit"
-    t.boolean  "insufficient_deposit",                                        default: false
+    t.boolean  "insufficient_deposit",                                           default: false
     t.integer  "fleet_checklist_by"
     t.integer  "start_checklist_by"
     t.integer  "end_checklist_by"
+    t.datetime "release_payment_updated_at"
+    t.decimal  "recorded_distance",                     precision: 10, scale: 2
   end
 
   add_index "bookings", ["car_id"], name: "index_bookings_on_car_id", using: :btree
@@ -252,6 +254,19 @@ ActiveRecord::Schema.define(version: 20141202125832) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "sampling",    default: false
+    t.boolean  "disable",     default: false
+  end
+
+  create_table "car_availabilities", force: true do |t|
+    t.integer  "car_id"
+    t.integer  "cargroup_id"
+    t.integer  "location_id"
+    t.string   "starts"
+    t.string   "ends"
+    t.integer  "time_available"
+    t.string   "user_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "car_images", force: true do |t|
@@ -303,6 +318,7 @@ ActiveRecord::Schema.define(version: 20141202125832) do
     t.string  "name"
     t.string  "display_name"
     t.boolean "status",                      default: false
+    t.boolean "ended",                       default: false
     t.integer "priority",         limit: 1
     t.integer "seating",          limit: 1
     t.integer "wait_period",      limit: 2
@@ -343,6 +359,14 @@ ActiveRecord::Schema.define(version: 20141202125832) do
     t.boolean "kle",                         default: false
   end
 
+  create_table "cargroups_cities", force: true do |t|
+    t.integer "cargroup_id",    limit: 2
+    t.integer "city_id",        limit: 2
+    t.boolean "inventory_done",           default: false
+  end
+
+  add_index "cargroups_cities", ["city_id"], name: "index_cargroups_cities_on_city_id", using: :btree
+
   create_table "carmovements", force: true do |t|
     t.integer  "car_id",         limit: 2
     t.integer  "cargroup_id",    limit: 2
@@ -366,18 +390,18 @@ ActiveRecord::Schema.define(version: 20141202125832) do
   add_index "carmovements", ["location_id"], name: "index_carmovements_on_location_id", using: :btree
 
   create_table "cars", force: true do |t|
-    t.integer  "cargroup_id",      limit: 2
-    t.integer  "location_id",      limit: 2
+    t.integer  "cargroup_id",        limit: 2
+    t.integer  "location_id",        limit: 2
     t.string   "name"
-    t.integer  "status",           limit: 1,  default: 0
-    t.integer  "mileage",          limit: 3,  default: 0
+    t.integer  "status",             limit: 1,                           default: 0
+    t.integer  "mileage",            limit: 3,                           default: 0
     t.string   "vin"
     t.string   "license"
     t.string   "insurer"
     t.string   "policy"
-    t.integer  "wait_period",      limit: 2
+    t.integer  "wait_period",        limit: 2
     t.boolean  "allindia"
-    t.string   "color",            limit: 10
+    t.string   "color",              limit: 10
     t.boolean  "leather_interior"
     t.boolean  "mp3"
     t.boolean  "gps"
@@ -398,11 +422,20 @@ ActiveRecord::Schema.define(version: 20141202125832) do
     t.datetime "updated_at"
     t.date     "starts"
     t.date     "ends"
-    t.boolean  "kle_installed",               default: false
-    t.boolean  "immobilizer",                 default: false
+    t.boolean  "kle_installed",                                          default: false
+    t.boolean  "immobilizer",                                            default: false
     t.string   "tguid"
-    t.string   "km_reading",       limit: 11
-    t.integer  "fuel_reading",     limit: 1,  default: 0
+    t.string   "km_reading",         limit: 11
+    t.integer  "fuel_reading",       limit: 1,                           default: 0
+    t.date     "emi_start_date"
+    t.string   "financier_name"
+    t.string   "loan_account_num"
+    t.string   "city_of_purchase"
+    t.decimal  "rate_of_interest",              precision: 6,  scale: 4
+    t.decimal  "loan_amount",                   precision: 10, scale: 2
+    t.integer  "loan_tenure_months"
+    t.date     "car_regn_date"
+    t.integer  "city_id"
   end
 
   add_index "cars", ["cargroup_id"], name: "index_cars_on_cargroup_id", using: :btree
@@ -442,7 +475,12 @@ ActiveRecord::Schema.define(version: 20141202125832) do
     t.string   "medium",             limit: 20, default: "1"
     t.integer  "car_id",             limit: 2
     t.string   "initial_answer"
+    t.datetime "question_open_time"
+    t.datetime "answer_time"
   end
+
+  add_index "checklist_answers", ["checklist_id"], name: "index_checklist_answers_on_checklist_id", using: :btree
+  add_index "checklist_answers", ["checklistable_type", "checklistable_id"], name: "index_checklist_answers_on_checklistable", using: :btree
 
   create_table "checklists", force: true do |t|
     t.text     "header"
@@ -467,6 +505,7 @@ ActiveRecord::Schema.define(version: 20141202125832) do
     t.string  "pricing_mode",            limit: 2
     t.string  "contact_phone",           limit: 15
     t.string  "contact_email",           limit: 50
+    t.string  "refund_contact_email",    limit: 50
     t.string  "seo_title"
     t.string  "seo_description"
     t.string  "seo_keywords"
@@ -485,6 +524,7 @@ ActiveRecord::Schema.define(version: 20141202125832) do
     t.string  "link_name"
     t.text    "address"
     t.text    "directions"
+    t.string  "vat"
   end
 
   create_table "city_offers", force: true do |t|
@@ -517,6 +557,20 @@ ActiveRecord::Schema.define(version: 20141202125832) do
   end
 
   add_index "coupon_codes", ["code"], name: "index_coupon_codes_on_code", using: :btree
+
+  create_table "crash_reports", force: true do |t|
+    t.string   "platform"
+    t.string   "version"
+    t.string   "device_id"
+    t.text     "crash_text"
+    t.text     "notes"
+    t.integer  "notification_sent", default: 0
+    t.boolean  "resolved"
+    t.string   "push_message"
+    t.string   "resolved_version"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "credits", force: true do |t|
     t.integer  "user_id"
@@ -591,6 +645,11 @@ ActiveRecord::Schema.define(version: 20141202125832) do
     t.datetime "updated_at"
     t.integer  "city_id"
     t.integer  "user_id"
+    t.text     "install_utm"
+    t.text     "last_signin_utm"
+    t.text     "signin_utm"
+    t.text     "signup_utm"
+    t.boolean  "uninstall",       default: false
   end
 
   add_index "devices", ["uid"], name: "index_devices_on_uid", using: :btree
@@ -688,17 +747,12 @@ ActiveRecord::Schema.define(version: 20141202125832) do
   add_index "inventories", ["cargroup_id", "location_id", "slot"], name: "index_inventories_on_cargroup_id_and_location_id_and_slot", unique: true, using: :btree
   add_index "inventories", ["total"], name: "index_inventories_on_total", using: :btree
 
-  create_table "inventories_old", force: true do |t|
-    t.integer  "cargroup_id", limit: 2
-    t.integer  "location_id", limit: 2
-    t.integer  "city_id",     limit: 2
-    t.integer  "total",       limit: 1, default: 0
-    t.datetime "slot"
-    t.integer  "max",         limit: 1, default: 0
+  create_table "ivrs", force: true do |t|
+    t.string  "ssid"
+    t.string  "digits"
+    t.string  "phone"
+    t.boolean "status"
   end
-
-  add_index "inventories_old", ["cargroup_id", "location_id", "slot"], name: "index_inventories_on_cargroup_id_and_location_id_and_slot", unique: true, using: :btree
-  add_index "inventories_old", ["total"], name: "index_inventories_on_total", using: :btree
 
   create_table "jobs", force: true do |t|
     t.string   "title"
@@ -728,6 +782,8 @@ ActiveRecord::Schema.define(version: 20141202125832) do
     t.string   "mobile",          limit: 15
     t.string   "email",           limit: 100
     t.integer  "status",          limit: 1,                           default: 1
+    t.boolean  "inventory_done",                                      default: false
+    t.boolean  "ended",                                               default: false
     t.string   "disclaimer"
     t.integer  "block_time",      limit: 2
     t.integer  "zone_id"
@@ -775,6 +831,17 @@ ActiveRecord::Schema.define(version: 20141202125832) do
   create_table "models", force: true do |t|
     t.integer "brand_id", limit: 2
     t.string  "name"
+  end
+
+  create_table "notification_sents", force: true do |t|
+    t.integer  "notificable_id"
+    t.string   "notificable_type"
+    t.string   "body"
+    t.datetime "sent_at"
+    t.integer  "no_of_times",      default: 1
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "type"
   end
 
   create_table "notifieds", force: true do |t|
@@ -836,15 +903,13 @@ ActiveRecord::Schema.define(version: 20141202125832) do
   create_table "pages", force: true do |t|
     t.string   "title"
     t.text     "content"
-    t.boolean  "active",                    default: true
+    t.boolean  "active",               default: true
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "seo_title"
-    t.string   "seo_description"
-    t.string   "seo_keywords"
-    t.string   "seo_h1"
-    t.integer  "city_id",         limit: 2
+    t.integer  "city_id",    limit: 2
   end
+
+  add_index "pages", ["title"], name: "index_pages_on_title", using: :btree
 
   create_table "parking_slots", force: true do |t|
     t.integer "location_id"
@@ -876,7 +941,7 @@ ActiveRecord::Schema.define(version: 20141202125832) do
     t.integer  "location_id",    limit: 2
     t.boolean  "credit",                                           default: false
     t.decimal  "amount",                   precision: 7, scale: 2
-    t.text     "reason"
+    t.string   "reason"
     t.text     "notes"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -885,6 +950,17 @@ ActiveRecord::Schema.define(version: 20141202125832) do
   end
 
   add_index "petty_cashes", ["location_id"], name: "index_petty_cashes_on_location_id", using: :btree
+
+  create_table "pictures", force: true do |t|
+    t.integer  "pictureable_id"
+    t.string   "pictureable_type"
+    t.string   "avatar_file_name"
+    t.string   "avatar_content_type"
+    t.integer  "avatar_file_size"
+    t.datetime "avatar_updated_at"
+  end
+
+  add_index "pictures", ["pictureable_type", "pictureable_id"], name: "index_pictures_on_pictureable_type_and_pictureable_id", using: :btree
 
   create_table "pricings", force: true do |t|
     t.integer "cargroup_id",                limit: 2
@@ -932,6 +1008,20 @@ ActiveRecord::Schema.define(version: 20141202125832) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "referrals", force: true do |t|
+    t.integer  "referral_user_id"
+    t.string   "referral_email",   limit: 63
+    t.string   "source",           limit: 31
+    t.integer  "valid_referral",   limit: 2
+    t.boolean  "signup_flag"
+    t.integer  "first_booking_id"
+    t.integer  "referable_type",   limit: 2
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "referrals", ["referral_user_id", "referral_email"], name: "index_referrals_on_referral_user_id_and_referral_email", unique: true, using: :btree
 
   create_table "refunds", force: true do |t|
     t.integer  "booking_id"
@@ -1048,6 +1138,15 @@ ActiveRecord::Schema.define(version: 20141202125832) do
 
   add_index "t4u_logs", ["car_id"], name: "index_t4u_logs_on_car_id", using: :btree
 
+  create_table "templates", force: true do |t|
+    t.string   "title"
+    t.text     "content"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "templates", ["title"], name: "index_templates_on_title", using: :btree
+
   create_table "test_inventories", force: true do |t|
     t.integer  "cargroup_id", limit: 2
     t.integer  "location_id", limit: 2
@@ -1081,6 +1180,7 @@ ActiveRecord::Schema.define(version: 20141202125832) do
     t.integer  "role",                            limit: 1,                            default: 0
     t.boolean  "mobile",                                                               default: false
     t.string   "email",                                                                                null: false
+    t.string   "ref_code"
     t.string   "encrypted_password",                                                   default: "",    null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
@@ -1122,6 +1222,7 @@ ActiveRecord::Schema.define(version: 20141202125832) do
     t.decimal  "wallet_total_amount",                         precision: 10, scale: 0
     t.integer  "city_id",                         limit: 2
     t.datetime "license_updated_at"
+    t.boolean  "card_saved",                                                           default: false
   end
 
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
@@ -1136,12 +1237,12 @@ ActiveRecord::Schema.define(version: 20141202125832) do
     t.integer "car_id",              limit: 2
     t.integer "cargroup_id",         limit: 2
     t.integer "location_id",         limit: 2
-    t.integer "minutes",             limit: 2,                         default: 0
-    t.integer "billed_minutes",      limit: 2,                         default: 0
-    t.integer "billed_minutes_last", limit: 2,                         default: 0
+    t.integer "minutes",             limit: 2, default: 0
+    t.integer "billed_minutes",      limit: 2, default: 0
+    t.integer "billed_minutes_last", limit: 2, default: 0
     t.integer "wday",                limit: 1
-    t.decimal "revenue",                       precision: 7, scale: 2, default: 0.0
-    t.decimal "revenue_last",                  precision: 7, scale: 2, default: 0.0
+    t.integer "revenue"
+    t.integer "revenue_last"
     t.date    "day"
     t.float   "fuel_margin"
   end

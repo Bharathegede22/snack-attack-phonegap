@@ -6,6 +6,7 @@
 	slot_s = nil
 	slot_e = nil
 	loc = @location
+	loc_other = Location.find(@booking.location_id).city_id
 - @inventory.each do |i|
 	:ruby
 		slot = i.slot - 330.minutes
@@ -51,7 +52,7 @@
 		- if i.slot.to_i >= (@booking.starts.to_i + 330*60) && i.slot.to_i < (@booking.ends.to_i + 330*60)
 			- if slot.min == 0
 				.b
-			- if total > 1 && Location.find(@booking.location_id).city_id != 1
+			- if total > 1 && loc_other != 1
 				.g.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Available"}
 			- elsif total == 1 && Location.find(@booking.location_id).city_id != 1
 				.o.sel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Only 1 Available"}
@@ -60,7 +61,7 @@
 		- else
 			- if slot.min == 0
 				.b
-			- if total > 1 && Location.find(@booking.location_id).city_id != 1
+			- if total > 1 && loc_other != 1
 				.g.unsel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Available<br/>Outside Selection"}
 			- elsif total == 1 && Location.find(@booking.location_id).city_id != 1
 				.o.unsel.help{'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "#{slot.strftime("%I:%M %p")}<br/>Only 1 Available<br/>Outside Selection"}
