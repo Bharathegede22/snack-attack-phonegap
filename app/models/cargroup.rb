@@ -117,6 +117,18 @@ class Cargroup < ActiveRecord::Base
 	def shortname
 		self.display_name.gsub('Mahindra ','') rescue ""
 	end
+
+	def small_image
+		Rails.cache.fetch("cargroup-small-image-#{self.id}") do
+			self.picture
+		end
+	end
+
+	def large_image
+		Rails.cache.fetch("cargroup-large-image-#{self.id}") do
+			self.image
+		end
+	end
 	
 end
 
