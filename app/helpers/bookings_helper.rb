@@ -54,7 +54,7 @@ module BookingsHelper
       params[:promo] = session[:promo_code]
     end
     params[:city] = @city.link_name
-    params[:auth_token] = @current_user.authentication_token
+    params[:auth_token] = @current_user.generate_authentication_token
     if @booking.present?
       params[:starts] = @booking.starts if params[:starts].blank? && @booking.starts.present?
       params[:ends] = @booking.ends if params[:ends].blank? && @booking.ends.present?
