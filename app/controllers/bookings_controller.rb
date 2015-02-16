@@ -804,7 +804,7 @@ class BookingsController < ApplicationController
                                                                   new_ui: "Yes"
 		                                                            }
 		        Rails.logger.info "API call over: ======== "
-		      	@inventory,@cars,@order = get_inventory_from_json search_results_from_admin
+		      	@inventory,@cars,@order,@car_images = get_inventory_from_json search_results_from_admin
 		      	@header = 'search'
 		  end
     end
@@ -850,12 +850,12 @@ class BookingsController < ApplicationController
 		@booking.cargroup_id = params[:car]
 		@booking.location_id = params[:location]
   		@page = (params[:page] || 0).to_i
-  			
+
   		timeline_from_admin = admin_api_get_call "#{ADMIN_HOSTNAME}/mobile/#{ADMIN_API_VERSION}/bookings/timeline",
                                                {
                                                           starts: session[:search][:starts],
                                                           ends: session[:search][:ends],
-                                                          city: "pune",
+                                                          city: @city.link_name,
                                                           location: params[:location],
                                                           page: params[:page],
                                                           car: params[:car],

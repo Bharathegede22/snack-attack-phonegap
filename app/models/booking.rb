@@ -1122,6 +1122,7 @@ end
 #  start_checklist_by         :integer
 #  end_checklist_by           :integer
 #  release_payment_updated_at :datetime
+#  recorded_distance          :decimal(10, 2)
 #
 # Indexes
 #

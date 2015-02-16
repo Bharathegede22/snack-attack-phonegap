@@ -39,8 +39,8 @@
 	.search-item
 		.default
 			.p-10
-				%img.car-img{:src => asset_url(cargroup.small_image.avatar.url)}
-					/ %div{:class => 'car' + car.id.to_s}
+				.car-img
+					.lazy{'data-background' => @car_images[car.id.to_s]}
 				.details
 					.name
 						= car.display_name

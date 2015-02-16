@@ -14,15 +14,17 @@ module BookingsHelper
       json_result = JSON.parse(json_data)
       cars = json_result["cars"]
       results = Hash.new
+      car_images = {}
       cars.each do |car|
         results[car["id"].to_s] = car["locations_availibility"]
+        car_images[car["id"].to_s] = car["small_image_url"]
       end
       order_by = results.keys
-      [results,cars,order_by]
+      [results,cars,order_by,car_images]
     rescue Exception => ex      
       Rails.logger.info "JsonParsingError: Error parsing response from search results from api===== #{ex.message}--- BookingsHelper"
       flash[:error] = "Sorry, our system is busy right now. Please try after some time."
-      [nil,nil]
+      [nil,nil,nil,nil]
     end
   end
 
@@ -103,7 +105,7 @@ module BookingsHelper
 
   def update_reschedule_params(params, booking)
     params[:promo] = booking.promo
-    params[:id] = booking.id
+    params[:booking_id] = booking.confirmation_key
     params[:city_id] = @city.id
     params[:auth_token] = @current_user.authentication_token
     params[:starts] = Time.zone.parse(params[:starts]) if params[:starts].present?

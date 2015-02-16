@@ -64,8 +64,12 @@ class User < ActiveRecord::Base
 	end
 
 	def generate_referral_code
-		self.ref_code = Base64.urlsafe_encode64(self.id.to_s)
-		self.save(validate: false)
+		ref_code = Base64.urlsafe_encode64(self.id.to_s)
+		self.ref_code = ref_code.gsub(/[^0-9A-Za-z]/, '')
+		while User.where(:ref_code => self.ref_code).count > 0
+			self.ref_code += rand(1..30).to_s
+		end
+		self.save(:validate => false)
 	end
 	
 	def get_bookings(action, page=0)
@@ -419,6 +423,7 @@ end
 #  role                            :integer          default(0)
 #  mobile                          :boolean          default(FALSE)
 #  email                           :string(255)      not null
+#  ref_code                        :string(255)
 #  encrypted_password              :string(255)      default(""), not null
 #  reset_password_token            :string(255)
 #  reset_password_sent_at          :datetime
