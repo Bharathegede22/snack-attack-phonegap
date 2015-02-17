@@ -260,8 +260,10 @@ function getData(complete_url,divId,divAction,divWait) {
       		if(divAction) {
       			if(divAction == 'append') {
       				$("#"+divId).append(data["html"]);
-      			} else if(divAction == 'prepend') {
+                    $('.arrw-d').show();
+                } else if(divAction == 'prepend') {
       				$("#"+divId).prepend(data["html"]);
+                    $('.arrw-u').show();
       			} else {
       				$("#"+divId).html(data["html"]);
       			}
@@ -596,10 +598,12 @@ function showTimeline(carId, action, carName) {
 		}
 		$('#TimelineAction' + carId).tooltip('hide');
 	} else if(action == 1) {
+        $('.arrw-d').hide();
 		$('#TimelineWait' + carId).slideDown();
 		var num = $('#TimelineMoreNum' + carId).val();
 		getData("/bookings/timeline?car=" + carId + "&location=" + locId + "&page=" + num, 'TimelineContent' + carId, 'append', null);
 	} else if(action == -1) {
+        $('.arrw-u').hide();
 		$('#TimelineWait' + carId).slideDown();
 		var num = $('#TimelineLessNum' + carId).val();
 		getData("/bookings/timeline?car=" + carId + "&location=" + locId + "&page=" + num, 'TimelineContent' + carId, 'prepend', null);
