@@ -763,6 +763,22 @@ class Booking < ActiveRecord::Base
     self.credits.create(user_id: self.user_id, amount: args[:amount].to_i, booking_key: self.confirmation_key, action: true, status: true, source_name: args[:source_name])
   end
 
+  # Tells if any payments were made for the booking
+  # Author:: Rohit
+  # Date:: 11/02/2015
+  #
+  def any_payments?
+  	(self.confirmed_payments.present?) || (self.confirmed_credit_payments.present?)
+  end
+
+  # Creates a payment with 0 value
+  # Author:: Rohit
+  # Date:: 11/02/2015
+  #
+  def create_dummy_payment
+  	self.payments.create(status: 1, amount: 0, through: 'dummy')
+  end
+
 	def sendsms(action, amount,deposit = 0)
 		message =  case action 
 		when 'change' then "Zoomcar booking (#{self.confirmation_key}) is changed. #{self.cargroup.display_name} from #{self.starts.strftime('%I:%M %p, %d %b')} till #{self.ends.strftime('%I:%M %p, %d %b')} at #{self.location.shortname}. "
