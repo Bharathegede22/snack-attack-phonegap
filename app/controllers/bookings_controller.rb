@@ -415,6 +415,11 @@ class BookingsController < ApplicationController
 		if @payment
 			render :layout => 'plain'
 		else
+			# make a zero payment if no payment entry is created.
+			if not @booking.any_payments?
+				@booking.create_dummy_payment
+				@booking.reload
+			end
 			flash[:notice] = "Booking is already paid for full, no need for a new transaction."
       redirect_to "/bookings/" + @booking.encoded_id and return
     end
