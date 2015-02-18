@@ -13,7 +13,8 @@
 		.sold-out-tag
 	.each-car-offer.r-3
 		.col-md-4.border-r-c.car-booking-block
-			= image_tag("cars/#{cargroup.id}small.jpg", :alt => "")
+			%img.m-auto{:alt => cargroup.display_name, :src => asset_url(cargroup.small_image.avatar.url),:class => 'car' + cargroup_id.to_s}
+			/ = image_tag("cars/#{cargroup.id}small.jpg", :alt => "")
 			.fl.p-t5.p-b10
 				.size-20.f-b.zoom-b.t-c
 					= cargroup.shortname
@@ -47,7 +48,7 @@
 						= ends.strftime("%d %b, %Y")
 						%br 
 							= ends.strftime('%I:%M %P')
-			.col-md-4.border-l-c.p-l0.p-r0
+			.col-md-4.border-l-c.p-l0.p-
 				.text-up.size-18.p-b10.p-t10.t-c.duration-hrs
 					.fo-helv.f-b
 						= ((ends - starts)/1.hour).round 
