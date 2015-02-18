@@ -2,6 +2,7 @@ class UsersController < ApplicationController
 	
 	before_filter :authenticate_user!, :only => [:license,:license_get_del, :social, :settings, :update, :credits, :referrals,:credit_history]
 	skip_before_filter :authenticate_staging
+	before_filter :check_license, :only => [:license,:license_get_del]
 	
 	def access
 		flash[:error] = "<b>Access Denied!</b>"
@@ -16,6 +17,17 @@ class UsersController < ApplicationController
 
 	def forgot
 		render json: {html: render_to_string('/devise/passwords/new.haml', :layout => false)}
+	end
+
+	def check_license
+		if params['license_approval_id'].present? && current_user.role >= 6
+			cookies['license_approval_id'] = {:value => params['license_approval_id'].to_i, :expires => 5.minutes.from_now, :domain => ".#{HOSTNAME.gsub('www.','')}"}
+		end
+		if cookies['license_approval_id'].present?
+	    @admin_user = User.where(id: cookies['license_approval_id'].to_i).first
+	  else
+	  	@admin_user = current_user
+	  end
 	end
 	
 	def license_get_del
@@ -32,7 +44,7 @@ class UsersController < ApplicationController
 						if img.first.destroy
 							image_count = image_count - 1
 							# image_arr << {delete_status: 1, count: image_count}
-							# last_count = Image.where("imageable_id = ? AND imageable_type = 'License'",current_user.id)
+							# last_count = Image.where("imageable_id = ? AND imageable_type = 'License'",@admin_user.id)
 							if image_count == 0
 								User.find(@admin_user.id).update_column(:license_status,0)
 								image_arr << {delete_status: 1, count: image_count,final_status: 0}
@@ -71,16 +83,7 @@ class UsersController < ApplicationController
 	  end
 	end
 
-	def license
-		if params[:license_approval_id].present? && current_user.role >= 6
-			@admin_user = User.where(id: params[:license_approval_id].to_i).first
-			if @admin_user.nil?
-				flash[:error] = 'select correct user'
-				return
-			end
-		else
-			@admin_user = current_user@admin_user
-		end
+	def license			
     if request.post? 
 	      @hash = {}
 	      @image_arr = []
