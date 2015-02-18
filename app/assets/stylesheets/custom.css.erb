@@ -1116,20 +1116,41 @@ a {
 /*---------Searched Car Image Location------ ----*/
 .search-item .car-img {
 	float:left;
-	margin:0px 10px;
-	margin:0px 30px 0 10px;
-	width:100px;
+	margin:0 25px 0 5px;
+	width:110px;
+	height:80px;
+	background:url(<%= asset_path 'r.png' %>) no-repeat;
+	background-position:-310px -120px;
+	-webkit-filter:grayscale(100%);
+  -moz-filter:grayscale(100%);
+  -ms-filter:grayscale(100%);
+  -o-filter:grayscale(100%);
+  filter:grayscale(100%);
 }
+
+.search-item:hover .car-img {
+	-webkit-filter:grayscale(0%);
+  -moz-filter:grayscale(0%);
+  -ms-filter:grayscale(0%);
+  -o-filter:grayscale(0%);
+  filter:grayscale(0%);
+}
+
+.search-item .car-img .lazy {
+	width:110px;
+	height:80px;
+}
+
 /*------------------------------------------------*/
 .content .car1, .content .car2, .content .car3, .content .car4, .content .car5, 
 	.content .car6, .content .car7, .content .car8, .content .car9, .content .car10, 
 	.content .car11, .content .car12, .content .car13, .content .car14, .content .car15 {
-	background:url(<%= asset_path 'cars/strip.jpg' %>) no-repeat;
+	/*background:url(<%= asset_path 'cars/strip.jpg' %>) no-repeat;*/
 	width:100px;
-	height:80px;
+/*	height:80px;*/
 }
 
-.content .car1 {
+/*.content .car1 {
 	background-position:0px 0px;
 }
 
@@ -1188,9 +1209,9 @@ a {
 .content .car15 {
 	background-position:-1400px 0px;
 }
+*/
 
-
-.small-car1, .small-car2, .small-car3, .small-car4, .small-car5, 
+/*.small-car1, .small-car2, .small-car3, .small-car4, .small-car5, 
 	.small-car6, .small-car7, .small-car8, .small-car9, .small-car10, 
 	.small-car11, .small-car12, .small-car13, .small-car14, .small-car15 {
 	background:url(<%= asset_path 'cars/small-strip.jpg' %>) no-repeat;
@@ -1376,7 +1397,7 @@ a {
 
 .search-item:hover .car15, .colored .car15 {
 	background-position:-1400px -80px;
-}
+}*/
 
 .search-item .details {
 	width:330px;

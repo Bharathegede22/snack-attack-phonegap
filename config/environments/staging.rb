@@ -57,18 +57,24 @@ Web::Application.configure do
   config.cache_store = :dalli_store, 'zoom-test-cache.cloudapp.net:11211', {:namespace => MEMCACHED_KEY}
   
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
+  # config.action_controller.asset_host = Proc.new { |source|
+  # 	if source.starts_with?('/assets')
+  # 		"//assets." + HOSTNAME.gsub('www.','')
+  #   elsif source.starts_with?('/images')
+  #     "//images." + HOSTNAME.gsub('www.','')
+  #   elsif source.starts_with?('/system')
+  #     "//uploads." + HOSTNAME.gsub('www.','')
+  #   else
+  #     "//assets." + HOSTNAME.gsub('www.','')
+  #   end
+  # }
   config.action_controller.asset_host = Proc.new { |source|
-  	if source.starts_with?('/assets')
-  		"//assets." + HOSTNAME.gsub('www.','')
-    elsif source.starts_with?('/images')
-      "//images." + HOSTNAME.gsub('www.','')
-    elsif source.starts_with?('/system')
-      "//uploads." + HOSTNAME.gsub('www.','')
+    if source.starts_with?('/system')
+      "//uploads.zoomcar.com"
     else
-      "//assets." + HOSTNAME.gsub('www.','')
+      "//" + HOSTNAME
     end
   }
-
   # Precompile additional assets.
   # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
   # config.assets.precompile += %w( search.js )
