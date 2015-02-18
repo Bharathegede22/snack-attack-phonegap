@@ -2,8 +2,7 @@
 	.sold-out-tag
 	.each-car-offer.r-3
 		.col-md-4.border-r-c.car-booking-block
-			%img.m-auto{:src => asset_url(cargroup.small_image.avatar.url),:class => 'car' + cargroup.id.to_s}
-			/ = image_tag("cars/2small.jpg", :alt => "")
+			%img.m-auto{:src => asset_url(Cargroup.find(2).small_image.avatar.url),:class => 'car2'}
 			.fl.p-t5.p-b10.t-c
 				.size-20.f-b.zoom-b
 					Scorpio LX
