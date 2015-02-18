@@ -48,6 +48,8 @@ end
 configurations = YAML.load(File.read(File.join(::Rails.root.to_s, 'config', 'configurations.yml')))
 HOSTNAME = configurations['hostname']
 MEMCACHED_KEY = configurations['memcached_key']
+MEMCACHED_HOST = configurations['memcached_host']
+MEMCACHED_PORT = configurations['memcached_port']
 
 ADMIN_HOSTNAME = configurations['admin_hostname']
 ADMIN_API_VERSION = configurations['admin_api_version']
