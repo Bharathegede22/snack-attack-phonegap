@@ -34,7 +34,8 @@
 				%div{:class => cls, :id => "car#{cargroup.id}"}
 					.row.white
 						.inline-block{style: 'width:150px;'}
-							= image_tag("cars/#{cargroup.id}small.jpg", :alt => cargroup.display_name)
+							%img.m-auto{:alt => cargroup.display_name, :src => asset_url(cargroup.small_image.avatar.url),:class => 'car' + cargroup.id.to_s}
+							/ = image_tag("cars/#{cargroup.id}small.jpg", :alt => cargroup.display_name)
 							%br/
 							%br/
 						.inline-block.bg-zoomb.p-10.r-5.m-10.tariff_primary_box

@@ -28,9 +28,9 @@
 						- else
 							Where?
 				%li
-					%a{href:"#Cars", 'data-toggle' => "tab"} Cars Available	
+					%a{href:"#AvailCars", 'data-toggle' => "tab"} Cars Available	
 				%li
-					%a#LocTab{href:"#Locations", 'data-toggle' => "tab"} Other Locations
+					%a#LocTab{href:"#OtherLocations", 'data-toggle' => "tab"} Other Locations
 .tab-content
 	#How.tab-pane.fade.in.active
 		.wrapper
@@ -97,7 +97,7 @@
 					.fc
 		%br/
 		%br/
-	#Cars.tab-pane.fade
+	#AvailCars.tab-pane.fade
 		%br/
 		.wrapper
 			= render :partial => "/main/pricing/#{@city.pricing_mode}/car_grid"
@@ -149,7 +149,7 @@
 										Security Deposit
 			%br/
 			%br/
-	#Locations.tab-pane.fade
+	#OtherLocations.tab-pane.fade
 		%br/
 		#GmapLocationsWait
 			%br/
