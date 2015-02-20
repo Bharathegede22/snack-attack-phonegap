@@ -12,7 +12,7 @@ class Pricingv4
 	
 	def initialize(booking)
 		@booking = booking
-		@pricing = booking.pricing
+		@pricing = Pricing.lookup_id(booking.pricing_id)
 	end
 
 	def cancel
@@ -34,6 +34,10 @@ class Pricingv4
 		self.new(booking).check
 	end
 	
+	def self.check_offer(booking, offer)
+		self.new(booking).check_offer(offer)
+	end
+
 	def check
 		data = {}
 		if @booking.status < 9
@@ -66,6 +70,10 @@ class Pricingv4
 		end
 		return data
 	end
+
+	def check_offer(offer)
+		return get_fare(@booking.starts, @booking.ends, offer)
+	end
 	
 	def early
 		data = get_fare(@booking.starts, @booking.ends)
@@ -90,7 +98,7 @@ class Pricingv4
 		return data
 	end
 	
-	def mis(start_date, end_date)
+	def self.mis(start_date, end_date)
 		temp = {
 			days: 0, standard_days: 0, discounted_days: 0, 
 			hours: 0, standard_hours: 0, discounted_hours: 0
@@ -158,9 +166,9 @@ class Pricingv4
 	
 	private
 	
-	def get_fare(start_date, end_date)
+	def get_fare(start_date, end_date, offer=nil)
 		data = {
-			total: 0, estimate: 0, discount: 0, bod_extra: 0,
+			total: 0, estimate: 0, discount: 0, bod_extra: 0, offer_discount: 0,
 			hours: 0, standard_hours: 0, discounted_hours: 0, bod_hours: 0,
 			excess_kms: @pricing.excess_kms, kms: 0, log: false, 
 			penalty: 0, refund: 0, kms_penalty: 0
@@ -186,8 +194,8 @@ class Pricingv4
 		wday = start_date.wday
 		data[:kms] = (kms*h).round
 		year = start_date.year
-		
-		promo_pricing = @booking.city.promo_pricing
+
+		promo_pricing = @pricing.promo
 		if promo_pricing
 			blackout_days = []
 		else
@@ -199,11 +207,31 @@ class Pricingv4
 			if blackout_days.include?(start_date.advance(hours: (hour-1)).strftime("%m-%d"))
 				data[:bod_hours] += 1
 				data[:bod_extra] += (bod_fare - fare)
-			elsif [0,5,6].include?(wday)
-				data[:standard_hours] += 1
 			else
-				data[:discounted_hours] += 1
-				data[:discount] += (fare - discounted_fare)
+				# Offer Discount
+				offer_discount = 0
+				if offer
+					if !offer.weekdays.blank?
+						offer_discount = 1.0 if offer.weekdays.include?(wday.to_s)
+					else
+						offer_discount = 1.0
+					end
+					if offer_discount != 0
+						if offer.discount_type == 'PERCENT'
+							offer_discount = (offer.value/100.0)
+						else
+							offer_discount = 1.0
+						end
+					end
+				end
+				if [0,5,6].include?(wday)
+					data[:standard_hours] += 1
+					data[:offer_discount] += fare*offer_discount
+				else
+					data[:discounted_hours] += 1
+					data[:discount] += (fare - discounted_fare)
+					data[:offer_discount] += discounted_fare*offer_discount
+				end
 			end
 			if year != start_date.advance(hours: hour).year
 				year = start_date.advance(hours: hour).year
@@ -216,6 +244,7 @@ class Pricingv4
 		data[:estimate] = data[:estimate].round
 		data[:discount] = data[:discount].round
 		data[:total] = data[:estimate] - data[:discount] + data[:bod_extra]
+		data[:offer_discount] = data[:offer_discount].to_i
 		return data
 	end
 	
