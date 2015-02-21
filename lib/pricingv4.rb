@@ -195,7 +195,7 @@ class Pricingv4
 		data[:kms] = (kms*h).round
 		year = start_date.year
 
-		promo_pricing = @pricing.promo
+		promo_pricing = @booking.city.promo_pricing || @pricing.promo
 		if promo_pricing
 			blackout_days = []
 		else
