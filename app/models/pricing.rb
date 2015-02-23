@@ -39,7 +39,13 @@ class Pricing < ActiveRecord::Base
 
 	def mode
 		return "Pricing#{self.version}".constantize
-	end
+  end
+
+  def self.lookup_id(id)
+    Rails.cache.fetch("pricing-#{id}") do
+      Pricing.where(id: id)[0]
+    end
+  end
 	
 end
 
