@@ -18,17 +18,6 @@ class UsersController < ApplicationController
 	def forgot
 		render json: {html: render_to_string('/devise/passwords/new.haml', :layout => false)}
 	end
-
-	def check_license
-		if params['license_approval_id'].present? && current_user.role >= 6
-			cookies['license_approval_id'] = {:value => params['license_approval_id'].to_i, :expires => 5.minutes.from_now, :domain => ".#{HOSTNAME.gsub('www.','')}"}
-		end
-		if cookies['license_approval_id'].present?
-	    @admin_user = User.where(id: cookies['license_approval_id'].to_i).first
-	  else
-	  	@admin_user = current_user
-	  end
-	end
 	
 	def license_get_del
 		if params[:license_delete] == "true"
@@ -206,6 +195,17 @@ class UsersController < ApplicationController
 	end
 	
 	private
+
+	def check_license
+		if params['license_approval_id'].present? && current_user.role >= 6
+			cookies['license_approval_id'] = {:value => params['license_approval_id'].to_i, :expires => 5.minutes.from_now, :domain => ".#{HOSTNAME.gsub('www.','')}"}
+		end
+		if cookies['license_approval_id'].present?
+	    @admin_user = User.where(id: cookies['license_approval_id'].to_i).first
+	  else
+	  	@admin_user = current_user
+	  end
+	end
 	
 	def image_params
 		params.permit(:avatar)
