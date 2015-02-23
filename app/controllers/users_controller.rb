@@ -2,6 +2,7 @@ class UsersController < ApplicationController
 	
 	before_filter :authenticate_user!, :only => [:license,:license_get_del, :social, :settings, :update, :credits, :referrals,:credit_history]
 	skip_before_filter :authenticate_staging
+	before_filter :check_license, :only => [:license,:license_get_del]
 	
 	def access
 		flash[:error] = "<b>Access Denied!</b>"
@@ -23,18 +24,18 @@ class UsersController < ApplicationController
 				@hash = {}
 				image_arr = []
 				image_count = 0
-				if params[:image_id].present? && !current_user.license_pic.blank?
-					img = Image.where("imageable_id = ? AND id = ? AND imageable_type = 'License'", current_user.id,params[:image_id].to_i)
-					all_pics = Image.where("imageable_id = ? AND imageable_type = 'License'",current_user.id)
+				if params[:image_id].present? && !@admin_user.license_pic.blank?
+					img = Image.where("imageable_id = ? AND id = ? AND imageable_type = 'License'", @admin_user.id,params[:image_id].to_i)
+					all_pics = Image.where("imageable_id = ? AND imageable_type = 'License'",@admin_user.id)
 					image_count = all_pics.count if !all_pics.blank?
 					if img.present?
 						img.first.avatar.destroy
 						if img.first.destroy
 							image_count = image_count - 1
 							# image_arr << {delete_status: 1, count: image_count}
-							# last_count = Image.where("imageable_id = ? AND imageable_type = 'License'",current_user.id)
+							# last_count = Image.where("imageable_id = ? AND imageable_type = 'License'",@admin_user.id)
 							if image_count == 0
-								User.find(current_user.id).update_column(:license_status,0)
+								User.find(@admin_user.id).update_column(:license_status,0)
 								image_arr << {delete_status: 1, count: image_count,final_status: 0}
 							else
 								image_arr << {delete_status: 1, count: image_count,final_status: 1}
@@ -51,13 +52,13 @@ class UsersController < ApplicationController
     	@image_arr = []
     	image_count = 0
     	count = 0
-    	image = Image.where("imageable_id = ? AND imageable_type = 'License'",current_user.id)
+    	image = Image.where("imageable_id = ? AND imageable_type = 'License'",@admin_user.id)
     	if image.blank?
     		image_count = 0 
     	else
     		image_count = image.count
     	end
-	    @image_arr << {count: image_count,status: current_user.license_status}
+	    @image_arr << {count: image_count,status: @admin_user.license_status}
 	    if !image.blank?
 	    	image.each do|img|
 	    	# urll = "http://local.dev"
@@ -71,31 +72,31 @@ class UsersController < ApplicationController
 	  end
 	end
 
-	def license
+	def license			
     if request.post? 
 	      @hash = {}
 	      @image_arr = []
 	      count = 0
-		   	image_count = Image.where("imageable_id = ? AND imageable_type = 'License'",current_user.id).count
+		   	image_count = Image.where("imageable_id = ? AND imageable_type = 'License'",@admin_user.id).count
 		   	if image_count < 5 
 			   	@image = Image.new(image_params)
-					@image.imageable_id = current_user.id
+					@image.imageable_id = @admin_user.id
 					@image.imageable_type = 'License'
 					if @image.save
 						image_count = (image_count + 1)
-						current_user.license_status = 1
-						current_user.save(:validate=>false)
-				    @image_arr << {count: image_count,status: current_user.license_status}
+						@admin_user.license_status = 1
+						@admin_user.save(:validate=>false)
+				    @image_arr << {count: image_count,status: @admin_user.license_status}
 		    		# urll = "http://local.dev"
 		   	  	urll = @image.avatar.url
 		   	  	@image_arr << {url: urll, image_id: @image.id}
 		   	  else
-		   	  	@image_arr << {count: image_count,status: current_user.license_status,error: 1}
+		   	  	@image_arr << {count: image_count,status: @admin_user.license_status,error: 1}
 				  end
 			      @hash = {image: @image_arr}
 			      render :json => @hash
 			 	else
-			 			@image_arr << {count: image_count,status: current_user.license_status,error: 0}
+			 			@image_arr << {count: image_count,status: @admin_user.license_status,error: 0}
 			 			
 			    	####
 			  end
@@ -194,6 +195,17 @@ class UsersController < ApplicationController
 	end
 	
 	private
+
+	def check_license
+		if params['license_approval_id'].present? && current_user.role >= 6
+			cookies['license_approval_id'] = {:value => params['license_approval_id'].to_i, :expires => 5.minutes.from_now, :domain => ".#{HOSTNAME.gsub('www.','')}"}
+		end
+		if cookies['license_approval_id'].present?
+	    @admin_user = User.where(id: cookies['license_approval_id'].to_i).first
+	  else
+	  	@admin_user = current_user
+	  end
+	end
 	
 	def image_params
 		params.permit(:avatar)
