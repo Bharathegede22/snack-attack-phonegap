@@ -488,7 +488,7 @@ class User < ActiveRecord::Base
   #
 	def send_otp_sms
 		message = "Hi! Your code for phone number verification is #{self.otp}."
-		ph_number = Rails.env.production? ? self.phone : CommonHelper::INTERCEPTOR_NUMBER
+		ph_number = Rails.env.production? ? (self.unverified_phone.present? ? self.unverified_phone : self.phone) : CommonHelper::INTERCEPTOR_NUMBER
 		begin
 			SmsSender.perform(ph_number,message,0,"otp_phone_verification")
 		rescue Exception => e

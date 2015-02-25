@@ -166,6 +166,7 @@ class UsersController < ApplicationController
 		attributes = signup_params
 		attributes = attributes.merge("unverified_phone" => attributes["phone"]).except("phone")
 		if current_user.update(attributes.merge({'profile' => 1}))
+			current_user.send_opt_verification_sms
 			flash[:notice] = 'Profile changes are saved! '
 			redirect_to "/users/settings"
 		else
