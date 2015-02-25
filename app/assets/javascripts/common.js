@@ -988,3 +988,18 @@ $(document).ready(function(){
 	});
 });
 
+function referForm(frm,url,divId) {
+	$(document).ready(function(){
+		var otp_code = jQuery.trim($("#otp_code").val());
+		  $.ajax({
+		    type:"POST", 
+		    url: url,
+		    data: {otp_code: otp_code},
+				dataType: "json"
+		  })
+		  .done(function(json){
+		    $("#referForm").empty().append(json.html);
+		  })
+	});
+}
+

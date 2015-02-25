@@ -242,7 +242,6 @@ class User < ActiveRecord::Base
 		self.otp = rand(100000..999999)
 		self.otp_valid_till = Time.now + 2.hours
 		self.otp_attempts = 0 
-		save!
 	end
 
 	def otp_requested?
@@ -397,15 +396,111 @@ class User < ActiveRecord::Base
   def sign_up_credits_earned?
 		credits.where(:source_name => Credit::SOURCE_NAME_INVERT["Sign up"]).count > 0
 	end
+
+	# If the user signed through a referral
+	#
+	# Author:: Rohit
+  # Date:: 19/02/2015
+  #
+	def referral_sign_up?
+    return true # For now BC
+    return @referral_sign_up if defined?(@referral_sign_up)
+    @referral_sign_up = Referral.where(referral_email: current_user.email, signup_flag: 1).count > 0
+  end
+
+	# Verifies user opt code
+  #
+  # Author:: Rohit
+  # Date:: 19/02/2015
+  #
+  # Expects ::
+  #  * <b>otp_code</b> otp provided by the user
+  #
+	def verify_otp(otp_code)
+		if otp.to_s == otp_code.to_s
+			# This is a verified bitch
+			self.phone_verified = 1
+			accept_unverified_phone_number if self.unverified_phone.present?
+			self.save!
+			return {:err => nil, :response => 'success'}
+		end
+		{:err => 'otp code mismatch'}
+	end
+
+	# Update the user phone with the unverified phone number.
+	# Author:: Rohit
+	#
+	def accept_unverified_phone_number
+		self.phone = self.unverified_phone
+		self.unverified_phone = nil
+	end
+
+	# Sends OTP verification sms to user mobile
+  #
+  # Author:: Rohit
+  # Date:: 19/02/2015
+  #
+  # Expects ::
+  #  * <b>user</b> User object
+  #
+	def send_opt_verification_sms
+		if self.otp.present?
+			resend_sms
+		else
+			generate_otp
+			send_otp_sms
+		end
+		save!
+	end
 	
 	private :before_create_tasks, :before_validation_tasks, :valid_otp_length?
 
-	def after_save_tasks
-		license_update_events
+	private
+
+	# Resend OTP sms
+  #
+  # Author:: Rohit
+  # Date:: 19/02/2015
+  #
+  # Can't send 3 sms with in a lifetime of the generated otp
+	def resend_sms
+		return if self.otp_attempts >=3 && Time.now < self.otp_valid_till
+		generate_otp if Time.now > self.otp_valid_till # Regenerate and send sms
+		send_otp_sms
 	end
 
-	def license_update_events
-		Referral.validate_reference(self, {:field => :phone, :value => self.phone}) if self.phone_changed?
+	# Generates OTP for the user
+  #
+  # Author:: Rohit
+  # Date:: 19/02/2015
+  #
+	def generate_otp
+		self.otp = rand.to_s[2..7]
+		self.otp_valid_till = Time.now + 1.hours
+		self.otp_last_attempt = Time.now
+		self.otp_attempts = 0
+	end
+
+	# Sends OTP for phone verification
+	#
+	# Author:: Rohit
+  # Date:: 19/02/2015
+  #
+	def send_otp_sms
+		message = "Hi! Your code for phone number verification is #{self.otp}."
+		ph_number = Rails.env.production? ? self.phone : CommonHelper::INTERCEPTOR_NUMBER
+		begin
+			SmsSender.perform(ph_number,message,0,"otp_phone_verification")
+		rescue Exception => e
+			ExceptionNotifier::Notifier.exception_notification(Rails.env, e).deliver
+			Exotel.send_message(ph_number, message, 0, "otp_phone_verification")
+		end
+		self.otp_attempts = self.otp_attempts.to_i + 1
+	end
+
+	def after_save_tasks
+		# Allot credits after validating the referral once the phone is verified
+		Referral.validate_reference(self) if phone_verified_changed? && phone_verified == true
 	end
 end
 

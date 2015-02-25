@@ -121,23 +121,28 @@ class UsersController < ApplicationController
 			current_user.country = user.country
 			current_user.pincode = user.pincode
 			current_user.state = user.state
-      #if current_user.city_id.blank?
-      # current_user.city_id = @city.id
-      #else
-      # current_user.city = user.city
-      #end
+
 			current_user.city = user.city
       current_user.city_id = user.city_id
 			current_user.signup = true
+			current_user.send_opt_verification_sms if current_user.referral_sign_up?
 			if current_user.save
 				flash[:notice] = 'Details saved, please carry on!' if session[:book].blank?
 			else
 				flash[:error] = 'Please fix the following errors.'
 			end
-			return render json: {html: render_to_string('/users/signup.haml', :layout => false)}
+			if current_user.referral_sign_up?
+				return render json: {html: render_to_string('/users/otp_verification.haml', :layout => false)}
+			else
+				return render json: {html: render_to_string('/users/signup.haml', :layout => false)}
+			end
 		else
 			if user_signed_in?
+				# if current_user.referral_sign_up?
+				# 	return render json: {html: render_to_string('/users/otp_verification.haml', :layout => false)}
+				# else
 				return render json: {html: render_to_string('/users/signup.haml', :layout => false)}
+				# end
 			else
 				render json: {html: render_to_string('/devise/registrations/new.haml', :layout => false)}
 			end
@@ -158,7 +163,9 @@ class UsersController < ApplicationController
 	end
 
 	def update
-		if current_user.update(signup_params.merge({'profile' => 1}))
+		attributes = signup_params
+		attributes = attributes.merge("unverified_phone" => attributes["phone"]).except("phone")
+		if current_user.update(attributes.merge({'profile' => 1}))
 			flash[:notice] = 'Profile changes are saved! '
 			redirect_to "/users/settings"
 		else
@@ -190,6 +197,34 @@ class UsersController < ApplicationController
     response = ApiModule.admin_api_post_call(url, args)
 		render json: (response["response"] rescue { err: true, :response => 'Sorry!! But something went wrong'})
 	end
+
+	# Sends OTP SMS to the user mobile
+  #
+  # Author:: Rohit
+  # Date:: 19/02/2015
+  #
+	def send_otp_sms
+		return unless request.xhr?
+    response = call_send_otp_sms_api
+		render nothing: true, :status => 200
+	end
+
+	# Applies referral
+  #
+  # Author:: Rohit
+  # Date:: 17/12/2014
+  #
+  # Expects ::
+  #  * <b>params[:otp_code]</b> OTP code to be verified from the user
+  #
+	def verify_opt_sms
+		return unless request.xhr?
+		response = call_verify_otp_sms_api
+		@response = response["response"]["response"] rescue false
+		# render json: (response["response"] rescue { err: true, :response => 'Sorry!! But something went wrong'})
+		return render json: {html: render_to_string('/users/otp_verification.haml', :layout => false)}
+	end
+
 	
 	private
 
@@ -209,7 +244,7 @@ class UsersController < ApplicationController
 	end
 	
   def signup_params
-    params.require(:user).permit(:name, :phone, :dob, :gender, :country, :pincode, :state, :city, :license, :city_id)
+    params.require(:user).permit(:name, :phone, :dob, :gender, :country, :pincode, :state, :city, :license, :city_id, :unverified_phone)
   end
 
 end
