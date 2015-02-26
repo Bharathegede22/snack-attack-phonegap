@@ -138,11 +138,11 @@ class UsersController < ApplicationController
 			end
 		else
 			if user_signed_in?
-				# if current_user.referral_sign_up?
-				# 	return render json: {html: render_to_string('/users/otp_verification.haml', :layout => false)}
-				# else
-				return render json: {html: render_to_string('/users/signup.haml', :layout => false)}
-				# end
+				if current_user.unverified_phone && params[:reenter_phone].blank?
+					return render json: {html: render_to_string('/users/otp_verification.haml', :layout => false)}
+				else
+					return render json: {html: render_to_string('/users/signup.haml', :layout => false)}
+				end
 			else
 				render json: {html: render_to_string('/devise/registrations/new.haml', :layout => false)}
 			end
@@ -164,9 +164,10 @@ class UsersController < ApplicationController
 
 	def update
 		attributes = signup_params
-		attributes = attributes.merge("unverified_phone" => attributes["phone"]).except("phone")
+		attributes = attributes.merge("unverified_phone" => attributes["phone"]).except("phone") if current_user.phone.present?
+		current_user.signup = true
 		if current_user.update(attributes.merge({'profile' => 1}))
-			current_user.send_opt_verification_sms
+			current_user.send_opt_verification_sms if attributes["unverified_phone"].present?
 			flash[:notice] = 'Profile changes are saved! '
 			redirect_to "/users/settings"
 		else

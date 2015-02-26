@@ -24,6 +24,7 @@ class User < ActiveRecord::Base
   validates :license, uniqueness: true, if: Proc.new {|u| u.license_check? && !u.license.blank?}
   validates :phone, numericality: {only_integer: true}, if: Proc.new {|u| u.profile? && !u.phone.blank?}
   validates :pincode, numericality: {only_integer: true}, if: Proc.new {|u| !u.pincode.blank?}
+  # validates :unverified_phone, length: {is: 10, message: 'only indian mobile numbers without +91/091' }, if: Proc.new {|u| u.profile? && !u.phone.blank?}
   validates :phone, length: {is: 10, message: 'only indian mobile numbers without +91/091' }, if: Proc.new {|u| u.profile? && !u.phone.blank?}
   validates :pincode, length: {is: 6, message: 'should be of 6 digits'}, if: Proc.new {|u| !u.pincode.blank?}
   validate :check_dob
@@ -490,7 +491,7 @@ class User < ActiveRecord::Base
 		message = "Hi! Your code for phone number verification is #{self.otp}."
 		ph_number = Rails.env.production? ? (self.unverified_phone.present? ? self.unverified_phone : self.phone) : CommonHelper::INTERCEPTOR_NUMBER
 		begin
-			SmsSender.perform(ph_number,message,0,"otp_phone_verification")
+			SmsSender.perform_async(ph_number,message,0,"otp_phone_verification")
 		rescue Exception => e
 			ExceptionNotifier::Notifier.exception_notification(Rails.env, e).deliver
 			Exotel.send_message(ph_number, message, 0, "otp_phone_verification")
@@ -500,7 +501,11 @@ class User < ActiveRecord::Base
 
 	def after_save_tasks
 		# Allot credits after validating the referral once the phone is verified
-		Referral.validate_reference(self) if phone_verified_changed? && phone_verified == true
+		Referral.validate_reference(self) if phone_verified_changed? && phone_verified && self.referral_sign_up?
+	end
+
+	def before_save_tasks
+		current_user.send_opt_verification_sms if current_user.unverified_phone_changed?
 	end
 end
 

@@ -1,6 +1,6 @@
 - if current_user
 	#DetailsDiv
-		- if current_user.name.blank? || current_user.phone.blank? || current_user.dob.blank? || !current_user.valid?
+		- if current_user.name.blank? || current_user.phone.blank? || current_user.dob.blank? || !current_user.valid? || params[:reenter_phone].to_i == 1
 			- render_flash
 			- current_user.country = 'IN' if current_user.country.blank?
 			- current_user.state = 'Karnataka' if current_user.state.blank?

@@ -19,6 +19,12 @@
 						= f.text_field :phone, :class => 'form-control', placeholder: '10 digit mobile no. (India only)'
 						.error
 							= errortxt(current_user.errors[:phone].uniq.join(', '))
+				- if current_user.unverified_phone.present?
+					.row.form-group
+						%label.col-sm-2.control-label New Phone
+						.col-sm-10
+							%p.form-control-static
+								%a{:href => "javascript:void(0)", :onclick => "showModal('Sign Up', '/users/signup');"} Vefify Phone
 				.row.form-group
 					%label.col-sm-2.control-label Password
 					.col-sm-10

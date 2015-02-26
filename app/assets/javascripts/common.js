@@ -1003,3 +1003,32 @@ function referForm(frm,url,divId) {
 	});
 }
 
+function resendOTP() {
+	$(document).ready(function(){
+		// var otp_code = jQuery.trim($("#otp_code").val());
+		  $.ajax({
+		    type:"POST",
+		    url: '/users/send_otp_sms/',
+		    data: {},
+				dataType: "json"
+		  })
+		  .done(function(json){
+		    $("#referForm").empty().append(json.html);
+		  })
+	});
+}
+
+function modifyPhone() {
+	$(document).ready(function(){
+		// var otp_code = jQuery.trim($("#otp_code").val());
+		  $.ajax({
+		    type:"GET",
+		    url: '/users/signup/',
+		    data: {reenter_phone: '1'},
+				dataType: "json"
+		  })
+		  .done(function(json){
+		    $("#referForm").empty().append(json.html);
+		  })
+	});
+}

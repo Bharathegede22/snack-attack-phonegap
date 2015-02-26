@@ -1,21 +1,19 @@
 - if current_user && (@response != "success")
 	#referForm
-		.login.t-c
-			We have sent a code to your phone, please verify it. #{1}
+		#referbox.t-c
+			We have sent a code to your phone number, Please enter that.
 			%br/
 			%br/
 			%form{:id => "referForm", :onsubmit => "return referForm(this,'#{verify_opt_sms_users_path}','referForm');", :action => "javascript:void(0)", "data-remote" => "true"}
 				.form-horizontal
 					.row.form-group
-						.col-sm-3.col-sm-offset-1.t-r
-							%label.control-label
-						.col-sm-6
-							%input#otp_code.validate-presence.form-control{:placeholder => "Enter Promo Code" ,name: 'otp_code', type: "text"}
-							#LoginEmailError.error.t-l
-							%br/
-							%br/
-							TRex was a bitch
-							%br/
+					%input#otp_code.validate-presence.form-control{:placeholder => "Enter Promo Code" ,name: 'otp_code', type: "text"}
+					#LoginEmailError.error.t-l
+					%br/
+					%br/
+					We never want to spam anyone, this helps verify that the phone number you provided is in fact yours.
+					%br/
+					%br/
 					.row
 						.col-sm-3.col-sm-offset-1
 						.col-sm-6.t-l
@@ -26,11 +24,11 @@
 		.p-t20
 			.f-b.bg-e.p-10.r-5.border-c.solid
 				.fl
-					%a.btn.btn-primary.btn-sm{:href => "javascript:void(0)", :onclick => "getData('/users/send_otp_sms', 'SignupDiv', 'replace', null);"}
+					%a.btn.btn-primary.btn-sm{:href => "javascript:void(0)", :onclick => "modifyPhone();"}
 						Edit Phone Number
 				.fr
-					%a.btn.btn-primary.btn-sm{:href => "javascript:void(0)", :onclick => "getData('/users/forgot', 'SignupDiv', 'replace', null);"}
+					%a.btn.btn-primary.btn-sm{:href => "javascript:void(0)", :onclick => "resendOTP();"}
 						Resend OTP
 				.fc
 - else
-	Thanks for the verification, you have earned 500 credits through this sign up!
+	Thanks for the verification
