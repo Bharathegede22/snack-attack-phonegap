@@ -13,7 +13,7 @@
 		.sold-out-tag
 	.each-car-offer.r-3
 		.col-md-4.border-r-c.car-booking-block
-			%img.m-auto{:alt => cargroup.display_name, :src => asset_url(cargroup.small_image.avatar.url),:class => 'car' + cargroup.id.to_s}
+			%img.m-auto{:alt => cargroup.display_name, :src => cargroup.small_image.avatar.url,:class => 'car' + cargroup.id.to_s}
 			/ = image_tag("cars/#{cargroup.id}small.jpg", :alt => "")
 			.fl.p-t5.p-b10
 				.size-20.f-b.zoom-b.t-c

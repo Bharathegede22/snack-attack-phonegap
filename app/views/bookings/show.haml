@@ -53,7 +53,7 @@
 		.border-b-c.position-r
 			.p-t5.p-b5.p-l20.p-r20.size-16
 				.inline-block.colored
-					%img.m-auto{:src => asset_url(cargroup.small_image.avatar.url), :class => 'car' + @booking.cargroup_id.to_s}
+					%img.m-auto{:src => cargroup.small_image.avatar.url, :class => 'car' + @booking.cargroup_id.to_s}
 					/ .m-auto{:class => 'car' + @booking.cargroup_id.to_s}
 				.inline-block.p-l5.position-r{style: "vertical-align: middle;"}
 					.size-18.f-b.zoom-b
