@@ -34,7 +34,7 @@
 								.red.size-10
 									= cargroup.disclaimer.html_safe
 							.colored
-								%img.m-auto{:src => asset_url(cargroup.small_image.avatar.url),:class => 'car' + @booking.cargroup_id.to_s}
+								%img.m-auto{:src => cargroup.small_image.avatar.url,:class => 'car' + @booking.cargroup_id.to_s}
 								/ .m-auto{:class => 'car' + cargroup.id.to_s}
 							Available at
 							%br/

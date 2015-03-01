@@ -10,7 +10,7 @@
 		%td{width: "#{width}%"} &nbsp;
 		- cars.each do |cg|
 			%td{width: "#{width}%"}
-				%img.m-auto{:alt => cg.display_name, :src => asset_url(cg.small_image.avatar.url),:class => 'car' + cg.id.to_s}
+				%img.m-auto{:alt => cg.display_name, :src => cg.small_image.avatar.url,:class => 'car' + cg.id.to_s}
 				/ = image_tag("cars/#{cg.id}small.jpg", :alt => cg.display_name)
 				%br/
 				.p-t10.p-b10
