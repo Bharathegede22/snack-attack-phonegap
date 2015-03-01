@@ -54,6 +54,7 @@ namespace :generic do
 	  run "ln -s #{shared_path}/database.yml #{release_path}/config/database.yml"
 	  run "ln -s #{shared_path}/varnishd.yml #{release_path}/config/varnishd.yml"
     run "ln -s #{shared_path}/newrelic.yml #{release_path}/config/newrelic.yml"
+    run "ln -s #{shared_path}/s3.yml #{release_path}/config/s3.yml"
 	  run "ln -s #{shared_path}/GeoLiteCity.dat #{release_path}/GeoLiteCity.dat"
 	  run "chmod 777 #{release_path}/public/sitemap.xml"
 	end
