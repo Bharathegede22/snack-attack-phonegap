@@ -125,7 +125,7 @@ class UsersController < ApplicationController
 			current_user.city = user.city
       current_user.city_id = user.city_id
 			current_user.signup = true
-			current_user.send_opt_verification_sms if current_user.referral_sign_up?
+			current_user.send_otp_verification_sms if current_user.referral_sign_up?
 			if current_user.save
 				flash[:notice] = 'Details saved, please carry on!' if session[:book].blank?
 			else
@@ -167,7 +167,11 @@ class UsersController < ApplicationController
 		attributes = attributes.merge("unverified_phone" => attributes["phone"]).except("phone") if current_user.phone.present?
 		current_user.signup = true
 		if current_user.update(attributes.merge({'profile' => 1}))
-			current_user.send_opt_verification_sms if attributes["unverified_phone"].present?
+			if attributes["unverified_phone"].present?
+				current_user.send_otp_verification_sms
+				@show_otp_modal_box = true
+			end
+			@show_otp
 			flash[:notice] = 'Profile changes are saved! '
 			redirect_to "/users/settings"
 		else

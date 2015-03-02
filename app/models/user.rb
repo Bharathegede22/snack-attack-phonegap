@@ -444,7 +444,7 @@ class User < ActiveRecord::Base
   # Expects ::
   #  * <b>user</b> User object
   #
-	def send_opt_verification_sms
+	def send_otp_verification_sms
 		if self.otp.present?
 			resend_sms
 		else
@@ -493,7 +493,7 @@ class User < ActiveRecord::Base
 		begin
 			SmsSender.perform_async(ph_number,message,0,"otp_phone_verification")
 		rescue Exception => e
-			ExceptionNotifier::Notifier.exception_notification(Rails.env, e).deliver
+			ExceptionNotifier.notify_exception(e)
 			Exotel.send_message(ph_number, message, 0, "otp_phone_verification")
 		end
 		self.otp_attempts = self.otp_attempts.to_i + 1
@@ -505,7 +505,7 @@ class User < ActiveRecord::Base
 	end
 
 	def before_save_tasks
-		current_user.send_opt_verification_sms if current_user.unverified_phone_changed?
+		current_user.send_otp_verification_sms if current_user.unverified_phone_changed?
 	end
 end
 

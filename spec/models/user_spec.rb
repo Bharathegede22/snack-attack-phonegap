@@ -2,6 +2,79 @@ require 'spec_helper'
 
 describe User do
   pending "add some examples to (or delete) #{__FILE__}"
+
+
+	describe "#send_otp_verification_sms", focus: true do
+
+    it "should send OTP to unverified_phone if unverified_phone is present" do
+      @user = FactoryGirl.create(:user, unverified_phone: '9930000000')
+      @user.send_otp_verification_sms
+      expect(@user.otp).not_to be nil # otp generated?
+      expect(@user.otp_valid_till).to be < 1.hour.from_now # check validity
+      expect(@user.unverified_phone).not_to be nil
+    end
+
+    it "should not send more than 3 sms within hour" do
+      @user = FactoryGirl.create(:user, unverified_phone: '9930000000')
+      4.times { @user.send_otp_verification_sms }
+      expect(@user.otp_attempts).not_to be > 3 #Sms.where(:phone => '', :activity => 'otp_phone_verification').length.should_not be > 3
+    end
+
+    it "should send OTP to primary phone if unverified_phone if it is nil" do
+      @user = FactoryGirl.create(:user, phone: '9930000000')
+      expect(@user.unverified_phone).to be nil
+      @user.send_otp_verification_sms
+      expect(@user.otp).not_to be nil # otp generated?
+      expect(@user.otp_valid_till).to be < 1.hour.from_now # check validity
+    end
+  end
+
+  describe "#verify_otp", focus: true do
+    # Creates user and send OTP sms
+    def create_user_and_send_otp_sms(args={})
+      @user = FactoryGirl.create(:user, args)
+      @user.send_otp_verification_sms
+      @user
+    end
+
+    it "should verify otp for unverified_phone" do
+      @user = create_user_and_send_otp_sms(unverified_phone: '9930000000')
+      expect(@user.phone_verified).to be false
+      expect(@user.unverified_phone).not_to be nil
+      @user.verify_otp(@user.otp)
+      expect(@user.phone_verified).to be true
+      expect(@user.unverified_phone).to be nil
+    end
+
+    it "should verify otp for primary phone" do
+      @user = create_user_and_send_otp_sms(phone: '9930000000')
+      expect(@user.phone_verified).to be false
+      expect(@user.unverified_phone).to be nil
+      expect(@user.phone).not_to be nil
+      @user.verify_otp(@user.otp)
+      expect(@user.phone_verified).to be true
+    end
+
+    it "should return err if otp mismatch" do
+      @user = create_user_and_send_otp_sms(phone: '9930000000')
+       #setting any number
+      expect(@user.verify_otp('234234')[:err]).to eq('otp code mismatch')
+    end
+
+    it "should give credits to the referred user" do
+      referrer_user = FactoryGirl.create(:user)
+      @user = create_user_and_send_otp_sms(phone: '9930000000')
+      referral = Referral.create(referral_user_id: referrer_user.id, referral_email: @user.email, signup_flag: 1)
+      @user.verify_otp(@user.otp)
+      expect(@user.sign_up_credits_earned?).to be true
+      # It should not give duplicate sign up credits
+      Referral.validate_reference @user
+      signup_credits = @user.credits.where(:source_name => Credit::SOURCE_NAME_INVERT["Sign up"]).collect(&:amount).sum.to_i
+      expect(signup_credits).to eq(Credit::REFERRAL_CREDIT)
+    end
+
+  end
+
 end
 
 # == Schema Information
