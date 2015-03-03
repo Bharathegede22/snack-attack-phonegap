@@ -28,6 +28,15 @@ class Image < ActiveRecord::Base
   
   validates :imageable_id, :imageable_type, presence: true
   # validates :imageable_id, uniqueness: {scope: :imageable_type}
+
+  before_save :before_save_tasks
+
+  protected
+
+  def before_save_tasks
+    self.s3_flag = false
+    return true
+  end
   
 end
 
