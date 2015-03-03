@@ -6,7 +6,7 @@ module ApplicationHelper
       resource.get params: params  
     rescue Exception => e
       Rails.logger.debug "RestClient GET call failed\n #{e.message}"
-      ExceptionNotifier::Notifier.exception_notification(Rails.env, e).deliver
+      ExceptionNotifier.notify_exception(e)
       flash[:error] = "Sorry, our system is busy right now. Please try after some time."
       return
     end
@@ -15,10 +15,10 @@ module ApplicationHelper
   def admin_api_post_call url,params
     begin
       resource = RestClient::Resource.new(url,:timeout => 5, :open_timeout => 5)
-      resource.post params: params  
+      resource.post params
     rescue Exception => e
       Rails.logger.debug "RestClient POST call failed\n #{e.message}"
-      ExceptionNotifier::Notifier.exception_notification(Rails.env, e).deliver
+      ExceptionNotifier.notify_exception(e)
       flash[:error] = "Sorry, our system is busy right now. Please try after some time."
     end
   end
