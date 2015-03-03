@@ -55,7 +55,6 @@ group :doc do
 end
 
 group :development, :test do
-	gem 'debugger'
   gem "rspec"
   gem 'rspec-rails'
   gem 'rb-readline'
@@ -79,7 +78,6 @@ group :development, :test do
   gem 'pry'
   gem 'pry-remote'
   gem 'pry-stack_explorer'
-  gem 'pry-debugger'
   gem 'awesome_print'
   gem 'interactive_editor'
   gem 'meta_request'
