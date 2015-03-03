@@ -806,7 +806,8 @@ class BookingsController < ApplicationController
 		                                                              city: @city.link_name,
 		                                                              location_id: @booking.location_id,
 		                                                              platform: "web",
-                                                                  new_ui: "Yes"
+                                                                  new_ui: "Yes",
+                                                                  dummy_no_loc: "true"
 		                                                            }
 		        Rails.logger.info "API call over: ======== "
 		      	@inventory,@cars,@order,@car_images = get_inventory_from_json search_results_from_admin
