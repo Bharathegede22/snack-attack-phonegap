@@ -1,5 +1,8 @@
 class MainController < ApplicationController
+	
+	after_filter :set_http_caching, :except => [:calculator, :get_locations_map, :index, :join, :mobile_redirect, :redirect]
 	before_filter :set_referral_cookie, :only => [:signup]
+
 	def about
 		@meta_title = "About Zoomcar Team | Online Self Drive Car In #{@city.name}"
 		@meta_description = "Read about Zoomcar's self drive car team. Highly qualified professionals with knowledge and experience in self driven car rental services"
@@ -247,15 +250,15 @@ class MainController < ApplicationController
 			@canonical = @city.link
 		else
 			redirect_to @city.link and return if !session[:city].blank?
-      @city = City.lookup_all('bangalore') if @city.blank? || !@city.active
+      @city = City.lookup_all('bangalore') #if @city.blank? || !@city.active
 			@meta_title = City.meta_title
 			@meta_description = City.meta_description
 			@meta_keywords = City.meta_keywords
 			@header = 'homepage'
 			@canonical = City.link
 		end
+		set_http_caching
 		render :inactive and return if @city.prelaunch
-		#expires_in 1.months, :public => true, 'max-stale' => 0 #if Rails.env == 'production'
 	end
 
 	def job

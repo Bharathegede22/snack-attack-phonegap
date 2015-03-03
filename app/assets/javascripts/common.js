@@ -199,10 +199,7 @@ function checkout(data) {
 
 function checkUser() {
 	if($('#UserBar').length) {
-		if($('body').hasClass('body-header-new'))
-			getData("/users/status", 'UserBar', 'replace', null);
-		else
-			getData("/users/status_old", 'UserBar', 'replace', null);
+		getData("/users/status", 'UserBar', 'replace', null);
 	}
 }
 

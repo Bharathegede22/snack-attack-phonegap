@@ -1,5 +1,7 @@
 class SeoController < ApplicationController
 	
+	after_filter :set_http_caching
+
 	def explore
 		@meta_title = @city.meta_title('inside')
 		@meta_description = @city.meta_description('inside')

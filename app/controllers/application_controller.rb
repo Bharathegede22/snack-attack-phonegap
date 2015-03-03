@@ -1,6 +1,9 @@
 require "browser"
 class ApplicationController < ActionController::Base
+  
   include ApplicationHelper
+  include Lacquer::CacheUtils
+
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   
@@ -8,11 +11,12 @@ class ApplicationController < ActionController::Base
   
   before_filter :check_city
   before_filter :check_mobile
-  before_filter :check_ref
+  #before_filter :check_ref
   before_filter :authenticate_staging
   force_ssl if: :check_ssl?
 
   def check_city
+    response.headers["X-FRAME-OPTIONS"] = "ALLOW-FROM http://optimizely.com"
     # Checking explicit city in the url
     city_prompt = false
     city = params[:city]
@@ -68,14 +72,16 @@ class ApplicationController < ActionController::Base
   end
   
   def check_ref
-    response.headers["X-FRAME-OPTIONS"] = "ALLOW-FROM http://optimizely.com"
   	# Check Ref Initial
   	if cookies[:ref].blank?
   		vref = ''
   	else
   		vref = cookies[:ref] + ','
   	end
-  	vref << params[:ref] + ',' if !params[:ref].blank?
+    if request.env["HTTP_REFERER"].include?('?ref=')
+      ref = request.env["HTTP_REFERER"].split('?ref=').last.split('?').first
+    end
+  	vref << ref + ',' if !ref.blank?
   	if vref.blank?
   		vref ='-'
   	else
@@ -201,4 +207,11 @@ class ApplicationController < ActionController::Base
     end
   end
   
+  # Author :: Amit
+  # Date :: 03/03/2015
+  # Support for Varnish
+  def set_http_caching
+    expires_in 1.hours, :public => true if Rails.env == 'production'
+  end
+
 end
