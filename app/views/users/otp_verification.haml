@@ -7,7 +7,7 @@
 			%form{:id => "referForm", :onsubmit => "return referForm(this,'#{verify_opt_sms_users_path}','referForm');", :action => "javascript:void(0)", "data-remote" => "true"}
 				.form-horizontal
 					.row.form-group
-					%input#otp_code.validate-presence.form-control{:placeholder => "Enter Promo Code" ,name: 'otp_code', type: "text"}
+					%input#otp_code.validate-presence.form-control{:placeholder => "Enter Code" ,name: 'otp_code', type: "text"}
 					#LoginEmailError.error.t-l
 					%br/
 					%br/

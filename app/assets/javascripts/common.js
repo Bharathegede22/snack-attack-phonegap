@@ -1032,3 +1032,11 @@ function modifyPhone() {
 		  })
 	});
 }
+
+/*
+	For User Settings page
+*/
+
+	if (typeof window.user_settings_modal !== 'undefined' && window.user_settings_modal === true) {
+		showModal('Sign Up', '/users/signup');
+	}
