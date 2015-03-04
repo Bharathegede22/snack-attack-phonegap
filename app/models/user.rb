@@ -501,7 +501,7 @@ class User < ActiveRecord::Base
 
 	def after_save_tasks
 		# Allot credits after validating the referral once the phone is verified
-		Referral.validate_reference(self) if phone_verified_changed? && phone_verified && self.referral_sign_up?
+		Referral.validate_reference(self) if phone_verified && self.referral_sign_up?
 	end
 
 	def before_save_tasks
