@@ -125,7 +125,8 @@ class UsersController < ApplicationController
 			current_user.city = user.city
       current_user.city_id = user.city_id
 			current_user.signup = true
-			current_user.send_otp_verification_sms if current_user.referral_sign_up?
+			# Send OTP verification sms to user mobile phone
+			call_send_otp_sms_api if current_user.referral_sign_up?
 			if current_user.save
 				flash[:notice] = 'Details saved, please carry on!' if session[:book].blank?
 			else
@@ -168,7 +169,8 @@ class UsersController < ApplicationController
 		current_user.signup = true
 		if current_user.update(attributes.merge({'profile' => 1}))
 			if attributes["unverified_phone"].present?
-				current_user.send_otp_verification_sms
+				# Send OTP verification sms to the new user mobile phone
+				call_send_otp_sms_api
 				@show_otp_modal_box = true
 			end
 			@show_otp

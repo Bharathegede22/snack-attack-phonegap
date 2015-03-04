@@ -199,7 +199,6 @@ class ApplicationController < ActionController::Base
   end
 
   def call_send_otp_sms_api
-    return unless request.xhr?
     args = { platform: "web", auth_token: current_user.generate_authentication_token}
     url = "#{ADMIN_HOSTNAME}/mobile/v3/user_activities/send_otp_sms"
     response = ApiModule.admin_api_post_call(url, args)

@@ -505,7 +505,7 @@ class User < ActiveRecord::Base
 	end
 
 	def before_save_tasks
-		current_user.send_otp_verification_sms if current_user.unverified_phone_changed?
+		# current_user.send_otp_verification_sms if current_user.unverified_phone_changed?
 	end
 end
 
