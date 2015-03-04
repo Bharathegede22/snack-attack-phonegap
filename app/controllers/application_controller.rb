@@ -59,16 +59,16 @@ class ApplicationController < ActionController::Base
   	session[:web_layout] = 1 if !params[:web].blank? && params[:web].to_i == 1
   	return if !session[:web_layout].blank? && session[:web_layout] == 1
   	# Checking mobile browsers
-  	if !request.user_agent.blank?
-  		browser = Browser.new(:ua => request.user_agent, :accept_language => "en-us")
-  		if browser.mobile? || browser.tablet?
-  			if browser.mac?
-  				@device = 'ios'
-  			else
-  				@device = 'android'
-  			end
-  		end
-  	end
+  	# if !request.user_agent.blank?
+  	# 	browser = Browser.new(:ua => request.user_agent, :accept_language => "en-us")
+  	# 	if browser.mobile? || browser.tablet?
+  	# 		if browser.mac?
+  	# 			@device = 'ios'
+  	# 		else
+  	# 			@device = 'android'
+  	# 		end
+  	# 	end
+  	# end
   end
   
   def check_ref
