@@ -22,6 +22,7 @@ set :rails_env, "production"
 role :web, "43.252.91.239", "43.252.91.247", "43.252.91.248"
 role :app, "43.252.91.239", "43.252.91.247", "43.252.91.248"
 role :db,  "43.252.91.239", "43.252.91.247", "43.252.91.248", :primary => true
+role :cache, "43.252.91.239"
 
 ssh_options[:user] = "root"
 ssh_options[:keys] = "/root/.ssh/id_rsa"
@@ -75,7 +76,7 @@ namespace :generic do
   end
   
   desc "Removing Varnish Cache"
-  task :clear_cache, :roles => :app do
+  task :clear_cache, :roles => :cache do
     run "cd #{release_path} ; bundle exec rails runner -e production \"Lacquer::Varnish.new.purge('.*')\""
     run "cd #{release_path} ; bundle exec rails runner -e production \"Rails.cache.clear\""
   end

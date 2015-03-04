@@ -75,7 +75,7 @@
 				.fc
 		.bg-w
 			.wrapper.p-t5.p-b10
-				%a.logo{:href => '/'}
+				%a.logo{:href => "/#{CommonHelper.escape(@city.link_name.downcase)}"}
 				%nav.links{:role => "navigation"}
 					%ul.nav.navbar-nav.fr
 						%li.dropdown
