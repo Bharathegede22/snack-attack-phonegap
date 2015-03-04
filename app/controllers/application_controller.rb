@@ -214,4 +214,16 @@ class ApplicationController < ActionController::Base
     expires_in 1.hours, :public => true if Rails.env == 'production'
   end
 
+  # Author :: Amit
+  # Date :: 04/03/2015
+  # Setting city cookies from IP
+  def set_city
+    if !cookies[:city]
+      if @city.blank? || !@city.active
+        set_cookies_ref('bangalore')
+      else
+        set_cookies_ref(@city.name)
+      end
+    end
+  end
 end

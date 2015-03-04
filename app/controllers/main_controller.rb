@@ -249,7 +249,7 @@ class MainController < ApplicationController
 			@header = 'homepage'
 			@canonical = @city.link
 		else
-			redirect_to @city.link and return if !session[:city].blank?
+			#redirect_to @city.link and return if !session[:city].blank?
       @city = City.lookup_all('bangalore') #if @city.blank? || !@city.active
 			@meta_title = City.meta_title
 			@meta_description = City.meta_description

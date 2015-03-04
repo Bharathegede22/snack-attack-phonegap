@@ -152,6 +152,7 @@ class UsersController < ApplicationController
 	
 	def status
 		check_ref
+		#set_city
 		p @city.inspect
 		render json: {html: render_to_string('/users/status.haml', :layout => false)}
 	end
