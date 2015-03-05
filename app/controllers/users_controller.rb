@@ -125,18 +125,15 @@ class UsersController < ApplicationController
 			current_user.city = user.city
       current_user.city_id = user.city_id
 			current_user.signup = true
-			# Send OTP verification sms to user mobile phone
-			call_send_otp_sms_api if current_user.referral_sign_up?
 			if current_user.save
+				# Send OTP verification sms to user mobile phone
+				call_send_otp_sms_api if current_user.referral_sign_up?
 				flash[:notice] = 'Details saved, please carry on!' if session[:book].blank?
+				return render json: {html: render_to_string('/users/otp_verification.haml', :layout => false)} if current_user.referral_sign_up?
 			else
 				flash[:error] = 'Please fix the following errors.'
 			end
-			if current_user.referral_sign_up?
-				return render json: {html: render_to_string('/users/otp_verification.haml', :layout => false)}
-			else
-				return render json: {html: render_to_string('/users/signup.haml', :layout => false)}
-			end
+			return render json: {html: render_to_string('/users/signup.haml', :layout => false)}
 		else
 			if user_signed_in?
 				if current_user.unverified_phone && params[:reenter_phone].blank?
@@ -173,7 +170,6 @@ class UsersController < ApplicationController
 				call_send_otp_sms_api
 				@show_otp_modal_box = true
 			end
-			@show_otp
 			flash[:notice] = 'Profile changes are saved! '
 			redirect_to "/users/settings"
 		else

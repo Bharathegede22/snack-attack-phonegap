@@ -28,6 +28,7 @@ class User < ActiveRecord::Base
   validates :phone, length: {is: 10, message: 'only indian mobile numbers without +91/091' }, if: Proc.new {|u| u.profile? && !u.phone.blank?}
   validates :pincode, length: {is: 6, message: 'should be of 6 digits'}, if: Proc.new {|u| !u.pincode.blank?}
   validate :check_dob
+  validate :duplicate_verified_phone
   
   after_create :send_welcome_mail
   before_create :before_create_tasks
@@ -48,6 +49,10 @@ class User < ActiveRecord::Base
 	
   def check_dob
   	errors.add(:dob, "can't be less than #{CommonHelper::MIN_AGE} years") if !self.dob.blank? && (self.dob.to_datetime > (Time.zone.now - CommonHelper::MIN_AGE.years))
+  end
+
+  def duplicate_verified_phone
+  	errors.add(:phone, "this phone is already been used by a verified user") if User.where(phone: self.unverified_phone, phone_verified: 1).count > 0
   end
   
 	def encoded_id
@@ -404,9 +409,8 @@ class User < ActiveRecord::Base
   # Date:: 19/02/2015
   #
 	def referral_sign_up?
-    return true # For now BC
     return @referral_sign_up if defined?(@referral_sign_up)
-    @referral_sign_up = Referral.where(referral_email: current_user.email, signup_flag: 1).count > 0
+    @referral_sign_up = Referral.where(referral_email: self.email, signup_flag: 1).count > 0
   end
 
 	# Verifies user opt code

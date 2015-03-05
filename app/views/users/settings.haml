@@ -1,5 +1,5 @@
 :ruby
-	@show_otp_modal_box = current_user.unverified_phone.present? || (current_user.referral_sign_up? && !current_user.phone_verified)
+	@show_otp_modal_box = (flash[:notice].present? && flash[:error].blank? && current_user.unverified_phone.present?) || (current_user.referral_sign_up? && !current_user.phone_verified)
 	current_user.country = 'IN' if current_user.country.blank?
 	current_user.state = 'Karnataka' if current_user.state.blank?
 = form_for(current_user, :url => "/users/update", :html => {:method => :post}) do |f|
