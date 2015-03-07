@@ -187,7 +187,7 @@ Please review the details of your reservation:
 				%td{valign: 'top'}
 					- license = @user.license_pic
 					- if license
-						%a{href: 'http://uploads.zoomcar.com' + license.avatar.url(:profile), target: '_blank'}
+						%a{href: license.avatar.url(:profile), target: '_blank'}
 							See license
 					- else
 						= "-"
