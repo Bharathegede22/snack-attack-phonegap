@@ -33,7 +33,8 @@
 			.red.size-10
 				= cargroup.disclaimer.html_safe
 		.colored
-			.m-auto{:class => 'car' + @booking.cargroup_id.to_s}
+			%img.m-auto{:src => cargroup.small_image.avatar.url,:class => 'car' + @booking.cargroup_id.to_s}
+			/ .m-auto{:class => 'car' + @booking.cargroup_id.to_s}
 		Location :
 		%b
 			%u

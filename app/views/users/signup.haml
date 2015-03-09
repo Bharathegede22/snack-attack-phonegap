@@ -39,7 +39,8 @@
 									%option#DetailsCity.validate-presence.form-control.city{type: "text", value: "3", selected: current_user.city_id == 3}
 										Delhi
 							- else
-								%input#DetailsDob.validate-presence.form-control.dob{name: 'user[dob]', type: "text", value: current_user.dob.strftime('%d/%m/%Y'), placeholder: "dd/mm/yyyy (min #{CommonHelper::MIN_AGE} years)"}
+								- dob_string = current_user.dob.strftime('%d/%m/%Y') rescue ""
+								%input#DetailsDob.validate-presence.form-control.dob{name: 'user[dob]', type: "text", value: dob_string, placeholder: "dd/mm/yyyy (min #{CommonHelper::MIN_AGE} years)"}
 							#DetailsDobError.error
 								= errortxt(current_user.errors[:dob].uniq.join(', '))
 					- if false
@@ -134,7 +135,7 @@
 			- session[:signup] = 1
 		- else
 			%div
-				- if City.find(current_user.city_id).active
+				- if City.find(current_user.city_id || 1).active
 					%b Thank you for signing up. #{signup_credits_earned? ? "You have earned ₹500 in credits! They are in your Zoomcar Wallet." : ""}
 				- else
 					%b  Thank you! A welcome email is on its way. When we reach beautiful Delhi we will send an email letting you know, and your discount code will be in that email.

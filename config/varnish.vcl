@@ -9,9 +9,9 @@ backend default {
 sub vcl_recv {
 	
 	# Pipe requests for zoomcaradmin.com
-  if (req.http.host ~ "(www\.)?zoomcaradmin\.com") {
-     return(pipe);
-  }
+  #if (req.http.host != "(www\.)?zoomcar\.com") {
+  #   return(pipe);
+  #}
   
   # Pipe requests that are non-RFC2616 or CONNECT which is weird.
   if (req.request != "GET" &&
@@ -25,7 +25,13 @@ sub vcl_recv {
   }
 	
 	# Pipe requests for assets, users, search & bookings
-  if (req.url ~ "^/assets/*" || req.url ~ "^/users/*" || req.url ~ "^/search/*" || req.url ~ "^/bookings/*" || req.url ~ "^/admin/*") {
+  if (req.url ~ "^/assets/*" || 
+    req.url ~ "^/users/*" || 
+    req.url ~ "^/(delhi|bangalore|chennai|hyderabad|pune)/search" || 
+    req.url ~ "^/(delhi|bangalore|chennai|hyderabad|pune)/bookings/*" || 
+    req.url ~ "^/users/*" || 
+    req.url ~ "^/bookings/*" 
+  ) {
     return(pipe);
   }
   
@@ -52,12 +58,38 @@ sub vcl_recv {
     }
   }
 	
+  # This rule is to insert the client's ip address into the request header
+  if (req.restarts == 0) {
+    if (req.http.x-forwarded-for) {
+      set req.http.X-Forwarded-For = req.http.X-Forwarded-For + ", " + client.ip;
+    } else {
+      set req.http.X-Forwarded-For = client.ip;
+    }
+  }
+
+  # Removing params
+  set req.url = regsub(req.url, "\?.*", "");
+
 	# Stripping cookies etc
-  unset req.http.cookie;
-  unset req.http.authorization;
+  unset req.http.Cookie;
+  unset req.http.Authorization;
   unset req.http.If-None-Match;
 
   return(lookup);
+}
+
+sub vcl_hit {
+  if(req.request == "PURGE") {
+    purge;
+    error 200 "Purged.";
+  }
+}
+
+sub vcl_miss {
+  if(req.request == "PURGE") {
+    purge;
+    error 200 "Purged.";
+  }
 }
 
 # Called when entering pipe mode
@@ -66,24 +98,8 @@ sub vcl_pipe {
   # requests from the client will also be piped through and
   # left untouched by varnish. We don't want that.
   set req.http.connection = "close";
-  #set bereq.http.connection = "close";
-  #if (req.http.X-Forwarded-For) {
-  #  set bereq.http.X-Forwarded-For = req.http.X-Forwarded-For;
-  #} else {
-  #  set bereq.http.X-Forwarded-For = regsub(client.ip, ":.*", "");
-  #}
   return(pipe);
 }
-
-#sub vcl_pass {
-#  set bereq.http.connection = "close";
-#  if (req.http.X-Forwarded-For) {
-#    set bereq.http.X-Forwarded-For = req.http.X-Forwarded-For;
-#  } else {
-#    set bereq.http.X-Forwarded-For = regsub(client.ip, ":.*", "");
-#  }
-#  return(pass);
-#}
 
 # Called when the requested object has been retrieved from the
 # backend, or the request to the backend has failed
@@ -102,7 +118,7 @@ sub vcl_fetch {
 	}
   
   set beresp.do_esi = true;
-  unset beresp.http.set-cookie;
+  unset beresp.http.Set-Cookie;
   unset beresp.http.Etag;
   return(deliver);
 }

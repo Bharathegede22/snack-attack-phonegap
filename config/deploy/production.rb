@@ -19,9 +19,10 @@ set :use_sudo, false
 set :deploy_to, "/var/www/#{application}"
 set :rails_env, "production"
 
-role :web, "180.179.52.177"
-role :app, "180.179.52.177"
-role :db,  "180.179.52.177", :primary => true
+role :web, "43.252.91.239", "43.252.91.247", "43.252.91.248"
+role :app, "43.252.91.239", "43.252.91.247", "43.252.91.248"
+role :db,  "43.252.91.239", "43.252.91.247", "43.252.91.248", :primary => true
+role :cache, "43.252.91.239"
 
 ssh_options[:user] = "root"
 ssh_options[:keys] = "/root/.ssh/id_rsa"
@@ -54,6 +55,7 @@ namespace :generic do
 	  run "ln -s #{shared_path}/database.yml #{release_path}/config/database.yml"
 	  run "ln -s #{shared_path}/varnishd.yml #{release_path}/config/varnishd.yml"
     run "ln -s #{shared_path}/newrelic.yml #{release_path}/config/newrelic.yml"
+    run "ln -s #{shared_path}/s3.yml #{release_path}/config/s3.yml"
 	  run "ln -s #{shared_path}/GeoLiteCity.dat #{release_path}/GeoLiteCity.dat"
 	  run "chmod 777 #{release_path}/public/sitemap.xml"
 	end
@@ -74,7 +76,7 @@ namespace :generic do
   end
   
   desc "Removing Varnish Cache"
-  task :clear_cache, :roles => :app do
+  task :clear_cache, :roles => :cache do
     run "cd #{release_path} ; bundle exec rails runner -e production \"Lacquer::Varnish.new.purge('.*')\""
     run "cd #{release_path} ; bundle exec rails runner -e production \"Rails.cache.clear\""
   end

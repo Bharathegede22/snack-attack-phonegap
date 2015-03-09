@@ -282,9 +282,27 @@ class Payment < ActiveRecord::Base
 		end
 	end
 
+	# Skips callback if the payment is Offer/Credit related and its within 24 hours
+  # Author:: Rohit
+  # Date:: 27/02/2015
+  #
+	def credit_offer_payment_with_in_defered_time?
+		# return false if booking is > 24 hours period or its a non credit / non offer payment.
+		return false if self.booking.defer_allowed? || ['credits','dummy'].exclude?(self.through.to_s)
+		# Test for two conditions
+		# Condition 1: User has wallet amount present in this account.
+		return true if (self.booking.user.wallet_total_amount < CommonHelper::SECURITY_DEPOSIT)
+		# Condition 2: Payment is fullfilled by Credit or offer used.
+		return true if self.booking.outstanding > 0
+		false
+	end
+
 	protected
 	
 	def after_save_tasks
+		# skip callbaks for credit/offers payments with in 24 hours
+		return if credit_offer_payment_with_in_defered_time?
+
 		if self.status_changed? && self.status == 1 
 			b = self.booking
 			b.valid?

@@ -1,13 +1,5 @@
 :ruby
-	if !@booking
-		@booking = Booking.new
-		if !session[:search].blank?
-			@booking.starts = Time.zone.parse(session[:search][:starts]) if !session[:search][:starts].blank?
-			@booking.ends = Time.zone.parse(session[:search][:ends]) if !session[:search][:starts].blank?
-			@booking.location_id = session[:search][:loc]
-			@booking.cargroup_id = session[:search][:car]
-		end
-	end
+	@booking = Booking.new if !@booking
 %form{:id => "SearchForm", :onsubmit => "return SubmitForm(this,'/#{@city.link_name.downcase}/search/homepage','SearchFormDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
 	.item.fl
 		#StartDate.box.datetimebox

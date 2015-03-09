@@ -1,6 +1,10 @@
 class Image < ActiveRecord::Base
 	
 	has_attached_file :avatar, {
+      :storage => :s3,
+      :s3_credentials => Rails.root.join("config","s3.yml"),
+      :path => ":class/:style/:hash.:extension",
+      :hash_secret => YAML.load_file(Rails.root.join("config","s3.yml"))[Rails.env]["hash_secret"],
 			#:url => "/system/:hash.:extension",
 			#:hash_secret => "sjdsjuuwwndsajdsuwdnwqsshwssqsqgaodkfedwdnmqsuiqwgqqq",
 			:styles => lambda { |a|
@@ -28,6 +32,14 @@ class Image < ActiveRecord::Base
   
   validates :imageable_id, :imageable_type, presence: true
   # validates :imageable_id, uniqueness: {scope: :imageable_type}
+
+  before_save :before_save_tasks
+
+  protected
+
+  def before_save_tasks
+    self.s3_flag = true
+  end
   
 end
 

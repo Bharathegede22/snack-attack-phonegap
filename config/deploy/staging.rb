@@ -48,6 +48,7 @@ namespace :generic do
   desc "Link up config files."
   task :configs, :roles => [:app] do
     run "ln -s #{shared_path}/configurations.yml #{release_path}/config/configurations.yml"
+    run "ln -s #{shared_path}/s3.yml #{release_path}/config/s3.yml"
     run "ln -s #{shared_path}/database.yml #{release_path}/config/database.yml"
     run "ln -s #{shared_path}/varnishd.yml #{release_path}/config/varnishd.yml"
     run "ln -s #{shared_path}/newrelic.yml #{release_path}/config/newrelic.yml"

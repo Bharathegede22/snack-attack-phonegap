@@ -4,12 +4,12 @@
 			!
 	.broadcast.fr
 		.dropdown.fr
-			%a.dropdown-toggle.fl.border-r-d-9.topbar-link.p-5.p-l10{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
+			%a.dropdown-toggle.p-r10.p-l10{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
 				My Account
 				%b.caret
 			%ul.dropdown-menu.pull-right
 				%li
-					%a{:href => "#{@sslhost}/bookings"} My Bookings
+					%a{:href => "#{@sslhost}/users/bookings"} My Bookings
 				%li
 					%a{:href => "#{@sslhost}/users/settings"}
 						Account Settings
@@ -30,9 +30,12 @@
 			We're Hiring
 	.fc
 - else
+	- if current_user && current_user.unsafe_bookings.any?
+		%a.wallet-alert.fr.ts-3.f-b.pointer.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "You have an upcoming booking with Security Deposit due", href: "#{@sslhost}/users/bookings"}
+			!
 	.broadcast.fr
 		.dropdown.fr
-			%a.dropdown-toggle.fl.border-r-d-9.topbar-link.p-5.p-l10{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
+			%a.dropdown-toggle.p-r10.p-l10{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
 				My Account
 				%b.caret
 			%ul.dropdown-menu.pull-right
@@ -45,11 +48,13 @@
 				%li
 					%a{:href => "javascript:void(0)", :onclick => "showModal('Sign In', '/users/forgot');"}
 						Forgot Password
-	%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
-		We're Hiring
 
-	%a.hiring.fr.ts-3.f-b.pointer{href: "/deals", onclick: "pushEvent('Squirrel', 'Deals Tab - Header', '');"}
-		Deals
+	- if Deal.where('offer_start < ? and offer_end > ? and location_id IN (?)',Time.now,Time.now,@city.locations.map(&:id)).count > 0
+		%a.hiring.fr.ts-3.f-b.pointer{href: "/deals", onclick: "pushEvent('Squirrel', 'Deals Tab - Header', '');"}
+			Deals
+	- else
+		%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
+			We're Hiring
 	.fc
 - if user_signed_in? && !session[:social_signup].blank?
 	- if session[:social_signup] == 0

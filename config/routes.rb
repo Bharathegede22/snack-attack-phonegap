@@ -1,8 +1,12 @@
 Web::Application.routes.draw do
-	get 'mydeposits' => "wallets#show"
-  	get 'bookings'  => "wallets#show"
+	
+	get '/users/mydeposits' => "wallets#show"
+  get '/users/bookings'  => "wallets#show"
+  get 'mydeposits' => "wallets#show"
+  get 'bookings'  => "wallets#show"
 	get 'device'  => "main#device"
 	get 'deals' => "main#deals_of_the_day"
+	
 	scope "/(:city)", constraints: {city: /bangalore|delhi|pune/} do
 		get 'bookings/do_flash_booking' => 'bookings#do_flash_booking'
 	end
