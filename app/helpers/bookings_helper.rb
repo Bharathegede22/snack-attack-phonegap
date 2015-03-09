@@ -126,7 +126,7 @@ module BookingsHelper
       return res
     rescue Exception => ex
       Rails.logger.debug "JsonParsingError: Error parsing response from search results from api===== #{ex.message}--- BookingsHelper"
-      ExceptionNotifier::Notifier.exception_notification(Rails.env, ex).deliver
+      ExceptionNotifier.notify_exception(ex)
       flash[:error] = "Sorry, our system is busy right now. Please try after some time."
       return {}
     end
