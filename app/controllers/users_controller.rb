@@ -136,7 +136,7 @@ class UsersController < ApplicationController
 			return render json: {html: render_to_string('/users/signup.haml', :layout => false)}
 		else
 			if user_signed_in?
-				if current_user.unverified_phone && params[:reenter_phone].blank?
+				if show_otp_verification_box?
 					return render json: {html: render_to_string('/users/otp_verification.haml', :layout => false)}
 				else
 					return render json: {html: render_to_string('/users/signup.haml', :layout => false)}
@@ -162,7 +162,7 @@ class UsersController < ApplicationController
 
 	def update
 		attributes = signup_params
-		attributes = attributes.merge("unverified_phone" => attributes["phone"]).except("phone") if current_user.phone.present?
+		attributes = attributes.merge("unverified_phone" => attributes["phone"]).except("phone") if current_user.phone.present? && current_user.phone != attributes["phone"]
 		current_user.signup = true
 		if current_user.update(attributes.merge({'profile' => 1}))
 			if attributes["unverified_phone"].present?

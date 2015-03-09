@@ -1,5 +1,5 @@
 :ruby
-	@show_otp_modal_box = (flash[:notice].present? && flash[:error].blank? && current_user.unverified_phone.present?) || (current_user.referral_sign_up? && !current_user.phone_verified)
+	@show_otp_modal_box = flash[:notice].present? && flash[:error].blank? && show_otp_verification_box?
 	current_user.country = 'IN' if current_user.country.blank?
 	current_user.state = 'Karnataka' if current_user.state.blank?
 = form_for(current_user, :url => "/users/update", :html => {:method => :post}) do |f|
@@ -20,12 +20,12 @@
 						= f.text_field :phone, :class => 'form-control', placeholder: '10 digit mobile no. (India only)'
 						.error
 							= errortxt(current_user.errors[:phone].uniq.join(', '))
-				- if current_user.unverified_phone.present?
+				- if show_otp_verification_box?
 					.row.form-group
 						%label.col-sm-2.control-label
 						.col-sm-10
 							%p.form-control-static
-								%a{:href => "javascript:void(0)", :onclick => "showModal('Phone Number Verification', '/users/signup');"} Vefify Phone
+								%a{:href => "javascript:void(0)", :onclick => "showModal('Phone Number Verification', '/users/signup');"} Verify Phone Number
 								(Please complete the phone verification process. We will issue signup credits to your account only after this step.)
 				.row.form-group
 					%label.col-sm-2.control-label Password

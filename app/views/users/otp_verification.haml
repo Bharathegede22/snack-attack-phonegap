@@ -2,7 +2,7 @@
 	#referForm
 		.modal-loader#modal-loader-wrapper
 		#referbox.t-c
-			We have sent a code to your phone number, Please enter that.
+			We have sent a code to your phone number, please enter that.
 			%br/
 			%br/
 			%form{:id => "referForm", :onsubmit => "return referForm(this,'#{verify_opt_sms_users_path}','referForm');", :action => "javascript:void(0)", "data-remote" => "true"}
@@ -34,7 +34,7 @@
 						Edit Phone Number
 				.fr
 					%a.btn.btn-primary.btn-sm{:href => "javascript:void(0)", :onclick => "resendOTP();"}
-						Resend OTP
+						Resend Code
 				.fc
 - else
-	Thanks for the verification
+	Thanks for verifying the number

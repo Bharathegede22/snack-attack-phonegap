@@ -52,7 +52,7 @@ class User < ActiveRecord::Base
   end
 
   def duplicate_verified_phone
-  	errors.add(:phone, "this phone is already been used by a verified user") if User.where(phone: self.unverified_phone, phone_verified: 1).count > 0
+  	errors.add(:phone, I18n.t(:alredyUsedPhone)) if self.unverified_phone.present? && User.where(phone: self.unverified_phone, phone_verified: 1).count > 0
   end
   
 	def encoded_id

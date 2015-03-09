@@ -22,4 +22,5 @@
 en:
   hello: "Hello world"
   tokenNotFound: "Please Logout and Login again."
-  otpMismatch: "Sorry! but you seem to have entered a wrong password. Please try again"
+  otpMismatch: "Sorry, that code is incorrect. Please try again."
+  alredyUsedPhone: "Sorry, this number is already being used by another account."
