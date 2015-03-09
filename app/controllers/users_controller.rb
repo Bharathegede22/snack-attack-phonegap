@@ -210,7 +210,7 @@ class UsersController < ApplicationController
 	def send_otp_sms
 		return unless request.xhr?
     response = call_send_otp_sms_api
-		render nothing: true, :status => 200
+		render json: {success: true}, :status => 200
 	end
 
 	# Applies referral
@@ -225,6 +225,7 @@ class UsersController < ApplicationController
 		return unless request.xhr?
 		response = call_verify_otp_sms_api
 		@response = response["response"]["response"] rescue false
+		@errors =  I18n.t response["response"]["err"] if response.present? && response["response"].present? && response["response"]["err"].present?
 		# render json: (response["response"] rescue { err: true, :response => 'Sorry!! But something went wrong'})
 		return render json: {html: render_to_string('/users/otp_verification.haml', :layout => false)}
 	end

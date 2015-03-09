@@ -1005,7 +1005,7 @@ function referForm(frm,url,divId) {
 
 function resendOTP() {
 	$(document).ready(function(){
-		// var otp_code = jQuery.trim($("#otp_code").val());
+		$('#modal-loader-wrapper').show();
 		  $.ajax({
 		    type:"POST",
 		    url: '/users/send_otp_sms/',
@@ -1013,14 +1013,14 @@ function resendOTP() {
 				dataType: "json"
 		  })
 		  .done(function(json){
-		    $("#referForm").empty().append(json.html);
+		  	console.log('hi');
+		  	$('#modal-loader-wrapper').hide();
 		  })
 	});
 }
 
 function modifyPhone() {
 	$(document).ready(function(){
-		// var otp_code = jQuery.trim($("#otp_code").val());
 		  $.ajax({
 		    type:"GET",
 		    url: '/users/signup/',
@@ -1038,5 +1038,5 @@ function modifyPhone() {
 */
 
 	if (typeof window.user_settings_modal !== 'undefined' && window.user_settings_modal === true) {
-		showModal('Phone Verification', '/users/signup');
+		showModal('Phone Number Verification', '/users/signup');
 	}

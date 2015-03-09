@@ -1,5 +1,6 @@
 - if current_user && (@response != "success")
 	#referForm
+		.modal-loader#modal-loader-wrapper
 		#referbox.t-c
 			We have sent a code to your phone number, Please enter that.
 			%br/
@@ -9,6 +10,11 @@
 					.row.form-group
 					%input#otp_code.validate-presence.form-control{:placeholder => "Enter Code" ,name: 'otp_code', type: "text"}
 					#LoginEmailError.error.t-l
+					- if @errors.present?
+						%br/
+						%br/
+						.red
+							= @errors
 					%br/
 					%br/
 					We never want to spam anyone, this helps verify that the phone number you provided is in fact yours.
