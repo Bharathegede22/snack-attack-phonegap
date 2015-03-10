@@ -98,38 +98,43 @@ Please review the details of your reservation:
 						= @booking.promo
 					%br/
 					= offer.summary.html_safe
+				%br/
+			%br/
 - if @booking.kle_enabled
-	%br/
-	%br/
-	%div{style: "font-weight: bold; font-style: italic"}
-		Zoomcar goes Keyless!
-	You can now enter a Zoomcar at the start of your booking or exit it at the end keyless-ly:
-	%ul
-		%li 
-			%b Unlock:
-			At the start of your booking, to unlock the car use the Zoomcar app or SMS "UNLOCK" to #{CommonHelper::KLE_UNLOCK_NUMBER} from the phone number linked to your Zoomcar account. Watch the magic unfold!
-		%li 
-			%b Grab Car Key: 
-			The key will be inside the glove-box. You can unlock and lock the car keyless-ly only once during your booking, so keep the key on you.
-		%li 
-			%b Checklist: 
-			Go through the checklist on the in-car tablet's Zoomcar app. We ensure the car has everything for a smooth journey. Please remember if the checklist is not filled we will assume you found everything in great condition.
-		%li 
-			%b Start Your Journey: 
-			Zoom off!
-		%li 
-			%b Return: 
-			Place the key back inside the glove-box. Complete the super-quick return checklist on the tablet.
-		%li 
-			%b Lock: 
-			The car auto-locks 5 minutes after you submit the return checklist. You are now all set! See you again soon at the wheel of another Zoomcar.
+	%div{style: "font-weight: bold; font-weight: bold; font-size: 20px; text-align: center; margin-bottom: 15px;"}
+		%br/
+		How Keyless Entry Works
+	%div
+		%img{:src => "http://assets.zoomcartest.com/images/email/kle.jpg "}
+	/%div{style: "font-weight: bold; font-style: italic"}
+	/ 	Zoomcar goes Keyless!
+	/ You can now enter a Zoomcar at the start of your booking or exit it at the end keyless-ly:
+	/ %ul
+	/ 	%li 
+	/ 		%b Unlock:
+	/ 		At the start of your booking, to unlock the car use the Zoomcar app or SMS "UNLOCK" to #{CommonHelper::KLE_UNLOCK_NUMBER} from the phone number linked to your Zoomcar account. Watch the magic unfold!
+	/ 	%li 
+	/ 		%b Grab Car Key: 
+	/ 		The key will be inside the glove-box. You can unlock and lock the car keyless-ly only once during your booking, so keep the key on you.
+	/ 	%li 
+	/ 		%b Checklist: 
+	/ 		Go through the checklist on the in-car tablet's Zoomcar app. We ensure the car has everything for a smooth journey. Please remember if the checklist is not filled we will assume you found everything in great condition.
+	/ 	%li 
+	/ 		%b Start Your Journey: 
+	/ 		Zoom off!
+	/ 	%li 
+	/ 		%b Return: 
+	/ 		Place the key back inside the glove-box. Complete the super-quick return checklist on the tablet.
+	/ 	%li 
+	/ 		%b Lock: 
+	/ 		The car auto-locks 5 minutes after you submit the return checklist. You are now all set! See you again soon at the wheel of another Zoomcar.
 	%br/
 	Please make sure the number linked with your Zoomcar account is your correct number: 
 	%b #{@booking.user.phone}.
 	We will text your car’s details on this number, and also allow unlocking the car via SMS through only this number.
 	%br/
-	%br/
-	%br/
+%br/
+%br/
 %div{style: "margin:0px; padding:0px;"}
 	%b{style: "color:red; font-style:italic;"} IMPORTANT!
 	%br/
