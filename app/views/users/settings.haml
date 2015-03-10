@@ -20,7 +20,7 @@
 						= f.text_field :phone, :class => 'form-control', placeholder: '10 digit mobile no. (India only)'
 						.error
 							= errortxt(current_user.errors[:phone].uniq.join(', '))
-				- if show_otp_verification_box?
+				- if show_otp_verification_box? && current_user.referral_sign_up?
 					.row.form-group
 						%label.col-sm-2.control-label
 						.col-sm-10
