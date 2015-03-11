@@ -39,7 +39,7 @@ class Cargroup < ActiveRecord::Base
   	Rails.cache.fetch("cargroup-locations-#{city.id}-#{self.id}") do
 		 	Location.find_by_sql("SELECT l.* FROM locations l 
 		 		INNER JOIN cars c ON c.location_id = l.id 
-		 		WHERE c.cargroup_id = #{self.id} AND c.status > 0 AND l.status > 0 AND l.city_id = #{city.id} 
+		 		WHERE c.cargroup_id = #{self.id} AND c.status > 0 AND l.status > 0 AND l.ended = 0 AND l.city_id = #{city.id}
 		 		GROUP BY l.id 
 		 		ORDER BY l.id DESC")
 		end
