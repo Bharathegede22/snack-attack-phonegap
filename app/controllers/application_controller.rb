@@ -96,8 +96,8 @@ class ApplicationController < ActionController::Base
   	session[:ref_initial] = cookies[:ref]
   	
   	# Check Ref Immediate
-  	if !params[:ref].blank?
-    	session[:ref_immediate] = params[:ref]
+  	if !ref.blank?
+    	session[:ref_immediate] = ref
     else
     	session[:ref_immediate] = '-' if session[:ref_immediate].blank?
     end
