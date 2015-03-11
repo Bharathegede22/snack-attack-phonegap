@@ -1013,7 +1013,6 @@ function resendOTP() {
 				dataType: "json"
 		  })
 		  .done(function(json){
-		  	console.log('hi');
 		  	$('#modal-loader-wrapper').hide();
 		  })
 	});

@@ -165,11 +165,8 @@ class UsersController < ApplicationController
 		attributes = attributes.merge("unverified_phone" => attributes["phone"]).except("phone") if current_user.phone.present? && current_user.phone != attributes["phone"]
 		current_user.signup = true
 		if current_user.update(attributes.merge({'profile' => 1}))
-			if attributes["unverified_phone"].present?
-				# Send OTP verification sms to the new user mobile phone
-				call_send_otp_sms_api
-				@show_otp_modal_box = true
-			end
+			# Send OTP verification sms to the new user mobile phone
+			call_send_otp_sms_api if attributes["unverified_phone"].present?
 			flash[:notice] = 'Profile changes are saved! '
 			redirect_to "/users/settings"
 		else
