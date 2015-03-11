@@ -2,7 +2,8 @@
 	#referForm
 		.modal-loader#modal-loader-wrapper
 		#referbox.t-c
-			We have sent a code to your phone number, please enter that.
+			.size-13
+				We have sent a code to your phone number, please enter that.
 			%br/
 			%br/
 			%form{:id => "referForm", :onsubmit => "return referForm(this,'#{verify_opt_sms_users_path}','referForm');", :action => "javascript:void(0)", "data-remote" => "true"}
@@ -17,7 +18,8 @@
 							= @errors
 					%br/
 					%br/
-					We never want to spam anyone, this helps verify that the phone number you provided is in fact yours.
+					.size-13
+						We never want to spam anyone, this helps verify that the phone number you provided is in fact yours.
 					%br/
 					%br/
 					.row
@@ -33,7 +35,7 @@
 					%a.btn.btn-primary.btn-sm{:href => "javascript:void(0)", :onclick => "modifyPhone();"}
 						Edit Phone Number
 				.fr
-					%a.btn.btn-primary.btn-sm{:href => "javascript:void(0)", :onclick => "resendOTP();"}
+					%a.btn.btn-primary.btn-sm.sendotp{:href => "javascript:void(0)", :onclick => "resendOTP();"}
 						Resend Code
 				.fc
 - else
