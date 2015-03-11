@@ -24,7 +24,6 @@ class User < ActiveRecord::Base
   validates :license, uniqueness: true, if: Proc.new {|u| u.license_check? && !u.license.blank?}
   validates :phone, numericality: {only_integer: true}, if: Proc.new {|u| u.profile? && !u.phone.blank?}
   validates :pincode, numericality: {only_integer: true}, if: Proc.new {|u| !u.pincode.blank?}
-  # validates :unverified_phone, length: {is: 10, message: 'only indian mobile numbers without +91/091' }, if: Proc.new {|u| u.profile? && !u.phone.blank?}
   validates :phone, length: {is: 10, message: 'only indian mobile numbers without +91/091' }, if: Proc.new {|u| u.profile? && !u.phone.blank?}
   validates :pincode, length: {is: 6, message: 'should be of 6 digits'}, if: Proc.new {|u| !u.pincode.blank?}
   validate :check_dob
@@ -32,7 +31,6 @@ class User < ActiveRecord::Base
   
   after_create :send_welcome_mail
   before_create :before_create_tasks
-  after_save :after_save_tasks
 	before_validation :before_validation_tasks
 	
 	def admin?
@@ -248,6 +246,7 @@ class User < ActiveRecord::Base
 		self.otp = rand(100000..999999)
 		self.otp_valid_till = Time.now + 2.hours
 		self.otp_attempts = 0 
+		save!
 	end
 
 	def otp_requested?
@@ -399,6 +398,11 @@ class User < ActiveRecord::Base
     end 
   end
 
+  # Tells if the user has already earned the sign up credits
+	#
+	# Author:: Rohit
+  # Date:: 19/02/2015
+  #
   def sign_up_credits_earned?
 		credits.where(:source_name => Credit::SOURCE_NAME_INVERT["Sign up"]).count > 0
 	end
@@ -413,104 +417,8 @@ class User < ActiveRecord::Base
     @referral_sign_up = Referral.where(referral_email: self.email, signup_flag: 1).count > 0
   end
 
-	# Verifies user opt code
-  #
-  # Author:: Rohit
-  # Date:: 19/02/2015
-  #
-  # Expects ::
-  #  * <b>otp_code</b> otp provided by the user
-  #
-	def verify_otp(otp_code)
-		if otp.to_s == otp_code.to_s
-			# This is a verified bitch
-			self.phone_verified = 1
-			accept_unverified_phone_number if self.unverified_phone.present?
-			self.save!
-			return {:err => nil, :response => 'success'}
-		end
-		{:err => 'otp code mismatch'}
-	end
-
-	# Update the user phone with the unverified phone number.
-	# Author:: Rohit
-	#
-	def accept_unverified_phone_number
-		self.phone = self.unverified_phone
-		self.unverified_phone = nil
-	end
-
-	# Sends OTP verification sms to user mobile
-  #
-  # Author:: Rohit
-  # Date:: 19/02/2015
-  #
-  # Expects ::
-  #  * <b>user</b> User object
-  #
-	def send_otp_verification_sms
-		if self.otp.present?
-			resend_sms
-		else
-			generate_otp
-			send_otp_sms
-		end
-		save!
-	end
-	
 	private :before_create_tasks, :before_validation_tasks, :valid_otp_length?
 
-	private
-
-	# Resend OTP sms
-  #
-  # Author:: Rohit
-  # Date:: 19/02/2015
-  #
-  # Can't send 3 sms with in a lifetime of the generated otp
-	def resend_sms
-		return if self.otp_attempts >=3 && Time.now < self.otp_valid_till
-		generate_otp if Time.now > self.otp_valid_till # Regenerate and send sms
-		send_otp_sms
-	end
-
-	# Generates OTP for the user
-  #
-  # Author:: Rohit
-  # Date:: 19/02/2015
-  #
-	def generate_otp
-		self.otp = rand.to_s[2..7]
-		self.otp_valid_till = Time.now + 1.hours
-		self.otp_last_attempt = Time.now
-		self.otp_attempts = 0
-	end
-
-	# Sends OTP for phone verification
-	#
-	# Author:: Rohit
-  # Date:: 19/02/2015
-  #
-	def send_otp_sms
-		message = "Hi! Your code for phone number verification is #{self.otp}."
-		ph_number = Rails.env.production? ? (self.unverified_phone.present? ? self.unverified_phone : self.phone) : CommonHelper::INTERCEPTOR_NUMBER
-		begin
-			SmsSender.perform_async(ph_number,message,0,"otp_phone_verification")
-		rescue Exception => e
-			ExceptionNotifier.notify_exception(e)
-			Exotel.send_message(ph_number, message, 0, "otp_phone_verification")
-		end
-		self.otp_attempts = self.otp_attempts.to_i + 1
-	end
-
-	def after_save_tasks
-		# Allot credits after validating the referral once the phone is verified
-		Referral.validate_reference(self) if phone_verified && self.referral_sign_up?
-	end
-
-	def before_save_tasks
-		# current_user.send_otp_verification_sms if current_user.unverified_phone_changed?
-	end
 end
 
 # == Schema Information
