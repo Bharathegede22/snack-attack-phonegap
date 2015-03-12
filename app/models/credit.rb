@@ -2,7 +2,9 @@ class Credit < ActiveRecord::Base
 	
 	belongs_to :creditable, :polymorphic => true
 	belongs_to :user
-	
+
+	validates :user_id, :presence => true
+
 	after_create :after_create_tasks
 	
 	default_scope { where(status: 1) }

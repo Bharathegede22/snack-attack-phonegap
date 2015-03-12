@@ -2,7 +2,7 @@ class MainController < ApplicationController
 	
 	after_filter :set_http_caching, :except => [:calculator, :get_locations_map, :index, :join, :mobile_redirect, :redirect]
 	before_filter :set_referral_cookie, :only => [:signup]
-
+	before_filter :set_cache_buster, :only => [:signup], :if => proc { params["ref"]== 'REFCODE'}
 	def about
 		@meta_title = "About Zoomcar Team | Online Self Drive Car In #{@city.name}"
 		@meta_description = "Read about Zoomcar's self drive car team. Highly qualified professionals with knowledge and experience in self driven car rental services"
@@ -360,5 +360,14 @@ class MainController < ApplicationController
 			cookies[:ref_code] = {:value => JSON.generate(:ref_code => params[:ref_code], :source => params[:refsource]), :expires => 1.day.from_now, :domain => "." + HOSTNAME.split(':').first.gsub("www.", '')}
 		end
 	end
+
+	# Author:: Rohit
+	# Date:: 10/03/2015
+	#
+	def set_cache_buster
+    response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "Fri, 01 Jan 1990 00:00:00 GMT"
+  end
 
 end
