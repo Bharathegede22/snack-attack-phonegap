@@ -30,7 +30,10 @@ sub vcl_recv {
     req.url ~ "^/(delhi|bangalore|chennai|hyderabad|pune)/search" || 
     req.url ~ "^/(delhi|bangalore|chennai|hyderabad|pune)/bookings/*" || 
     req.url ~ "^/users/*" || 
-    req.url ~ "^/bookings/*" 
+    req.url ~ "^/bookings/*" || 
+    req.url ~ "^/wallets/*" || 
+    req.url ~ "^/signup/*" || 
+    req.url ~ "^/calculator/*"
   ) {
     return(pipe);
   }
