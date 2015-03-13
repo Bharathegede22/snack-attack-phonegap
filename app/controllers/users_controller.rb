@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-	
+	include UsersHelper
 	before_filter :authenticate_user!, :only => [:license,:license_get_del, :social, :settings, :update, :credits, :referrals,:credit_history]
 	skip_before_filter :authenticate_staging
 	before_filter :check_license, :only => [:license,:license_get_del]
