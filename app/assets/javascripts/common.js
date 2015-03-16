@@ -988,3 +988,54 @@ $(document).ready(function(){
 	});
 });
 
+function referForm(frm,url,divId) {
+	$(document).ready(function(){
+		var otp_code = jQuery.trim($("#otp_code").val());
+		  $.ajax({
+		    type:"POST", 
+		    url: url,
+		    data: {otp_code: otp_code},
+				dataType: "json"
+		  })
+		  .done(function(json){
+		    $("#referForm").empty().append(json.html);
+		  })
+	});
+}
+
+function resendOTP() {
+	$(document).ready(function(){
+		$('#modal-loader-wrapper').show();
+		  $.ajax({
+		    type:"POST",
+		    url: '/users/send_otp_sms/',
+		    data: {},
+				dataType: "json"
+		  })
+		  .done(function(json){
+		  	$('#modal-loader-wrapper').hide();
+		  })
+	});
+}
+
+function modifyPhone() {
+	$(document).ready(function(){
+		  $.ajax({
+		    type:"GET",
+		    url: '/users/signup/',
+		    data: {reenter_phone: '1'},
+				dataType: "json"
+		  })
+		  .done(function(json){
+		    $("#referForm").empty().append(json.html);
+		  })
+	});
+}
+
+/*
+	For User Settings page
+*/
+
+	if (typeof window.user_settings_modal !== 'undefined' && window.user_settings_modal === true) {
+		showModal('Phone Number Verification', '/users/signup');
+	}

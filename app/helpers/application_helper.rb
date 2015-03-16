@@ -56,6 +56,14 @@ module ApplicationHelper
   def referral_url(source)
     "http://#{HOSTNAME}/signup/?ref=#{Referral::REFCODE}&ref_code=#{current_user.referral_code}&refsource=#{source}"
   end
+
+  def show_otp_verification_box?
+    return false if current_user.blank?
+    return false if params[:reenter_phone].present?
+    return true if current_user.referral_sign_up? && current_user.phone.present? && !current_user.phone_verified
+    return true if current_user.unverified_phone.present? && current_user.otp_valid_till.present? && (Time.now < current_user.otp_valid_till)
+    false
+  end
   
 
 end

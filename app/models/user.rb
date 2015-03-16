@@ -27,10 +27,10 @@ class User < ActiveRecord::Base
   validates :phone, length: {is: 10, message: 'only indian mobile numbers without +91/091' }, if: Proc.new {|u| u.profile? && !u.phone.blank?}
   validates :pincode, length: {is: 6, message: 'should be of 6 digits'}, if: Proc.new {|u| !u.pincode.blank?}
   validate :check_dob
+  validate :duplicate_verified_phone
   
   after_create :send_welcome_mail
   before_create :before_create_tasks
-  after_save :after_save_tasks
 	before_validation :before_validation_tasks
 	
 	def admin?
@@ -47,6 +47,10 @@ class User < ActiveRecord::Base
 	
   def check_dob
   	errors.add(:dob, "can't be less than #{CommonHelper::MIN_AGE} years") if !self.dob.blank? && (self.dob.to_datetime > (Time.zone.now - CommonHelper::MIN_AGE.years))
+  end
+
+  def duplicate_verified_phone
+  	errors.add(:phone, I18n.t(:alredyUsedPhone)) if self.unverified_phone.present? && User.where(phone: self.unverified_phone, phone_verified: 1).count > 0
   end
   
 	def encoded_id
@@ -394,19 +398,27 @@ class User < ActiveRecord::Base
     end 
   end
 
+  # Tells if the user has already earned the sign up credits
+	#
+	# Author:: Rohit
+  # Date:: 19/02/2015
+  #
   def sign_up_credits_earned?
 		credits.where(:source_name => Credit::SOURCE_NAME_INVERT["Sign up"]).count > 0
 	end
-	
+
+	# If the user signed through a referral
+	#
+	# Author:: Rohit
+  # Date:: 19/02/2015
+  #
+	def referral_sign_up?
+    return @referral_sign_up if defined?(@referral_sign_up)
+    @referral_sign_up = Referral.where(referral_email: self.email, signup_flag: 1).count > 0
+  end
+
 	private :before_create_tasks, :before_validation_tasks, :valid_otp_length?
 
-	def after_save_tasks
-		license_update_events
-	end
-
-	def license_update_events
-		Referral.validate_reference(self, {:field => :phone, :value => self.phone}) if self.phone_changed?
-	end
 end
 
 # == Schema Information

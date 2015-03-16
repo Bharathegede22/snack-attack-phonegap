@@ -1,4 +1,5 @@
 :ruby
+	@show_otp_modal_box = flash[:notice].present? && flash[:error].blank? && show_otp_verification_box?
 	current_user.country = 'IN' if current_user.country.blank?
 	current_user.state = 'Karnataka' if current_user.state.blank?
 = form_for(current_user, :url => "/users/update", :html => {:method => :post}) do |f|
@@ -19,6 +20,13 @@
 						= f.text_field :phone, :class => 'form-control', placeholder: '10 digit mobile no. (India only)'
 						.error
 							= errortxt(current_user.errors[:phone].uniq.join(', '))
+				- if show_otp_verification_box? && current_user.referral_sign_up?
+					.row.form-group
+						%label.col-sm-2.control-label
+						.col-sm-10
+							%p.form-control-static
+								%a{:href => "javascript:void(0)", :onclick => "showModal('Phone Number Verification', '/users/signup');"} Verify Phone Number
+								(Please complete the phone verification process. We will issue signup credits to your account only after this step.)
 				.row.form-group
 					%label.col-sm-2.control-label Password
 					.col-sm-10
@@ -85,3 +93,6 @@
 								= errortxt(current_user.errors[:pincode].uniq.join(', '))
 							%br/
 							= submit_tag "Update", :class => 'btn btn-default btn-lg'
+
+:javascript
+	window.user_settings_modal = #{@show_otp_modal_box}

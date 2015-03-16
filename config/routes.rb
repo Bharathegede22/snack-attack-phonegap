@@ -92,6 +92,8 @@ Web::Application.routes.draw do
 			post 'signup'
 			post 'update'
 			post 'refer_user'
+			post 'send_otp_sms'
+			post 'verify_opt_sms'
 		end
 	end
 
