@@ -8,6 +8,7 @@ class Charge < ActiveRecord::Base
 	
 	after_create :after_create_tasks
 	after_save :after_save_tasks
+	before_save :before_save_tasks
 	
 	default_scope where("(active = 1)")
 	
@@ -46,6 +47,10 @@ class Charge < ActiveRecord::Base
 
 	def after_save_tasks
 		Booking.recalculate(self.booking_id)
+	end
+
+	def before_save_tasks
+		self.created_by = 'system'
 	end
 	
 end
