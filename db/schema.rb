@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150210093736) do
+ActiveRecord::Schema.define(version: 20150114051938) do
 
   create_table "accidents", force: true do |t|
     t.boolean  "active",                                                            default: true
@@ -125,9 +125,6 @@ ActiveRecord::Schema.define(version: 20150210093736) do
 
   add_index "bankcodes", ["issuerCode"], name: "index_bankcodes_on_issuerCode", using: :btree
 
-# Could not dump table "blocks" because of following StandardError
-#   Unknown type 'polygon' for column 'ip_poly'
-
   create_table "bookings", force: true do |t|
     t.integer  "car_id",                     limit: 2
     t.integer  "location_id",                limit: 2
@@ -218,7 +215,6 @@ ActiveRecord::Schema.define(version: 20150210093736) do
     t.integer  "start_checklist_by"
     t.integer  "end_checklist_by"
     t.datetime "release_payment_updated_at"
-    t.decimal  "recorded_distance",                     precision: 10, scale: 2
   end
 
   add_index "bookings", ["car_id"], name: "index_bookings_on_car_id", using: :btree
@@ -287,13 +283,6 @@ ActiveRecord::Schema.define(version: 20150210093736) do
   end
 
   add_index "car_images", ["car_imageable_type", "car_imageable_id"], name: "index_car_images_on_car_imageable_type_and_car_imageable_id", using: :btree
-
-  create_table "car_rankings", force: true do |t|
-    t.integer  "cargroup_id"
-    t.float    "deviation"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "carblocks", force: true do |t|
     t.integer  "car_id",         limit: 2
@@ -485,8 +474,6 @@ ActiveRecord::Schema.define(version: 20150210093736) do
     t.string   "medium",             limit: 20, default: "1"
     t.integer  "car_id",             limit: 2
     t.string   "initial_answer"
-    t.datetime "question_open_time"
-    t.datetime "answer_time"
   end
 
   add_index "checklist_answers", ["checklist_id"], name: "index_checklist_answers_on_checklist_id", using: :btree
@@ -776,33 +763,6 @@ ActiveRecord::Schema.define(version: 20150210093736) do
     t.datetime "updated_at"
   end
 
-  create_table "loc_car_rankings", force: true do |t|
-    t.integer  "cargroup_id"
-    t.integer  "location_id"
-    t.integer  "city_id"
-    t.float    "deviation"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "loc_car_rankings_1", force: true do |t|
-    t.integer  "cargroup_id"
-    t.integer  "location_id"
-    t.integer  "city_id"
-    t.float    "deviation"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "location_distances", force: true do |t|
-    t.integer  "city_id"
-    t.string   "loc_a"
-    t.string   "loc_b"
-    t.float    "distance"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "location_offers", force: true do |t|
     t.integer "location_id"
     t.integer "offer_id"
@@ -868,17 +828,6 @@ ActiveRecord::Schema.define(version: 20150210093736) do
   create_table "models", force: true do |t|
     t.integer "brand_id", limit: 2
     t.string  "name"
-  end
-
-  create_table "notification_sents", force: true do |t|
-    t.integer  "notificable_id"
-    t.string   "notificable_type"
-    t.string   "body"
-    t.datetime "sent_at"
-    t.integer  "no_of_times",      default: 1
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "type"
   end
 
   create_table "notifieds", force: true do |t|
@@ -1046,20 +995,6 @@ ActiveRecord::Schema.define(version: 20150210093736) do
     t.datetime "updated_at"
   end
 
-  create_table "referrals", force: true do |t|
-    t.integer  "referral_user_id"
-    t.string   "referral_email",   limit: 63
-    t.string   "source",           limit: 31
-    t.integer  "valid_referral",   limit: 2
-    t.boolean  "signup_flag"
-    t.integer  "first_booking_id"
-    t.integer  "referable_type",   limit: 2
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "referrals", ["referral_user_id", "referral_email"], name: "index_referrals_on_referral_user_id_and_referral_email", unique: true, using: :btree
-
   create_table "refunds", force: true do |t|
     t.integer  "booking_id"
     t.integer  "status",     limit: 1,                          default: 0
@@ -1193,7 +1128,8 @@ ActiveRecord::Schema.define(version: 20150210093736) do
     t.integer  "max",         limit: 1, default: 0
   end
 
-  add_index "templates", ["title"], name: "index_templates_on_title", using: :btree
+  add_index "test_inventories", ["cargroup_id", "location_id", "slot"], name: "index_inventories_on_cargroup_id_and_location_id_and_slot", unique: true, using: :btree
+  add_index "test_inventories", ["total"], name: "index_inventories_on_total", using: :btree
 
   create_table "triplogs", force: true do |t|
     t.integer  "booking_id"
@@ -1216,7 +1152,6 @@ ActiveRecord::Schema.define(version: 20150210093736) do
     t.integer  "role",                            limit: 1,                            default: 0
     t.boolean  "mobile",                                                               default: false
     t.string   "email",                                                                                null: false
-    t.string   "ref_code"
     t.string   "encrypted_password",                                                   default: "",    null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
