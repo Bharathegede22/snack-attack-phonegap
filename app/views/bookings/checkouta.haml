@@ -143,7 +143,7 @@
 					- if !@abtest
 						%tr
 							%td.p-10.p-l20.p-b10.text-up.size-12
-								Fuel, GPS, Insurance & Taxes
+								Fuel, Insurance & Taxes
 							%td.p-10.t-r.p-r25.p-b10.zoom.f-b.size-16
 								Free
 
@@ -183,7 +183,7 @@
 							%td.p-10.p-l20.size-12
 								.fl.text-up
 									Deposit Due
-								
+
 								- if deal != 'SQUIRREL' && @booking.defer_allowed? && !(@wallet_available>= @booking.security_amount)
 									.fl.p-l20
 										%span
