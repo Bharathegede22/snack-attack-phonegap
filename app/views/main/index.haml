@@ -74,9 +74,9 @@
 				#BubbleTaxes.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>We Get Govt. Off Your Back</b><br/>Tariff includes all taxes, except the relevant tolls/taxes one has to pay while visiting another state.", :onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'Taxes');"}
 					.p-10
 						.taxes
-				#BubbleNav.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Zip Zap Zoom</b><br/>All Zoomcar vehicles are fitted with a 3G enabled tablet to guide you on your journey.", :onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'Navigation');"}
-					.p-10
-						.navigation
+				/ #BubbleNav.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Zip Zap Zoom</b><br/>All Zoomcar vehicles are fitted with a 3G enabled tablet to guide you on your journey.", :onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'Navigation');"}
+				/ 	.p-10
+				/ 		.navigation
 				- if @city.mode::SECURITY == 0
 					#BubbleDeposit.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>In You We Trust</b><br/>The start of our relationship is not with a bag of money. Just pay the rental and you are good to zoom.", :onmouseover => "pushEvent('Additional Benefits ( Home Page )', 'NoDeposit');"}
 						.p-10
