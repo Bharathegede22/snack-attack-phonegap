@@ -1,0 +1,33 @@
+- render_flash
+- if @booking.status != 10
+	.p-b10.size-16
+		.row.f-b
+			.col-md-6
+				Start Time
+			.col-md-6.t-r
+				End Time
+		.row
+			.col-md-6
+				= @booking.starts.strftime("%d/%m/%Y %H:%M %p (%A)")
+			.col-md-6.t-r
+				= @booking.ends.strftime("%d/%m/%Y %H:%M %p (%A)")
+	.alert.alert-danger
+		This action is irreversible, your booking will be cancelled.
+	%form{:id => "SearchForm", :onsubmit => "return SubmitForm(this,'/bookings/#{@booking.encoded_id}/cancel','ModalContent');", :action => "javascript:void(0)", "data-ajax" => "false"}
+		.size-20
+			.label.label-info
+				%b
+					= (@fare[:refund] - @fare[:penalty]).round + @security
+				will be refunded.
+		.p-t10
+			#SearchSubmit
+				= submit_tag "Confirm", :class => 'btn btn-default'
+			#SearchWait.p-5{style: 'display:none;'}
+				.wait
+- else
+	:javascript
+		var auto = setTimeout(function(){ submitRedirect(); }, 3000);
+		function submitRedirect() {
+			clearTimeout(auto);
+			location.reload();
+		}

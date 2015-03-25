@@ -1,0 +1,17 @@
+%br/
+.fl.m-5
+	.fb-share-button{"data-href" => "http://www.zoomcar.com?ref=share-facebook", "data-type" => "button"}
+.fl.m-5
+	%a.twitter-share-button{"data-count" => "none", "data-lang" => "en", "data-related" => "anywhereTheJavascriptAPI", "data-url" => "http://www.zoomcar.com?ref=share-twitter", "data-via" => "zoom", :href => "https://twitter.com/share"} Tweet
+.fl.m-5
+	.g-plus{"data-action" => "share", "data-annotation" =>"none", "data-href" => "http://www.zoomcar.com?ref=share-gplus"}
+.fc
+:javascript
+	function checkJquery() {
+		if (window.jQuery) {
+			socialPlugins();
+		} else {
+			window.setTimeout(checkJquery, 1000);
+		}
+	}
+	checkJquery();

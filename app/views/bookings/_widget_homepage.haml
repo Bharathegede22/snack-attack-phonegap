@@ -1,0 +1,55 @@
+:ruby
+	@booking = Booking.new if !@booking
+%form{:id => "SearchForm", :onsubmit => "return SubmitForm(this,'/#{@city.link_name.downcase}/search/homepage','SearchFormDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+	.item.fl
+		#StartDate.box.datetimebox
+			.cal
+			.txt
+				- if @booking.starts.blank?
+					%input#StartDateVal.datetime.validate-presence.starts-nav{name: 'starts', type: "text", value: "Pickup Date & Time*", readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
+				- else
+					%input#StartDateVal.datetime.validate-presence.starts-nav{name: 'starts', type: "text", value: @booking.starts.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
+			.arrw
+			.fc
+		#StartDateValError.error
+			= errortxt(@booking.errors[:starts].uniq.join(', '))
+	.item.fl.m-l10
+		#EndDate.box.datetimebox
+			.cal
+			.txt
+				- if @booking.ends.blank?
+					%input#EndDateVal.datetime.validate-presence.ends-nav{name: 'ends', type: "text", value: "Dropoff Date & Time*", readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
+				- else
+					%input#EndDateVal.datetime.validate-presence.ends-nav{name: 'ends', type: "text", value: @booking.ends.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
+			.arrw
+			.fc
+		#EndDateValError.error
+			= errortxt(@booking.errors[:ends].uniq.join(', '))
+	.fl.m-l10
+		.hide
+			%input#LocationVal{name: 'loc', type: "text", value: @booking.location_id, readonly: 'true'}
+			%input#CarsVal{name: 'car', type: "text", value: @booking.cargroup_id, readonly: 'true'}
+		#SearchSubmit.button
+			= submit_tag "Book A Car", :class => 'inpt'
+		#SearchWait.p-5.t-c{style: 'display:none;'}
+			.wait
+	.fc
+- if request.post?
+	- if @booking && @booking.valid?
+		:javascript
+			pushEvent('Search Bar', 'Book A Car');
+			window.location = "http://#{HOSTNAME}/#{@city.link_name.downcase}/search";
+	- else
+		:javascript
+			pushEvent('Search Bar', 'Book A Car');
+			initializeDatePicker();
+- else
+	:javascript
+		function checkJquery() {
+			if (window.jQuery) {
+				initializeDatePicker();
+			} else {
+				window.setTimeout(checkJquery, 1000);
+			}
+		}
+		checkJquery();

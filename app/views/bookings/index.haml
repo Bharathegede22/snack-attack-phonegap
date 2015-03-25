@@ -1,0 +1,52 @@
+- render_flash
+.panel.panel-default
+	.panel-heading
+		%h3.panel-title Live Bookings
+	.panel-body
+		:ruby
+			if user_signed_in?
+				bk = current_user.get_bookings('live')
+			else
+				bk = []
+			end
+		= render :partial => 'item', :locals => {:bookings => bk, :show_credits_us => true}
+	.panel-heading
+		%h3.panel-title Future Bookings
+	.panel-body
+		:ruby
+			if user_signed_in?
+				bk = current_user.get_bookings('future')
+			else
+				bk = []
+			end
+		= render :partial => 'item', :locals => {:bookings => bk, :show_credits_us => true}
+	.panel-heading
+		%h3.panel-title Completed Bookings
+	.panel-body
+		:ruby
+			if user_signed_in?
+				bk = current_user.get_bookings('completed')
+			else
+				bk = []
+			end
+		= render :partial => 'item', :locals => {:bookings => bk, :show_credits_us => true, :show_credits_er => true}
+	.panel-heading
+		%h3.panel-title Cancelled Bookings
+	.panel-body
+		:ruby
+			if user_signed_in?
+				bk = current_user.get_bookings('cancelled')
+			else
+				bk = []
+			end
+		= render :partial => 'item', :locals => {:bookings => bk, :show_credits_us => true}
+	.panel-heading
+		%h3.panel-title Unconfirmed (Not Paid) Bookings
+	.panel-body
+		:ruby
+			if user_signed_in?
+				bk = current_user.get_bookings('unfinished')
+			else
+				bk = []
+			end
+		= render :partial => 'item', :locals => {:bookings => bk}

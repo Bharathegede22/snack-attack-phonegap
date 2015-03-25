@@ -1,0 +1,73 @@
+- car = Cargroup.find(5)
+:ruby
+	pricing = car.active_pricing(@city.id)
+.static
+	%table{:cellspacing => '10', :cellpadding => '10', :width => '960'}
+		%tr
+			%td{:align => 'left', :width => '550'}
+				= image_tag("cars/reva.jpg", alt: "Mahindra Reva E2O")
+			%td
+				%h1
+					.t-r Mahindra Reva E2O
+				.t-r.size-20
+					Zoom in India's only electric car
+				%br/
+				.bg-e.r-10
+					%table.size-20.grey{:width => '100%'}
+						%tr.f-b
+							%td.p-10
+								&nbsp;
+							%td.p-10.p-t20
+								Tariff
+							%td.p-10.p-t20
+								Free Usage
+								%span.red *
+						%tr
+							%td.f-b.p-10.p-l20
+								Hourly
+							%td.p-10
+								Rs.#{pricing.hourly_fare}
+							%td.p-10
+								#{pricing.hourly_kms} Km
+						%tr
+							%td.f-b.p-10.p-l20
+								Daily
+							%td.p-10
+								Rs.#{pricing.daily_fare}
+							%td.p-10
+								#{pricing.daily_kms} Km
+						%tr
+							%td.f-b.p-10.p-l20
+								Weekly
+							%td.p-10
+								Rs.#{pricing.weekly_fare}
+							%td.p-10
+								#{pricing.weekly_kms} Km
+				.m-10.size-14.red
+					* - Excess Kms will be charged at 
+					%b Rs.#{pricing.excess_kms} / Km
+				.m-10.size-14.t-c.zoom
+					Zoomcar's Reva comes with a charging cord that can be plugged into a regular 15 Amp socket
+	%h2 Reva Trivia
+	%p
+		100 km range when vehicle is fully charged. More than enough to cruise around #{@city.name} with the zippiest automatic transmission out there! The sensational turning radius is merely icing on the cake.
+	%p
+		Even if you have a lead foot and are not the model driver, you can still expect to achieve a full range of at least 85 km on a charge.
+	%p
+		Take it easy, as the vehicle dashboard displays how many kms can be run with current state of charge in vehicle.
+	%p
+		In case you're running out of juice, our reva comes with a charging chord that can be plugged in to a regular 15 Amp socket. There are also over 110 official Reva charging points across the city,
+		%a{:href => 'http://www.mahindrae2o.com/charging-points.aspx', :target => '_blank', :rel => 'nofollow'} click here
+		to see Reva charging points.
+	%p
+		Off the grid, no worries, even if you can't reach an official Reva charging point, all you need is a 15 amp socket to charge the car completely (0-100% in 5 hours).
+	%p
+		Don't fret about how to plug in, it's super handy as the vehicle has a charging chord that can be found in the trunk.
+	%br/
+	%br/
+	%h2 Reva Cares for Environment
+	%p Reva's running cost is 10% that of a standard petrol vehicle.
+	%p Only vehicle in India that can run on Solar Energy.
+	%p A year in solar powered electric car is equivalent to planting over 60 trees.
+	%p CO2 Saved per year per - 3.2 tonnes (assuming one drives 15,000 Kms a year).
+	%p Just last year 3 million new ACs were sold in India, each of which consume enough energy per day as much as 2.4 E2Os would consume- without crashing the grid!

@@ -1,0 +1,141 @@
+.static
+
+	.fl
+		= image_tag("zoomecosport.png", :alt => "Zoom EcoSport")
+	#whatiszoom.fl
+		.p-10.f-b.size-28
+			What is Zoomcar?
+		.p-10
+			Zoomcar is a 
+			%span#self-drive.item.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<div class='p-10'>With Zoomcar you drive the car yourself. No chauffeurs, so you can go where you want when you want.</div>"} Self-Drive
+			car rental service which allows you to rent cars by the hour, day, week, or month. We have a wide variety of cars and many locations, in fact you can find us in your neighbourhood. Basically, we save you the cost and hassle of owning a car while giving you all the good parts: 
+			= succeed "," do
+				%span.f-b.zoom convenience
+			= succeed "," do
+				%span.f-b.zoom mobility 
+			and 
+			= succeed "." do
+				%span.f-b.zoom independence
+
+	.fc
+
+	%br/
+
+	%table.m-auto{:cellpadding => '0', :cellspacing => '0', :border => '0', :width => '860px', :style => 'text-align: center;'}
+		%tr
+			%td.border-zoom{:valign => 'top', :style => 'width: 239px'}
+				.feature2.size-14
+					= image_tag("features/1.png", :alt => "Any duration")
+					.m-t10.feature
+						Rent by the Hour, Day, Week, or Month
+			%td.border-zoom{:valign => 'top', :style => 'width: 239px'}
+				.feature2.size-14
+					= image_tag("features/2.png", :alt => "Any duration")
+					.m-t10.feature
+						Located in Your Neighbourhood or Near Your Office
+			%td.border-zoom{:valign => 'top', :style => 'width: 239px'}
+				.feature2.size-14
+					= image_tag("features/3.png", :alt => "Any duration")
+					.m-t10.feature
+						Range of Cars: SUV, Luxury, Sedan,...
+		%tr
+			%td.border-zoom{:valign => 'top', :style => 'width: 239px'}
+				.feature2.size-14
+					= image_tag("features/4.png", :alt => "Any duration")
+					.m-t10.feature
+						Fuel and Insurance are on Us!
+			%td.border-zoom{:valign => 'top', :style => 'width: 239px'}
+				.feature2.size-14
+					= image_tag("features/6.png", :alt => "Any duration")
+					.m-t10.feature
+						No Hidden Charges. Our Prices Include Even Tax
+			%td.border-zoom{:valign => 'top', :style => 'width: 239px'}
+				.feature2.size-14
+					= image_tag("features/7.png", :alt => "Any duration")
+					.m-t10.feature
+						Go Anywhere. Our Cars Have All-India Permits
+	%br/
+	%br/
+	%br/
+
+	
+	- if user_signed_in?
+	- else
+		%div{:style => 'width: 550px; margin: 0 auto;'}
+			#signup-call.fl
+				Ready to make your first booking?
+			%a#signup-hiw.fl{href: "javascript:void(0)", onclick: "showModal('Sign Up', '/users/signup');"}
+				Sign Up
+			.fc
+
+	.t-c.size-14.f-i.m-t10
+		Still have questions or curious to find out more? Either continue scrolling or check out our 
+		= succeed "." do
+			%a.f-b{:href => '/faq'} FAQs
+
+	%br/
+	%br/
+	%br/
+
+	#whatyoucando.fl.t-r
+		.f-b.size-28.m-b5
+			What you can do with Zoomcar
+		.f-i
+			In case you’re wondering if Zoomcar is what you’re looking for
+
+	#usecases.fl
+		= image_tag("usecases-#{@city.id}.jpg", :alt => "Use Cases")
+
+	.fc
+
+	%br/
+	%br/
+	%br/
+	%br/
+
+	.f-b.size-28.t-c.m-b5
+		How to Zoom
+	.f-i.t-c
+		In 4 Quick Steps
+
+	#howwrapper
+		.howitworks.t-c.fl
+			#howitworks1
+				&nbsp;
+			.f-b.size-24.m-b10
+				Book
+			.text.size-14
+				Sign up and book your machine, all on our site! You decide the duration, location, and car. It’s all super easy.
+
+		.howitworks.t-c.fl
+			#howitworks2
+				&nbsp;
+			.f-b.size-24.m-b10
+				Pay
+			.text.size-14
+				- if @city.mode::SECURITY == 0
+					There are no hidden charges, even taxes are included in our prices. So go ahead and pay for your sweet ride.
+				- else
+					We take a small security deposit on the cars. There are no hidden charges! So go ahead and pay for your sweet ride.
+
+		.howitworks.t-c.fl
+			#howitworks3
+				&nbsp;
+			.f-b.size-24.m-b10
+				Zoom!
+			.text.size-14
+				At the location, our friendly fleet executive will hand over the car. Grab the keys and drive baby, drive.
+
+		.howitworks.t-c.fl
+			#howitworks4
+				&nbsp;
+			.f-b.size-24.m-b10
+				Return
+			.text.size-14
+				When your booking is over bring the car to the same location and you are all set!
+
+		.fc
+
+	%br/
+	%br/
+

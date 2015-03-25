@@ -1,0 +1,75 @@
+- if user_signed_in?
+	- if current_user && current_user.unsafe_bookings.any?
+		%a.wallet-alert.fr.ts-3.f-b.pointer.help.t-c{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "You have an upcoming booking with Security Deposit due", href: "/bookings"}
+			!
+	.broadcast.fr
+		.dropdown.fr
+			%a.dropdown-toggle.p-r10.p-l10{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
+				My Account
+				%b.caret
+			%ul.dropdown-menu.pull-right
+				%li
+					%a{:href => "#{@sslhost}/users/bookings"} My Bookings
+				%li
+					%a{:href => "#{@sslhost}/users/settings"}
+						Account Settings
+				%li
+					%a{href: "/users/referrals"}
+						Referrals
+				%li
+					%a{:href => "#{@sslhost}/users/license"}
+						License Details
+				%li
+					%a{:href => "javascript:void(0)", :onclick => "logOut('#{destroy_user_session_path}');"}
+						Logout
+	- if Deal.where('offer_start < ? and offer_end > ? and location_id IN (?)',Time.now,Time.now,@city.locations.map(&:id)).count > 0
+		%a.hiring.fr.ts-3.f-b.pointer{href: "/deals", onclick: "pushEvent('Squirrel', 'Deals Tab - Header', '');"}
+			Deals
+	- else
+		%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
+			We're Hiring
+	.fc
+- else
+	- if current_user && current_user.unsafe_bookings.any?
+		%a.wallet-alert.fr.ts-3.f-b.pointer.help{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "You have an upcoming booking with Security Deposit due", href: "#{@sslhost}/users/bookings"}
+			!
+	.broadcast.fr
+		.dropdown.fr
+			%a.dropdown-toggle.p-r10.p-l10{:href => "javascript:void(0)", 'data-toggle' => "dropdown"}
+				My Account
+				%b.caret
+			%ul.dropdown-menu.pull-right
+				%li
+					%a{:href => "javascript:void(0)", :onclick => "showModal('Sign Up', '/users/signup');"}
+						Sign Up
+				%li
+					%a{:href => "javascript:void(0)", :onclick => "showModal('Sign In', '/users/signin');"}
+						Sign In
+				%li
+					%a{:href => "javascript:void(0)", :onclick => "showModal('Sign In', '/users/forgot');"}
+						Forgot Password
+
+	- if Deal.where('offer_start < ? and offer_end > ? and location_id IN (?)',Time.now,Time.now,@city.locations.map(&:id)).count > 0
+		%a.hiring.fr.ts-3.f-b.pointer{href: "/deals", onclick: "pushEvent('Squirrel', 'Deals Tab - Header', '');"}
+			Deals
+	- else
+		%a.hiring.fr.ts-3.f-b.pointer{href: "/careers"}
+			We're Hiring
+	.fc
+- if user_signed_in? && !session[:social_signup].blank?
+	- if session[:social_signup] == 0
+		- session[:social_signup] = nil
+		:javascript
+			userLogin();
+	- else
+		:javascript
+			showModal('Sign Up', '/users/social');
+- if session[:confirmed] == 1
+	- session[:confirmed] = nil
+	:javascript
+		userActive();
+- elsif session[:blocked] == 1
+	- session[:blocked] = nil
+	- flash[:notice] = "<b>Access Denied!</b> Please login to continue."
+	:javascript
+		showModal('Sign In', '/users/signin');

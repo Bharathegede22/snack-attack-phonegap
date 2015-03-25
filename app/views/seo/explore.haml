@@ -1,0 +1,68 @@
+:ruby
+	attractions = @city.attractions
+	inside = []
+	attractions.each do |a|
+		inside << a if !a.outstation
+	end
+.static
+	%h1
+		= @city.h1('inside')
+	.attraction
+		.right
+			%h2
+				.zoom-b
+					What To Explore In #{@city.name}
+			- inside.each do |a|
+				.small
+					= link_to a.name, a.link
+			.fc
+			%br/
+			%br/
+		.left
+			#Gmap.map{style: 'height: 600px;'}
+		.fc
+= javascript_tag do
+	:plain
+		function initializeMap() {
+			var myLatlng = new google.maps.LatLng(#{@city.lat}, #{@city.lng});
+			var mapOptions = {
+				center: myLatlng,
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			}
+			var map = new google.maps.Map(document.getElementById("Gmap"), mapOptions);
+			bounds = new google.maps.LatLngBounds ();
+			bounds.extend (myLatlng);
+	- inside.each do |a|
+		:plain
+			var infowindow#{a.id} = new google.maps.InfoWindow({
+				content: "#{a.name}"
+			});
+			var myLatlng#{a.id} = new google.maps.LatLng(#{a.lat.to_f}, #{a.lng.to_f});
+			bounds.extend (myLatlng#{a.id});
+			var marker#{a.id} = new google.maps.Marker({
+				position: myLatlng#{a.id},
+				map: map,
+				animation: google.maps.Animation.DROP,
+				title:"#{a.name}",
+				icon:"#{asset_path 'map/zoom.png'}"
+			});
+			google.maps.event.addListener(marker#{a.id}, 'click', function() {
+				infowindow#{a.id}.open(map,marker#{a.id});
+			});
+	:plain
+			google.maps.event.addListenerOnce(map, 'idle', function() {
+				google.maps.event.trigger(map, 'resize');
+				map.fitBounds(bounds);
+			});
+		}
+		function checkJquery() {
+			if (window.jQuery) {
+				var script = document.createElement("script");
+				script.type = "text/javascript";
+				script.src = "http://maps.googleapis.com/maps/api/js?key=#{GOOGLE_MAP_KEY}&sensor=true&callback=initializeMap";
+				document.body.appendChild(script);
+			} else {
+				window.setTimeout(checkJquery, 1000);
+			}
+		}
+		checkJquery();

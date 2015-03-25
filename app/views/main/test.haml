@@ -1,0 +1,136 @@
+%html
+%head
+	%ul.shareButtons
+	%li.fbShare
+		.fb-share-button{"data-type" => "button_count"}
+			%a{"expr:share_url" => "data:post.url", :name => "fb_share", :onclick => "postToFeed();", :rel => "nofollow", :type => "button_count"} Share
+		%span.account-name
+	%li.twShare
+		%div
+			%a.twitter-share-button{:href => "https://twitter.com/intent/tweet?url=http://zoomcar.in/about&text=Message"} Twitter
+		%span.account-name
+	%li.googShare
+		.g-plus{"data-action" => "share", "data-href" => "https://www.zoomcar.in/", "data-onclick" => "trackShare", "data-onendinteraction" => "trackShare"}
+		%span.account-name
+%body
+	#fb-root
+	/ asynchronous JavaScript for google plus just before your </body> tag
+	:javascript
+		(function() {
+			var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+			po.src = 'https://apis.google.com/js/client:plusone.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+		})();
+
+		function trackShare( jsonParam ) {
+			console.log(jsonParam);
+			if(jsonParam.type=="confirm"){
+			console.log("Shared successfully");
+			/*
+			 Code to handle callback after sharing the message successfully
+			*/
+			}
+			else
+			{console.log("Issue occurred while sharing");
+			}
+			}
+		// Javascript code for facebook 
+		window.fbAsyncInit = function () {
+			FB.init({
+				appId: '240169379371525',
+				status: true,
+				cookie: true,
+				xfbml: true,
+				oauth: true
+			});
+			};
+
+
+		//function for sharing facebook
+		function postToFeed()
+		{
+			FB.ui(
+			{
+				method: 'feed',
+				name: 'Zoom decription',
+				
+				link: 'http://local.dev',
+				picture: 'http://fbrell.com/f8.jpg',
+				caption: 'Reference Documentation',
+				description: 'Zoommmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm'
+				
+			},
+				function (response) {
+				
+					if (response && response.post_id) {
+						alert('Post was published.');
+						console.log(response);
+						/*
+					Code to handle callback after sharing the message successfully
+					*/
+					
+					} else {
+						alert('Post was not published.');
+					}
+				}
+			);
+			};
+			
+				/*facebook authorization via access token
+					function checkAutho()
+				{
+					FB.getLoginStatus(function (response) {
+						if (response.authResponse) {
+						console.log("bhuvnesh")
+							console.log(response.authResponse.accessToken);
+						} else {
+							console.log(response);
+						}
+					});
+				};
+				*/
+		
+		
+			//facebook asynchronus code
+			(function (d) {
+				var js, id = 'facebook-jssdk';
+				if (d.getElementById(id)) {
+					return;
+				}
+				js = d.createElement('script');
+				js.id = id;
+				js.async = true;
+				js.src = "//connect.facebook.net/en_US/all.js";
+				d.getElementsByTagName('head')[0].appendChild(js);
+			}(document));
+		
+				//Include the Twitter Library
+			window.twttr = (function (d,s,id) {
+			var t, js, fjs = d.getElementsByTagName(s)[0];
+			if (d.getElementById(id)) return; js=d.createElement(s); js.id=id;
+			js.src="https://platform.twitter.com/widgets.js"; fjs.parentNode.insertBefore(js, fjs);
+			return window.twttr || (t = { _e: [], ready: function(f){ t._e.push(f) } });
+			}(document, "script", "twitter-wjs"));
+
+			// On ready, register the callback...
+			twttr.ready(function (twttr) {
+				twttr.events.bind('tweet', function (event) {
+					/*
+					Code to handle callback after sharing the message successfully
+					*/
+					console.log(event);
+				});
+			});
+
+	:javascript
+		var fb_param = {};
+		fb_param.pixel_id = '6012062102930';
+		fb_param.value = '0.00';
+		fb_param.currency = 'USD';
+		(function(){
+			var fpw = document.createElement('script');
+			fpw.async = true;
+			fpw.src = '//connect.facebook.net/en_US/fp.js';
+			var ref = document.getElementsByTagName('script')[0];
+			ref.parentNode.insertBefore(fpw, ref);
+		})();

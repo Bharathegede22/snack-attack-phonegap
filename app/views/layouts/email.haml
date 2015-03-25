@@ -1,0 +1,86 @@
+:ruby
+	@city = @city || City.find(1)
+
+%table{:cellpadding => "20", :cellspacing => "0", :width => '100%', :style => "font-family:Arial, Helvetica, sans-serif; background:#E6E6E6; color: #666666; font-size: 16px;"}
+	%tr
+		%td
+			%div{:style => 'color:#6ABD19; font-size:40px; font-weight:bold; padding:10px 0; text-align:center;'}
+				%a{href: "http://www.zoomcar.com", style: "text-decoration:none; color:#6ABD19;"}
+					%img{:src => "http://#{HOSTNAME}/images/email/logo.png", :alt => 'Zoomcar', :border => '0'}/
+			%div{:style => "border-radius:10px; background:#ffffff; padding:20px; width:600px; margin:auto; color:#333333; font-size:12px; box-shadow: 0px 0px 10px #6ABD19;"}
+				- if !Rails.env.production?
+					%div{style: "text-align:center; color:red; margin:10px; padding:0; font-weight:bold;"}
+						Support / Fleet Guys : Please ignore this email.
+				= yield
+				%div{:style => "padding:10px 0; margin:0;"}
+					%b
+						%a{href: "http://#{HOSTNAME}/handover"}
+							Click here to see how to Zoom responsibly
+				%div{:style => "border-radius:10px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; background:#eeeeee; padding:10px; color:#666666; font-size:12px;"}
+					%table{cellpadding: '2', cellspacing: '0', border: '0', width: '100%'}
+						%tr
+							%td{align: 'center', width:'25%'}
+								%img{:src => "http://#{HOSTNAME}/images/email/no-alcohol.png", :alt => '', :border => '0'}/
+							%td{align: 'center', width:'25%'}
+								%img{:src => "http://#{HOSTNAME}/images/email/no-smoking.png", :alt => '', :border => '0'}/
+							%td{align: 'center', width:'25%'}
+								%img{:src => "http://#{HOSTNAME}/images/email/no-pets.png", :alt => '', :border => '0'}/
+							%td{align: 'center', width:'25%'}
+								%img{:src => "http://#{HOSTNAME}/images/email/speed-limit.png", :alt => '', :border => '0'}/
+						%tr{style: 'font-size:12px; color:#000000;'}
+							%td{align: 'center'}
+								%b.black No Alcohol / Drug
+							%td{align: 'center'}
+								%b.black No Smoking
+							%td{align: 'center'}
+								%b.black No Pets
+							%td{align: 'center'}
+								%b.black No Overspeeding
+						%tr{style: 'font-size:12px; color:#333333;'}
+							%td{align: 'center'}
+								Account Block
+							%td{align: 'center'}
+								₹ #{CommonHelper::SMOKING} Fine
+							%td{align: 'center'}
+								Account Block
+							%td{align: 'center'}
+								₹ #{CommonHelper::OVERSPEEDING} Fine
+				%table{:style => "background:black;font-family:Arial;font-size:14px;border-collapse:collapse;border-spacing:0;display:table;border-bottom-left-radius:10px;border-bottom-right-radius:10px;margin-bottom:15px;", :width => "100%"}
+					%tbody
+						%tr
+							%td{:width => "100%"}
+								%table{:style => "border-collapse:collapse", :width => "100%"}
+									%tbody
+										%tr
+											%td{:colspan => "2",:style => "color:white"}
+												%div{:style => "margin-left:2%;margin-top:5%"}
+													Download our app:
+											%td{:rowspan => "2",:style => "width:40%;text-align: right;"}
+												%div{:style => "margin:6%;"}
+													%a{:href => "http://www.zoomcar.com/?utm_source=triggermail&amp;utm_medium=email&amp;utm_content=appinstall&amp;utm_campaign=emailfooter", :target => "_blank"}
+														%img.CToWUd{:src => "http://#{HOSTNAME}/images/email/eco-trans.png", :style => "width:47%;"}
+														%p{:style => "text-align:right;color: rgb(126, 244, 10);text-decoration: inherit;margin: 0;font-size:13px;"}
+															www.zoomcar.com
+										%tr{:style => "border-bottom: 2px solid white;vertical-align: top;"}
+											%td{:style => "width:25%"}
+												%div{:style => "margin:5%"}
+													%a{:href => "https://play.google.com/store/apps/details?id=com.zoomcar&amp;referrer=utm_source%3Dtriggermail%26utm_medium%3Demail%26utm_content%3Dappinstall%26utm_campaign%3Demailfooter", :target => "_blank"}
+														%img.CToWUd{:src => "http://#{HOSTNAME}/images/email/App-Store-buttons_Android.png", :style => "width:100%"}
+											%td{:style => "width:25%"}
+												%div{:style => "margin:5%"}
+													%a{:href => "https://itunes.apple.com/in/app/zoomcar-self-drive-cars/id889910218?mt=8", :target => "_blank"}
+														%img.CToWUd{:src => "http://#{HOSTNAME}/images/email/App-Store-buttons_Apple.png", :style => "width:100%"}
+
+										%tr{:style => "color:white"}
+											%td{:colspan => "2",:style => "text-align:left;padding-left:2%;border-top:2px solid white"}
+												%div{:style => "margin-top:2%;margin-bottom:2%;font-size:12px;"}
+													Zoomcar India PVT Limited
+													%p{:style => "margin:0;"}=@city.address.html_safe
+											%td{:style => "text-align:right;padding-right:2%;border-top:2px solid white;color:white"}
+												%div{:style => "margin-top:2%;margin-bottom:2%;color:white;text-decoration:inherit;font-size: 12px;"}
+													for more details call:
+													%p{:style => "color:white;text-decoration:none!important;text-align:right;margin:0;"}
+														=@city.contact_phone
+				- if !Rails.env.production?
+					%div{style: "text-align:center; color:red; margin:10px; padding:0; font-weight:bold;"}
+						this email is generated on Zoomcar's test server and doesn't have any relevance whatsoever

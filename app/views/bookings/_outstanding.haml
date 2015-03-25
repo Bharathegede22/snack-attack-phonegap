@@ -1,0 +1,79 @@
+:ruby
+	@fare = @booking.get_fare
+	@pricing = @booking.pricing
+- if current_user && current_user.total_credits.to_i > 0
+	.bg-e.p-10.border-c.solid.r-5
+		= render :partial => "credits"
+	%br/
+.bg-e.p-10.border-c.solid.r-5
+	= render :partial => "promo"
+.p-t10
+	.bg-c.r-5.p-5.size-14.dgrey
+		%table{width: '100%'}
+			%tr
+				%td.p-5
+					%b Total Tariff
+				%td &nbsp;
+				%td.p-5.t-r
+					₹#{show_currency @fare[:total]}
+			- if @booking.security_amount_remaining > 0
+				%tr
+					%td.p-5
+						.fl
+							%b Refundable Deposit
+						.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Fully refundable security deposit which will be released once your booking is over. It will take 5-15 days before the refund reflects in your account."}
+							%u (?)
+						.fc
+					%td
+						- if @booking.defer_allowed?
+							%span
+								%input{checked: "checked", id: "changeDeposit", name: "securityDeposit", type: "checkbox", value: "yes"}
+							%span
+								Pay Deposit Now
+							%span.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => @booking.deposit_help}
+								%u (?)
+					%td.p-5.t-r
+						- if @booking.defer_allowed?
+							#Deposit
+								₹#{show_currency @booking.outstanding_with_security}
+			- if @booking.defer_allowed?
+				%tr#DepositMessage.red.t-c{style: 'display:none;'}
+					%td.p-5{colspan: '3'}
+						%i
+							= @booking.deposit_warning.html_safe
+			%tr.f-b.size-20.black
+				%td.p-5
+					%b Payable Amount
+				%td &nbsp;
+				%td.p-5.t-r
+					:ruby
+						if !session[:credits].blank?
+							total = @fare[:total] - session[:credits].to_i
+						else
+							total = @fare[:total]
+						end
+					#DepositFinal
+						₹#{show_currency(total + @booking.security_amount_remaining)}
+- render_flash
+:javascript
+	function checkJquery() {
+		if (window.jQuery) {
+			$('#changeDeposit').change(function() {
+				var $this = $(this);
+				if ($this.is(':checked')) {
+					$('#checkoutDeposit').val("1");
+					$("#DepositMessage").hide();
+					$("#Deposit").removeClass('t-s');
+					$("#DepositFinal").html("₹#{show_currency(total + @booking.security_amount_remaining)}");
+				} else {
+					$('#checkoutDeposit').val("0");
+					$("#DepositMessage").show();
+					$("#Deposit").addClass('t-s');
+					$("#DepositFinal").html("₹#{show_currency(total)}");
+				}
+			});
+		} else {
+			window.setTimeout(checkJquery, 1000);
+		}
+	}
+	checkJquery();

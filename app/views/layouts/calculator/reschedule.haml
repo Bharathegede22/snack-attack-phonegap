@@ -1,0 +1,250 @@
+- render_flash
+:ruby
+	if @booking
+		@car = @booking.cargroup
+		@starts = @booking.starts_last
+		@ends = @booking.ends_last
+		@newstarts = @booking.starts
+		@newends = @booking.ends
+	end
+.vertical-widget
+	%form{:id => "ReschForm", :onsubmit => "return SubmitForm(this,'/calculator/reschedule','ModalContent');", :action => "javascript:void(0)", "data-ajax" => "false"}
+		.row
+			.col-md-6
+				%b Select a Car *
+			.col-md-6
+				%b Expected Kms
+		.row
+			.col-md-6
+				- cargroups = Cargroup.list(@city)
+				.dropdown
+					#ReCars.dropdown-toggle.box{'data-toggle' => "dropdown"}
+						.car
+						#ReCarsHtml.txt 
+							- if @car.blank?
+								= cargroups.first.shortname
+							- else
+								= @car.shortname
+						.arrw
+						.fc
+					%ul#ReCarsMenu.dropdown-menu{:role => "menu", 'aria-labelledby' => 'Cars'}
+						%li{:id => ("Car"), :role => "presentation"}
+						- cargroups.each do |c|
+							- if (@car.blank? && c == cargroups.first) || (!@car.blank? && c.id == @car.id)
+								%li.active{:id => ("ReCara" + c.id.to_s), :role => "presentation"}
+									%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.shortname}','ReCars','recal');"}
+										= c.shortname
+							- else
+								%li{:id => ("ReCars" + c.id.to_s), :role => "presentation"}
+									%a{:href => "javascript:void(0)", :onclick => "changeCar(#{c.id},'#{c.shortname}','ReCars','recal');"}
+										= c.shortname
+					.hide
+						- if @car.blank?
+							%input#ReCarsVal{name: 'car', type: "text", value: cargroups.first.id, readonly: 'true'}
+						- else
+							%input#ReCarsVal{name: 'car', type: "text", value: @car.id, readonly: 'true'}
+			.col-md-6
+				.box
+					.unpointer
+						.loc
+						.txt
+							%input#KmsVal{name: 'kms', type: "text", value: @kms, 'dummy-title' => "Enter Kms", :onclick => "pushEvent('Rescheduler', 'Mileage');"}
+						.fc
+		.row.p-t20
+			.col-md-6
+				%b Original Pickup Time *
+			.col-md-6
+				%b Original Dropoff Time *
+		.row
+			.col-md-6
+				#OrgStartDate.box.datetimebox
+					.cal
+					.txt
+						- if @starts.blank?
+							%input#OrgStartDateVal.datetime.validate-presence.starts-recal{name: 'starts', type: "text", value: "", readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
+						- else
+							%input#OrgStartDateVal.datetime.validate-presence.starts-recal{name: 'starts', type: "text", value: @starts.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
+					.arrw
+					.fc
+				#OrgStartDateValError.error
+			.col-md-6
+				#OrgEndDate.box.datetimebox
+					.cal
+					.txt
+						- if @ends.blank?
+							%input#OrgEndDateVal.datetime.validate-presence.ends-recal{name: 'ends', type: "text", value: "", readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
+						- else
+							%input#OrgEndDateVal.datetime.validate-presence.ends-recal{name: 'ends', type: "text", value: @ends.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
+					.arrw
+					.fc
+				#OrgEndDateValError.error
+		.row.p-t20
+			.col-md-6
+				%b New Pickup Time *
+			.col-md-6
+				%b New Dropoff Time *
+		.row
+			.col-md-6
+				#NewStartDate.box.datetimebox
+					.cal
+					.txt
+						- if @newstarts.blank?
+							%input#NewStartDateVal.datetime.validate-presence.newstarts-recal{name: 'newstarts', type: "text", value: "", readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
+						- else
+							%input#NewStartDateVal.datetime.validate-presence.newstarts-recal{name: 'newstarts', type: "text", value: @newstarts.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Pickup Date & Time*"}
+					.arrw
+					.fc
+				#NewStartDateValError.error
+			.col-md-6
+				#NewEndDate.box.datetimebox
+					.cal
+					.txt
+						- if @newends.blank?
+							%input#NewEndDateVal.datetime.validate-presence.newends-recal{name: 'newends', type: "text", value: "", readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
+						- else
+							%input#NewEndDateVal.datetime.validate-presence.newends-recal{name: 'newends', type: "text", value: @newends.strftime("%d/%m/%Y %H:%M"), readonly: 'true', 'dummy-title' => "Dropoff Date & Time*"}
+					.arrw
+					.fc
+				#NewEndDateValError.error
+		.t-c
+			#ReschSubmit
+				= submit_tag "Calculate", :class => 'button size-12 m-auto', :onclick => "pushEvent('Trip Modification Estimator ( Tariff Page )', 'Trip Modification');"
+			#ReschWait.p-t15.p-b5{:style => 'display:none;'}
+				.wait
+- if !@tariff.blank?
+	%table.table.table-bordered.bg-f6
+		%tr
+			%td
+				&nbsp;
+			%td
+				%b Before 24 hours
+			%td
+				%b Within 24 hours
+		%tr
+			%td
+				Cancellation Refund **
+			%td
+				= @tariff[:org][:total]
+			%td
+				= @tariff[:org][:total]
+				= "- #{@tariff[:org][:penalty]}"
+				%sup ##
+		- if @booking.starts_last != @booking.starts
+			- if @tariff[:reschedule][:refund] > 0
+				%tr
+					%td
+						Reschedule Refund
+					%td
+						= @tariff[:reschedule][:refund]
+						+ #{@tariff[:reschedule][:kms_penalty]}
+						%sup #
+					%td
+						= @tariff[:reschedule][:refund] 
+						+ #{@tariff[:reschedule][:kms_penalty]}
+						%sup #
+						= "- #{@tariff[:reschedule][:penalty]}"
+						%sup ##
+			- else
+				%tr
+					%td
+						Reschedule Charges
+					%td
+						= @tariff[:reschedule][:total]
+						+ #{@tariff[:reschedule][:kms_penalty]}
+						%sup #
+					%td
+						= @tariff[:reschedule][:total] 
+						+ #{@tariff[:reschedule][:kms_penalty]}
+						%sup #
+						+ #{@tariff[:reschedule][:penalty]}
+						%sup ##
+		- elsif @booking.ends_last < @booking.ends
+			%tr
+				%td
+					Extension Charges
+				%td
+					= '-'
+				%td
+					= @tariff[:extended][:total]
+					+ #{@tariff[:extended][:kms_penalty]}
+					%sup #
+			%tr.danger
+				%td
+					Late Charges
+				%td
+					= '-'
+				%td
+					= @tariff[:late][:total]
+					+ #{@tariff[:late][:kms_penalty]}
+					%sup #
+					+ #{@tariff[:late][:penalty]}
+					%sup ##
+		- else
+			%tr
+				%td
+					Shortening Refund
+				%td
+					= @tariff[:short][:total]
+					+ #{@tariff[:short][:kms_penalty]}
+					%sup #
+				%td
+					= @tariff[:short][:total]
+					+ #{@tariff[:short][:kms_penalty]}
+					%sup #
+					+ #{@tariff[:short][:penalty]}
+					%sup ##
+			%tr
+				%td
+					Early Return Credits
+				%td
+					= '-'
+				%td
+					= @tariff[:early][:refund] 
+					= "- #{@tariff[:early][:kms_penalty]}"
+					%sup #
+					= "- #{@tariff[:early][:penalty]}"
+					%sup ##
+		%tr.bg-c
+			%td
+				%b Change :
+				:ruby
+					h = @tariff[:mod][:hours] - @tariff[:org][:hours]
+					tmp = ''
+					d = h/24
+					h -= d*24
+					if d == 1
+						tmp << "1 day, "
+					elsif d > 0
+						tmp << d.to_s + " days, "
+					end
+					if h == 1
+						tmp << "1 hour"
+					elsif h > 0
+						tmp << h.to_s + " hours"
+					end
+				= tmp.chomp(', ')
+			%td
+				%b Old Fare :
+				= @tariff[:org][:total]
+			%td
+				%b New Fare :
+				= @tariff[:mod][:total]
+	.m-5.t-c.f-b
+		** - Cancellation of original booking
+		%br/
+		%sup #
+		= "- Excess Kms : Charged at Rs.#{@tariff[:org][:excess_kms]}/Km"
+		%br/
+		%sup ##
+		= "- Penalty"
+.f-i.red.size-12.t-c
+	This calculator is only to help you estimate your charges, refunds & credits
+	%br/
+	when you reschedule your booking as per current tariff and policies.
+- if @calcar || @calstart || @calend
+	:javascript
+		initializeDatePicker('recal');
+		pushEvent('Rescheduler', 'Submit');
+- else
+	:javascript
+		initializeDatePicker('recal');

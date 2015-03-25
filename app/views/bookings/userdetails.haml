@@ -1,0 +1,16 @@
+.content
+	= render :partial => "/bookings/search_steps", locals: {step: 4}
+	.wrapper
+		- render_flash
+		.narrow-content.fl.bg-w.bs-9
+			.p-20
+				.alert.alert-info.t-c
+					%b Please provide the following details to complete your reservation
+				.p-b10
+					= render :template => "/users/signup"
+				.t-c.f-b.f-i
+					On submitting, you will proceed to payment
+		.sidebar-b.fr
+			= render :partial => "/bookings/sidebar", locals: {step: 4}
+		.fc
+		%br/

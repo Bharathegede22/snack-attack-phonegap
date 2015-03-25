@@ -1,0 +1,22 @@
+!!!
+%html{lang: "en"}
+	= render :partial => "/layouts/head_static"
+	-#- cls = (!cookies[:abtestd].blank?) ? 'body-header-new' : ''
+	- cls = ''
+	%body{:class => cls}
+		-#= render :partial => (!cookies[:abtestd].blank?) ? "/layouts/header" : "/layouts/header_old"
+		= render :partial => "/layouts/header_old"
+		.content
+			.wrapper.bg-f
+				.p-20
+					- book = Booking.where(confirmation_key: params[:id],status: 1)
+					- if !book.blank? && !current_user.blank? && [0,3].include?(current_user.license_status)
+					- time = Booking.timediff(book.first)
+						- if !time.nil? && time > 21600
+							.alert.alert-danger
+								Please upload a clear picture of your driver’s license by #{Booking.booking_creation(book.first).strftime("%d %b, %Y %I:%M %p")} or your booking will get cancelled.
+						- else
+							.alert.alert-danger
+								Please upload a clear picture of your driver’s license or you will not be able to access your Zoomcar.
+					= yield
+		= render :partial => '/layouts/footer'

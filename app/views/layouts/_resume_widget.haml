@@ -1,0 +1,59 @@
+- if !(session[:book].blank? && session[:search].blank?) && !(['userdetails','search','login','checkout','checkoutab'].include?(action_name))
+	- if !session[:search].blank? && session[:book].blank?
+		#resume_widget.fixed.solid.border-9
+			%a#resume_header.block.p-10.bg-zoomb.white.f-b{'href' => '#'}
+				Resume Booking
+			%a#resume_body.block.bg-w{'href' => '/resume'}
+				.border-b-c
+					.time.inline-block.p-5.border-r-c.t-c.size-11
+						.lgrey.text-up.m-b3
+							Pickup
+						#{session[:search][:starts].to_datetime.strftime("%d %b, %I:%M %p")}
+					.time.inline-block.p-5.t-c.size-11
+						.lgrey.text-up.m-b3
+							Dropoff
+						#{session[:search][:ends].to_datetime.strftime("%d %b, %I:%M %p")}
+
+	- elsif (session[:search][:starts] == session[:book][:starts]) && (session[:search][:ends] == session[:book][:ends])
+		#resume_widget.fixed.solid.border-9
+			%a#resume_header.block.p-10.bg-zoomb.white.f-b{'href' => '#'}
+				Resume Booking
+			%a#resume_body.block.bg-w{'href' => '/resume'}
+				.border-b-c
+					.time.inline-block.p-5.border-r-c.t-c.size-11
+						.lgrey.text-up.m-b3
+							Pickup
+						#{session[:book][:starts].to_datetime.strftime("%d %b, %I:%M %p")}
+					.time.inline-block.p-5.t-c.size-11
+						.lgrey.text-up.m-b3
+							Dropoff
+						#{session[:book][:ends].to_datetime.strftime("%d %b, %I:%M %p")}
+
+				.p-l5
+					.inline-block.colored
+						%img.m-auto{:src => cargroup.small_image.avatar.url,:class => 'car' + @booking.cargroup_id.to_s}
+						/ .m-auto{:class => 'car' + @booking.cargroup_id.to_s}
+					.inline-block.p-l5.t-l.position-r{style: "vertical-align: middle;"}
+						.f-b.zoom-b
+							#{Cargroup.where(id: session[:book][:car].to_i).last.shortname}
+						.size-11.grey
+							%span.zoom Available
+							at
+						.size-11.grey
+							#{Location.where(id: session[:book][:loc].to_i).last.name}
+
+	- else
+		#resume_widget.fixed.solid.border-9
+			%a#resume_header.block.p-10.bg-zoomb.white.f-b{'href' => '#'}
+				Resume Booking
+			%a#resume_body.block.bg-w{'href' => '/resume'}
+				.border-b-c
+					.time.inline-block.p-5.border-r-c.t-c.size-11
+						.lgrey.text-up.m-b3
+							Pickup
+						#{session[:search][:starts].to_datetime.strftime("%d %b, %I:%M %p")}
+					.time.inline-block.p-5.t-c.size-11
+						.lgrey.text-up.m-b3
+							Dropoff
+						#{session[:search][:ends].to_datetime.strftime("%d %b, %I:%M %p")}
+

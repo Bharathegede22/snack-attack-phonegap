@@ -1,0 +1,55 @@
+- @user ||= User.new
+#SignupDiv
+	.login.t-c
+		%table.m-auto
+			%tr
+				%td.p-5
+					%a.facebook{:href => "#{user_omniauth_authorize_path(:facebook)}", :onclick => "newUserSessionEvent(window.location.pathname, 'Sign Up', 'Facebook');"}
+						.txt Sign up with Facebook
+				%td.p-5
+					%a.gplus{:href => "#{user_omniauth_authorize_path(:google_oauth2)}", :onclick => "newUserSessionEvent(window.location.pathname, 'Sign Up', 'Google+');"}
+						.txt Sign up with Google+
+		%br/
+		OR
+		%br/
+		%br/
+		- render_flash
+		%form{:id => "LoginForm", :onsubmit => "return SubmitForm(this,'#{registration_path(:user)}','SignupDiv');", :action => "javascript:void(0)", "data-ajax" => "false"}
+			.form-horizontal
+				.row.form-group
+					.col-sm-3.col-sm-offset-1.t-r
+						%label.control-label Email
+					.col-sm-6
+						%input#LoginEmail.validate-presence.form-control{name: 'user[email]', type: "text", value: resource.email, :onclick => "newUserSessionEvent(window.location.pathname, 'Sign Up', 'Email');"}
+						#LoginEmailError.error.t-l
+							= errortxt(@user.errors[:email].uniq.join(', '))
+				.row.form-group
+					.col-sm-3.col-sm-offset-1.t-r
+						%label.control-label Password
+					.col-sm-6
+						%input#LoginPass.validate-presence.form-control{name: "user[password]", type: "password", value: resource.password, :onclick => "newUserSessionEvent(window.location.pathname, 'Sign Up', 'Password');"}
+						#LoginPassError.error.t-l
+							= errortxt(@user.errors[:password].uniq.join(', '))
+				.row.form-group
+					.col-sm-3.col-sm-offset-1.t-r
+						%label.control-label Confirm Password
+					.col-sm-6
+						%input#LoginPassConfirm.validate-presence.form-control{name: "user[password_confirmation]", type: "password", :onclick => "newUserSessionEvent(window.location.pathname, 'Sign Up', 'Confirm Password');"}
+						#LoginPassConfirmError.error.t-l
+							= errortxt(@user.errors[:password_confirmation].join(', '))
+				.row
+					.col-sm-3.col-sm-offset-1
+					.col-sm-6.t-l
+						#LoginSubmit
+							= submit_tag "Submit", :class => 'btn btn-default btn-lg', :onclick => "newUserSessionEvent(window.location.pathname, 'Sign Up', 'Submit');"
+						#LoginWait.p-5.hide
+							.wait
+		.p-t20
+			.f-b.bg-e.p-10.r-5.border-c.solid
+				.fl
+					%a.btn.btn-primary.btn-sm{:href => "javascript:void(0)", :onclick => "getData('/users/signin', 'SignupDiv', 'replace', null);"}
+						Sign In?
+				.fr
+					%a.btn.btn-primary.btn-sm{:href => "javascript:void(0)", :onclick => "getData('/users/forgot', 'SignupDiv', 'replace', null);"}
+						Forgot Your Password?
+				.fc

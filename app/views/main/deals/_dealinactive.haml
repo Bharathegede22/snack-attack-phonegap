@@ -1,0 +1,54 @@
+.col-md-6.pull-left.deal-inactive
+	.sold-out-tag
+	.each-car-offer.r-3
+		.col-md-4.border-r-c.car-booking-block
+			%img.m-auto{:src => Cargroup.find(2).small_image.avatar.url,:class => 'car2'}
+			.fl.p-t5.p-b10.t-c
+				.size-20.f-b.zoom-b
+					Scorpio LX
+				.size-14.m-t5.lgrey
+					7 Seater
+					.m-t10.btn-book.m-b3
+						.button.button-dis
+							Book Now
+		.col-md-8.border-b-c.p-0
+			.col-md-4
+				.text-up.size-12.p-b2.p-t5.t-c.light-grey
+					Pickup Time
+			.col-md-4.border-l-c
+				.text-up.size-12.p-b2.p-t5.t-c.light-grey
+					Dropoff Time
+			.col-md-4.border-l-c.p-l0.p-r0
+				.text-up.size-12.p-b2.p-t11.p-b11.t-c.light-grey
+					Duration
+		.col-md-8.border-b-c.p-0
+			.col-md-4.p-l0.p-r0
+				.text-up.size-12.p-b10.p-t10.t-c
+					.fo-helv.f-b
+						= 1.day.from_now.strftime("%d %b, %Y")
+						%br 10:00 AM
+			.col-md-4.border-l-c.p-l0.p-r0
+				.text-up.size-12.p-b10.p-t10.t-c
+					.fo-helv.f-b
+						= 1.day.from_now.strftime("%d %b, %Y")
+						%br 08:00 PM
+			.col-md-4.border-l-c.p-l0.p-r0
+				.text-up.size-18.p-b10.p-t10.t-c.duration-hrs
+					.fo-helv.f-b
+						10 Hrs 
+		.col-md-8.border-b-c.p-0.p-l35.location_icon
+			.size-13.p-b5.p-t5.light-grey
+				%span.text-up
+					Pickup location
+				.zoom-b.f-b.size-12.m-t5
+					Marathalli (Sireesh Auto)
+					%br
+					%a.size-11.help.pointer{:href => "javascript:showMap(12.951530718193473, 77.70201437166179, 'Marathalli (Sireesh Auto)');"}
+						(view map)
+		.col-md-8.p-0
+			.col-md-5.p-r0.p-l0
+				%h4.t-c.size-16.m-t15.strike-text Rs. 1100
+			.col-md-7.p-r0.p-l0
+				%h4.t-c.fo-helv.f-b.size-20.m-t15.red 
+					Rs. 880 
+					%span.size-16.red (20% off)

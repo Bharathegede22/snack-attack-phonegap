@@ -1,0 +1,19 @@
+- if !@inventory.blank?
+	= render :partial => 'timeline_data'
+= javascript_tag do
+	:plain
+		$("#TimelineWait#{@booking.cargroup_id}").slideUp();
+	- if @page < 0
+		:plain
+			$("#TimelineLessNum#{@booking.cargroup_id}").val("#{@page-1}");
+	- else
+		:plain
+			$("#TimelineMoreNum#{@booking.cargroup_id}").val("#{@page+1}");
+	- if (@inventory.blank? && @page < 0) || (!@inventory.blank? && @inventory.first.slot.to_i == Time.now.to_date.to_datetime.to_i)
+		:plain
+			$("#TimelineLess#{@booking.cargroup_id}").html("");
+	- if (@inventory.blank? && @page > 0) || (!@inventory.blank? && @inventory.last.slot.to_date.to_datetime.to_i == (Time.now.to_date.to_datetime + (CommonHelper::BOOKING_WINDOW + 1).days).to_i)
+		:plain
+			$("#TimelineMore#{@booking.cargroup_id}").html("");
+	:plain
+		$('.help').tooltip();

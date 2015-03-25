@@ -1,0 +1,91 @@
+:ruby
+	locs = @object.locations(@city)
+.static
+	%h1
+		= @object.h1(@city)
+	.attraction
+		.right
+			%h2 About #{@object.name}
+			%table.table.table-bordered
+				%tr
+					%td
+						%b Seating
+					%td #{@object.seating}
+				%tr
+					%td
+						%b Type
+					%td #{CommonHelper::CAR_TYPE[@object.cartype-1][0]}
+				%tr
+					%td
+						%b Drive
+					%td #{CommonHelper::DRIVE[@object.drive-1][0]}
+				%tr
+					%td
+						%b Fuel
+					%td #{CommonHelper::FUEL[@object.fuel-1][0]}
+				%tr
+					%td
+						%b Transmission
+					%td
+						- if @object.manual
+							Manual
+						- else
+							Automatic
+			- if !@object.disclaimer.blank?
+				.red
+					= @object.disclaimer.html_safe
+			- if !@object.description.blank?
+				%br/
+				%i
+					= @object.description.html_safe
+				%br/
+			%br/
+			= render :partial => "/main/pricing/#{@city.pricing_mode}/car_tariff"
+		.left
+			#Gmap.map{style: 'height: 600px;'}
+		.fc
+= javascript_tag do
+	:plain
+		function initializeMap() {
+			var myLatlng = new google.maps.LatLng(#{@city.lat}, #{@city.lng});
+			var mapOptions = {
+				center: myLatlng,
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			}
+			var map = new google.maps.Map(document.getElementById("Gmap"), mapOptions);
+			bounds = new google.maps.LatLngBounds ();
+			bounds.extend (myLatlng);
+	- locs.each do |a|
+		:plain
+			var infowindow#{a.id} = new google.maps.InfoWindow({
+				content: "#{a.mapcontent}"
+			});
+			var myLatlng#{a.id} = new google.maps.LatLng(#{a.lat}, #{a.lng});
+			bounds.extend (myLatlng#{a.id});
+			var marker#{a.id} = new google.maps.Marker({
+				position: myLatlng#{a.id},
+				map: map,
+				animation: google.maps.Animation.DROP,
+				title:"#{a.shortname}",
+				icon:"#{asset_path 'map/zoom.png'}"
+			});
+			google.maps.event.addListener(marker#{a.id}, 'click', function() {
+				infowindow#{a.id}.open(map,marker#{a.id});
+			});
+	:plain
+			google.maps.event.addListenerOnce(map, 'idle', function() {
+				google.maps.event.trigger(map, 'resize');
+				map.fitBounds(bounds);
+			});
+		}
+		function checkJquery() {
+			if (window.jQuery) {
+				var script = document.createElement("script");
+				script.type = "text/javascript";
+				script.src = "http://maps.googleapis.com/maps/api/js?key=#{GOOGLE_MAP_KEY}&sensor=true&callback=initializeMap";
+				document.body.appendChild(script);
+			} else {
+				window.setTimeout(checkJquery, 1000);
+			}
+		}
+		checkJquery();

@@ -1,0 +1,33 @@
+- render_flash
+%h4
+	Available Credits: ₹ #{@total_credits.to_i}
+
+
+.panel.panel-default
+	.panel-heading
+		%h3.panel-title Credits Used
+	- if @used_credits.any?
+		.panel-body
+			%table.table
+				%th Date 
+				%th Source
+				%th Amount ₹
+				- @used_credits.each do |credit|
+					%tr
+						%td= credit.created_at.strftime("%d %B %Y")
+						%td= Credit::SOURCE_NAME[credit.source_name]
+						%td= credit.amount
+	%br/
+	.panel-heading
+		%h3.panel-title Credits Earned
+	- if @earned_credits.any?
+		.panel-body
+			%table.table
+				%th Date 
+				%th Source
+				%th Amount ₹
+				- @earned_credits.each do |credit|
+					%tr
+						%td= credit.created_at.strftime("%d %B %Y")
+						%td= credit.Credit::SOURCE_NAME[credit.source_name]
+						%td= credit.amount

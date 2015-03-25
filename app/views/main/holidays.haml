@@ -1,0 +1,38 @@
+.static
+	%h1.zoom Upcoming #{CommonHelper::BLACKOUT_TEXT}
+	%p
+		Offers / Coupon codes are not valid during #{CommonHelper::BLACKOUT_TEXT}. Additional Charges apply for bookings during #{CommonHelper::BLACKOUT_TEXT}. Please check the 
+		%a{:href => "/bangalore/tariff", :target => "_blank"}tariff page 
+		for pricing details.	
+		%table.table.table-bordered.table-holiday-list
+			%tr.active
+				%th.holiday-list-head #{CommonHelper::BLACKOUT_TEXT}
+				%th.holiday-list-head Dates
+			:ruby
+				old_d = nil
+				new_d = nil
+				h_name = nil
+			- Holiday.active.each do |h|
+				- if old_d.blank?
+					:ruby
+						old_d = h.day
+						new_d = h.day
+						h_name = h.name
+				- else
+					- if (new_d+1.days) == h.day
+						- new_d = h.day
+					- else
+						%tr
+							%td.holiday-list-tabs
+								= h_name
+							%td.holiday-list-tabs
+								- if old_d == new_d
+									= old_d.strftime("%d %b %Y")
+								- else
+									= old_d.strftime("%d %b %Y")
+									= "-"
+									= new_d.strftime("%d %b %Y")
+						:ruby
+							old_d = h.day
+							new_d = h.day
+							h_name = h.name

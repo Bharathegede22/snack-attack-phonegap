@@ -1,0 +1,25 @@
+.t-c
+	%br/
+	%br/
+	%br/
+	%br/
+	%br/
+	%br/
+	%b.size-16 Please wait while we take you to the next step
+	%br/
+	%br/
+	%br/
+	%br/
+	%img{:src => "http://#{HOSTNAME}/images/loader.gif", :alt => '', :border => '0'}
+	%br/
+	%br/
+	%br/
+	%br/
+	%br/
+	%br/
+:javascript
+	var auto = setTimeout(function(){ submitRedirect(); }, 1000);
+	function submitRedirect() {
+		clearTimeout(auto);
+		window.location = "/#{@city.link_name.downcase}/bookings/do";
+	}

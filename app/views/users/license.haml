@@ -1,0 +1,358 @@
+:javascript
+
+  function checkJquery() {
+    if (window.jQuery) {
+
+      $(document).ready(function(){
+
+      $(".ajax-file-upload-green").innerHTML = "Upload Image";
+
+      $("body").addClass("upload_dl_page");
+
+      $(".zc-upload-dl-page-wrapper").css("display", "block");
+
+      var total_image_count;
+
+      image_data1 = {"data": true};
+      $.ajax({
+               url: 'license_get_del',
+               type: 'post',
+               data: image_data1,
+               success: function(resp,status)
+                       {   
+                         display_data(resp);
+                       },
+                       error: function(error)
+                      {
+                          console.log(error);
+                      }
+              });
+
+  function display_data(resp) {
+
+    var obj = resp;
+    var final_status = obj.image[0].status;      
+
+    if (final_status == 0) {
+      $(".licence-status0").css("display", "block");
+    }
+
+    if (final_status == 1) {
+      $(".licence-status1").css("display", "block");
+      $(".status1-warning").css("display", "block");
+    }
+
+    if (final_status == 2) {
+        $(".licence-status2").css("display", "block");
+    }
+
+    if (final_status == 3 ) {
+      $(".licence-status3").css("display","block");
+      $(".status3-warning").css("display", "block");
+    }
+
+    if (obj.image.length != 0) {
+      
+      total_image_count = obj.image[0].count;
+      //console.log(total_image_count);
+
+        for (var i=1; i<obj.image.length; i++) {
+
+          if ((obj.image[0].count == 5) || (final_status == 2)){
+              //console.log(final_status);
+              $(".licence-upload-btns").css("display", "none");
+          }
+          else {
+            $(".licence-upload-btns").css("display", "block");
+          }
+
+            var img_div_pre = document.createElement("div"); 
+                              
+                img_div_pre.className = "pre_uploaded-img-wrapper";
+                img_div_pre.id = "pre_uploaded-img-wrapper" +obj.image[i].image_id;
+
+                var pre_innerDiv = document.createElement('div');
+                pre_innerDiv.className = 'block-2';
+
+                var delete_btn = document.createElement('button');
+
+
+                var hover_child_pre = document.createElement("div");
+                hover_child_pre.className = "hover-delete";
+
+                hover_child_pre.innerHTML ="<a href='"+obj.image[i].url+"' target='_blank'><img class='dl-preuploaded-img img-responsive' id='"+obj.image[i].image_id+"' src='"+obj.image[i].url+"' /></a>";
+ 
+                // img_div_pre.innerHTML = "<a href='"+obj.image[i].url+"' target='_blank'><img class='dl-preuploaded-img img-responsive' id='"+obj.image[i].image_id+"' src='"+obj.image[i].url+"' /></a>";
+
+                hover_child_pre.appendChild(pre_innerDiv);
+                img_div_pre.appendChild(hover_child_pre);
+
+                // img_div_pre.appendChild(pre_innerDiv); 
+
+                pre_innerDiv.appendChild(delete_btn);
+ 
+                delete_btn.innerHTML = "X";
+                delete_btn.className = "delete";
+                delete_btn.id = "delete_your_img";
+
+                var popupDiv = document.createElement("div");
+                    popupDiv.id = "popover-" + obj.image[i].image_id;
+                    popupDiv.className = "popover_block"
+                    img_div_pre.appendChild(popupDiv);
+
+                pre_uploaded_img_parent.appendChild(img_div_pre);
+
+                $(".pre_uploaded_img_parent").insertBefore(".licence-upload-btns");
+
+                if (final_status == 2) {
+                  $(".delete").css("display", "none");
+                }               
+                
+        }
+    }
+    else {
+        document.getElementById("pre_uploaded_img_parent").style.display = "none";
+    }
+  }
+
+      var uploadedArray;
+ 
+        $("#fileuploader").uploadFile({
+          showStatusAfterSuccess:false,
+          url:"/users/license",
+          fileName:"avatar",
+          allowedTypes:"jpg,png",
+          maxFileSize:2097152,
+          multiple: "true",
+          showAbort:false,
+          showDone:false,
+          uploadButtonClass:"ajax-file-upload-green",
+          onSuccess:function(files,data,xhr)
+              { 
+                
+                $("#eventsmessage").html($("#eventsmessage").html()+"<br/>Success for: "+JSON.stringify(data));
+
+                //console.log(data.image[0].count);
+
+                var output = document.getElementById("result");
+
+                var img_div = document.createElement("div");
+                    
+                    img_div.id = "pre_uploaded-img-wrapper" + data.image[1].image_id; 
+                   
+                    img_div.className = "uploaded-img-wrapper";
+
+                    var innerDiv = document.createElement('div');
+                    innerDiv.className = 'block-2';
+
+                    var delete_btn = document.createElement('button');
+
+                    var hover_child = document.createElement("div");
+                    hover_child.className = "hover-delete";
+
+                    hover_child.innerHTML ="<a href='"+data.image[1].url+"'><img class='new-dl-images img-responsive' id='"+data.image[1].image_id+"' src='"+data.image[1].url+"'/></a>";
+                    
+                    //img_div.innerHTML = "<a href='"+data.image[1].url+"'><img class='new-dl-images img-responsive' id='"+data.image[1].image_id+"' src='"+data.image[1].url+"'/></a>";
+
+                    var dl_src = $(".uploaded-img-wrapper img").attr('src');
+
+                    hover_child.appendChild(innerDiv);
+                    img_div.appendChild(hover_child);
+
+                    // img_div.appendChild(innerDiv);
+
+                    innerDiv.appendChild(delete_btn);
+                    delete_btn.innerHTML = "X";
+                    delete_btn.className = "delete";
+                    delete_btn.id = "delete_your_img";
+
+                    var popupDiv = document.createElement("div");
+                    popupDiv.id = "popover-" + data.image[1].image_id;
+                    popupDiv.className = "popover_block"
+                    img_div.appendChild(popupDiv);
+
+                    output.insertBefore(img_div,null);
+
+                    setTimeout(function(){
+                      $(".uploaded-img-wrapper").css("background", "#fff");
+                    },500);
+
+                    $(".uploaded-img-wrapper").insertBefore(".licence-upload-btns");
+
+                      
+                    
+
+                if (data.image[0].count == 5) {
+                  $(".licence-upload-btns").css("display", "none");
+                }
+                else {
+                  $(".licence-upload-btns").css("display", "block");
+                }
+
+                  if (data.image[0].count > 0) {
+                    $(".licence-status0").css("display", "none");
+                    $(".licence-status2").css("display", "none");
+                    $(".licence-status3").css("display", "none");
+                    $(".status3-warning").css("display", "none");
+                    $(".status0-moreThan-sixHrs").css("display", "none");
+                    $(".licence-status1").css("display", "block");
+                    $(".status1-warning").css("display", "block");
+                  }
+
+              }
+
+              
+          });     
+
+  });
+
+  var parentElId, actionDelRequest;
+      
+  $( document ).on( 'click', '.delete', function () {
+
+    parentElId = $(this).parent().parent().parent().attr('id');
+    $("#"+parentElId +" .delete").addClass("hide");
+     //console.log("parent id: " + parentElId);
+     var htm = "<div class='popover_overlay'>"+
+                  "<button>Delete</button>"+
+                  "<button>Cancel</button>"+
+                  "</div>";
+      $(".pre_uploaded-img-wrapper").removeClass("popover_block");
+
+      if ($(parentElId).hasClass('popover_overlay')) {
+      }
+      else {
+        $('#'+parentElId).append(htm);
+      }
+
+      $(".popover_overlay").attr('id', 'popover-'+parentElId);
+      //console.log("id is : " +'popover-'+parentElId);
+
+      $(".popover_overlay button:first-child").addClass("popup-delete");
+      $(".popover_overlay button:first-child").attr('id', 'popup-delete-image');
+
+      $(".popover_overlay button:last-child").attr('id', 'popup-donot-delete-image');
+      $(".popover_overlay button:last-child").addClass("popup-cancel");
+
+     actionDelRequest = $('#'+ parentElId + " " + 'img').attr('id');
+     //console.log(actionDelRequest);
+
+  });
+
+
+  $(document).on('click', '#popup-delete-image',function(){
+    var delLicence = "#pre_uploaded-img-wrapper" + actionDelRequest;
+
+    $.ajax({
+       url: 'license_get_del',
+       type: 'post',
+       data: {"image_id" : actionDelRequest,"license_delete": true},
+       success: function(delStatus)
+                 {   
+
+                 //console.log(delStatus.image[0].count);
+                 if (delStatus.image[0].count == 0) {
+                    $(".licence-status1").css("display","none");
+                    $(".status1-warning").css("display", "none");
+                    $(".licence-status2").css("display","none");
+                    $(".licence-status3").css("display","none");
+                    $(".status3-warning").css("display", "none");
+                    $(".licence-status0").css("display","block");
+                 }
+
+                
+
+                 if (delStatus.image[0].count == 5) {
+                    $(".licence-upload-btns").css("display", "none");
+                 }
+                 else {
+                    $(".licence-upload-btns").css("display", "block");
+                 }
+
+                 if (delStatus.image[0].delete_status == 1) {
+
+                    $(delLicence).css("display", "none");
+                 }
+                 else {
+                    alert("Image deletion failed because your network connection dropped. Please try again.");
+                 }
+
+                },
+                error: function(error)
+                {
+                    console.log(error);
+
+                }
+    });
+  });
+
+  $(document).on('click', '#popup-donot-delete-image', function(){
+
+  var cancelDelRequest = "#popover-" + parentElId;
+  $("#"+parentElId +" .delete").removeClass("hide");
+
+    //console.log("cancel req id : " + cancelDelRequest);
+    $(this).parent().remove();
+  });
+
+    } else {
+      window.setTimeout(checkJquery, 1000);
+    }
+  }
+  checkJquery();
+.zc-upload-dl-page-wrapper
+  .licence-data-container
+    .zc-dl-instruction-block
+      %h3 Your Driving License
+      .zc-instruct-lines-outer-wrapper
+        .col-md-12.zc-instruct-lines-wrapper.clearfix
+          .zc-instruct-lines.col-md-9
+            %table.licence-instruct-table
+              %tbody
+                %tr
+                  %td.col-md-4.license-manual-table.license-manual-heading OWN LICENSE
+                  %td.col-md-8.license-manual-table
+                    Uploading a picture of your
+                    %b OWN
+                    driving licence is required to take a Zoomcar.
+                %tr
+                  %td.col-md-4.license-manual-table.license-manual-heading ALL INFORMATION
+                  %td.col-md-8.license-manual-table Zoomcar manually checks each license. Please ensure the following are clearly visible in the picture: Name, Date of Birth, Driver License Number, Expiry Date, and Vehicle Class. In case your license has these details on different sides or pages, please upload all images.
+                %tr
+                  %td.col-md-4.license-manual-table.license-manual-heading CORRECT INFORMATION
+                  %td.col-md-8.license-manual-table Any discrepancy in information will cause booking cancellation.
+          .col-md-3.zc-licence-status-block.text-center
+            %p.status-tag Licence Status
+            %p.licence-status0 Not Uploaded
+            %p.licence-status1 Pending
+            - book = Booking.latest_booking(current_user)
+            - if !book.blank? && current_user.license_status == 0
+              - if Booking.timediff(book.first) > 21600
+                %p.status0-moreThan-sixHrs
+                  Please upload a clear picture of your driver’s license by #{Booking.booking_creation(book.first).strftime("%d %b, %Y %I:%M %p")} or your booking will get cancelled.
+              - else
+                %p.status0-lessThan-sixHrs
+                  Please upload a clear picture of your driver’s license or you will not be able to access your Zoomcar.
+            %p.license-status1.status1-warning We will check your license shortly.
+            %p.licence-status2 Approved
+            %p.licence-status3 Declined
+            %p.license-status3.status3-warning Your driver's license picture was not valid. Please upload another picture. 
+      .licence-upload-area
+        %div.m-b10
+          %span Licence Images
+          %span You can upload up to 5 images
+        #pre_uploaded_img_parent
+        .licence-upload-btns.col-md-4
+          / <input id="files" class="custom-file-upload" type="file" multiple/>
+          %div#fileuploader Upload Image
+        
+        #result.clearfix
+        .license-loader
+        #img-loader
+        #app-links-block.text-center
+          .app_links_text
+            Upload your license on the go, just point and shoot. Download the Zoomcar app.
+          .app-icon-block
+            %a.iphone-dl-page.help{"data-original-title" => "", "data-placement" => "bottom", "data-title" => "Get Zoomcar iPhone App", "data-toggle" => "tooltip", :target => "_blank", :href => "https://itunes.apple.com/us/app/zoomcar-self-drive-cars/id889910218?mt=8&amp;utm_source=home%20page&amp;utm_medium=header%20links&amp;utm_content=iOS&amp;utm_campaign=installs", :title => ""}
+         
+            %a.android-dl-page.help{"data-original-title" => "", "data-placement" => "bottom", "data-title" => "Get Zoomcar Android App", "data-toggle" => "tooltip", :target => "_blank", :href => "https://play.google.com/store/apps/details?id=com.zoomcar&amp;referrer=utm_source%3Dhome%2520page%26utm_medium%3Dheader%2520links%26utm_content%3Dandroid%26utm_campaign%3Dinstalls", :title => ""}

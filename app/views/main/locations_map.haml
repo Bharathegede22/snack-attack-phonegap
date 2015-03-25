@@ -1,0 +1,39 @@
+#GmapCustom{style: "height:100%; width:100%"}
+- if @city
+	= javascript_tag do
+		:plain
+			function initializeCustomMap() {
+				var myLatlng = new google.maps.LatLng(#{@city.lat}, #{@city.lng});
+				var mapOptions = {
+					center: myLatlng,
+					mapTypeId: google.maps.MapTypeId.ROADMAP
+				}
+				var map = new google.maps.Map(document.getElementById("GmapCustom"), mapOptions);
+				bounds = new google.maps.LatLngBounds ();
+				bounds.extend (myLatlng);
+		- Location.live(@city).each do |l|
+			- if !l.lat.blank? && !l.lng.blank?
+				:plain
+					var infowindow#{l.id} = new google.maps.InfoWindow({
+						content: "#{l.mapcontent}",
+						maxWidth: 300
+					});
+					var myLatlng#{l.id} = new google.maps.LatLng(#{l.lat}, #{l.lng});
+					bounds.extend (myLatlng#{l.id});
+					var marker#{l.id} = new google.maps.Marker({
+						position: myLatlng#{l.id},
+						map: map,
+						animation: google.maps.Animation.DROP,
+						title:"#{l.shortname}",
+						icon:"#{asset_path 'map/zoom.png'}"
+					});
+					google.maps.event.addListener(marker#{l.id}, 'click', function() {
+						infowindow#{l.id}.open(map,marker#{l.id});
+					});
+		:plain
+				google.maps.event.addListenerOnce(map, 'idle', function() {
+					google.maps.event.trigger(map, 'resize');
+					map.fitBounds(bounds);
+				});
+			}
+			initializeCustomMap();

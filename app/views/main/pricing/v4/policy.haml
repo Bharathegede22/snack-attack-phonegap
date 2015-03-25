@@ -1,0 +1,402 @@
+.static
+	%h1{:style => "text-align: center;"} 
+		Fee Policy : #{@city.name}
+	#fee-tabs.solid.border-c
+		%a.block.fl.active{:href => "#fee-1", 'data-toggle' => "tab"}
+			Paid Hours
+		%a.block.fl{:href => "#fee-2", 'data-toggle' => "tab"}
+			Free Kms
+		%a.block.fl{:href => "#fee-3", 'data-toggle' => "tab"}
+			Return & Reschedule
+		%a.block.fl{:href => "#fee-4", 'data-toggle' => "tab"}
+			Penalty Fees
+		.fc
+	#fee-body.tab-content
+		#fee-1.tab-pane.fade.in.active
+			%p
+				Zoomcar charges by the hour. Any usage between 1 - 59 minutes is treated as a full hour. Hourly rates are different for
+				- if @city.promo_pricing
+					Mon-Thu and Fri-Sun. Please refer the
+				- else
+					Mon-Thu, Fri-Sun and #{CommonHelper::BLACKOUT_TEXT}[?]. Please refer the
+				%a{:href => "http://www.zoomcar.com/bangalore/tariff", :target => "_blank"} tariff page
+				for more details. All hours are billed according to the day on which they start. 
+				%u 
+					There is a minimum billing of 
+					%b #{Pricingv4::MIN_HOURS} hours.
+					%i All bookings between 1 to #{Pricingv3::MIN_HOURS-1} hours will be billed at #{Pricingv4::MIN_HOURS} hours.
+				See the below table for some examples.
+				%br/
+				%table.size-13{:cellpadding => '0', :cellspacing => '0', :border => '0', :aling => 'left', :width => '100%'}
+					%tr.bg-zoomb.white
+						%td.border-zoom.t-c{:width => '200'}
+							.p-10
+								%b Start Time *
+						%td.border-zoom.t-c{:width => '120'}
+							.p-10
+								%b End Time *
+						%td.border-zoom.t-c{:width => '160'}
+							.p-10
+								%b Paid Hours
+						%td.border-zoom
+							.p-10
+								%b Comment
+					%tr
+						%td.border-zoom.t-c
+							.p-10
+								Monday 1pm
+						%td.border-zoom.t-c
+							.p-10
+								Monday 3pm
+						%td.border-zoom.t-c
+							.p-10
+								4 Hours
+						%td.border-zoom
+							.p-10
+								All hours are billed at Mon-Thu price.
+					%tr
+						%td.border-zoom.t-c
+							.p-10
+								Thursday 11pm
+						%td.border-zoom.t-c
+							.p-10
+								Friday 1am
+						%td.border-zoom.t-c
+							.p-10
+								4 Hours
+						%td.border-zoom
+							.p-10
+								1 hour is billed at Mon-Thu price.
+								%br/
+								3 hours are billed at Fri-Sun price.
+					%tr
+						%td.border-zoom.t-c
+							.p-10
+								Monday 1pm
+						%td.border-zoom.t-c
+							.p-10
+								Monday 9pm
+						%td.border-zoom.t-c
+							.p-10
+								8 Hours
+						%td.border-zoom
+							.p-10
+								All hours are billed at Mon-Thu price.
+					%tr
+						%td.border-zoom.t-c
+							.p-10
+								Monday 1pm
+						%td.border-zoom.t-c
+							.p-10
+								Tuesday 1pm
+						%td.border-zoom.t-c
+							.p-10
+								24 Hours
+						%td.border-zoom
+							.p-10
+								All hours are billed at Mon-Thu price.
+					%tr
+						%td.border-zoom.t-c
+							.p-10
+								Thursday 1.30pm
+						%td.border-zoom.t-c
+							.p-10
+								Friday 1.30pm
+						%td.border-zoom.t-c
+							.p-10
+								24 Hours
+						%td.border-zoom
+							.p-10
+								11 hours are billed at Mon-Thu price.
+								%br/
+								13 hours are billed at Fri-Sun price.
+					%tr
+						%td.border-zoom.t-c
+							.p-10
+								Sunday 1.30pm
+						%td.border-zoom.t-c
+							.p-10
+								Monday 1pm
+						%td.border-zoom.t-c
+							.p-10
+								24 Hours
+						%td.border-zoom
+							.p-10
+								11 hours are billed at Fri-Sun price.
+								%br/
+								13 hours are billed at Mon-Thu price.
+		#fee-2.tab-pane.fade
+			%p
+				All Zoomcar reservations come with free driving kms, which are calculated based on vehicle type and reservation duration. Any kms in excess of these limits will be charged at the appropriate rates. For weekly reservations, free kms will be given on pro-rated basis using weekly limit. For daily reservation, free kms can comprise of the daily and hourly free kms.
+				%b Free Kms are always calculated based on the last scheduled reservation end time and actual vehicle return time (for completed bookings), whichever is bigger.
+				See the below table for the use cases
+				%br/
+				%table.size-13{:cellpadding => '0', :cellspacing => '0', :border => '0', :aling => 'left', :width => '100%'}
+					%tr.bg-zoomb.white
+						%td.border-zoom.t-c{:width => '200'}
+							.p-10
+								%b Action
+						%td.border-zoom
+							.p-10
+								%b Comment
+					%tr
+						%td.border-zoom.t-c
+							.p-10
+								Extending the booking
+						%td.border-zoom
+							.p-10
+								Free Kms will be calculated based on the new end date/time.
+								Should be 
+								%i
+									%u more than or equal 
+								to the last limit.
+					%tr
+						%td.border-zoom.t-c
+							.p-10
+								Cancelling the booking
+						%td.border-zoom
+							.p-10
+								NA
+					%tr
+						%td.border-zoom.t-c
+							.p-10
+								Shortening the booking
+						%td.border-zoom
+							.p-10
+								Free Kms will be calculated based on the new end date/time.
+								Should be 
+								%i
+									%u less than or equal 
+								to the last limit.
+					%tr
+						%td.border-zoom.t-c
+							.p-10
+								Early Return
+						%td.border-zoom
+							.p-10
+								Free Kms will be calculated based on the last scheduled return time.
+								Should be 
+								%i
+									%u equal 
+								to the last limit.
+					%tr
+						%td.border-zoom.t-c
+							.p-10
+								Late Return
+						%td.border-zoom
+							.p-10
+								Free Kms will be calculated based on the actual return time.
+								Should be 
+								%i
+									%u more than or equal 
+								to the last limit.
+		#fee-3.tab-pane.fade
+			%table.size-13{:cellpadding => '0', :cellspacing => '0', :border => '0', :aling => 'left', :width => '100%'}
+				%tr
+					%td.border-zoom.t-c{:width => '180'}
+						.p-10.f-b
+							Late Return
+					%td.border-zoom
+						.p-10
+							1. Standard hourly charges will be applicable per hour of delay. Weekend or weekday delays will be charged accordingly.
+							%br/
+							2. Free KMs will be given at 10 km per hour of delay.
+							%br/
+							3. An additional Rs. 300 per hour will be charged as late fee.
+				%tr
+					%td.border-zoom.t-c{:width => '180'}
+						.p-10.f-b
+							Early Return
+					%td.border-zoom
+						.p-10
+							1. Credits worth 50% of billed hourly rate will be given for the remaining hours of your booking.
+							%br/
+							2. Free KMs will be given  only for the hours for which you did not get credits.
+			%br/
+			%table.size-13{:cellpadding => '0', :cellspacing => '0', :border => '0', :aling => 'left', :width => '100%'}
+				%tr
+					%td.border-zoom.t-c{:width => '180'}
+						.p-10.f-b
+							Shortening Post Start
+					%td.border-zoom
+						.p-10
+							1. 25% of the difference between the old amount and the new amount will be charged as Trip Modification Fee with a maximum reschedule charge of Rs 2500.
+							%br/
+							2. Free KMs you received will be reduced based on the new duration.
+				%tr
+					%td.border-zoom.t-c{:width => '180'}
+						.p-10.f-b
+							Extension Post Start
+					%td.border-zoom
+						.p-10
+							1. Extension can be done as per availability and regular charges.
+				%tr
+					%td.border-zoom.t-c{:width => '180'}
+						.p-10.f-b
+							Reschedule Before Start
+					%td.border-zoom
+						.p-10
+							1. No additional charges if the trip is rescheduled more than 24 hours before the booking start time.
+							%br/
+							2. A charge of 25% of the difference between the old amount and the new amount is applicable if the trip is rescheduled within 24 hours of booking start time, with a maximum reschedule charge of Rs. 2500.
+							%br/
+							3. There will be no additional charge if the new amount is greater than old amount.
+			%br/
+			%table.size-13{:cellpadding => '0', :cellspacing => '0', :border => '0', :aling => 'left', :width => '100%'}
+				%tr
+					%td.border-zoom.t-c{:width => '180'}
+						.p-10.f-b
+							Cancellation
+					%td.border-zoom
+						.p-10
+							1. There are no charges if you cancel more than 24 hours before booking start time.
+							%br/
+							2. A charge of 25% of booking amount is applicable if cancelled within 24 hours of the booking start time, with a maximum cancellation charge of Rs. 2,500.
+		#fee-4.tab-pane.fade
+			.f-b.size-16.m-b5.t-u
+				Fee for Returning the Vehicle to the Wrong Location
+			%ol
+				%li
+					Member will be charged the full hourly fee for use of the vehicle, plus the full late fee until the vehicle is either returned to the correct location or is in use by the next Member, plus an additional fee of ₹2000.
+			.f-b.size-16.m-b5.t-u
+				Fee for Traffic and Parking Violations
+			%ol#Overspeeding
+				%li
+					Zoomcar will pay for all traffic and parking fines (including fines for not paying tolls). The charge for these fines will be posted to the Member's account.
+				%li
+					Late payment of these fines will be charged an additional fee ₹500 per 30 days or fraction thereof.
+				%li
+					Members must report and turn over all traffic and parking violations/receipts to Zoomcar's vehicle attendants immediately following their reservation. Zoomcar will subsequently mail a hard copy of the violation/receipt to the Member and payment will be according to the guidance provided above.
+			.f-b.size-16.m-b5.t-u
+				Overspeeding
+			%p Note that Zoomcar tracks the speed of all vehicles through a sophisticated back end monitoring system that provides real-time overspeeding alerts.
+			%ol
+				%li
+					Member will receive a warning email along with a fine of 
+					%b ₹#{CommonHelper::OVERSPEEDING} 
+					for reaching a speed of 
+					%b 125 Km/hr and above 
+					during a reservation.
+				%li
+					Member will be automatically expelled from Zoomcar's service if they exceed a speed of
+					%b 150 km/hr
+					at any point.
+				%li
+					Member has to pay only one over-speeding fine per reservation.
+				%li
+					Member receiving a warning email will be treated as an offence. Only one offence will be counted for the whole duration of the reservation. So even if a member had received more than one warning emails it will be counted as one offence.
+				%li
+					Member will be automatically expelled from Zoomcar's service if they exceed a speed of
+					%b 125 Km/hr
+					as a second offense.
+				%li
+					This fine is contractually imposed upon you and is in addition to any statutory fine that may be, or may have been, separately imposed upon by you.
+			.f-b.size-16.m-b5.t-u
+				Smoking
+			%ol
+				%li
+					In the interest of the entire Zoomcar community, smoking is strictly forbidden in all Zoomcar vehicles. Members who smoke in Zoomcar vehicles will be fined 
+					%b ₹#{CommonHelper::SMOKING}
+					plus any other applicable damage costs related to the interior.
+			.f-b.size-16.m-b5.t-u
+				Lost Tablet Fee
+			%ol
+				%li
+					If the Member loses the Android enabled tablet provided by Zoomcar and does not replace the exact model prior to returning the vehicle, they will be charged Rs 10,000 (cost of tablet).
+	%br/
+	%br/
+	.f-b.size-20.zoom.m-b10 Member's Responsibility
+	%p.f-b
+		If a Zoomcar member is violating the law or Zoomcar rules, for example by overspeeding or driving drunk, the member will be responsible for all damage, liability, and fines and could face legal action.
+	%p
+		.f-b.size-16.m-b5
+			Responsibility for Payment:
+		%ol
+			%li
+				Payments by Members shall be made with his/her credit card or debit card. The Member is under obligation to ensure that the account from which the amounts are to be collected have sufficient funds or credit available to cover any charges. Member is solely responsible for any associated bank or credit card charges or fees. Member may be charged a processing fee for a declined credit or debit card payment.
+			%li
+				In the event the Member defaults on any payments, Zoomcar is entitled to charge reminder fees and default interest in accordance with the provisions of the law. In addition, Zoomcar may utilize third parties to collect amounts owed to Zoomcar by a Member.
+			%li
+				With all fees mentioned above, Zoomcar reserves the right to prohibit a Member from making a subsequent reservation until all outstanding fees in the Member's account have been paid in full. In the event a fee is incurred, Members will receive an email invoice from Zoomcar that will have detailed payment instructions.
+		.f-b.size-16.m-b5
+			Collision or other incident:
+		%ol
+			%li
+				Zoomcar provides full wrap unlimited third party liability insurance without a maximum cap.
+			%li
+				If member is involved in an incident (including but not limited to a collision or misuse of the vehicle) Member will be responsible for a standard insurance deductible payment of up to ₹5,000. The Member will be obligated to pay the repair cost (up to ₹5,000) and Zoomcar will send the Member a repair invoice. The payment owed will be deducted from the security deposit. Should the security deposit not cover the payment (in the case the Member has accrued late return, excess km, etc charges) the balance of the payment owed will be made electronically by the Member.
+			%li
+				Member will be responsible for all towing and impounding charges associated with a collision.
+			%li
+				Member will be responsible for all towing and impounding charges caused by member failure.
+			%li
+				Zoomcar will be responsible for all towing and impounding charges caused by vehicle failure.
+			%li
+				Member will be responsible for all applicable damages and costs, including those in excess of the applicable Damage Fee, arising from the Member's failure to comply with the terms of the Agreement and/or a violation of the law.
+		%br/
+		.f-b.size-16.m-b5
+			Tolls:
+		%ol
+			%li
+				Members are responsible for paying all tolls at the time they are due.
+				- if @city.id == 2
+					Users driving in Pune should be aware that cars with self-drive license plates are required to pay the Rs 15 Cantonment toll.
+			%li
+				Zoomcar vehicles are registered with an All India Permit, allowing the vehicle to enter any state in the country.
+			%li
+				Members must pay all inter-state taxes and fees upon entering into a neighbouring state. For the state of Andhra Pradesh, Zoomcar will reimburse the State entry fee cost paid by Member. Zoomcar members are liable to pay in full the state entry fee tax for all other states besides Andhra Pradesh.
+	%table.size-13{:cellpadding => '0', :cellspacing => '0', :border => '0', :width => '100%'}
+		%thead.bg-zoomb.white
+			%tr
+				%th{:style => "border-right:1px solid #fff;"}
+					.p-10 Violation
+				%th{:style => "border-left:1px solid #fff;border-right:1px solid #fff;"}
+					.p-10 Penalty
+		%tbody
+			%tr
+				%td.border-zoom 
+					.p-10 Returning vehicle late
+				%td.border-zoom 
+					.p-10
+						1. Standard hourly charges will be applicable per hour of delay. Weekend or weekday delays will be charged accordingly.
+						%br/
+						2. An additional Rs. 300 per hour will be charged as late fee.
+			%tr
+				%td.border-zoom
+					.p-10 Traffic and parking violations
+				%td.border-zoom
+					.p-10 
+						Pay violation fine 
+						%br/
+						PLUS ₹500 per 30 days late in payment 
+			%tr
+				%td.border-zoom.t-l
+					.p-10 Key not returned at end of reservation
+				%td.border-zoom 
+					.p-10 
+						₹200 
+						%br/
+						PLUS replacement cost and ₹500 if key not returned in 3 days
+			%tr
+				%td.border-zoom 
+					.p-10 Vehicle Damage
+				%td.border-zoom 
+					.p-10 Damage cost up to ₹#{CommonHelper::LIABILITY} (full-wrap insurance covers the rest)
+			%tr
+				%td.border-zoom
+					.p-10 Towing and impounding
+				%td.border-zoom
+					.p-10 
+						Full costs if caused by member failure 
+						%br/
+						No cost if caused by vehicle failure
+	%br/
+	%p
+		By joining Zoomcar, the Member agrees to pay Zoomcar the costs, charges, fees and expenses set out in the Agreement, including specifically and without limitation those set forth in this schedule. The following is not exhaustive and other specific fees, costs and charges may apply. Other applicable costs will be communicated to the Member. Capitalized terms used in this schedule shall have the same meaning assigned to such terms in the Agreement.
+	%p
+		Zoomcar reserves the right to change the terms of this Policy from time to time and shall give notice of such changes to the Member in a timely manner. Notice to the Members shall be considered given when such notice is indicated and accessible from the first page accessed after the Member log-on to the Zoomcar website, or by email to the Member's email address provided to Zoomcar in the Member's application or most recently provided to Zoomcar. Member agrees that the amended terms and conditions of this Agreement shall be effective and binding the earlier of (1) the effective date indicated in such notice; or (2) on the date posted on Zoomcar's website.
+	%br/
+	%br/
+.mod-calculator-box
+	.mod-calculator.r-tl-10.r-tr-10.ts-0{:onclick => "showModal('Trip Modification Estimator', '/calculator/reschedule'); return false;"}
+		Trip Modification Estimator

@@ -1,0 +1,527 @@
+/ 2-step checkout page for seamless integration
+
+:ruby
+	if !@booking.blank?
+		cargroup = @booking.cargroup
+		location = @booking.location
+	else
+		cargroup = Cargroup.random(@city)
+		location = Location.random(@city)
+		@booking = Booking.new
+		@booking.starts = Time.today + 30.days
+		@booking.ends = Time.today + 31.days
+		@booking.location_id = location.id
+		@booking.cargroup_id = cargroup.id
+		@booking.city_id = @city.id
+		@booking.valid?
+	end
+	fare = @booking.get_fare
+		session[:total] = fare[:total]
+	pricing = @booking.pricing
+	tmp = ''
+	h = (@booking.ends.to_i - @booking.starts.to_i)/3600
+	h += 1 if (@booking.ends.to_i - @booking.starts.to_i) > h*3600
+	d = h/24
+	h -= d*24
+	if d == 1
+		tmp << "1 day, "
+	elsif d > 0
+		tmp << d.to_s + " days, "
+	end
+	if h == 1
+		tmp << "1 hour"
+	elsif h > 0
+		tmp << h.to_s + " hours"
+	end
+	if current_user
+		user = current_user
+	else
+		user = User.find(100)
+		user.name = 'xxxxxxxxx'
+		user.email = 'xxxxxxxxx'
+		user.phone = 'xxxxxxxxx'
+		user.dob = Time.now - 25.years
+	end
+.content
+	= render :partial => "/bookings/search_steps", locals: {step: 4}
+	.wrapper
+		- render_flash
+		- if user && user.check_details
+			.full-content.bg-w.bs-9.position-r.z-3
+				.bg-zoomb.white.p-10.f-b.size-18.p-l10.p-r10
+					.fl
+						Booking Summary
+					.fr
+						.glyphicon.glyphicon-pencil.pointer.help{onclick: "showSearch();", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Change your booking"}
+					.fc
+
+				.summary-cell.fl.border-r-c
+					.p-t5.p-b5.t-c.size-16
+						.inline-block.colored
+							%img.m-auto{:src => cargroup.small_image.avatar.url,:class => 'car' + @booking.cargroup_id.to_s}
+							/ .m-auto{:class => 'car' + @booking.cargroup_id.to_s}
+						.inline-block.p-l5.t-l.position-r{style: "vertical-align: middle;"}
+							.size-18.f-b.zoom-b
+								= cargroup.display_name
+								- if !cargroup.disclaimer.blank?
+									%span.red.size-12.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => cargroup.disclaimer.html_safe}
+										[?]
+							.size-14.m-t5.lgrey
+								= cargroup.seating
+								Seater
+
+				.summary-cell.fl.border-r-c.t-c
+					.p-t8.p-b8.border-b-c
+						.text-up.size-11.m-b3
+							Pickup Time
+						.zoom-b.f-b.size-12
+							= @booking.starts.strftime("%d %b, %Y - %I:%M %p")
+
+					.p-t8.p-b8
+						.text-up.size-11.m-b3
+							Dropoff Time
+						.zoom-b.f-b.size-12
+							= @booking.ends.strftime("%d %b, %Y - %I:%M %p")
+
+				.summary-cell.fl.border-r-c.p-15
+					#location.p-t10.p-b10.p-l5.p-r5.icon
+						.text-up.size-11.m-b3
+							Pickup Location
+						.zoom-b.f-b.size-12
+							= location.shortname
+							%span.size-11.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-title' => "View Map", onclick: "showModal('#{location.shortname}', '/map?lat=#{location.lat}&lng=#{location.lng}&title=#{location.shortname}');"}
+								[?]
+							- if !location.disclaimer.blank?
+								- if location.id == 10 or location.id == 8
+									%div.red.size-11.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => location.disclaimer.html_safe}
+										(not a resident?)
+								- elsif location.id == 11 or location.id == 33
+									%div.red.size-11.help.pointer.f-n{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => location.disclaimer.html_safe}
+										(not an employee?)
+								- else
+									%span.red.size-12.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => location.disclaimer.html_safe}
+										[?]
+
+				.summary-cell.fl.p-15
+					#duration.p-t10.p-b10.p-l5.p-r5.icon
+						.text-up.size-11.m-b3
+							Duration
+						.zoom-b.f-b.size-12
+							= tmp.chomp(', ')
+
+				.fc
+
+			- if @abtest
+				.booking-includes.bg-w.bs-g.p-t20.p-r20.p-b10.p-l20.m-auto.position-r.z-2.t-c
+					Your Booking Includes:
+					#inc-fuel.included.m-l10.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Fuel is Ours</b><br/>All Zoomcar reservations come with unlimited fuel as part of the tariff. If you need more fuel, just fill up the tank, keep the receipt and <b><u><i>we will refund the amount!</i></u></b>."}
+						Fuel
+					#inc-insurance.included.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>No Worries, You're All Covered</b><br/>All Zoomcar reservations are covered with full comprehensive insurance, as long as a Zoomcar member is driving the car. <b><u><i>Maximum liability</i></u> for any damage for a Zoomcar member <u><i>is Rs.5000</i></u></b>."}
+						Insurance
+					/ #inc-gps.included.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>Zip Zap Zoom</b><br/>All Zoomcar cars are fitted with a 3G enabled tablet to guide you on your journey."}
+					/ 	GPS
+					#inc-taxes.included.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "<b class='zoom p-5'>We Get Govt. Off Your Back</b><br/>Tariff includes all taxes, except the relevant tolls/taxes one has to pay while visiting another state."}
+						Taxes
+
+			.tariff-details.bg-w.bs-9.p-t20.m-auto
+				- if user.support?
+					.p-10
+						#CorporateDiv
+							= render :partial => 'corporate'
+				%table.position-r{width: '100%'}
+					.bg-e.p-10.border-c.solid.r-5.available_credits_data
+						= render :partial => "promo_credits", :locals => {:fare => fare, :h => h, :user => user}
+					/ %tr
+					/ 	%td.p-5.p-l20.text-up.size-12
+					/ 		Discount
+					/ 	%td.p-5.t-r.p-r20.zoom-b.f-b.size-16
+					/ 		\ ₹ 0
+
+					- if !@abtest
+						%tr
+							%td.p-10.p-l20.p-b10.text-up.size-12
+								Fuel, Insurance & Taxes
+							%td.p-10.t-r.p-r25.p-b10.zoom.f-b.size-16
+								Free
+
+					/ %tr.bg-e
+					/ 	%td.p-10.p-l20.size-12
+					/ 		%b.text-up Total Tariff
+					/ 		%span.size-12.help.pointer{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Tariff Calculator"}
+					/ 			[?]
+					/ 	%td.p-10.t-r.p-r20.zoom-b.f-b.size-16
+					/ 		₹ #{show_currency fare[:total]}
+
+					- if pricing.mode::SECURITY > 0
+						%tr
+							%td.p-5.p-l20.size-12
+								.fl.text-up
+									Refundable Deposit
+								.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "Fully refundable security deposit which will be released once your booking is over. It will take 5-15 days before the refund reflects in your account."}
+									[?]
+								.fc
+								.fl.m-t5
+									%a.pop{'href' => '#', 'tabindex' => '0', 'data-toggle' => "popover", 'data-trigger' => 'focus', 'data-placement' => "left", 'data-title' => "Don’t have multiple Security Deposits stuck in refund processes!", 'data-html' => "true", 'data-content' => "<div class='p-l5 m-b5'>• Use the same Deposit across multiple bookings through your Zoomcar Wallet.</div><div class='p-l5 m-b5'>• Refund the amount you want, when you want.</div><div class='p-l5'>• Add money to the Deposit amount in the Wallet if needed.</div><div class='m-t10'>Learn more <a href='/faq#faq-42' target='_blank'>here</a>.</div>"}
+										Can I Use One Security Deposit For Multiple Bookings?
+								.fc
+							%td.p-10.t-r.p-r25.lgrey.f-b.size-16.securityTotal
+								#Deposit
+									₹ #{show_currency pricing.mode::SECURITY}
+						- unless @wallet_available==0
+							%tr
+								%td.p-10.p-l20.size-12
+									.fl.text-up
+										Money in Wallet
+									.fc
+								%td.p-10.t-r.p-r20.lgrey.f-b.size-16
+									\- ₹ #{show_currency @wallet_available}
+						%tr.bg-e
+							%td.p-10.p-l20.size-12
+								.fl.text-up
+									Deposit Due
+								
+								- if @booking.defer_allowed? && !(@wallet_available>= @booking.security_amount)
+									.fl.p-l20
+										%span
+											%input{checked: "checked", id: "changeDeposit", name: "securityDeposit", type: "checkbox", value: "yes"}
+										%label{style: 'font-weight: normal; margin: 0;', for: 'changeDeposit'}
+											Pay this now
+										%span.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => @booking.deposit_help}
+											[?]
+								.fc
+							%td.p-10.t-r.p-r25.zoom-b.f-b.size-16
+								₹ #{show_currency(@booking.security_amount-@wallet_available)}
+					- if @booking.defer_allowed?
+						%tr#DepositMessage{style: "display: none"}
+							%td.p-10.p-l20.p-r20.size-11.position-r{style: "top: -10px", colspan: '2'}
+								%i
+									= @booking.deposit_warning(@wallet_available>0 ? "remaining " : '').html_safe
+
+					%tr.bg-6.white.bg-zoom.ribbon
+						%td.p-10.p-l30.text-up.size-16.f-b{style: 'width: 250px'}
+							Payable Amount
+
+							.ribbon-tl
+							.ribbon-tr
+
+						%td.p-10.t-r.p-r35.size-22.outstandingSide.position-r{style: 'width: 250px'}
+							:ruby
+								if session[:credits].present? || session[:promo_discount].present?
+									total = fare[:total] - session[:credits].to_i - session[:promo_discount].to_i
+								else
+									total = fare[:total]
+								end
+							#DepositFinal
+								₹
+								%span#final_amount_to_pay 
+									#{show_currency(total + @booking.security_amount - @wallet_available)}
+					%tr.ribbon-after
+						%td{colspan: 2}
+							&nbsp;
+
+					%tr
+						%td.p-5.p-l20.p-t10.size-12
+							.fl.text-up Free Kms
+							.fl.p-l5.help.pointer{'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "All Zoomcar reservations comes with free driving kms, which are based on vehicle type and reservation duration."}
+								[?]
+							.fc
+						%td.p-5.t-r.p-r25.p-t10.zoom-b.f-b.size-16
+							= fare[:kms]
+					%tr
+						%td.p-5.p-b10.p-l20.size-12
+							.fl.text-up Excess Kms Charge
+							.fl.p-l5.help.pointer{onclick: "showModal('Tariff Calculator', '/calculator/tariff?process=checkout');", 'data-placement' => "bottom", 'data-toggle' => "tooltip", 'data-html' => 'true', 'data-title' => "If you travel more than #{fare[:kms]} Kms during the reservation, then Kms beyond #{fare[:kms]} will be charged at this price. Click here to enter your expected Kms to estimate your final tariff."}
+								[?]
+							.fc
+						%td.p-5.p-b10.t-r.p-r25.zoom-b.f-b.size-16
+							₹ #{pricing.excess_kms.to_i} / Km
+
+
+			.payment-options.bg-w.bs-9.m-auto{style: 'display: none; clear: both'}
+				%table.position-r{width: '100%'}
+					%tr#viewTariffDetails.pointer.bg-6.white.bg-zoom.ribbon
+						%td.p-10.p-l30.text-up.size-16.f-b{style: 'width: 250px'}
+							Payable Amount
+
+							.ribbon-bl
+							.ribbon-br
+
+						%td.p-10.t-r.p-r30.size-22.outstandingSide.position-r{style: 'width: 250px'}
+							:ruby
+								if !session[:credits].blank?
+									total = fare[:total] - session[:credits].to_i
+								else
+									total = fare[:total]
+								end
+							#DepositFinal.DepositFinal
+								₹
+								%span#final_amount_to_pay 
+									#{show_currency(total + @booking.security_amount - @wallet_available)}
+
+					%tr.ribbon-after
+						%td{colspan: 2}
+							&nbsp;
+
+				.payment-partial#payment-partial
+					.fc
+						.wait#loader
+					/ = render :partial => "/bookings/pg/payment_options"
+
+			.t-c
+				.m-auto.p-20{style: "width:400px;"}
+					- if @available == 1 && user && !user.is_blacklisted? && !user.is_underage?
+						/ %form{:action => "/#{@city.link_name.downcase}/bookings/seamless_docreate", :id => "CheckoutForm", :method => "post"}
+						%form{:id => "CheckoutForm"}
+							.hide
+								%input{name: "starts", type: "hidden", value: session[:book][:starts]}
+								%input{name: "ends", type: "hidden", value: session[:book][:ends]}
+								%input{name: "loc", type: "hidden", value: session[:book][:loc]}
+								%input{name: "car", type: "hidden", value: session[:book][:car]}
+								%input{name: "deposit", type: "hidden", value: 1, id: "checkoutDeposit"}
+
+							%a#proceedToPayment.pointer.inline-block.button.m-auto{style: "width:225px;", onclick: "sleep(1000, createPayment);"}
+								Proceed To Payment
+							.wait#depositLoader.hide
+							%br/
+							%br/
+							/ %input.button.m-auto{style: "width:200px;", type: "submit", value: "Checkout"}
+
+					- else
+						.button-dis Checkout
+					#CheckoutWait{style: 'display:none;'}
+						%br/
+						.wait
+				= render :partial => "/bookings/blacklist"
+		- else
+			.alert.alert-info.t-c
+				%b Please provide the following details to complete your reservation
+			.p-b10
+				= render :template => "/users/signup"
+			.t-c.f-b.f-i
+				On submitting, you will proceed to payment
+		%br/
+		%br/
+		/ .main-content.fl.bg-w.bs-9
+		/ 	.p-20
+		/ 		- if user && user.check_details
+		/ 			- if user.support?
+		/ 				#CorporateDiv
+		/ 					= render :partial => 'corporate'
+		/ 			#OutstandingDiv
+		/ 				= render :partial => 'outstanding'
+		/ 			.t-c
+		/ 				.m-auto.p-20{style: "width:400px;"}
+		/ 					- if @available == 1 && user && !user.is_blacklisted?
+		/ 						.button.m-auto{onclick: "checkout({starts: '#{session[:book][:starts]}',ends: '#{session[:book][:ends]}',loc: '#{session[:book][:loc]}',car: '#{session[:book][:car]}'});", style: "width:200px;"} Checkout
+		/ 					- else
+		/ 						.button-dis Checkout
+		/ 					#CheckoutWait{style: 'display:none;'}
+		/ 						%br/
+		/ 						.wait
+		/ 				= render :partial => "/bookings/blacklist"
+		/ 		- else
+		/ 			.alert.alert-info.t-c
+		/ 				%b Please provide the following details to complete your reservation
+		/ 			.p-b10
+		/ 				= render :template => "/users/signup"
+		/ 			.t-c.f-b.f-i
+		/ 				On submitting, you will proceed to payment
+		.fc
+		%br/
+
+:javascript
+	var flag = true;
+	var details;
+	var _adx = {};
+	_adx.xb  = '35BDU410';
+	_adx.xt  = 'conversion';
+	_adx.xgid  = '6AMDq23';
+	(function(d){
+		var x = d.createElement('script');
+		x.async = true;
+		x.src = ('https:' == d.location.protocol ? 'https://d1adj61x0fgvmc.cloudfront.net' : 'http://s.adx.io') + '/dxjet.js';
+		var s = d.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(x, s);
+	})(document);
+
+	function checkJquery() {
+		if (window.jQuery) {
+			pushEvent('1-click checkout', 'Checkout Page Load', '');
+			$.getScript("https://api.juspay.in/pay.js", function(){
+				//loading Juspay js file
+			});
+			$('#changeDeposit').change(function() {
+				var $this = $(this);
+				if(!flag){
+					updateDeposit($this.is(':checked'));
+				}
+				if ($this.is(':checked')) {
+					$('#checkoutDeposit').val("1");
+					$('#DepositMessage').hide();
+					$("#Deposit").removeClass('t-s');
+					$("#DepositFinal").html("₹ #{show_currency(total + @booking.security_amount - @wallet_available)}");
+				} else {
+					$('#checkoutDeposit').val("0");
+					$('#DepositMessage').show();
+					$("#Deposit").addClass('t-s');
+					$(".DepositFinal").html("₹ #{show_currency(total)}");
+				}
+			});
+			
+			if (!($("#credits_block").length)) {
+					$("#applyPromoCode").css("display", "none");
+					$("#promo_without_credits").css("display", "block");
+					$('#applyPromoCode_withoutCredits').click(function(){
+					$('#promoCode').toggle();
+					$('#credits_block').toggle();
+					if ($.trim($(this).text()) === 'Apply Promo Code') {
+				        $(this).text('Hide Promo Code');
+				    } else {
+				        $(this).text('Apply Promo Code');        
+				    }
+				});
+			}
+
+			$( document ).on( 'click', '.apply_promocode_btn', function (){
+				$("body").addClass("promoCodeClass");
+				$(".applyCodeText").css("display", "none");
+		
+			});
+			
+			$( document ).on( 'click', '.promoCodeCancelBtn', function (){
+				$("body").removeClass("promoCodeClass");
+				if ($(".creditUseClass").length) {
+				$(".applyCodeText").css("display", "none");
+			} else {
+				$(".applyCodeText").css("display", "block");
+			}
+			});
+
+			$( document ).on( 'click', '.use-credits-submit', function (){
+				$(".wrapper").addClass('creditUseClass');
+				$(".applyCodeText").css("display", "none");
+			
+			});
+
+			$( document ).on( 'click', '.cancelCreditsBtn', function (){
+				$(".wrapper").removeClass("creditUseClass");
+				if ($(".promoCodeClass").length) {
+				$(".applyCodeText").css("display", "none");
+			} else {
+				$(".applyCodeText").css("display", "block");
+			}
+			});
+
+			$('#applyPromoCode').click(function(){
+				$('#promoCode').toggle();
+				$('#credits_block').toggle();
+				if ($.trim($(this).text()) === 'Apply Promo Code or Use Credits') {
+			        $(this).text('Hide Promo Code and Credits Options');
+			    } else {
+			        $(this).text('Apply Promo Code or Use Credits');        
+			    }
+			});
+			$('#proceedToPayment').click(function(){
+				$('#proceedToPayment').hide();
+			});
+			$('#viewTariffDetails').click(function(){
+				$('.tariff-details').slideDown();
+				$('.payment-options').slideUp();
+				$('#proceedToPayment').show();
+				return false;
+			});
+		} else {
+			window.setTimeout(checkJquery, 1000);
+		}
+	}
+	function sleep(millis, callback) {
+		setTimeout(function(){ callback(); }, millis);
+	}
+	function createPayment() {
+		if(flag) {
+			pushEvent('1-click checkout', 'Payment Options Load', '');
+			var dep;
+			if('#{@booking.defer_allowed?}'==false||$("#changeDeposit").is(':checked')){
+				dep = 1;
+			}
+			else{
+				dep = 0;
+			}
+			flag = false;
+			$.ajax({
+				url: "/#{@city.link_name.downcase}/bookings/seamless_docreate",
+				type: "POST",
+				dataType: "json",
+				data: {
+					starts : $("#starts").val(),
+					ends : $("#ends").val(),
+					loc : $("#loc").val(),
+					car : $("#car").val(),
+					deposit : dep
+				},
+				success: function(data, response) {
+					if(response=="success") {
+						details = JSON.parse(JSON.stringify(data));
+						switch(details.response) {
+							case 'created':
+								$('#loader').hide();
+								$('#payment-partial').append("#{j render(:partial => 'bookings/pg/payment_options')}");
+								$('.order_id').val(details.order_id);
+								$('.description').val(details.desc);
+								$('.product_id').val(details.product_id);
+								$('.firstname').val(details.name);
+								$('.customer_email').val(details.email);
+								$('.customer_phone').val(details.phone);
+								$('.amount').val(details.amt);
+								$('.customer_id').val(details.cust_id);
+								$('#hash').val(details.hash);
+								break;
+							case 'corporate':
+								window.location = '/bookings/' + details.id;
+								break;
+							case 'paid':
+								window.location = '/bookings/' + details.id;
+								break;
+							case 'paid license checked':
+								window.location = '/bookings/' + details.id;
+								break;
+							case 'paid no license':
+								window.location = '//#{HOSTNAME}/users/license';
+								break;
+							case 'unavailable':
+							case 'pg error':
+								window.location.reload();
+								break; 
+						}
+					}
+					else {
+						flag = true;
+						$('.tariff-details').slideDown();
+						$('.payment-options').slideUp();
+					}
+				}
+			});
+		}
+		else {
+		}
+	}
+	function updateDeposit(dep) {
+		$('#depositLoader').removeClass('hide');
+		$('#proceedToPayment').hide();
+		$("#changeDeposit").prop('disabled', true);
+		$.post( "/bookings/seamless_update_payment", { deposit: dep, id: details.order_id }, 
+			function(data, status){
+				if(status=="success"){
+					var response = JSON.parse(JSON.stringify(data));
+					if(response.status == "success") {
+						$('#depositLoader').addClass('hide');
+						$('#proceedToPayment').show();
+						$("#changeDeposit").prop('disabled', false);
+						$('#hash').val(response.hash);
+						$('#amount').val(response.amt);
+					}
+				}
+			});
+	}
+	checkJquery();	
+
